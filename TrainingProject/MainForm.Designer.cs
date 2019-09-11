@@ -34,12 +34,14 @@
 			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
 			this.btnAddRobo = new System.Windows.Forms.ToolStripButton();
-			this.btnFight = new System.Windows.Forms.ToolStripButton();
 			this.btnArenaLvl = new System.Windows.Forms.ToolStripButton();
+			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
+			this.btnFight = new System.Windows.Forms.ToolStripButton();
 			this.btnInterval = new System.Windows.Forms.ToolStripButton();
+			this.btnAutomatic = new System.Windows.Forms.ToolStripButton();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
-			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -51,11 +53,13 @@
             this.btnAddRobo,
             this.btnArenaLvl,
             this.btnMonsterDen,
+            this.toolStripSeparator1,
             this.btnFight,
-            this.btnInterval});
+            this.btnInterval,
+            this.btnAutomatic});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(554, 25);
+			this.toolStrip1.Size = new System.Drawing.Size(421, 25);
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -85,6 +89,26 @@
 			this.btnAddRobo.Text = "Add Robo";
 			this.btnAddRobo.Click += new System.EventHandler(this.btnAddRobo_Click);
 			// 
+			// btnArenaLvl
+			// 
+			this.btnArenaLvl.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnArenaLvl.Image = ((System.Drawing.Image)(resources.GetObject("btnArenaLvl.Image")));
+			this.btnArenaLvl.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnArenaLvl.Name = "btnArenaLvl";
+			this.btnArenaLvl.Size = new System.Drawing.Size(23, 22);
+			this.btnArenaLvl.Text = "Arena Level";
+			this.btnArenaLvl.Click += new System.EventHandler(this.btnArenaLvl_Click);
+			// 
+			// btnMonsterDen
+			// 
+			this.btnMonsterDen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnMonsterDen.Image = ((System.Drawing.Image)(resources.GetObject("btnMonsterDen.Image")));
+			this.btnMonsterDen.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnMonsterDen.Name = "btnMonsterDen";
+			this.btnMonsterDen.Size = new System.Drawing.Size(23, 22);
+			this.btnMonsterDen.Text = "Monster Den";
+			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
+			// 
 			// btnFight
 			// 
 			this.btnFight.BackColor = System.Drawing.Color.Transparent;
@@ -96,16 +120,6 @@
 			this.btnFight.Text = "Fight";
 			this.btnFight.Click += new System.EventHandler(this.btnFight_Click);
 			// 
-			// btnArenaLvl
-			// 
-			this.btnArenaLvl.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnArenaLvl.Image = ((System.Drawing.Image)(resources.GetObject("btnArenaLvl.Image")));
-			this.btnArenaLvl.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnArenaLvl.Name = "btnArenaLvl";
-			this.btnArenaLvl.Size = new System.Drawing.Size(23, 22);
-			this.btnArenaLvl.Text = "Arena Level";
-			this.btnArenaLvl.Click += new System.EventHandler(this.btnArenaLvl_Click);
-			// 
 			// btnInterval
 			// 
 			this.btnInterval.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -115,6 +129,16 @@
 			this.btnInterval.Size = new System.Drawing.Size(23, 22);
 			this.btnInterval.Text = "toolStripButton1";
 			this.btnInterval.Click += new System.EventHandler(this.btnInterval_Click);
+			// 
+			// btnAutomatic
+			// 
+			this.btnAutomatic.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnAutomatic.Image = ((System.Drawing.Image)(resources.GetObject("btnAutomatic.Image")));
+			this.btnAutomatic.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnAutomatic.Name = "btnAutomatic";
+			this.btnAutomatic.Size = new System.Drawing.Size(23, 22);
+			this.btnAutomatic.Text = "Auto Battle";
+			this.btnAutomatic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnAutomatic_MouseDown);
 			// 
 			// timer1
 			// 
@@ -128,25 +152,20 @@
 			this.MainPannel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPannel.Location = new System.Drawing.Point(0, 28);
 			this.MainPannel.Name = "MainPannel";
-			this.MainPannel.Size = new System.Drawing.Size(554, 393);
+			this.MainPannel.Size = new System.Drawing.Size(420, 388);
 			this.MainPannel.TabIndex = 2;
 			// 
-			// btnMonsterDen
+			// toolStripSeparator1
 			// 
-			this.btnMonsterDen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnMonsterDen.Image = ((System.Drawing.Image)(resources.GetObject("btnMonsterDen.Image")));
-			this.btnMonsterDen.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnMonsterDen.Name = "btnMonsterDen";
-			this.btnMonsterDen.Size = new System.Drawing.Size(23, 22);
-			this.btnMonsterDen.Text = "Monster Den";
-			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(554, 423);
+			this.ClientSize = new System.Drawing.Size(421, 423);
 			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.MainPannel);
 			this.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -171,6 +190,8 @@
 		private System.Windows.Forms.ToolStripButton btnInterval;
 		private System.Windows.Forms.ToolStripButton btnArenaLvl;
 		private System.Windows.Forms.ToolStripButton btnMonsterDen;
+		private System.Windows.Forms.ToolStripButton btnAutomatic;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 	}
 }
 

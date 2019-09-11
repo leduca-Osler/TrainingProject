@@ -17,26 +17,42 @@ namespace TrainingProject
 		public IList<ArenaSeating> Seating;
 		public Team GameTeam1;
         public Team GameTeam2;
-        private int GoalScore;
+		public int MonsterCount;
+		public int RoboCount;
+		public int CurrentInterval;
+		public int MaxInterval;
+		public DateTime SafeTime;
+		private int GoalScore;
         private int MaxTeams;
 		private int TeamCost;
 		private int Jackpot; // holds the credits to be divied out after a fight
 		private int Currency;
+		private int CurrencyLog;
         private Boolean fighting;
+		private Boolean auto;
 		private string FightLog;
 		private int StoreLvl;
 		private int StoreLvlCost;
+		private int StoreLvlMaint;
 		private int ArenaLvl;
 		private int ArenaLvlCost;
+		private int ArenaLvlMaint;
 		private int MonsterDenLvl;
 		private int MonsterDenLvlCost;
+		private int MonsterDenLvlMaint;
 		private int MonsterDenBonus;
 		private int BlacksmithLvl;
 		private int BlacksmithLvlCost;
+		private int BlacksmithLvlMaint;
 		private int ResearchDevLvl;
 		private int ResearchDevCost;
+		private int ResearchDevMaint;
 		public string[] Weapons = { "Axe", "Blade", "Spear" };
 		public string[] Armour = { "Iron", "Bronze", "Titanium" };
+		// variables to determine if 
+		private bool Sedetary;
+		private int SedetaryTime;
+		private int breakTime;
 
 		public Game()
         {
@@ -46,18 +62,77 @@ namespace TrainingProject
             MaxTeams = 2;
 			TeamCost = 500;
 			fighting = false;
+			auto = false;
 			FightLog = "";
 			StoreLvl = 1;
 			StoreLvlCost = 100;
+			StoreLvlMaint = 1;
 			ArenaLvl = 1;
 			ArenaLvlCost = 100;
+			ArenaLvlMaint = 1;
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 100;
+			MonsterDenLvlMaint = 1;
 			MonsterDenBonus = 1;
 			BlacksmithLvl = 1;
 			BlacksmithLvlCost = 100;
+			BlacksmithLvlMaint = 1;
 			ResearchDevLvl = 1;
 			ResearchDevCost = 100;
+			ResearchDevMaint = 1;
+			MonsterCount = 0;
+			RoboCount = 0;
+			Sedetary = false;
+			SedetaryTime = 0;
+			breakTime = 0;
+			// Timer
+			CurrentInterval = 1000;
+			MaxInterval = 1000;
+			SafeTime = new DateTime();
+		}
+		public void fixTech()
+		{
+			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+		}
+
+		public void setAuto()
+		{
+			auto = !auto;
+		}
+
+		public void resetAuto()
+		{
+			// reset log files
+			CurrencyLog = 0;
+			foreach (Team eTeam in GameTeams)
+			{
+				eTeam.resetLogs();
+			}
+		}
+
+		public void stretch()
+		{
+			Sedetary = false;
+			breakTime += SedetaryTime;
+			SedetaryTime = 0;
+			if (breakTime > 3600000) { breakTime = 0; }
+		}
+
+		public void interval(Timer Timer1)
+		{
+			// update sedetary time
+			SedetaryTime += Timer1.Interval;
+			if (SedetaryTime > 1200000)
+			{
+				Sedetary = true;
+			}
+			CurrentInterval++;
+			if (CurrentInterval > MaxInterval)
+			{
+				CurrentInterval = 1000;
+				MaxInterval++;
+			}
+			Timer1.Interval = CurrentInterval;
 		}
 
 		public int getMonsterDenBonus
@@ -75,7 +150,14 @@ namespace TrainingProject
 
 		public int getMonsterDenLvl
 		{
-			get { return MonsterDenLvl; }
+			get
+			{
+				if (MonsterDenLvl > 8)
+				{
+					return 8; // Max number of Monster images
+				}
+				return MonsterDenLvl;
+			}
 		}
 		public int getArenaLvlCost
 		{
@@ -92,6 +174,7 @@ namespace TrainingProject
 		public void arenaLevelUp()
 		{
 			getCurrency -= ArenaLvlCost;
+			ArenaLvlMaint = ArenaLvlCost;
 			ArenaLvl++;
 			ArenaLvlCost *= RndVal.Next(10);
 			foreach (ArenaSeating eSeating in Seating)
@@ -105,6 +188,7 @@ namespace TrainingProject
 		public void MonsterDenLevelUp()
 		{
 			getCurrency -= MonsterDenLvlCost;
+			MonsterDenLvlMaint = MonsterDenLvlCost;
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
 			MonsterDenBonus += RndVal.Next(1, MonsterDenBonus);
@@ -114,6 +198,7 @@ namespace TrainingProject
 		{
 			set
 			{
+				CurrencyLog += value - Currency;
 				Currency = value;
 			}
 			get
@@ -134,10 +219,6 @@ namespace TrainingProject
 			{
 				return StoreLvl;
 			}
-		}
-		public void fixTech()
-		{
-
 		}
 
         public string addTeam()
@@ -201,10 +282,7 @@ namespace TrainingProject
 				if (tmpFullHP == false)
 				{
 					fullHP = false;
-					if (eTeam.getCurrency > 0)
-						eTeam.getCurrency--;
-					else
-						getCurrency--;
+					eTeam.getCurrency -= eTeam.MyTeam.Count;
 				}
 			}
 			return fullHP;
@@ -239,13 +317,25 @@ namespace TrainingProject
                     Team2Score = tmpScore;
                 }
             }
+			if (MonsterCount > 3)
+			{
+				Team2Index = RndVal.Next(GameTeams.Count - 1);
+				MonsterCount = 0;
+			}
+			if (RoboCount > 3)
+			{
+				Team2Index = Team1Index;
+				RoboCount = 0;
+			}
             if (Team1Index == Team2Index)
             {
+				MonsterCount++;
                 // Monster team... 
-                GameTeam2 = new Team(RndVal,GameTeam1.getDifficulty, MonsterDenLvl);
+                GameTeam2 = new Team(RndVal,GameTeam1.getDifficulty, getMonsterDenLvl);
             }
             else
             {
+				RoboCount++;
                 // Robo Team
                 GameTeam2 = GameTeams[Team2Index];
 				PotScore += GameTeam2.getScore;
@@ -261,10 +351,14 @@ namespace TrainingProject
 			}
 			getFightLog = GameTeam1.getName + " VS " + GameTeam2.getName + " @ " + DateTime.Now.ToString() + Environment.NewLine + msg + Environment.NewLine;
 		}
-        public Boolean isFighting()
-        {
-            return fighting;
-        }
+		public Boolean isFighting()
+		{
+			return fighting;
+		}
+		public Boolean isAuto()
+		{
+			return auto;
+		}
 
 		public FlowLayoutPanel getCharacterInfo(Robot eRobo)
 		{
@@ -275,45 +369,155 @@ namespace TrainingProject
 			Robo.Controls.Add(Name);
 			PictureBox RoboPic = new PictureBox { Image = Image.FromFile(eRobo.getImage), Width = 50, Height = 50, SizeMode = PictureBoxSizeMode.StretchImage };
 			Robo.Controls.Add(RoboPic);
-			ProgressBar HP = new ProgressBar { Maximum = eRobo.getHealth, Value = eRobo.HP, Width = 50 };
+			ProgressBar HP = new ProgressBar { Maximum = eRobo.getHealth, Value = eRobo.HP, Width = 50, Height = 5 };
 			Robo.Controls.Add(HP);
 			Label spd = new Label { AutoSize = true, Text = eRobo.message };
 			Robo.Controls.Add(spd);
 			return Robo;
 		}
 
-		public FlowLayoutPanel continueFight(int interval)
+		public string showInterval()
+		{
+			string retval = "";
+			int tmpInterval = CurrentInterval;
+			int Minutes = 0;
+			// Seconds
+			if (tmpInterval > 1000)
+			{
+				Minutes = (int)(tmpInterval / 1000);
+				tmpInterval -= Minutes * 1000;
+				retval += Minutes + "s ";
+			}
+			retval += tmpInterval + "ms";
+			return retval;
+		}
+		private void btnStretch_Click(object sender, EventArgs e)
+		{
+			stretch();
+		}
+
+		public FlowLayoutPanel showHeader()
+		{
+			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+			if (Sedetary)
+			{
+				Button btnSedetary = new Button { Text = "Stretch" };
+				btnSedetary.Click += new EventHandler(btnStretch_Click);
+			}
+			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 200, Height = 10 };
+			HeaderPanel.Controls.Add(Progress);
+			Label lblTime = new Label { AutoSize = true, Text = "Time:  " + DateTime.Now.ToString("HH:mm") + " (" + SafeTime.ToString("HH:mm") + ")"};
+			HeaderPanel.Controls.Add(lblTime);
+			return HeaderPanel;
+		}
+		public FlowLayoutPanel showSelectedTeam(int TeamSelect)
+		{
+			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+			MainPanel.Controls.Add(showHeader());
+			if (TeamSelect > 0)
+			{
+				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+				Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + GameTeams[TeamSelect - 1].getName };
+				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + GameTeams[TeamSelect - 1].getCurrency };
+				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + GameTeams[TeamSelect - 1].getScore };
+				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + GameTeams[TeamSelect - 1].getRoboCost + ")" };
+				Label lblDifficulty = new Label { AutoSize = true, Text = "Difficulty: " +  GameTeams[TeamSelect - 1].getDifficulty };
+				MainPanel.Controls.Add(lblTeamName);
+				MainPanel.Controls.Add(lblTeamCurrency);
+				MainPanel.Controls.Add(lblScore);
+				MainPanel.Controls.Add(lblRobots);
+				MainPanel.Controls.Add(lblDifficulty);
+				int index = 0;
+				foreach (Robot eRobo in GameTeams[TeamSelect-1].MyTeam)
+				{
+					FlowLayoutPanel MyPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
+					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
+					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
+					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + eRobo.rebuildCost() + ")" };
+					btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(index++));
+					MyPanel.Controls.Add(RoboName);
+					MyPanel.Controls.Add(Everything);
+					MyPanel.Controls.Add(btnRebuild);
+					TopLevelPanel.Controls.Add(MyPanel);
+				}
+				MainPanel.Controls.Add(TopLevelPanel);
+			}
+			else
+			{
+				Label lblTotalScore = new Label { AutoSize = true, Text = "Total Score: " + getScore() };
+				Label lblTeams = new Label { AutoSize = true, Text = "Teams:       " + GameTeams.Count + "/" + getMaxTeams + " (" + getTeamCost + ")" };
+				Label lblCurrency = new Label { AutoSize = true, Text = "Currency:    " + getCurrency };
+				Label lblArenaLvl = new Label { AutoSize = true, Text = "Arena Level: " + getArenaLvl + " (" + getArenaLvlCost + ")" };
+				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+				foreach (ArenaSeating eSeating in Seating)
+				{
+					Label lblArenaSeating = new Label { AutoSize = true, Text = "  Level: " + eSeating.Level + " Price " + eSeating.Price + " Seats " + eSeating.Amount };
+					pnlSeating.Controls.Add(lblArenaSeating);
+				}
+				Label lblShopLvl = new Label { AutoSize = true, Text = "Shop:       " + getShopLvl };
+				Label lblMonsterDen = new Label { AutoSize = true, Text = "Monster Den:" + getMonsterDenLvl + " (" + getMonsterDenLvlCost + ")   +" + getMonsterDenBonus };
+				Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
+				MainPanel.Controls.Add(lblTotalScore);
+				MainPanel.Controls.Add(lblTeams);
+				MainPanel.Controls.Add(lblCurrency);
+				MainPanel.Controls.Add(lblArenaLvl);
+				MainPanel.Controls.Add(pnlSeating);
+				MainPanel.Controls.Add(lblShopLvl);
+				MainPanel.Controls.Add(lblMonsterDen);
+				MainPanel.Controls.Add(lblFightLog);
+			}
+			//isShown = true;
+			return MainPanel;
+		}
+		public FlowLayoutPanel continueFight()
         {
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+			MainPanel.Controls.Add(showHeader());
+			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" };
+			MainPanel.Controls.Add(lblTeamName);
+			Label lblVS = new Label { AutoSize = true, Text = GameTeam1.getName + " VS " + GameTeam2.getName };
+			MainPanel.Controls.Add(lblVS);
 			if (GameTeam1.getNumRobos() > 0 && GameTeam2.getNumRobos() > 0)
 			{
 				getNext();
-				Label lblTeamName = new Label { AutoSize = true };
-				Label lblVS = new Label { AutoSize = true };
-				FlowLayoutPanel Team1 = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.LeftToRight };
-				// add all the robos to team one flow
-				foreach (Robot eRobo in GameTeam1.MyTeam)
+				if (auto)
 				{
-					if (eRobo.getKO < 10)
+					Label lblGameStats = new Label { AutoSize = true, Text = "Currency: " + getCurrency + " (" + CurrencyLog + ")" };
+					MainPanel.Controls.Add(lblGameStats);
+					Label lblTeam1stats = new Label { AutoSize = true, Text = GameTeam1.getTeamStats("", "") };
+					MainPanel.Controls.Add(lblTeam1stats);
+					Label lblTeam2stats = new Label { AutoSize = true, Text = GameTeam2.getTeamStats("", "") };
+					MainPanel.Controls.Add(lblTeam2stats);
+					foreach (Team eTeam in GameTeams)
 					{
-						Team1.Controls.Add(getCharacterInfo(eRobo));
+						Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(GameTeam1.getName, GameTeam2.getName) };
+						MainPanel.Controls.Add(lblTeamstats);
 					}
+					Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
+					MainPanel.Controls.Add(lblFightLog);
 				}
-				FlowLayoutPanel Team2Panel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.LeftToRight };
-				foreach (Robot eRobo in GameTeam2.MyTeam)
+				else
 				{
-					if (eRobo.getKO < 10)
+					FlowLayoutPanel Team1 = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.LeftToRight };
+					// add all the robos to team one flow
+					foreach (Robot eRobo in GameTeam1.MyTeam)
 					{
-						Team2Panel.Controls.Add(getCharacterInfo(eRobo));
+						if (eRobo.getKO < 10)
+						{
+							Team1.Controls.Add(getCharacterInfo(eRobo));
+						}
 					}
+					FlowLayoutPanel Team2Panel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.LeftToRight };
+					foreach (Robot eRobo in GameTeam2.MyTeam)
+					{
+						if (eRobo.getKO < 10)
+						{
+							Team2Panel.Controls.Add(getCharacterInfo(eRobo));
+						}
+					}
+					MainPanel.Controls.Add(Team1);
+					MainPanel.Controls.Add(Team2Panel);
 				}
-				lblTeamName.Text = "Fight (" + interval.ToString() + ")";
-				MainPanel.Controls.Add(lblTeamName);
-				lblVS.Text = GameTeam1.getName + " VS " + GameTeam2.getName;
-				lblVS.AutoSize = true;
-				MainPanel.Controls.Add(lblVS);
-				MainPanel.Controls.Add(Team1);
-				MainPanel.Controls.Add(Team2Panel);
 			}
 			else
 			{
@@ -321,7 +525,7 @@ namespace TrainingProject
 				Label lblWinner = new Label { AutoSize = true };
 				if (GameTeam1.getNumRobos() > 0)
 				{
-					lblWinner.Text = GameTeam1.getName + " winns!";
+					lblWinner.Text = GameTeam1.getName + " wins!";
 					int tmp = (int)(Jackpot * .4);
 					GameTeam1.getCurrency += tmp;
 					Jackpot -= tmp;
@@ -338,7 +542,7 @@ namespace TrainingProject
 						Jackpot -= tmp;
 						msg += " (" + tmp + ")";
 					}
-					getFightLog = GameTeam1.getName + " Won against " + GameTeam2.getName + msg + " @ " + DateTime.Now.ToString() + Environment.NewLine;
+					msg = GameTeam1.getName + " Won against " + GameTeam2.getName + msg;
 				}
 				else
 				{
@@ -367,15 +571,49 @@ namespace TrainingProject
 						Jackpot -= tmp;
 						msg += " (" + tmp + ")";
 					}
-					getFightLog = GameTeam2.getName + " Won against " + GameTeam1.getName + msg + " @ " + DateTime.Now.ToString() + Environment.NewLine;
+					msg = GameTeam2.getName + " Won against " + GameTeam1.getName + msg ;
 				}
 				getCurrency += Jackpot;
-				getFightLog = " Arena made " + Jackpot + Environment.NewLine;
+				getFightLog = msg + Environment.NewLine + "     Arena made " + Jackpot + " @ " + DateTime.Now.ToString() + Environment.NewLine;
+				buildingMaintenance();
 				Jackpot = 0;
 				MainPanel.Controls.Add(lblWinner);
 				fighting = false;
+				
 			}
 			return MainPanel;
+		}
+
+		public void buildingMaintenance()
+		{
+			int MaintCost = 0;
+			switch (RndVal.Next(100))
+			{
+				case 1:
+				case 2:
+				case 3:
+					// Arena Maintenance
+					MaintCost = RndVal.Next(ArenaLvlMaint);
+					getCurrency -= MaintCost;
+					getFightLog = "Arena maintenance cost " + MaintCost + Environment.NewLine;
+					break;
+				case 6:
+				case 7:
+				case 8:
+					// Monster Den Maintenance
+					MaintCost = RndVal.Next(MonsterDenLvlMaint);
+					getCurrency -= MaintCost;
+					getFightLog = "Monster den maintenance cost " + MaintCost + Environment.NewLine;
+					break;
+				case 11:
+				case 12:
+				case 13:
+					// Tax
+					MaintCost = (int)((ArenaLvlMaint* 0.1)+(MonsterDenLvlMaint * 0.1));
+					getCurrency -= MaintCost;
+					getFightLog = "Taxes cost " + MaintCost + Environment.NewLine;
+					break;
+			}
 		}
 
         public void getNext()
@@ -460,7 +698,7 @@ namespace TrainingProject
 												case "Level":
 													if (currStrategy.Focus == "Current")
 													{
-														if ((eDefender.getLevel >= attacker.getLevel && (eDefender.getLevel < defender.getLevel || defender.getLevel <= attacker.getLevel)) || defender.getName == "test")
+														if ((eDefender.getLevel >= attacker.getLevel && (eDefender.getLevel < defender.getLevel || defender.getLevel < attacker.getLevel)) || defender.getName == "test")
 														{
 															if (eDefender.HP > 0)
 																defender = eDefender;
@@ -486,14 +724,17 @@ namespace TrainingProject
 		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", };
 		public string[] name3 = { "Blades", "Arrows", "Staffs", "Sparks", "Factory", "Snipers", "Calvary" };
 		public string[] RoboName = { "Bolt", "Tink", "Hmr", "Golm", "Droi", "Trs", "Gun", "Rep", "Bot" };
-		public string[] MonsterName = { "Rabbit", "Wolf", "Tiger", "Goblin", "Orc", "Titan", "Dragon" };
+		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp","Element", "HandEye" };
         public Random RndVal;
         public IList<Robot> MyTeam;
 		private int Score;
+		private int ScoreLog;
 		private int Currency;
+		private int CurrencyLog;
 		private int Difficulty;
+		private int DifficultyLog;
 		private int GoalScore;
-        private int MaxRobo;
+		private int MaxRobo;
 		private int RoboCost;
         private string TeamName;
 		public Boolean isMonster; 
@@ -512,12 +753,15 @@ namespace TrainingProject
         }
         public Team(Random tmpRandom, int Difficulty, int MonsterLvl)
         {
+			if (Difficulty < 1)
+				Difficulty = 1;
             RndVal = tmpRandom;
 			int numMonsters = RndVal.Next(1, (Difficulty > 3 ? Difficulty/3 : 1));
             MyTeam = new List<Robot> { };
 			for (int i = 0; i < numMonsters; i++)
 			{
-				MyTeam.Add(new Robot((Difficulty / 3),setName(false), RndVal.Next(MonsterLvl), RndVal, true));
+				int Monster = RndVal.Next(MonsterLvl); 
+				MyTeam.Add(new Robot((Difficulty / 3),setName(false, Monster), Monster, RndVal, true));
 				int lvl = RndVal.Next(Difficulty);
 				for (int ii = 1; ii < lvl; ii++)
 				{
@@ -534,6 +778,31 @@ namespace TrainingProject
             TeamName = name1[RndVal.Next(name1.Length)] + " " + name2[RndVal.Next(name2.Length)];
 		}
 
+		public void resetLogs()
+		{
+			CurrencyLog = 0;
+			DifficultyLog = 0;
+			ScoreLog = 0;
+			foreach (Robot eRobo in MyTeam) { eRobo.resetLog(); }
+		}
+
+		public string getTeamStats(string team1, string Team2)
+		{
+			string strStats = "";
+			if (getName != team1 && getName != Team2)
+			{
+				strStats += getName;
+				strStats += " C: " + String.Format("{0:n0}", Currency) + " (" + String.Format("{0:n0}", CurrencyLog) + ")";
+				strStats += " S: " + String.Format("{0:n0}", Score) + " (" + String.Format("{0:n0}", ScoreLog) + ")";
+				strStats += " D: " + String.Format("{0:n0}", Difficulty) + " (" + String.Format("{0:n0}", DifficultyLog) + ")";
+				foreach (Robot eRobo in MyTeam)
+				{
+					strStats += eRobo.getRoboStats();
+				}
+			}
+			return strStats;
+		}
+
 		public int getRoboCost
 		{
 			get { return RoboCost; }
@@ -546,7 +815,7 @@ namespace TrainingProject
 		
 		public void fixTech()
 		{
-			TeamName = "Hard Factory";
+			
 		}
 		public void Rebuild(int robo)
 		{
@@ -588,6 +857,7 @@ namespace TrainingProject
 			{
 				int tmp = value;
 				if (tmp > 0)
+					DifficultyLog += value - Difficulty;
 					Difficulty = value;
 			}
 			get
@@ -599,6 +869,7 @@ namespace TrainingProject
 		{
 			set
 			{
+				CurrencyLog += value - Currency;
 				Currency = value;
 			}
 			get
@@ -623,11 +894,12 @@ namespace TrainingProject
         public int getScore
         {
             get
-            {
+            {				
                 return Score;
             }
             set
             {
+				ScoreLog += value - Score;
                 Score = value;
                 if (Score > GoalScore)
                 {
@@ -636,8 +908,12 @@ namespace TrainingProject
                 }
             }
         }
-
-        public string setName(Boolean isRobo)
+		public string setName(Boolean isRobo)
+		{
+			return setName(isRobo, 0);
+		}
+		
+		public string setName(Boolean isRobo, int MonsterLevel)
         {
             string name = "";
             if (isRobo)
@@ -646,7 +922,7 @@ namespace TrainingProject
             }
             else
             {
-                name = (MonsterName[RndVal.Next(MonsterName.Length)]);
+                name = (MonsterName[RndVal.Next(MonsterLevel)]);
             }
             return name;
         }
@@ -710,12 +986,28 @@ namespace TrainingProject
         private int Speed;
 		private int CurrentSpeed;
 		private int Level;
-		private long Analysis;
-		private long CurrentAnalysis;
+		private int LevelLog;
+		private int Analysis;
+		private int CurrentAnalysis;
+		private int AnalysisLog;
 
 		public void fixTech()
 		{
 			RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Current", "Level") };
+		}
+
+		public void resetLog()
+		{
+			LevelLog = 0;
+			AnalysisLog = 0;
+		}
+
+		public string getRoboStats()
+		{
+			string strStats = Environment.NewLine + "   " + getName + " L:" + getLevel + " (" + LevelLog + ")";
+			strStats += " A: " + String.Format("{0:n0}", getAnalysisLeft()) + " (" + String.Format("{0:n0}", AnalysisLog) + ")";
+			strStats += " HP: " + String.Format("{0:n0}", HP);
+			return strStats;
 		}
 		public int rebuildCost()
 		{
@@ -856,10 +1148,11 @@ namespace TrainingProject
 				return tmp;
 			}
 		}
-		public long getExperience
+		public int getExperience
 		{
 			set
 			{
+				AnalysisLog += value - CurrentAnalysis;
 				CurrentAnalysis = value;
 			}
 			get
@@ -947,6 +1240,7 @@ namespace TrainingProject
 
 		public void levelUp()
 		{
+			LevelLog++;
 			Level++;
 			Analysis += RndVal.Next(10);
 			CurrentAnalysis = 0;
@@ -982,7 +1276,7 @@ namespace TrainingProject
 				// get experience if attackers level is not higher
 				if (attacker.getLevel <= getLevel)
 				{
-					attacker.getExperience++;
+					attacker.getExperience+= getLevel - attacker.getLevel + 1;
 					if (HP == 0) { attacker.getExperience += 10; }
 				}
 				// if attacker is higher level, get less exp
@@ -1064,5 +1358,17 @@ namespace TrainingProject
 			Price = pPrice;
 			Amount = pAmount;
 		}
+	}
+	[Serializable]
+	class Equipment
+	{
+		private int Health;
+		private int Energy;
+		private int Armour;
+		private int Damage;
+		private int Hit;
+		private int MentalStrength;
+		private int MentalDefense;
+		private int Speed;
 	}
 }

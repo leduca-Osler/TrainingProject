@@ -15,6 +15,7 @@ namespace TrainingApp
 	public partial class MainForm : Form
 	{
 		private Game MyGame;
+		private bool isShown;
 		public MainForm()
 		{
 			try
@@ -28,7 +29,8 @@ namespace TrainingApp
 				MyGame = new Game();
 			}
 			InitializeComponent();
-			cbTeamSelect.Items.Add("Game Stats");
+			MyGame.interval(timer1);
+			cbTeamSelect.Items.Add("Stats");
 			foreach (Team eTeam in MyGame.GameTeams)
 			{
 				cbTeamSelect.Items.Add(eTeam.getName);
@@ -36,72 +38,16 @@ namespace TrainingApp
 			cbTeamSelect.SelectedIndex = 0;
 			update();
 		}
-
-
 		private void cbTeamSelect_Change(object sender, EventArgs e)
-		{
-			showSelectedTeam();
-		}
-		public void showSelectedTeam()
 		{
 			foreach (Control eControl in MainPannel.Controls)
 			{
 				eControl.Dispose();
 			}
 			MainPannel.Controls.Clear();
-			if (cbTeamSelect.SelectedIndex > 0)
-			{
-				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-				Label lblTeamName = new Label { AutoSize = true, Text =     "Team Name:  " + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getName };
-				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency };
-				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getScore };
-				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].MyTeam.Count + "/" + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getMaxRobos + " (" + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost + ")" };
-				Label lblDifficulty = new Label { AutoSize = true, Text =   "Difficulty: " + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getDifficulty };
-				MainPannel.Controls.Add(lblTeamName);
-				MainPannel.Controls.Add(lblTeamCurrency);
-				MainPannel.Controls.Add(lblScore);
-				MainPannel.Controls.Add(lblRobots);
-				MainPannel.Controls.Add(lblDifficulty);
-				for (int i = 0; i < MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].MyTeam.Count; i++)
-				{
-					FlowLayoutPanel MyPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-					Label RoboName = new Label { AutoSize = true, Text = MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].MyTeam[i].getName};
-					Label Everything = new Label { AutoSize = true, Text = MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].MyTeam[i].ToString() };
-					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].MyTeam[i].rebuildCost() + ")"};
-					int index = i; // need to assign to a variable...? 
-					btnRebuild.Click += new EventHandler((sender, e) => MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].Rebuild(index));
-					MyPanel.Controls.Add(RoboName);
-					MyPanel.Controls.Add(Everything); 
-					MyPanel.Controls.Add(btnRebuild);
-					TopLevelPanel.Controls.Add(MyPanel);
-				}
-				MainPannel.Controls.Add(TopLevelPanel);
-			}
-			else
-			{
-				Label lblTotalScore = new Label { AutoSize = true, Text = "Total Score: " + MyGame.getScore() };
-				Label lblTeams = new Label { AutoSize = true,      Text = "Teams:       " + MyGame.GameTeams.Count + "/" + MyGame.getMaxTeams + " (" + MyGame.getTeamCost + ")" };
-				Label lblCurrency = new Label { AutoSize = true, Text =   "Currency:    " + MyGame.getCurrency };
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   "Arena Level: " + MyGame.getArenaLvl + " (" + MyGame.getArenaLvlCost + ")"};
-				FlowLayoutPanel Seating = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-				foreach (ArenaSeating eSeating in MyGame.Seating)
-				{
-					Label lblArenaSeating = new Label { AutoSize = true, Text = "  Level: " + eSeating.Level + " Price " + eSeating.Price + " Seats " + eSeating.Amount};
-					Seating.Controls.Add(lblArenaSeating);
-				}
-				Label lblShopLvl = new Label { AutoSize = true, Text =    "Shop:       " + MyGame.getShopLvl };
-				Label lblMonsterDen = new Label { AutoSize = true, Text = "Monster Den:" + MyGame.getMonsterDenLvl + " (" + MyGame.getMonsterDenLvlCost + ")   +" + MyGame.getMonsterDenBonus };
-				Label lblFightLog = new Label { AutoSize = true, Text =   Environment.NewLine + "Fight Log:   " + MyGame.getFightLog };
-				MainPannel.Controls.Add(lblTotalScore);
-				MainPannel.Controls.Add(lblTeams);
-				MainPannel.Controls.Add(lblCurrency);
-				MainPannel.Controls.Add(lblArenaLvl);
-				MainPannel.Controls.Add(Seating);
-				MainPannel.Controls.Add(lblShopLvl);
-				MainPannel.Controls.Add(lblMonsterDen);
-				MainPannel.Controls.Add(lblFightLog);
-			}
-        }
+			MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex));
+			isShown = true;
+		}
         private void btnAddTeam_Click(object sender, EventArgs e)
         {
             cbTeamSelect.Items.Add(MyGame.addTeam());
@@ -115,21 +61,30 @@ namespace TrainingApp
         }
 
         private void btnFight_Click(object sender, EventArgs e)
-        {
-            MyGame.startFight();
-        }
+		{
+			isShown = false;
+			MyGame.startFight();
+		}
 		/***********************
          * * Ensure you can only add a team or robot when they are not on max
          * *
          * *******************/
 		private void timer1_Tick(object sender, EventArgs e)
 		{
-			update();
-			timer1.Interval++;
+			if (MyGame.SafeTime > DateTime.Now)
+			{
+				update();
+				MyGame.interval(timer1);
+			}
+			else
+			{
+				timer1.Enabled = false;
+				btnInterval.BackColor = Color.Red;
+			}
 		}
 		public void update()
 		{
-			MyGame.getScore();
+			//MyGame.getScore();
             Boolean addTeam = false;
 			Boolean addRobo = false;
 			Boolean arenaLvl = false;
@@ -158,20 +113,27 @@ namespace TrainingApp
 			// if fight is active
 			if (MyGame.isFighting())
             {
-				try
+
+				if (!isShown || MyGame.RndVal.Next(100) > 90 || !MyGame.isAuto())
 				{
 					foreach (Control eControl in MainPannel.Controls)
 					{
 						eControl.Dispose();
 					}
 					MainPannel.Controls.Clear();
-					MainPannel.Controls.Add(MyGame.continueFight(timer1.Interval));
+					MainPannel.Controls.Add(MyGame.continueFight());
+					isShown = true;
 				}
-				catch (System.ComponentModel.Win32Exception)
-				{ }
-            }
+				else
+				{
+					MyGame.continueFight();
+					if (!MyGame.isFighting())
+						isShown = false;
+				}
+			}
 			else
 			{
+				// Repair robots who fought
 				if (MyGame.Repair())
 				{
 					btnFight.BackColor = Color.White;
@@ -181,18 +143,34 @@ namespace TrainingApp
 					btnFight.BackColor = Color.Yellow;
 				}
 				// five percent chance to start a new fight 
-				if (MyGame.RndVal.Next(100) > 95) { MyGame.startFight(); }
-				else { showSelectedTeam(); }
+				if (MyGame.RndVal.Next(100) > 95)
+				{
+					MyGame.startFight();
+					isShown = false;
+				}
+				else
+				{
+					if (!isShown || MyGame.RndVal.Next(100) > 90)
+					{
+						foreach (Control eControl in MainPannel.Controls)
+						{
+							eControl.Dispose();
+						}
+						MainPannel.Controls.Clear();
+						MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex));
+						isShown = true;
+					}
+				}
 			}
 			try
 			{
-				if (MyGame.RndVal.Next(100) > 10)
+				if (MyGame.RndVal.Next(100) > 3)
 				{
 					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject.bin", MyGame);
 				}
 				else
 				{
-					BinarySerialization.WriteToBinaryFile<Game>(DateTime.Now.ToString("yyyyMMdd") + "TrainingProject.bin", MyGame);
+					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject" + MyGame.RndVal.Next(20) + ".bin", MyGame);
 				}
 			}
 			catch { }
@@ -200,13 +178,17 @@ namespace TrainingApp
 
 		private void btnInterval_Click(object sender, EventArgs e)
 		{
-			if (timer1.Interval > 90000)
+			if (timer1.Enabled)
 			{
-				timer1.Interval = 1500;
+				timer1.Enabled = false;
+				btnInterval.BackColor = Color.Red;
 			}
 			else
 			{
-				timer1.Interval = 100000;
+				timer1.Enabled = true;
+				btnInterval.BackColor = Color.White;
+				if (DateTime.Now > MyGame.SafeTime)
+					MyGame.SafeTime = DateTime.Now.AddSeconds(MyGame.RndVal.Next(300,MyGame.MaxInterval));
 			}
 		}
 
@@ -218,6 +200,23 @@ namespace TrainingApp
 		private void btnMonsterDen_Click(object sender, EventArgs e)
 		{
 			MyGame.MonsterDenLevelUp();
+		}
+
+		private void btnAutomatic_Click(object sender, EventArgs e)
+		{
+		}
+
+		private void btnResetAutoStats_Click(object sender, EventArgs e)
+		{
+		}
+
+		private void btnAutomatic_MouseDown(object sender, MouseEventArgs e)
+		{
+			isShown = false;
+			if (e.Clicks == 2)
+				MyGame.resetAuto();
+			else
+				MyGame.setAuto();
 		}
 	}
 	public static class BinarySerialization
