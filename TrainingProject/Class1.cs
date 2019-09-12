@@ -9,8 +9,46 @@ using System.Xml;
 
 namespace TrainingProject
 {
+	class Common
+	{
+		public string[] RoboImages = {
+			"Robo1.jpg",
+			"Robo2.jpg",
+			"Robo3.jpg",
+			"Robo4.jpg",
+			"Robo5.jpg",
+			"Robo6.jpg",
+			"Robo7.jpg",
+			"Robo8.jpg",
+			"Robo9.jpg",
+		};
+		public string[] MonsterImages = {
+			"Monster1.png",
+			"Monster2.png",
+			"Monster3.png",
+			"Monster4.png",
+			"Monster5.png",
+			"Monster6.png",
+			"Monster7.png",
+			"Monster8.png",
+			"Monster9.png",
+		};
+		public string strike = "Strike.jpg";
+		public string hurt = "Hurt.png";
+		public string KO = "KO.jpg";
+		public string miss = "dodge.png";
+		public string blocked = "block.png";
+		public int roundValues(int value)
+		{
+			if (value.ToString().Substring(0, 1) == "4")
+			{
+				value += (int)Math.Pow(10, value.ToString().Length - 1);
+			}
+			return value;
+		}
+	}
     [Serializable]
-    class Game
+    class Game : Common
     {
         public Random RndVal = new Random();
         public IList<Team> GameTeams;
@@ -175,6 +213,7 @@ namespace TrainingProject
 			ArenaLvlMaint = ArenaLvlCost;
 			ArenaLvl++;
 			ArenaLvlCost *= RndVal.Next(10);
+			ArenaLvlCost = (int)Math.Round((double)ArenaLvlCost, ArenaLvlCost.ToString().Length-1);
 			foreach (ArenaSeating eSeating in Seating)
 			{
 				eSeating.Amount += RndVal.Next(1, eSeating.Amount);
@@ -189,6 +228,7 @@ namespace TrainingProject
 			MonsterDenLvlMaint = MonsterDenLvlCost;
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
+			MonsterDenLvlCost = roundValues(MonsterDenLvlCost);
 			MonsterDenBonus += RndVal.Next(1, MonsterDenBonus);
 		}
 
@@ -224,7 +264,8 @@ namespace TrainingProject
 			// calculate cost
 			getCurrency -= TeamCost;
 			TeamCost *= 2;
-            Team tmp = new Team( RndVal );
+			TeamCost = roundValues(TeamCost);
+			Team tmp = new Team( RndVal );
             GameTeams.Add(tmp);
             return tmp.getName;
         }
@@ -232,6 +273,7 @@ namespace TrainingProject
         {
 			GameTeams[Team].getCurrency -= GameTeams[Team].getRoboCost;
 			GameTeams[Team].getRoboCost *= 2;
+			GameTeams[Team].getRoboCost = roundValues(GameTeams[Team].getRoboCost);
 			Robot tmp = new Robot(1,GameTeams[Team].setName(true), RndVal.Next(8), RndVal, false);
             GameTeams[Team].MyTeam.Add(tmp);
         }
@@ -239,8 +281,13 @@ namespace TrainingProject
         {
             int iTmpScore = 0;
             for (int i = 0; i < GameTeams.Count; i++) { iTmpScore += GameTeams[i].getScore; }
-			if (iTmpScore >= GoalScore) { MaxTeams++; GoalScore *= 2; }
-            return iTmpScore;
+			if (iTmpScore >= GoalScore)
+			{
+				MaxTeams++;
+				GoalScore *= 2;
+				GoalScore = roundValues(GoalScore);
+			}
+			return iTmpScore;
 		}
 		public int getGoalScore
 		{
@@ -719,7 +766,7 @@ namespace TrainingProject
         }
 	}
 	[Serializable]
-	class Team
+	class Team : Common
     {
         public string[] name1 = { "Green", "Blue", "Yellow", "Orange", "Black", "Pink", "Great", "Strong", "Cunning"};
 		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", };
@@ -820,7 +867,7 @@ namespace TrainingProject
 		}
 		public void Rebuild(int robo)
 		{
-			MyTeam[robo] = new Robot(MyTeam[robo].getLevel / 5, setName(true), RndVal.Next(8), RndVal, false);
+			MyTeam[robo] = new Robot((MyTeam[robo].getLevel / 5 == 0 ? 1 : MyTeam[robo].getLevel / 5), setName(true), RndVal.Next(8), RndVal, false);
 		}
 		public int getNumRobos()
 		{
@@ -837,8 +884,8 @@ namespace TrainingProject
 			Boolean fullHP = true;
 			foreach (Robot robo in MyTeam)
 			{
-				robo.HP += robo.getHealth / 10 + 1;
-				robo.MP += robo.getEnergy / 10 + 1;
+				robo.HP ++;
+				robo.MP ++;
 				robo.getKO = 0;
 				if (robo.getAnalysisLeft() <= 0) { robo.levelUp(); }
 				if (robo.HP < robo.getHealth) { fullHP = false; }
@@ -893,14 +940,6 @@ namespace TrainingProject
             }
         }
 
-		public int roundValues(int value)
-		{
-			if (value.ToString().Substring(0,1) == "4")
-			{
-				value += (int)Math.Pow(10, value.ToString().Length-1);
-			}
-			return value;
-		}
         public int getScore
         {
             get
@@ -939,38 +978,11 @@ namespace TrainingProject
         }
 	}
 	[Serializable]
-	class Robot
-    {
-        public string[] RoboImages = {
-            "Robo1.jpg",
-            "Robo2.jpg",
-            "Robo3.jpg",
-            "Robo4.jpg",
-            "Robo5.jpg",
-            "Robo6.jpg",
-            "Robo7.jpg",
-            "Robo8.jpg",
-            "Robo9.jpg",
-        };
-        private string[] MonsterImages = {
-            "Monster1.png",
-            "Monster2.png",
-            "Monster3.png",
-            "Monster4.png",
-            "Monster5.png",
-            "Monster6.png",
-            "Monster7.png",
-            "Monster8.png",
-            "Monster9.png",
-        };
-        private string strike = "Strike.jpg";
-        private string hurt = "Hurt.png";
-		private string KO = "KO.jpg";
-		private string miss = "dodge.png";
-		private string blocked = "block.png";
-		private Skill[] ListSkills = {
-            new Skill("Attack", "Enemy", 1, "Single attack")
-        };
+	class Robot : Common
+	{
+		public Skill[] ListSkills = {
+			new Skill("Attack", "Enemy", 1, "Single attack")
+		};
 		public IList<Strategy> RoboStrategy;
 		private Equipment EquipWeapon;
 		private Equipment EquipArmour;
@@ -1028,7 +1040,7 @@ namespace TrainingProject
 			// if base stats will go up add cost
 			if (Level / 5 > (Dexterity + Strength + Agility + Tech + Accuracy) )
 			{
-				cost = 100 * (2 ^ (Level / 5));
+				cost = 100 * (int)Math.Pow(2,(Level / 5));
 			}
 			return cost;
 		}

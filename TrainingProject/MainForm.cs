@@ -173,7 +173,7 @@ namespace TrainingApp
 				}
 			}
 			catch { }
-			cbTeamSelect.Select();
+			MainPannel.AutoScrollPosition = new Point(0, 0);
 		}
 
 		private void btnInterval_Click(object sender, EventArgs e)
@@ -188,7 +188,7 @@ namespace TrainingApp
 				timer1.Enabled = true;
 				btnInterval.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
-					MyGame.SafeTime = DateTime.Now.AddSeconds(MyGame.RndVal.Next(300,MyGame.MaxInterval));
+					MyGame.SafeTime = DateTime.Now.AddSeconds(MyGame.MaxInterval);
 			}
 		}
 
