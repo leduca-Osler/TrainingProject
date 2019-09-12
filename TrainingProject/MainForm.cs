@@ -84,7 +84,6 @@ namespace TrainingApp
 		}
 		public void update()
 		{
-			//MyGame.getScore();
             Boolean addTeam = false;
 			Boolean addRobo = false;
 			Boolean arenaLvl = false;
@@ -127,9 +126,9 @@ namespace TrainingApp
 				else
 				{
 					MyGame.continueFight();
-					if (!MyGame.isFighting())
-						isShown = false;
 				}
+				if (!MyGame.isFighting())
+					isShown = false;
 			}
 			else
 			{
@@ -170,10 +169,11 @@ namespace TrainingApp
 				}
 				else
 				{
-					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject" + MyGame.RndVal.Next(20) + ".bin", MyGame);
+					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject" + MyGame.RndVal.Next(5) + ".bin", MyGame);
 				}
 			}
 			catch { }
+			cbTeamSelect.Select();
 		}
 
 		private void btnInterval_Click(object sender, EventArgs e)

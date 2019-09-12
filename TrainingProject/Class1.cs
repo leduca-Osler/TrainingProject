@@ -15,6 +15,7 @@ namespace TrainingProject
         public Random RndVal = new Random();
         public IList<Team> GameTeams;
 		public IList<ArenaSeating> Seating;
+		public IList<Equipment> storeEquipment;
 		public Team GameTeam1;
         public Team GameTeam2;
 		public int MonsterCount;
@@ -34,6 +35,7 @@ namespace TrainingProject
 		private int StoreLvl;
 		private int StoreLvlCost;
 		private int StoreLvlMaint;
+		private int StoreStock;
 		private int ArenaLvl;
 		private int ArenaLvlCost;
 		private int ArenaLvlMaint;
@@ -50,9 +52,8 @@ namespace TrainingProject
 		public string[] Weapons = { "Axe", "Blade", "Spear" };
 		public string[] Armour = { "Iron", "Bronze", "Titanium" };
 		// variables to determine if 
+		private DateTime SedetaryTime;
 		private bool Sedetary;
-		private int SedetaryTime;
-		private int breakTime;
 
 		public Game()
         {
@@ -67,6 +68,7 @@ namespace TrainingProject
 			StoreLvl = 1;
 			StoreLvlCost = 100;
 			StoreLvlMaint = 1;
+			StoreStock = 1;
 			ArenaLvl = 1;
 			ArenaLvlCost = 100;
 			ArenaLvlMaint = 1;
@@ -83,8 +85,7 @@ namespace TrainingProject
 			MonsterCount = 0;
 			RoboCount = 0;
 			Sedetary = false;
-			SedetaryTime = 0;
-			breakTime = 0;
+			SedetaryTime = DateTime.Now.AddMinutes(20);
 			// Timer
 			CurrentInterval = 1000;
 			MaxInterval = 1000;
@@ -113,16 +114,13 @@ namespace TrainingProject
 		public void stretch()
 		{
 			Sedetary = false;
-			breakTime += SedetaryTime;
-			SedetaryTime = 0;
-			if (breakTime > 3600000) { breakTime = 0; }
+			SedetaryTime = DateTime.Now.AddMinutes(20);
 		}
 
 		public void interval(Timer Timer1)
 		{
 			// update sedetary time
-			SedetaryTime += Timer1.Interval;
-			if (SedetaryTime > 1200000)
+			if (SedetaryTime < DateTime.Now)
 			{
 				Sedetary = true;
 			}
@@ -403,6 +401,7 @@ namespace TrainingProject
 			{
 				Button btnSedetary = new Button { Text = "Stretch" };
 				btnSedetary.Click += new EventHandler(btnStretch_Click);
+				HeaderPanel.Controls.Add(btnSedetary);
 			}
 			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 200, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
@@ -419,7 +418,7 @@ namespace TrainingProject
 				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + GameTeams[TeamSelect - 1].getName };
 				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + GameTeams[TeamSelect - 1].getCurrency };
-				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + GameTeams[TeamSelect - 1].getScore };
+				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + GameTeams[TeamSelect - 1].getScore + " (" + GameTeams[TeamSelect - 1].getGoalScore + ")"};
 				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + GameTeams[TeamSelect - 1].getRoboCost + ")" };
 				Label lblDifficulty = new Label { AutoSize = true, Text = "Difficulty: " +  GameTeams[TeamSelect - 1].getDifficulty };
 				MainPanel.Controls.Add(lblTeamName);
@@ -488,6 +487,8 @@ namespace TrainingProject
 					MainPanel.Controls.Add(lblTeam1stats);
 					Label lblTeam2stats = new Label { AutoSize = true, Text = GameTeam2.getTeamStats("", "") };
 					MainPanel.Controls.Add(lblTeam2stats);
+					// Add a space
+					MainPanel.Controls.Add(new Label { AutoSize = true, Text = "" });
 					foreach (Team eTeam in GameTeams)
 					{
 						Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(GameTeam1.getName, GameTeam2.getName) };
@@ -891,6 +892,15 @@ namespace TrainingProject
                 return MaxRobo - MyTeam.Count;
             }
         }
+
+		public int roundValues(int value)
+		{
+			if (value.ToString().Substring(0,1) == "4")
+			{
+				value += (int)Math.Pow(10, value.ToString().Length-1);
+			}
+			return value;
+		}
         public int getScore
         {
             get
@@ -901,9 +911,10 @@ namespace TrainingProject
             {
 				ScoreLog += value - Score;
                 Score = value;
-                if (Score > GoalScore)
+                if (Score >= GoalScore)
                 {
                     GoalScore *= 2;
+					GoalScore = roundValues(GoalScore);
                     MaxRobo++;
                 }
             }
@@ -922,7 +933,7 @@ namespace TrainingProject
             }
             else
             {
-                name = (MonsterName[RndVal.Next(MonsterLevel)]);
+                name = (MonsterName[MonsterLevel]);
             }
             return name;
         }
@@ -931,37 +942,39 @@ namespace TrainingProject
 	class Robot
     {
         public string[] RoboImages = {
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo1.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo2.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo3.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo4.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo5.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo6.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo7.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo8.jpg",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Robo9.jpg",
+            "Robo1.jpg",
+            "Robo2.jpg",
+            "Robo3.jpg",
+            "Robo4.jpg",
+            "Robo5.jpg",
+            "Robo6.jpg",
+            "Robo7.jpg",
+            "Robo8.jpg",
+            "Robo9.jpg",
         };
         private string[] MonsterImages = {
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster1.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster2.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster3.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster4.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster5.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster6.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster7.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster8.png",
-            "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Monster9.png",
+            "Monster1.png",
+            "Monster2.png",
+            "Monster3.png",
+            "Monster4.png",
+            "Monster5.png",
+            "Monster6.png",
+            "Monster7.png",
+            "Monster8.png",
+            "Monster9.png",
         };
-        private string strike = "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Strike.jpg";
-        private string hurt = "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\Hurt.png";
-		private string KO = "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\KO.jpg";
-		private string miss = "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\dodge.png";
-		private string blocked = "\\\\USERS\\home\\Albert.Leduc\\My Documents\\Visual Studio 2015\\Projects\\TrainingProject\\TrainingProject\\block.png";
+        private string strike = "Strike.jpg";
+        private string hurt = "Hurt.png";
+		private string KO = "KO.jpg";
+		private string miss = "dodge.png";
+		private string blocked = "block.png";
 		private Skill[] ListSkills = {
             new Skill("Attack", "Enemy", 1, "Single attack")
         };
-        public IList<Strategy> RoboStrategy;
-        public Random RndVal;
+		public IList<Strategy> RoboStrategy;
+		private Equipment EquipWeapon;
+		private Equipment EquipArmour;
+		public Random RndVal;
         private string RoboName;
 		public string tmpMessage; 
         // Base stats
