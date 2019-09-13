@@ -91,6 +91,7 @@ namespace TrainingProject
 		public string[] Armour = { "Iron", "Bronze", "Titanium" };
 		// variables to determine if 
 		private DateTime SedetaryTime;
+		private DateTime BreakTime;
 		private bool Sedetary;
 
 		public Game()
@@ -124,6 +125,7 @@ namespace TrainingProject
 			RoboCount = 0;
 			Sedetary = false;
 			SedetaryTime = DateTime.Now.AddMinutes(20);
+			BreakTime = DateTime.Now.AddMinutes(60);
 			// Timer
 			CurrentInterval = 1000;
 			MaxInterval = 1000;
@@ -149,18 +151,27 @@ namespace TrainingProject
 			}
 		}
 
-		public void stretch()
-		{
-			Sedetary = false;
-			SedetaryTime = DateTime.Now.AddMinutes(20);
-		}
-
 		public void interval(Timer Timer1)
 		{
 			// update sedetary time
-			if (SedetaryTime < DateTime.Now)
+			if (BreakTime < DateTime.Now && !Sedetary)
 			{
 				Sedetary = true;
+				if (MessageBox.Show("5 Minute Break", "Take a break!", MessageBoxButtons.OK) == System.Windows.Forms.DialogResult.OK)
+				{
+					BreakTime = DateTime.Now.AddMinutes(60);
+					SedetaryTime = DateTime.Now.AddMinutes(20);
+					Sedetary = false;
+				}
+			}
+			else if (SedetaryTime < DateTime.Now && !Sedetary)
+			{
+				Sedetary = true;
+				if (MessageBox.Show("Get up and stretch","Time to stretch!",MessageBoxButtons.OK) == System.Windows.Forms.DialogResult.OK)
+				{
+					SedetaryTime = DateTime.Now.AddMinutes(20);
+					Sedetary = false;
+				}
 			}
 			CurrentInterval++;
 			if (CurrentInterval > MaxInterval)
@@ -213,7 +224,7 @@ namespace TrainingProject
 			ArenaLvlMaint = ArenaLvlCost;
 			ArenaLvl++;
 			ArenaLvlCost *= RndVal.Next(10);
-			ArenaLvlCost = (int)Math.Round((double)ArenaLvlCost, ArenaLvlCost.ToString().Length-1);
+			ArenaLvlCost = (int)Math.Round((double)ArenaLvlCost);
 			foreach (ArenaSeating eSeating in Seating)
 			{
 				eSeating.Amount += RndVal.Next(1, eSeating.Amount);
@@ -436,20 +447,10 @@ namespace TrainingProject
 			retval += tmpInterval + "ms";
 			return retval;
 		}
-		private void btnStretch_Click(object sender, EventArgs e)
-		{
-			stretch();
-		}
 
 		public FlowLayoutPanel showHeader()
 		{
 			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			if (Sedetary)
-			{
-				Button btnSedetary = new Button { Text = "Stretch" };
-				btnSedetary.Click += new EventHandler(btnStretch_Click);
-				HeaderPanel.Controls.Add(btnSedetary);
-			}
 			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 200, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
 			Label lblTime = new Label { AutoSize = true, Text = "Time:  " + DateTime.Now.ToString("HH:mm") + " (" + SafeTime.ToString("HH:mm") + ")"};

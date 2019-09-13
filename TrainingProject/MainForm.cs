@@ -188,7 +188,7 @@ namespace TrainingApp
 				timer1.Enabled = true;
 				btnInterval.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
-					MyGame.SafeTime = DateTime.Now.AddSeconds(MyGame.MaxInterval);
+					MyGame.SafeTime = DateTime.Now.AddSeconds(MyGame.RndVal.Next(900, MyGame.MaxInterval));
 			}
 		}
 
@@ -250,6 +250,7 @@ namespace TrainingApp
 			using (Stream stream = File.Open(filePath, FileMode.Open))
 			{
 				var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+				stream.Position = 0;
 				return (T)binaryFormatter.Deserialize(stream);
 			}
 		}

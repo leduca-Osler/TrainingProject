@@ -42,6 +42,9 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+			this.levelUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.restockToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -53,6 +56,7 @@
             this.btnAddRobo,
             this.btnArenaLvl,
             this.btnMonsterDen,
+            this.toolStripSplitButton1,
             this.toolStripSeparator1,
             this.btnFight,
             this.btnInterval,
@@ -160,6 +164,30 @@
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
 			// 
+			// toolStripSplitButton1
+			// 
+			this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripSplitButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.levelUpToolStripMenuItem,
+            this.restockToolStripMenuItem});
+			this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
+			this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripSplitButton1.Name = "toolStripSplitButton1";
+			this.toolStripSplitButton1.Size = new System.Drawing.Size(32, 22);
+			this.toolStripSplitButton1.Text = "Shop";
+			// 
+			// levelUpToolStripMenuItem
+			// 
+			this.levelUpToolStripMenuItem.Name = "levelUpToolStripMenuItem";
+			this.levelUpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.levelUpToolStripMenuItem.Text = "Level Up";
+			// 
+			// restockToolStripMenuItem
+			// 
+			this.restockToolStripMenuItem.Name = "restockToolStripMenuItem";
+			this.restockToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.restockToolStripMenuItem.Text = "Restock";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -192,6 +220,9 @@
 		private System.Windows.Forms.ToolStripButton btnMonsterDen;
 		private System.Windows.Forms.ToolStripButton btnAutomatic;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
+		private System.Windows.Forms.ToolStripMenuItem levelUpToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem restockToolStripMenuItem;
 	}
 }
 
