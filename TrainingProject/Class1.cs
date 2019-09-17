@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Xml;
+using Newtonsoft.Json;
 
 namespace TrainingProject
 {
+	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	class Common
 	{
+		public static readonly Random RndVal = new Random();
+		//public Random RndVal = new Random();
 		public string[] RoboImages = {
 			"Robo1.jpg",
 			"Robo2.jpg",
@@ -38,6 +43,11 @@ namespace TrainingProject
 		public string KO = "KO.jpg";
 		public string miss = "dodge.png";
 		public string blocked = "block.png";
+		public string[] name1 = { "Green", "Blue", "Yellow", "Orange", "Black", "Pink", "Great", "Strong", "Cunning" };
+		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", };
+		public string[] name3 = { "Blades", "Arrows", "Staffs", "Sparks", "Factory", "Snipers", "Calvary" };
+		public string[] RoboName = { "Bolt", "Tink", "Hmr", "Golm", "Droi", "Trs", "Gun", "Rep", "Bot" };
+		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp", "Element", "HandEye" };
 		public int roundValues(int value)
 		{
 			if (value.ToString().Substring(0, 1) == "4")
@@ -46,12 +56,15 @@ namespace TrainingProject
 			}
 			return value;
 		}
+		public Common() { }
 	}
     [Serializable]
-    class Game : Common
-    {
-        public Random RndVal = new Random();
-        public IList<Team> GameTeams;
+	[JsonObject(MemberSerialization.OptIn)]
+	class Game : Common
+	{
+		[JsonProperty]
+		public IList<Team> GameTeams;
+		[JsonProperty]
 		public IList<ArenaSeating> Seating;
 		public IList<Equipment> storeEquipment;
 		public Team GameTeam1;
@@ -61,12 +74,16 @@ namespace TrainingProject
 		public int CurrentInterval;
 		public int MaxInterval;
 		public DateTime SafeTime;
-		private int GoalScore;
-        private int MaxTeams;
+		[JsonProperty]
+		private int GoalGameScore;
+		[JsonProperty]
+		private int MaxTeams;
+		[JsonProperty]
 		private int TeamCost;
 		private int Jackpot; // holds the credits to be divied out after a fight
-		private int Currency;
-		private int CurrencyLog;
+		[JsonProperty]
+		private int GameCurrency;
+		private int GameCurrencyLog;
         private Boolean fighting;
 		private Boolean auto;
 		private string FightLog;
@@ -74,12 +91,19 @@ namespace TrainingProject
 		private int StoreLvlCost;
 		private int StoreLvlMaint;
 		private int StoreStock;
+		[JsonProperty]
 		private int ArenaLvl;
+		[JsonProperty]
 		private int ArenaLvlCost;
+		[JsonProperty]
 		private int ArenaLvlMaint;
+		[JsonProperty]
 		private int MonsterDenLvl;
+		[JsonProperty]
 		private int MonsterDenLvlCost;
+		[JsonProperty]
 		private int MonsterDenLvlMaint;
+		[JsonProperty]
 		private int MonsterDenBonus;
 		private int BlacksmithLvl;
 		private int BlacksmithLvlCost;
@@ -87,19 +111,120 @@ namespace TrainingProject
 		private int ResearchDevLvl;
 		private int ResearchDevCost;
 		private int ResearchDevMaint;
-		public string[] Weapons = { "Axe", "Blade", "Spear" };
-		public string[] Armour = { "Iron", "Bronze", "Titanium" };
 		// variables to determine if 
 		private DateTime SedetaryTime;
 		private DateTime BreakTime;
 		private bool Sedetary;
 
+		[JsonProperty]
+		public int getMonsterDenBonus
+		{
+			get { return MonsterDenBonus; }
+			set { MonsterDenBonus = value; }
+		}
+		[JsonProperty]
+		public int getMonsterDenLvlCost
+		{
+			get { return MonsterDenLvlCost; }
+			set { MonsterDenLvlCost = value; }
+		}
+		[JsonProperty]
+		public int getMonsterDenLvl
+		{
+			get
+			{
+				if (MonsterDenLvl > 8)
+				{
+					return 8; // Max number of Monster images
+				}
+				return MonsterDenLvl;
+			}
+			set { MonsterDenLvl = value; }
+		}
+		[JsonProperty]
+		public int getMonsterDenLvlMaint
+		{
+			get { return MonsterDenLvlMaint; }
+			set { MonsterDenLvlMaint = value; }
+		}
+		[JsonProperty]
+		public int getMaxTeams
+		{
+			get { return MaxTeams; }
+			set { MaxTeams = value; }
+		}
+		[JsonProperty]
+		public int getTeamCost
+		{
+			get { return TeamCost; }
+			set { TeamCost = value; }
+		}
+		[JsonProperty]
+		public int getGoalGameScore
+		{
+			get { return GoalGameScore; }
+			set { GoalGameScore = value; }
+		}
+		[JsonProperty]
+		public int getGameCurrency
+		{
+			set
+			{
+				GameCurrencyLog += value - GameCurrency;
+				GameCurrency = value;
+			}
+			get { return GameCurrency; }
+		}
+		[JsonProperty]
+		public int getArenaLvl
+		{
+			get { return ArenaLvl; }
+			set { ArenaLvl = value; }
+		}
+		[JsonProperty]
+		public int getArenaLvlCost
+		{
+			get { return ArenaLvlCost; }
+			set { ArenaLvlCost = value; }
+		}
+		[JsonProperty]
+		public int getArenaLvlMaint
+		{
+			get { return ArenaLvlMaint; }
+			set { ArenaLvlMaint = value; }
+		}
+		[JsonProperty]
+		public int getShopLvl
+		{
+			get { return StoreLvl; }
+			set { StoreLvl = value; }
+		}
+		[JsonProperty]
+		public string getFightLog
+		{
+			set
+			{
+				if (FightLog.Length > 5000)
+					FightLog = value + FightLog.Substring(1, 1500);
+				else
+					FightLog = value + FightLog;
+			}
+			get
+			{
+				return FightLog;
+			}
+		}
+		public int getAvailableTeams
+		{
+			get { return MaxTeams - GameTeams.Count; }
+			set { MaxTeams = value; }
+		}
 		public Game()
-        {
-            GameTeams = new List<Team> { new Team(RndVal), new Team(RndVal) };
-			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50) };
-            GoalScore = 100;
-            MaxTeams = 2;
+		{
+			GameTeams = new List<Team> { };
+			Seating = new List<ArenaSeating> {  };
+			GoalGameScore = 100;
+			MaxTeams = 2;
 			TeamCost = 500;
 			fighting = false;
 			auto = false;
@@ -114,7 +239,7 @@ namespace TrainingProject
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 100;
 			MonsterDenLvlMaint = 1;
-			MonsterDenBonus = 1;
+			MonsterDenBonus = 10;
 			BlacksmithLvl = 1;
 			BlacksmithLvlCost = 100;
 			BlacksmithLvlMaint = 1;
@@ -131,6 +256,45 @@ namespace TrainingProject
 			MaxInterval = 1000;
 			SafeTime = new DateTime();
 		}
+		public Game(bool isNew)
+        {
+            GameTeams = new List<Team> { new Team(true), new Team(true) };
+			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50) };
+			GameCurrency = 100;
+            GoalGameScore = 100;
+            MaxTeams = 2;
+			TeamCost = 500;
+			fighting = false;
+			auto = false;
+			FightLog = "";
+			StoreLvl = 1;
+			StoreLvlCost = 100;
+			StoreLvlMaint = 1;
+			StoreStock = 1;
+			ArenaLvl = 1;
+			ArenaLvlCost = 100;
+			ArenaLvlMaint = 1;
+			MonsterDenLvl = 1;
+			MonsterDenLvlCost = 100;
+			MonsterDenLvlMaint = 1;
+			MonsterDenBonus = 10;
+			BlacksmithLvl = 1;
+			BlacksmithLvlCost = 100;
+			BlacksmithLvlMaint = 1;
+			ResearchDevLvl = 1;
+			ResearchDevCost = 100;
+			ResearchDevMaint = 1;
+			MonsterCount = 0;
+			RoboCount = 0;
+			Sedetary = false;
+			SedetaryTime = DateTime.Now.AddMinutes(20);
+			BreakTime = DateTime.Now.AddMinutes(60);
+			// Timer
+			CurrentInterval = 1000;
+			MaxInterval = 1000;
+			SafeTime = new DateTime();
+		}
+		
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
@@ -144,7 +308,7 @@ namespace TrainingProject
 		public void resetAuto()
 		{
 			// reset log files
-			CurrencyLog = 0;
+			GameCurrencyLog = 0;
 			foreach (Team eTeam in GameTeams)
 			{
 				eTeam.resetLogs();
@@ -182,45 +346,9 @@ namespace TrainingProject
 			Timer1.Interval = CurrentInterval;
 		}
 
-		public int getMonsterDenBonus
-		{
-			get { return MonsterDenBonus; }
-		}
-		public int getMaxTeams
-		{
-			get { return MaxTeams; }
-		}
-		public int getMonsterDenLvlCost
-		{
-			get { return MonsterDenLvlCost; }
-		}
-
-		public int getMonsterDenLvl
-		{
-			get
-			{
-				if (MonsterDenLvl > 8)
-				{
-					return 8; // Max number of Monster images
-				}
-				return MonsterDenLvl;
-			}
-		}
-		public int getArenaLvlCost
-		{
-			get { return ArenaLvlCost; }
-			set { ArenaLvlCost = value; }
-		}
-
-		public int getTeamCost
-		{
-			get { return TeamCost; }
-			set { TeamCost = value; }
-		}
-
 		public void arenaLevelUp()
 		{
-			getCurrency -= ArenaLvlCost;
+			getGameCurrency -= ArenaLvlCost;
 			ArenaLvlMaint = ArenaLvlCost;
 			ArenaLvl++;
 			ArenaLvlCost *= RndVal.Next(10);
@@ -235,7 +363,7 @@ namespace TrainingProject
 		}
 		public void MonsterDenLevelUp()
 		{
-			getCurrency -= MonsterDenLvlCost;
+			getGameCurrency -= MonsterDenLvlCost;
 			MonsterDenLvlMaint = MonsterDenLvlCost;
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
@@ -243,40 +371,13 @@ namespace TrainingProject
 			MonsterDenBonus += RndVal.Next(1, MonsterDenBonus);
 		}
 
-		public int getCurrency
-		{
-			set
-			{
-				CurrencyLog += value - Currency;
-				Currency = value;
-			}
-			get
-			{
-				return Currency;
-			}
-		}
-		public int getArenaLvl
-		{
-			get
-			{
-				return ArenaLvl;
-			}
-		}
-		public int getShopLvl
-		{
-			get
-			{
-				return StoreLvl;
-			}
-		}
-
         public string addTeam()
         {
 			// calculate cost
-			getCurrency -= TeamCost;
+			getGameCurrency -= TeamCost;
 			TeamCost *= 2;
 			TeamCost = roundValues(TeamCost);
-			Team tmp = new Team( RndVal );
+			Team tmp = new Team(true);
             GameTeams.Add(tmp);
             return tmp.getName;
         }
@@ -285,49 +386,21 @@ namespace TrainingProject
 			GameTeams[Team].getCurrency -= GameTeams[Team].getRoboCost;
 			GameTeams[Team].getRoboCost *= 2;
 			GameTeams[Team].getRoboCost = roundValues(GameTeams[Team].getRoboCost);
-			Robot tmp = new Robot(1,GameTeams[Team].setName(true), RndVal.Next(8), RndVal, false);
+			Robot tmp = new Robot(1,GameTeams[Team].setName(true), RndVal.Next(8), false);
             GameTeams[Team].MyTeam.Add(tmp);
         }
         public int getScore()
         {
             int iTmpScore = 0;
             for (int i = 0; i < GameTeams.Count; i++) { iTmpScore += GameTeams[i].getScore; }
-			if (iTmpScore >= GoalScore)
+			if (iTmpScore >= GoalGameScore)
 			{
 				MaxTeams++;
-				GoalScore *= 2;
-				GoalScore = roundValues(GoalScore);
+				GoalGameScore *= 2;
+				GoalGameScore = roundValues(GoalGameScore);
 			}
 			return iTmpScore;
 		}
-		public int getGoalScore
-		{
-			get
-			{
-				return GoalScore;
-			}
-		}
-		public string getFightLog
-		{
-			set
-			{
-				if (FightLog.Length > 5000)
-					FightLog = value + FightLog.Substring(1,1500);
-				else
-					FightLog = value + FightLog;
-			}
-			get
-			{
-				return FightLog;
-			}
-		}
-		public int getAvailableTeams
-        {
-            get
-            {
-                return MaxTeams - GameTeams.Count;
-            }
-        }
 		public Boolean Repair()
 		{
 			Boolean fullHP = true;
@@ -373,11 +446,13 @@ namespace TrainingProject
                     Team2Score = tmpScore;
                 }
             }
+			// 3rd monster battle, try to make sure a team is selected
 			if (MonsterCount > 3)
 			{
 				Team2Index = RndVal.Next(GameTeams.Count - 1);
 				MonsterCount = 0;
 			}
+			// 3rd robot battle try to select a monster battle
 			if (RoboCount > 3)
 			{
 				Team2Index = Team1Index;
@@ -396,7 +471,7 @@ namespace TrainingProject
                 GameTeam2 = GameTeams[Team2Index];
 				PotScore += GameTeam2.getScore;
 			}
-			PotScore += getMonsterDenBonus;
+			PotScore += MonsterDenBonus;
 			string msg = "     Attendance: ";
 			// Get money for the pot
 			foreach (ArenaSeating eSeating in Seating)
@@ -493,7 +568,7 @@ namespace TrainingProject
 			{
 				Label lblTotalScore = new Label { AutoSize = true, Text = "Total Score: " + getScore() };
 				Label lblTeams = new Label { AutoSize = true, Text = "Teams:       " + GameTeams.Count + "/" + getMaxTeams + " (" + getTeamCost + ")" };
-				Label lblCurrency = new Label { AutoSize = true, Text = "Currency:    " + getCurrency };
+				Label lblCurrency = new Label { AutoSize = true, Text = "Currency:    " + getGameCurrency };
 				Label lblArenaLvl = new Label { AutoSize = true, Text = "Arena Level: " + getArenaLvl + " (" + getArenaLvlCost + ")" };
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				foreach (ArenaSeating eSeating in Seating)
@@ -502,7 +577,7 @@ namespace TrainingProject
 					pnlSeating.Controls.Add(lblArenaSeating);
 				}
 				Label lblShopLvl = new Label { AutoSize = true, Text = "Shop:       " + getShopLvl };
-				Label lblMonsterDen = new Label { AutoSize = true, Text = "Monster Den:" + getMonsterDenLvl + " (" + getMonsterDenLvlCost + ")   +" + getMonsterDenBonus };
+				Label lblMonsterDen = new Label { AutoSize = true, Text = "Monster Den:" + getMonsterDenLvl + " (" + getMonsterDenLvlCost + ")   +" + MonsterDenBonus };
 				Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
 				MainPanel.Controls.Add(lblTotalScore);
 				MainPanel.Controls.Add(lblTeams);
@@ -529,7 +604,7 @@ namespace TrainingProject
 				getNext();
 				if (auto)
 				{
-					Label lblGameStats = new Label { AutoSize = true, Text = "Currency: " + getCurrency + " (" + CurrencyLog + ")" };
+					Label lblGameStats = new Label { AutoSize = true, Text = "Currency: " + getGameCurrency + " (" + GameCurrencyLog + ")" };
 					MainPanel.Controls.Add(lblGameStats);
 					Label lblTeam1stats = new Label { AutoSize = true, Text = GameTeam1.getTeamStats("", "") };
 					MainPanel.Controls.Add(lblTeam1stats);
@@ -622,9 +697,8 @@ namespace TrainingProject
 					}
 					msg = GameTeam2.getName + " Won against " + GameTeam1.getName + msg ;
 				}
-				getCurrency += Jackpot;
+				getGameCurrency += Jackpot;
 				getFightLog = msg + Environment.NewLine + "     Arena made " + Jackpot + " @ " + DateTime.Now.ToString() + Environment.NewLine;
-				buildingMaintenance();
 				Jackpot = 0;
 				MainPanel.Controls.Add(lblWinner);
 				fighting = false;
@@ -636,31 +710,36 @@ namespace TrainingProject
 		public void buildingMaintenance()
 		{
 			int MaintCost = 0;
-			switch (RndVal.Next(100))
+			switch (RndVal.Next(1000))
 			{
 				case 1:
 				case 2:
 				case 3:
 					// Arena Maintenance
 					MaintCost = RndVal.Next(ArenaLvlMaint);
-					getCurrency -= MaintCost;
-					getFightLog = "Arena maintenance cost " + MaintCost + Environment.NewLine;
+					getGameCurrency -= MaintCost;
+					getFightLog = Environment.NewLine + "Arena maintenance cost " + MaintCost + Environment.NewLine;
 					break;
 				case 6:
 				case 7:
 				case 8:
 					// Monster Den Maintenance
 					MaintCost = RndVal.Next(MonsterDenLvlMaint);
-					getCurrency -= MaintCost;
-					getFightLog = "Monster den maintenance cost " + MaintCost + Environment.NewLine;
+					getGameCurrency -= MaintCost;
+					getFightLog = Environment.NewLine + "Monster den maintenance cost " + MaintCost + Environment.NewLine;
 					break;
 				case 11:
 				case 12:
 				case 13:
 					// Tax
 					MaintCost = (int)((ArenaLvlMaint* 0.1)+(MonsterDenLvlMaint * 0.1));
-					getCurrency -= MaintCost;
-					getFightLog = "Taxes cost " + MaintCost + Environment.NewLine;
+					getGameCurrency -= MaintCost;
+					getFightLog = Environment.NewLine + "Taxes cost " + MaintCost + Environment.NewLine;
+					break;
+				case 999:
+					MaintCost += MaxTeams * 1000;
+					getGameCurrency += MaintCost;
+					getFightLog = Environment.NewLine + "Received a sponsor! +" + MaintCost + Environment.NewLine;
 					break;
 			}
 		}
@@ -673,21 +752,21 @@ namespace TrainingProject
 			int team = 1;
 			foreach  (Robot eRobot in GameTeam1.MyTeam)
 			{
-				if ((eRobot.getSpeed > maxSpeed || (eRobot.getSpeed == maxSpeed && RndVal.Next(1000) > 500))
+				if ((eRobot.getCurrentSpeed > maxSpeed || (eRobot.getCurrentSpeed == maxSpeed && RndVal.Next(1000) > 500))
 					&& eRobot.HP > 0)
 				{
 					Attacker = eRobot;
-					maxSpeed = eRobot.getSpeed;
+					maxSpeed = eRobot.getCurrentSpeed;
 				}
 			}
 			foreach (Robot eRobot in GameTeam2.MyTeam)
 			{
-				if ((eRobot.getSpeed > maxSpeed || (eRobot.getSpeed == maxSpeed && RndVal.Next(1000) > 500))
+				if ((eRobot.getCurrentSpeed > maxSpeed || (eRobot.getCurrentSpeed == maxSpeed && RndVal.Next(1000) > 500))
 					&& eRobot.HP > 0)
 				{
 					team = 2;
 					Attacker = eRobot;
-					maxSpeed = eRobot.getSpeed;
+					maxSpeed = eRobot.getCurrentSpeed;
 				}
 			}
 			Attacker.setStrike();
@@ -704,7 +783,7 @@ namespace TrainingProject
 
         public void Attack(Robot attacker, Team attackers, Team defenders)
         {
-			Robot defender = new Robot(1, "test", 1, RndVal, false);
+			Robot defender = new Robot(1, "test", 1, false);
 			// Loop through attackers strategies
 			foreach (Strategy currStrategy in  attacker.RoboStrategy)
 			{
@@ -767,31 +846,123 @@ namespace TrainingProject
         }
 	}
 	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	class Team : Common
     {
-        public string[] name1 = { "Green", "Blue", "Yellow", "Orange", "Black", "Pink", "Great", "Strong", "Cunning"};
-		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", };
-		public string[] name3 = { "Blades", "Arrows", "Staffs", "Sparks", "Factory", "Snipers", "Calvary" };
-		public string[] RoboName = { "Bolt", "Tink", "Hmr", "Golm", "Droi", "Trs", "Gun", "Rep", "Bot" };
-		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp","Element", "HandEye" };
-        public Random RndVal;
-        public IList<Robot> MyTeam;
+		[JsonProperty]
+		public IList<Robot> MyTeam;
+		[JsonProperty]
 		private int Score;
 		private int ScoreLog;
+		[JsonProperty]
+		private int GoalScore;
+		[JsonProperty]
 		private int Currency;
 		private int CurrencyLog;
+		[JsonProperty]
 		private int Difficulty;
 		private int DifficultyLog;
-		private int GoalScore;
+		[JsonProperty]
 		private int MaxRobo;
+		[JsonProperty]
 		private int RoboCost;
-        private string TeamName;
-		public Boolean isMonster; 
+		[JsonProperty]
+		private string TeamName;
+		public Boolean isMonster;
+		
+		public int getAvailableRobo
+		{
+			get
+			{
+				return MaxRobo - MyTeam.Count;
+			}
+			set { MaxRobo = value; }
+		}
+		public int getScore
+		{
+			get
+			{
+				return Score;
+			}
+			set
+			{
+				ScoreLog += value - Score;
+				Score = value;
+				if (Score >= GoalScore)
+				{
+					GoalScore *= 2;
+					GoalScore = roundValues(GoalScore);
+					MaxRobo++;
+				}
+			}
+		}
+		public int getGoalScore
+		{
+			get { return GoalScore; }
+			set { GoalScore = value; }
+		}
+		public int getCurrency
+		{
+			set
+			{
+				CurrencyLog += value - Currency;
+				Currency = value;
+			}
+			get
+			{
+				return Currency;
+			}
+		}
+		public int getDifficulty
+		{
+			set
+			{
+				int tmp = value;
+				if (tmp > 0)
+					DifficultyLog += value - Difficulty;
+				Difficulty = value;
+			}
+			get
+			{
+				return Difficulty;
+			}
+		}
+		public int getMaxRobos
+		{
+			get { return MaxRobo; }
+			set { MaxRobo = value; }
+		}
+		public int getRoboCost
+		{
+			get { return RoboCost; }
+			set { RoboCost = value; }
+		}
+		public String getName
+		{
+			get { return TeamName; }
+			set { TeamName = value; }
+		}
+		public IList<Robot> getRobo
+		{
+			get { return MyTeam; }
+			set { MyTeam = value; }
+		}
 
-        public Team(Random tmpRandom)
+		public Team()
+		{
+			MyTeam = new List<Robot> { };
+			Score = 0;
+			Difficulty = 1;
+			GoalScore = 20;
+			MaxRobo = 1;
+			RoboCost = 100;
+			isMonster = false;
+			TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
+		}
+
+		public Team(bool isNew)
         {
-            RndVal = tmpRandom;
-            MyTeam = new List<Robot> { new Robot(1,setName(true), RndVal.Next(8), RndVal, false) };
+            MyTeam = new List<Robot> { new Robot(1,setName(true), RndVal.Next(8), false) };
             Score = 0;
 			Difficulty = 1;
             GoalScore = 20;
@@ -804,14 +975,13 @@ namespace TrainingProject
         {
 			if (Difficulty < 1)
 				Difficulty = 1;
-            RndVal = tmpRandom;
-			int numMonsters = RndVal.Next(1, (Difficulty > 3 ? Difficulty/3 : 1));
+			int numMonsters = Difficulty > 3 ? Difficulty / 3 : 1;
             MyTeam = new List<Robot> { };
 			for (int i = 0; i < numMonsters; i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl); 
-				MyTeam.Add(new Robot((Difficulty / 3),setName(false, Monster), Monster, RndVal, true));
-				int lvl = RndVal.Next(Difficulty);
+				MyTeam.Add(new Robot((Difficulty / 3),setName(false, Monster), Monster, true));
+				int lvl = RndVal.Next((int)((Difficulty - i)*0.8),Difficulty - i);
 				for (int ii = 1; ii < lvl; ii++)
 				{
 					MyTeam[i].levelUp();
@@ -851,24 +1021,14 @@ namespace TrainingProject
 			}
 			return strStats;
 		}
-
-		public int getRoboCost
-		{
-			get { return RoboCost; }
-			set { RoboCost = value; }
-		}
-		public int getMaxRobos
-		{
-			get { return MaxRobo; }
-		}
-		
+				
 		public void fixTech()
 		{
 			
 		}
 		public void Rebuild(int robo)
 		{
-			MyTeam[robo] = new Robot((MyTeam[robo].getLevel / 5 == 0 ? 1 : MyTeam[robo].getLevel / 5), setName(true), RndVal.Next(8), RndVal, false);
+			MyTeam[robo] = new Robot((MyTeam[robo].getLevel / 5 == 0 ? 1 : MyTeam[robo].getLevel / 5), setName(true), RndVal.Next(8), false);
 		}
 		public int getNumRobos()
 		{
@@ -893,72 +1053,6 @@ namespace TrainingProject
 			}
 			return fullHP;
 		}
-		public String getName
-		{
-			get
-			{
-				return TeamName;
-			}
-		}
-		public int getDifficulty
-		{
-			set
-			{
-				int tmp = value;
-				if (tmp > 0)
-					DifficultyLog += value - Difficulty;
-					Difficulty = value;
-			}
-			get
-			{
-				return Difficulty;
-			}
-		}
-		public int getCurrency
-		{
-			set
-			{
-				CurrencyLog += value - Currency;
-				Currency = value;
-			}
-			get
-			{
-				return Currency;
-			}
-		}
-		public int getGoalScore
-        {
-            get
-            {
-                return GoalScore;
-            }
-        }
-        public int getAvailableRobo
-        {
-            get
-            {
-                return MaxRobo - MyTeam.Count;
-            }
-        }
-
-        public int getScore
-        {
-            get
-            {				
-                return Score;
-            }
-            set
-            {
-				ScoreLog += value - Score;
-                Score = value;
-                if (Score >= GoalScore)
-                {
-                    GoalScore *= 2;
-					GoalScore = roundValues(GoalScore);
-                    MaxRobo++;
-                }
-            }
-        }
 		public string setName(Boolean isRobo)
 		{
 			return setName(isRobo, 0);
@@ -979,6 +1073,7 @@ namespace TrainingProject
         }
 	}
 	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	class Robot : Common
 	{
 		public Skill[] ListSkills = {
@@ -987,35 +1082,286 @@ namespace TrainingProject
 		public IList<Strategy> RoboStrategy;
 		private Equipment EquipWeapon;
 		private Equipment EquipArmour;
-		public Random RndVal;
-        private string RoboName;
-		public string tmpMessage; 
-        // Base stats
-        private int Dexterity;
-        private int Strength;
-        private int Agility;
-        private int Tech;
-        private int Accuracy;
-        // elevated stats (based on level, base stats, and equipment)
-        private int Health;
+		[JsonProperty]
+		private string RobotName;
+		public string tmpMessage;
+		// Base stats
+		[JsonProperty]
+		private int Dexterity;
+		[JsonProperty]
+		private int Strength;
+		[JsonProperty]
+		private int Agility;
+		[JsonProperty]
+		private int Tech;
+		[JsonProperty]
+		private int Accuracy;
+		// elevated stats (based on level, base stats, and equipment)
+		[JsonProperty]
+		private int Health;
 		private int CurrentHealth;
 		private int CountKO;
+		[JsonProperty]
 		private int Energy;
         private int CurrentEnergy;
-        private int Armour;
-        private int Damage;
+		[JsonProperty]
+		private int Armour;
+		[JsonProperty]
+		private int Damage;
+		[JsonProperty]
 		private int Hit;
+		[JsonProperty]
 		private int MentalStrength;
-        private int MentalDefense;
-        private string Image;
+		[JsonProperty]
+		private int MentalDefense;
+		[JsonProperty]
+		private string Image;
         private string tmpImage;
-        private int Speed;
+		[JsonProperty]
+		private int Speed;
 		private int CurrentSpeed;
+		[JsonProperty]
 		private int Level;
 		private int LevelLog;
+		[JsonProperty]
 		private int Analysis;
+		[JsonProperty]
 		private int CurrentAnalysis;
 		private int AnalysisLog;
+		public String getName
+		{
+			get { return RobotName; }
+			set { RobotName = value; }
+		}
+		public int getDexterity
+		{
+			set { Dexterity = value; }
+			get { return Dexterity; }
+		}
+		public int getStrength
+		{
+			set { Strength = value; }
+			get { return Strength; }
+		}
+		public int getAgility
+		{
+			set { Agility = value; }
+			get { return Agility; }
+		}
+		public int getTech
+		{
+			set { Tech = value; }
+			get { return Tech; }
+		}
+		public int getAccuracy
+		{
+			set { Accuracy = value; }
+			get { return Accuracy; }
+		}
+		public int getHealth
+		{
+			get { return Health; }
+			set { Health = value; }
+		}
+		public int HP
+		{
+			get { return CurrentHealth; }
+			set
+			{
+				if (value > Health)
+					CurrentHealth = Health;
+				else if (value <= 0)
+					CurrentHealth = 0;
+				else
+					CurrentHealth = value;
+			}
+		}
+		public int getEnergy
+		{
+			get { return Energy; }
+			set { Energy = value; }
+		}
+		public int MP
+		{
+			get { return CurrentEnergy; }
+			set
+			{
+				if (value > Energy)
+					CurrentEnergy = Energy;
+				else if (value < 0)
+					CurrentEnergy = 0;
+				else
+					CurrentEnergy = value;
+			}
+		}
+		public int getArmour
+		{
+			get { return Armour; }
+			set { Armour = value; }
+		}
+		public int getDamage
+		{
+			get { return Damage; }
+			set { Damage = value; }
+		}
+		public int getHit
+		{
+			get { return Hit; }
+			set { Hit = value; }
+		}
+		public int getMentalStrength
+		{
+			get { return MentalStrength; }
+			set { MentalStrength = value; }
+		}
+		public int getMentalDefense
+		{
+			get { return MentalDefense; }
+			set { MentalDefense = value; }
+		}
+		public string getImage
+		{
+			get
+			{
+				string tmp = Image;
+				if (HP == 0)
+				{
+					getKO++;
+					tmp = KO;
+				}
+				else if (tmpImage.Length > 0)
+				{
+					tmp = tmpImage;
+					tmpImage = "";
+				}
+				return tmp;
+			}
+			set { Image = value; }
+		}
+		public int getSpeed
+		{
+			get
+			{
+				return Speed;
+			}
+			set { Speed = value; }
+		}
+		public int getCurrentSpeed
+		{
+			get
+			{
+				int tmp = CurrentSpeed;
+				if (CurrentSpeed <= 0)
+				{
+					CurrentSpeed = RndVal.Next(Speed * 10);
+				}
+				return tmp;
+			}
+		}
+		public int getLevel
+		{
+			get { return Level; }
+			set { Level = value; }
+		}
+		public int getCurrentAnalysis
+		{
+			set
+			{
+				AnalysisLog += value - CurrentAnalysis;
+				CurrentAnalysis = value;
+			}
+			get { return CurrentAnalysis; }
+		}
+		public int getAnalysis
+		{
+			get { return Analysis; }
+			set { Analysis = value; }
+		}
+
+
+		public int getKO
+		{
+			set { CountKO = value; }
+			get { return CountKO; }
+		}
+		public String message
+		{
+			get
+			{
+				string tmp = tmpMessage;
+				tmpMessage = "";
+				return tmp;
+			}
+			set { tmpMessage = value; }
+		}
+		public Robot() { }
+		public Robot(bool isNew) : this(10, "test", 1, true) { }
+		public Robot(string strName, int RoboImage, Boolean isMonster) : this(10, strName, RoboImage, isMonster) { }
+		// New Robot object
+		public Robot(int iBasePoints, string strName, int imageIndex, Boolean isMonster)
+		{
+			int RandomValue = 0;
+			getName = strName;
+			Analysis = 90;
+			CurrentAnalysis = 0;
+			Level = 0;
+			message = "";
+			if (isMonster)
+			{
+				Image = MonsterImages[imageIndex];
+				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Highest", "HP") };
+			}
+			else
+			{
+				Image = RoboImages[imageIndex];
+				//RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Lowest", "HP") };
+				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Current", "Level") };
+			}
+			tmpImage = "";
+			Dexterity = 1;
+			Strength = 1;
+			Agility = 1;
+			Tech = 1;
+			Accuracy = 1;
+			iBasePoints -= 5; // Already distributed five points. 
+			for (int i = iBasePoints; i > 0; i--)
+			{
+				// Random 
+				RandomValue = RndVal.Next(5);
+				// Case statement to set values
+				switch (RandomValue)
+				{
+					case 1:
+						Dexterity++;
+						break;
+					case 2:
+						Strength++;
+						break;
+					case 3:
+						Agility++;
+						break;
+					case 4:
+						Tech++;
+						break;
+					case 5:
+						Accuracy++;
+						break;
+				}
+			}
+			// Set elevated stats based on base stats
+			Health = Dexterity + Strength + Agility;
+			Energy = Tech + Accuracy;
+			Armour = Dexterity;
+			Damage = Strength;
+			Hit = Accuracy;
+			Speed = Agility;
+			CurrentSpeed = 0;
+			MentalStrength = Tech;
+			MentalDefense = Tech;
+			levelUp();
+			CurrentHealth = Health;
+			CurrentEnergy = Energy;
+		}
 
 		public void fixTech()
 		{
@@ -1045,34 +1391,7 @@ namespace TrainingProject
 			}
 			return cost;
 		}
-		public String getName
-		{
-			get
-			{
-				return RoboName;
-			}
-		}
-		public int getKO
-		{
-			set
-			{
-				CountKO = value;
-			}
-			get
-			{
-				return CountKO;
-			}
-		}
-		public String message
-		{
-			get
-			{
-				string tmp = tmpMessage;
-				tmpMessage = "";
-				return tmp;
-			}
-			set { tmpMessage = value; }
-		}
+		
         public void setStrike()
         {
             tmpImage = strike;
@@ -1089,103 +1408,7 @@ namespace TrainingProject
 		{
 			tmpImage = miss;
 		}
-		public string getImage
-        {
-            get
-            {
-                string tmp = Image;
-                if (HP == 0)
-				{
-					getKO++;
-					tmp = KO;
-                }
-                else if (tmpImage.Length > 0)
-                {
-                    tmp = tmpImage;
-                    tmpImage = ""; 
-                }
-                return tmp;
-            }
-        }
-        public int MP
-        {
-            get
-            {
-                return CurrentEnergy;
-            }
-
-            set
-            {
-                if (value > Energy)
-                    CurrentEnergy = Energy;
-                else if (value < 0)
-                    CurrentEnergy = 0;
-                else
-                    CurrentEnergy = value;
-            }
-        }
-        public int HP
-        {
-            get
-            {
-				return CurrentHealth;
-            }
-
-            set
-            {
-				if (value > Health)
-					CurrentHealth = Health;
-				else if (value <= 0)
-					CurrentHealth = 0;
-				else
-					CurrentHealth = value;
-            }
-		}
-		public int getHealth
-		{
-			get
-			{
-				return Health;
-			}
-		}
-		public int getEnergy
-		{
-			get
-			{
-				return Energy;
-			}
-		}
-		public int getLevel
-		{
-			get
-			{
-				return Level;
-			}
-		}
-		public int getSpeed
-		{
-			get
-			{
-				int tmp = CurrentSpeed;
-				if (CurrentSpeed <= 0)
-				{
-					CurrentSpeed = RndVal.Next(Speed * 10);
-				}
-				return tmp;
-			}
-		}
-		public int getExperience
-		{
-			set
-			{
-				AnalysisLog += value - CurrentAnalysis;
-				CurrentAnalysis = value;
-			}
-			get
-			{
-				return CurrentAnalysis;
-			}
-		}
+		
 		public long getAnalysisLeft()
 		{
 				return (Analysis - CurrentAnalysis);
@@ -1197,72 +1420,6 @@ namespace TrainingProject
 				CurrentSpeed = RndVal.Next(0, (CurrentSpeed / 2));
 			}
 		}
-        // New Robot object
-        public Robot(int iBasePoints, string strName, int imageIndex, Random tmpRandom, Boolean isMonster)
-        {
-            RndVal = tmpRandom;
-            int RandomValue = 0;
-            RoboName = strName;
-			Analysis = 90; 
-			CurrentAnalysis = 0;
-			Level = 0;
-			message = "";
-			if (isMonster)
-			{
-				Image = MonsterImages[imageIndex];
-				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Highest", "HP") };
-			}
-			else
-			{
-				Image = RoboImages[imageIndex];
-				//RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Lowest", "HP") };
-				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Current", "Level") };
-			}
-			tmpImage = ""; 
-            Dexterity = 1;
-            Strength = 1;
-            Agility = 1;
-            Tech = 1;
-            Accuracy = 1;
-            iBasePoints -= 5; // Already distributed five points. 
-            for (int i = iBasePoints; i > 0; i--)
-            {
-                // Random 
-                RandomValue = RndVal.Next(5);
-                // Case statement to set values
-                switch (RandomValue)
-                {
-                    case 1:
-                        Dexterity++;
-                        break;
-                    case 2:
-                        Strength++;
-                        break;
-                    case 3:
-                        Agility++;
-                        break;
-                    case 4:
-                        Tech++;
-                        break;
-                    case 5:
-                        Accuracy++;
-                        break;
-                }
-            }
-            // Set elevated stats based on base stats
-            Health = Dexterity + Strength + Agility;
-            Energy = Tech + Accuracy;
-            Armour = Dexterity;
-			Damage = Strength;
-            Hit = Accuracy;
-			Speed = Agility;
-			CurrentSpeed = 0;
-            MentalStrength = Tech;
-            MentalDefense = Tech;
-			levelUp();
-            CurrentHealth = Health;
-            CurrentEnergy = Energy;
-        }
 
 		public void levelUp()
 		{
@@ -1302,17 +1459,16 @@ namespace TrainingProject
 				// get experience if attackers level is not higher
 				if (attacker.getLevel <= getLevel)
 				{
-					attacker.getExperience+= getLevel - attacker.getLevel + 1;
-					if (HP == 0) { attacker.getExperience += 10; }
+					attacker.getCurrentAnalysis+= getLevel - attacker.getLevel + 1;
+					if (HP == 0) { attacker.getCurrentAnalysis += 10; }
 				}
 				// if attacker is higher level, get less exp
 				else if (RndVal.Next(100) > 80)
 				{
-					attacker.getExperience++;
+					attacker.getCurrentAnalysis++;
 				}
 			}
 		}
-        public Robot(string strName, int RoboImage, Random tmpRand, Boolean isMonster) : this(10, strName, RoboImage, tmpRand, isMonster) { }
         public override string ToString()
         {
             string tmp = "";
@@ -1337,6 +1493,7 @@ namespace TrainingProject
         }
 	}
 	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	class Skill
     {
         public string name;
@@ -1344,6 +1501,7 @@ namespace TrainingProject
         public int strength; // int representing amount of damage / healing 
         public string type; // healing single, healing multiple, damage single, or damage multiple
 		public int cost; // energy cost
+		public Skill() { }
         public Skill(string skillName, string skillTarget, int skillStrength, string skilltype)
         {
             name = skillName;
@@ -1354,6 +1512,7 @@ namespace TrainingProject
         }
 	}
 	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	class Strategy
 	{
 		public Skill StrategicSkill; //skill to be used
@@ -1362,6 +1521,7 @@ namespace TrainingProject
 		public int ConditionValue; // a percentage or value
 		public string Focus; // Lowest or Highest
 		public string Field; // HP, MP, Str, Spirit, Speed, etc
+		public Strategy() { }
 		public Strategy(Skill pSkill, string pFieldCondition, string pCondition, int pConditionValue, string pFocus, string pField)
 		{
 			StrategicSkill = pSkill;
@@ -1373,11 +1533,16 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	class ArenaSeating
 	{
+		[JsonProperty]
 		public int Level; //Seating Level
+		[JsonProperty]
 		public int Price; // Cost of customers for seat
+		[JsonProperty]
 		public int Amount; // Number of seats
+		public ArenaSeating() { }
 		public ArenaSeating(int pLevel, int pPrice, int pAmount)
 		{
 			Level = pLevel;
@@ -1386,6 +1551,7 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
+	[JsonObject(MemberSerialization.OptIn)]
 	class Equipment
 	{
 		private int Health;
@@ -1396,5 +1562,6 @@ namespace TrainingProject
 		private int MentalStrength;
 		private int MentalDefense;
 		private int Speed;
+		public Equipment() { }
 	}
 }

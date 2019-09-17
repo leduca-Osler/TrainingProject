@@ -31,26 +31,30 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.btnExport = new System.Windows.Forms.ToolStripSplitButton();
+			this.mnuExport = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuImport = new System.Windows.Forms.ToolStripMenuItem();
 			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
 			this.btnAddRobo = new System.Windows.Forms.ToolStripButton();
 			this.btnArenaLvl = new System.Windows.Forms.ToolStripButton();
 			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
+			this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+			this.levelUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.restockToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnFight = new System.Windows.Forms.ToolStripButton();
 			this.btnInterval = new System.Windows.Forms.ToolStripButton();
 			this.btnAutomatic = new System.Windows.Forms.ToolStripButton();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
-			this.levelUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.restockToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// toolStrip1
 			// 
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnExport,
             this.cbTeamSelect,
             this.btnAddTeam,
             this.btnAddRobo,
@@ -66,6 +70,33 @@
 			this.toolStrip1.Size = new System.Drawing.Size(421, 25);
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
+			// 
+			// btnExport
+			// 
+			this.btnExport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnExport.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuExport,
+            this.mnuImport});
+			this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
+			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnExport.Name = "btnExport";
+			this.btnExport.Size = new System.Drawing.Size(32, 22);
+			this.btnExport.Text = "Export / Import";
+			this.btnExport.ButtonClick += new System.EventHandler(this.btnExport_ButtonClick);
+			// 
+			// mnuExport
+			// 
+			this.mnuExport.Name = "mnuExport";
+			this.mnuExport.Size = new System.Drawing.Size(152, 22);
+			this.mnuExport.Text = "Export";
+			this.mnuExport.Click += new System.EventHandler(this.mnuExport_Click);
+			// 
+			// mnuImport
+			// 
+			this.mnuImport.Name = "mnuImport";
+			this.mnuImport.Size = new System.Drawing.Size(152, 22);
+			this.mnuImport.Text = "Import";
+			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
 			// 
 			// cbTeamSelect
 			// 
@@ -113,6 +144,35 @@
 			this.btnMonsterDen.Text = "Monster Den";
 			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
 			// 
+			// toolStripSplitButton1
+			// 
+			this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripSplitButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.levelUpToolStripMenuItem,
+            this.restockToolStripMenuItem});
+			this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
+			this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripSplitButton1.Name = "toolStripSplitButton1";
+			this.toolStripSplitButton1.Size = new System.Drawing.Size(32, 22);
+			this.toolStripSplitButton1.Text = "Shop";
+			// 
+			// levelUpToolStripMenuItem
+			// 
+			this.levelUpToolStripMenuItem.Name = "levelUpToolStripMenuItem";
+			this.levelUpToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+			this.levelUpToolStripMenuItem.Text = "Level Up";
+			// 
+			// restockToolStripMenuItem
+			// 
+			this.restockToolStripMenuItem.Name = "restockToolStripMenuItem";
+			this.restockToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+			this.restockToolStripMenuItem.Text = "Restock";
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+			// 
 			// btnFight
 			// 
 			this.btnFight.BackColor = System.Drawing.Color.Transparent;
@@ -159,35 +219,6 @@
 			this.MainPannel.Size = new System.Drawing.Size(420, 388);
 			this.MainPannel.TabIndex = 2;
 			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-			// 
-			// toolStripSplitButton1
-			// 
-			this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripSplitButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.levelUpToolStripMenuItem,
-            this.restockToolStripMenuItem});
-			this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
-			this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripSplitButton1.Name = "toolStripSplitButton1";
-			this.toolStripSplitButton1.Size = new System.Drawing.Size(32, 22);
-			this.toolStripSplitButton1.Text = "Shop";
-			// 
-			// levelUpToolStripMenuItem
-			// 
-			this.levelUpToolStripMenuItem.Name = "levelUpToolStripMenuItem";
-			this.levelUpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.levelUpToolStripMenuItem.Text = "Level Up";
-			// 
-			// restockToolStripMenuItem
-			// 
-			this.restockToolStripMenuItem.Name = "restockToolStripMenuItem";
-			this.restockToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.restockToolStripMenuItem.Text = "Restock";
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -223,6 +254,9 @@
 		private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
 		private System.Windows.Forms.ToolStripMenuItem levelUpToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem restockToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSplitButton btnExport;
+		private System.Windows.Forms.ToolStripMenuItem mnuExport;
+		private System.Windows.Forms.ToolStripMenuItem mnuImport;
 	}
 }
 

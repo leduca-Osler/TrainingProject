@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +28,7 @@ namespace TrainingApp
 			catch
 			{
 				// if no file, start a new game
-				MyGame = new Game();
+				MyGame = new Game(true);
 			}
 			InitializeComponent();
 			MyGame.interval(timer1);
@@ -62,8 +64,11 @@ namespace TrainingApp
 
         private void btnFight_Click(object sender, EventArgs e)
 		{
-			isShown = false;
-			MyGame.startFight();
+			if (!MyGame.isFighting())
+			{
+				isShown = false;
+				MyGame.startFight();
+			}
 		}
 		/***********************
          * * Ensure you can only add a team or robot when they are not on max
@@ -88,7 +93,7 @@ namespace TrainingApp
 			Boolean addRobo = false;
 			Boolean arenaLvl = false;
 			Boolean monsterLvl = false;
-			if (MyGame.getAvailableTeams > 0 && MyGame.getCurrency > MyGame.getTeamCost)
+			if (MyGame.getAvailableTeams > 0 && MyGame.getGameCurrency > MyGame.getTeamCost)
             {
                 addTeam = true;
             }
@@ -97,11 +102,11 @@ namespace TrainingApp
             {
                 addRobo = true;
 			}
-			if (MyGame.getCurrency >= MyGame.getArenaLvlCost)
+			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)
 			{
 				arenaLvl = true;
 			}
-			if (MyGame.getCurrency >= MyGame.getMonsterDenLvlCost)
+			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)
 			{
 				monsterLvl = true;
 			}
@@ -113,7 +118,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
             {
 
-				if (!isShown || MyGame.RndVal.Next(100) > 90 || !MyGame.isAuto())
+				if (!isShown || Game.RndVal.Next(100) > 90 || !MyGame.isAuto())
 				{
 					foreach (Control eControl in MainPannel.Controls)
 					{
@@ -142,14 +147,15 @@ namespace TrainingApp
 					btnFight.BackColor = Color.Yellow;
 				}
 				// five percent chance to start a new fight 
-				if (MyGame.RndVal.Next(100) > 95)
+				if (Game.RndVal.Next(100) > 95)
 				{
 					MyGame.startFight();
 					isShown = false;
 				}
 				else
 				{
-					if (!isShown || MyGame.RndVal.Next(100) > 90)
+					MyGame.buildingMaintenance();
+					if (!isShown || Game.RndVal.Next(100) > 90)
 					{
 						foreach (Control eControl in MainPannel.Controls)
 						{
@@ -163,13 +169,13 @@ namespace TrainingApp
 			}
 			try
 			{
-				if (MyGame.RndVal.Next(100) > 3)
+				if (Game.RndVal.Next(100) > 3)
 				{
 					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject.bin", MyGame);
 				}
 				else
 				{
-					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject" + MyGame.RndVal.Next(5) + ".bin", MyGame);
+					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject" + Game.RndVal.Next(5) + ".bin", MyGame);
 				}
 			}
 			catch { }
@@ -188,7 +194,7 @@ namespace TrainingApp
 				timer1.Enabled = true;
 				btnInterval.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
-					MyGame.SafeTime = DateTime.Now.AddSeconds(MyGame.RndVal.Next(900, MyGame.MaxInterval));
+					MyGame.SafeTime = DateTime.Now.AddSeconds(Game.RndVal.Next(900, MyGame.MaxInterval));
 			}
 		}
 
@@ -217,6 +223,42 @@ namespace TrainingApp
 				MyGame.resetAuto();
 			else
 				MyGame.setAuto();
+		}
+
+		private void btnExport_ButtonClick(object sender, EventArgs e)
+		{
+			WriteJSON();
+		}
+
+		private void mnuExport_Click(object sender, EventArgs e)
+		{
+			WriteJSON();
+		}
+
+		private void mnuImport_Click(object sender, EventArgs e)
+		{
+			ReadJSON();
+		}
+		public void WriteJSON()
+		{
+			var JSON = new JavaScriptSerializer().Serialize(MyGame);
+			System.IO.File.WriteAllText("TrainingProject.JSON", JSON);
+		}
+		public void ReadJSON()
+		{
+			using (StreamReader file = File.OpenText(@"TrainingProject.JSON"))
+			{
+				JsonSerializer serializer = new JsonSerializer();
+				MyGame = (Game)serializer.Deserialize(file, typeof(Game));
+			}
+			cbTeamSelect.Items.Clear();
+			cbTeamSelect.Items.Add("Stats");
+			foreach (Team eTeam in MyGame.GameTeams)
+			{
+				cbTeamSelect.Items.Add(eTeam.getName);
+			}
+			cbTeamSelect.SelectedIndex = 0;
+			update();
 		}
 	}
 	public static class BinarySerialization
