@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -175,7 +176,7 @@ namespace TrainingApp
 				}
 				else
 				{
-					BinarySerialization.WriteToBinaryFile<Game>("TrainingProject" + Game.RndVal.Next(5) + ".bin", MyGame);
+					WriteJSON();
 				}
 			}
 			catch { }
@@ -242,14 +243,45 @@ namespace TrainingApp
 		public void WriteJSON()
 		{
 			var JSON = new JavaScriptSerializer().Serialize(MyGame);
-			System.IO.File.WriteAllText("TrainingProject.JSON", JSON);
+			System.IO.File.WriteAllText(DateTime.Now.ToString("yyyyMMdd") + "TrainingProject.JSON", JSON);
 		}
 		public void ReadJSON()
 		{
-			using (StreamReader file = File.OpenText(@"TrainingProject.JSON"))
+			OpenFileDialog Open = new OpenFileDialog();
+			Open.ShowDialog();
+			using (StreamReader file = File.OpenText(Open.FileName))
 			{
 				JsonSerializer serializer = new JsonSerializer();
-				MyGame = (Game)serializer.Deserialize(file, typeof(Game));
+				JObject json = (JObject)JToken.ReadFrom(new JsonTextReader(file));
+				// Parse json and assign to MyGame
+				MyGame = new Game((int)json["getGoalGameScore"], (int)json["getMaxTeams"], (int)json["getTeamCost"], (int)json["getGameCurrency"], (int)json["getArenaLvl"], (int)json["getArenaLvlCost"], 
+					(int)json["getArenaLvlMaint"], (int)json["getMonsterDenLvl"], (int)json["getMonsterDenLvlCost"], (int)json["getMonsterDenLvlMaint"], (int)json["getMonsterDenBonus"]);
+				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
+				{
+					MyGame.Seating.Add(new ArenaSeating((int)json["Seating"][seatingIndex]["Level"], (int)json["Seating"][seatingIndex]["Price"], (int)json["Seating"][seatingIndex]["Amount"]));
+				}
+				for (int GameTeamIndex = 0; GameTeamIndex < json["GameTeams"].Count(); GameTeamIndex++)
+				{
+					MyGame.GameTeams.Add(
+						new Team((int)json["GameTeams"][GameTeamIndex]["getScore"], (int)json["GameTeams"][GameTeamIndex]["getGoalScore"], (int)json["GameTeams"][GameTeamIndex]["getCurrency"], 
+							(int)json["GameTeams"][GameTeamIndex]["getDifficulty"], (int)json["GameTeams"][GameTeamIndex]["getMaxRobos"], (int)json["GameTeams"][GameTeamIndex]["getRoboCost"], 
+							(string)json["GameTeams"][GameTeamIndex]["getName"])
+					);
+					for (int RobotIndex = 0; RobotIndex < json["GameTeams"][GameTeamIndex]["MyTeam"].Count(); RobotIndex++)
+					{
+						MyGame.GameTeams[GameTeamIndex].MyTeam.Add(
+							new Robot((string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getName"],(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getDexterity"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getStrength"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getAgility"], 
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getTech"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getAccuracy"], 
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getHealth"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEnergy"], 
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getArmour"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getDamage"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getHit"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getMentalStrength"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getMentalDefense"], (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getRobotImage"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getSpeed"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getLevel"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getAnalysis"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getCurrentAnalysis"])
+						);
+					}
+				}
 			}
 			cbTeamSelect.Items.Clear();
 			cbTeamSelect.Items.Add("Stats");

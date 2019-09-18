@@ -219,13 +219,15 @@ namespace TrainingProject
 			get { return MaxTeams - GameTeams.Count; }
 			set { MaxTeams = value; }
 		}
-		public Game()
+		public Game(int pGoalGameScore, int pMaxTeams, int pTeamCost, int pGameCurrency, int pArenaLvl, int pArenaLvlCost, int pArenaLvlMaint, int pMonsterDenLvl, int pMonsterDenLvlCost, int pMonsterDenLvlMaint, 
+			int pMonsterDenBonus)
 		{
 			GameTeams = new List<Team> { };
 			Seating = new List<ArenaSeating> {  };
-			GoalGameScore = 100;
-			MaxTeams = 2;
-			TeamCost = 500;
+			GoalGameScore = pGoalGameScore;
+			MaxTeams = pMaxTeams;
+			TeamCost = pTeamCost;
+			GameCurrency = pGameCurrency;
 			fighting = false;
 			auto = false;
 			FightLog = "";
@@ -233,13 +235,13 @@ namespace TrainingProject
 			StoreLvlCost = 100;
 			StoreLvlMaint = 1;
 			StoreStock = 1;
-			ArenaLvl = 1;
-			ArenaLvlCost = 100;
-			ArenaLvlMaint = 1;
-			MonsterDenLvl = 1;
-			MonsterDenLvlCost = 100;
-			MonsterDenLvlMaint = 1;
-			MonsterDenBonus = 10;
+			ArenaLvl = pArenaLvl;
+			ArenaLvlCost = pArenaLvlCost;
+			ArenaLvlMaint = pArenaLvlMaint;
+			MonsterDenLvl = pMonsterDenLvl;
+			MonsterDenLvlCost = pMonsterDenLvlCost;
+			MonsterDenLvlMaint = pMonsterDenLvlMaint;
+			MonsterDenBonus = pMonsterDenBonus;
 			BlacksmithLvl = 1;
 			BlacksmithLvlCost = 100;
 			BlacksmithLvlMaint = 1;
@@ -260,7 +262,7 @@ namespace TrainingProject
         {
             GameTeams = new List<Team> { new Team(true), new Team(true) };
 			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50) };
-			GameCurrency = 100;
+			GameCurrency = 0;
             GoalGameScore = 100;
             MaxTeams = 2;
 			TeamCost = 500;
@@ -948,14 +950,16 @@ namespace TrainingProject
 			set { MyTeam = value; }
 		}
 
-		public Team()
+		public Team(int pScore, int pGoalScore, int pCurrency, int pDifficulty, int pMaxRobo, int pRoboCost, string pTeamName)
 		{
 			MyTeam = new List<Robot> { };
-			Score = 0;
-			Difficulty = 1;
-			GoalScore = 20;
-			MaxRobo = 1;
-			RoboCost = 100;
+			Score = pScore;
+			Currency = pCurrency;
+			Difficulty = pDifficulty;
+			GoalScore = pGoalScore;
+			MaxRobo = pMaxRobo;
+			RoboCost = pRoboCost;
+			TeamName = pTeamName;
 			isMonster = false;
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
 		}
@@ -1238,6 +1242,11 @@ namespace TrainingProject
 			}
 			set { Image = value; }
 		}
+		public string getRobotImage
+		{
+			get { return Image; }
+			set { Image = value; }
+		}
 		public int getSpeed
 		{
 			get
@@ -1294,8 +1303,36 @@ namespace TrainingProject
 			}
 			set { tmpMessage = value; }
 		}
-		public Robot() { }
-		public Robot(bool isNew) : this(10, "test", 1, true) { }
+		public Robot(string pRobotName, int pDexterity, int pStrength, int pAgility, int pTech, int pAccuracy, int pHealth, int pEnergy, int pArmour, int pDamage, int pHit, int pMentalStrength, int pMentalDefense, 
+			string pImage, int pSpeed, int pLevel, int pAnalysis, int pCurrentAnalysis)
+		{
+			getName = pRobotName;
+			Analysis = pAnalysis;
+			CurrentAnalysis = pCurrentAnalysis;
+			Level = pLevel;
+			message = "";
+			Image = pImage;
+			RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Current", "Level") };
+			tmpImage = "";
+			Dexterity = pDexterity;
+			Strength = pStrength;
+			Agility = pAgility;
+			Tech = pTech;
+			Accuracy = pAccuracy;
+			Health = pHealth;
+			Energy = pEnergy;
+			Armour = pArmour;
+			Damage = pDamage;
+			Hit = pHit;
+			Speed = pSpeed;
+			CurrentSpeed = 0;
+			MentalStrength = pMentalStrength;
+			MentalDefense = pMentalDefense;
+			CurrentHealth = Health;
+			CurrentEnergy = Energy;
+
+		}
+		public Robot(bool isNew) : this(1, "test", 1, true) { }
 		public Robot(string strName, int RoboImage, Boolean isMonster) : this(10, strName, RoboImage, isMonster) { }
 		// New Robot object
 		public Robot(int iBasePoints, string strName, int imageIndex, Boolean isMonster)
