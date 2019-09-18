@@ -202,11 +202,13 @@ namespace TrainingApp
 		private void btnArenaLvl_Click(object sender, EventArgs e)
 		{
 			MyGame.arenaLevelUp();
+			update();
 		}
 
 		private void btnMonsterDen_Click(object sender, EventArgs e)
 		{
 			MyGame.MonsterDenLevelUp();
+			update();
 		}
 
 		private void btnAutomatic_Click(object sender, EventArgs e)

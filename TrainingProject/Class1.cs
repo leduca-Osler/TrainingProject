@@ -279,7 +279,7 @@ namespace TrainingProject
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 100;
 			MonsterDenLvlMaint = 1;
-			MonsterDenBonus = 10;
+			MonsterDenBonus = 5;
 			BlacksmithLvl = 1;
 			BlacksmithLvlCost = 100;
 			BlacksmithLvlMaint = 1;
@@ -353,7 +353,7 @@ namespace TrainingProject
 			getGameCurrency -= ArenaLvlCost;
 			ArenaLvlMaint = ArenaLvlCost;
 			ArenaLvl++;
-			ArenaLvlCost *= RndVal.Next(10);
+			ArenaLvlCost *= RndVal.Next(1,10);
 			ArenaLvlCost = (int)Math.Round((double)ArenaLvlCost);
 			foreach (ArenaSeating eSeating in Seating)
 			{
@@ -370,7 +370,7 @@ namespace TrainingProject
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
 			MonsterDenLvlCost = roundValues(MonsterDenLvlCost);
-			MonsterDenBonus += RndVal.Next(1, MonsterDenBonus);
+			MonsterDenBonus += RndVal.Next(1, (int)(MonsterDenBonus*.5));
 		}
 
         public string addTeam()
@@ -474,7 +474,7 @@ namespace TrainingProject
 				PotScore += GameTeam2.getScore;
 			}
 			PotScore += MonsterDenBonus;
-			string msg = "     Attendance: ";
+			string msg = "     Attendance: " + Environment.NewLine;
 			// Get money for the pot
 			foreach (ArenaSeating eSeating in Seating)
 			{
@@ -541,11 +541,11 @@ namespace TrainingProject
 			if (TeamSelect > 0)
 			{
 				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-				Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + GameTeams[TeamSelect - 1].getName };
-				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + GameTeams[TeamSelect - 1].getCurrency };
-				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + GameTeams[TeamSelect - 1].getScore + " (" + GameTeams[TeamSelect - 1].getGoalScore + ")"};
-				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + GameTeams[TeamSelect - 1].getRoboCost + ")" };
-				Label lblDifficulty = new Label { AutoSize = true, Text = "Difficulty: " +  GameTeams[TeamSelect - 1].getDifficulty };
+				Label lblTeamName = new Label { AutoSize = true, Text =     "Team Name:  " + GameTeams[TeamSelect - 1].getName };
+				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getCurrency) };
+				Label lblScore = new Label { AutoSize = true, Text =        "Score:      " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getScore) + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getGoalScore) + ")"};
+				Label lblRobots = new Label { AutoSize = true, Text =       "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getRoboCost) + ")" };
+				Label lblDifficulty = new Label { AutoSize = true, Text =   "Difficulty: " +  GameTeams[TeamSelect - 1].getDifficulty };
 				MainPanel.Controls.Add(lblTeamName);
 				MainPanel.Controls.Add(lblTeamCurrency);
 				MainPanel.Controls.Add(lblScore);
@@ -557,7 +557,7 @@ namespace TrainingProject
 					FlowLayoutPanel MyPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
-					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + eRobo.rebuildCost() + ")" };
+					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + String.Format("{0:n0}", eRobo.rebuildCost()) + ")" };
 					btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(index++));
 					MyPanel.Controls.Add(RoboName);
 					MyPanel.Controls.Add(Everything);
@@ -568,18 +568,19 @@ namespace TrainingProject
 			}
 			else
 			{
-				Label lblTotalScore = new Label { AutoSize = true, Text = "Total Score: " + getScore() };
-				Label lblTeams = new Label { AutoSize = true, Text = "Teams:       " + GameTeams.Count + "/" + getMaxTeams + " (" + getTeamCost + ")" };
-				Label lblCurrency = new Label { AutoSize = true, Text = "Currency:    " + getGameCurrency };
-				Label lblArenaLvl = new Label { AutoSize = true, Text = "Arena Level: " + getArenaLvl + " (" + getArenaLvlCost + ")" };
-				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+				Label lblTotalScore = new Label { AutoSize = true, Text = "Total Score: " + getScore() + " (" + String.Format("{0:n0}", getGoalGameScore) + ")" };
+				Label lblTeams = new Label { AutoSize = true, Text =	  "Teams:       " + GameTeams.Count + "/" + getMaxTeams + " (" + String.Format("{0:n0}", getTeamCost) + ")" };
+				Label lblCurrency = new Label { AutoSize = true, Text =   "Currency:    " + String.Format("{0:n0}", getGameCurrency) };
+				Label lblArenaLvl = new Label { AutoSize = true, Text =   "Arena Level: " + getArenaLvl + " (" + String.Format("{0:n0}", getArenaLvlCost) + ")" };
+				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				foreach (ArenaSeating eSeating in Seating)
 				{
-					Label lblArenaSeating = new Label { AutoSize = true, Text = "  Level: " + eSeating.Level + " Price " + eSeating.Price + " Seats " + eSeating.Amount };
+					Label lblArenaSeating = new Label { AutoSize = true, Text = "  Level: " + eSeating.Level + " Price " + String.Format("{0:n0}", eSeating.Price) + " Seats " + 
+						String.Format("{0:n0}", eSeating.Amount) + Environment.NewLine};
 					pnlSeating.Controls.Add(lblArenaSeating);
 				}
-				Label lblShopLvl = new Label { AutoSize = true, Text = "Shop:       " + getShopLvl };
-				Label lblMonsterDen = new Label { AutoSize = true, Text = "Monster Den:" + getMonsterDenLvl + " (" + getMonsterDenLvlCost + ")   +" + MonsterDenBonus };
+				Label lblShopLvl = new Label { AutoSize = true, Text = "Shop:        " + getShopLvl };
+				Label lblMonsterDen = new Label { AutoSize = true, Text = "Monster Den: " + getMonsterDenLvl + " (" + getMonsterDenLvlCost + ")   +" + String.Format("{0:n0}", MonsterDenBonus) };
 				Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
 				MainPanel.Controls.Add(lblTotalScore);
 				MainPanel.Controls.Add(lblTeams);
@@ -606,7 +607,7 @@ namespace TrainingProject
 				getNext();
 				if (auto)
 				{
-					Label lblGameStats = new Label { AutoSize = true, Text = "Currency: " + getGameCurrency + " (" + GameCurrencyLog + ")" };
+					Label lblGameStats = new Label { AutoSize = true, Text = "Currency: " + String.Format("{0:n0}", getGameCurrency) + " (" + String.Format("{0:n0}", GameCurrencyLog) + ")" + "Total Score: " + String.Format("{0:n0}", getScore()) };
 					MainPanel.Controls.Add(lblGameStats);
 					Label lblTeam1stats = new Label { AutoSize = true, Text = GameTeam1.getTeamStats("", "") };
 					MainPanel.Controls.Add(lblTeam1stats);
@@ -655,18 +656,18 @@ namespace TrainingProject
 					int tmp = (int)(Jackpot * .4);
 					GameTeam1.getCurrency += tmp;
 					Jackpot -= tmp;
-					msg += " " + tmp ;
+					msg += " " + String.Format("{0:n0}", tmp) ;
 					// increase difficulty if monster
 					if (GameTeam2.isMonster) { GameTeam1.getDifficulty++; }
 					else
 					{
-						// increase score if another team
+						// increase score if another team and score's are within 20%
 						GameTeam1.getScore++;
 						// pay team 2 25%;
 						tmp = (int)(Jackpot * .25);
 						GameTeam2.getCurrency += tmp;
 						Jackpot -= tmp;
-						msg += " (" + tmp + ")";
+						msg += " (" + String.Format("{0:n0}", tmp) + ")";
 					}
 					msg = GameTeam1.getName + " Won against " + GameTeam2.getName + msg;
 				}
@@ -682,7 +683,7 @@ namespace TrainingProject
 						int tmp = (int)(Jackpot * .25);
 						GameTeam1.getCurrency += tmp;
 						Jackpot -= tmp;
-						msg += " (" + tmp +")";
+						msg += " (" + String.Format("{0:n0}", tmp) +")";
 					}
 					else
 					{
@@ -690,17 +691,17 @@ namespace TrainingProject
 						int tmp = (int)(Jackpot * .4);
 						GameTeam2.getCurrency += tmp;
 						Jackpot -= tmp;
-						msg += " " + tmp;
+						msg += " " + String.Format("{0:n0}", tmp);
 						// team lost gets 25%
 						tmp = (int)(Jackpot * .25);
 						GameTeam1.getCurrency += tmp;
 						Jackpot -= tmp;
-						msg += " (" + tmp + ")";
+						msg += " (" + String.Format("{0:n0}", tmp) + ")";
 					}
 					msg = GameTeam2.getName + " Won against " + GameTeam1.getName + msg ;
 				}
 				getGameCurrency += Jackpot;
-				getFightLog = msg + Environment.NewLine + "     Arena made " + Jackpot + " @ " + DateTime.Now.ToString() + Environment.NewLine;
+				getFightLog = msg + Environment.NewLine + "     Arena made " + String.Format("{0:n0}", Jackpot) + " @ " + DateTime.Now.ToString() + Environment.NewLine;
 				Jackpot = 0;
 				MainPanel.Controls.Add(lblWinner);
 				fighting = false;
@@ -720,7 +721,7 @@ namespace TrainingProject
 					// Arena Maintenance
 					MaintCost = RndVal.Next(ArenaLvlMaint);
 					getGameCurrency -= MaintCost;
-					getFightLog = Environment.NewLine + "Arena maintenance cost " + MaintCost + Environment.NewLine;
+					getFightLog = Environment.NewLine + "*** Arena maintenance cost " + MaintCost + Environment.NewLine;
 					break;
 				case 6:
 				case 7:
@@ -728,7 +729,7 @@ namespace TrainingProject
 					// Monster Den Maintenance
 					MaintCost = RndVal.Next(MonsterDenLvlMaint);
 					getGameCurrency -= MaintCost;
-					getFightLog = Environment.NewLine + "Monster den maintenance cost " + MaintCost + Environment.NewLine;
+					getFightLog = Environment.NewLine + "*** Monster den maintenance cost " + MaintCost + Environment.NewLine;
 					break;
 				case 11:
 				case 12:
@@ -736,12 +737,12 @@ namespace TrainingProject
 					// Tax
 					MaintCost = (int)((ArenaLvlMaint* 0.1)+(MonsterDenLvlMaint * 0.1));
 					getGameCurrency -= MaintCost;
-					getFightLog = Environment.NewLine + "Taxes cost " + MaintCost + Environment.NewLine;
+					getFightLog = Environment.NewLine + "*** Taxes cost " + MaintCost + Environment.NewLine;
 					break;
 				case 999:
 					MaintCost += MaxTeams * 1000;
 					getGameCurrency += MaintCost;
-					getFightLog = Environment.NewLine + "Received a sponsor! +" + MaintCost + Environment.NewLine;
+					getFightLog = Environment.NewLine + "*** Received a sponsor! +" + MaintCost + Environment.NewLine;
 					break;
 			}
 		}
@@ -1509,23 +1510,23 @@ namespace TrainingProject
         public override string ToString()
         {
             string tmp = "";
-			tmp += ("*Base Stats*"						+ Environment.NewLine);
-			tmp += ("Level:     " + Level				+ Environment.NewLine);
-			tmp += ("Dexterity: " + Dexterity			+ Environment.NewLine);
+			tmp += ("*Base Stats*" + Environment.NewLine);
+			tmp += ("Level:     " + Level + Environment.NewLine);
+			tmp += ("Dexterity: " + Dexterity + Environment.NewLine);
 			tmp += ("Strength:  " + Strength            + Environment.NewLine);
             tmp += ("Agility:   " + Agility             + Environment.NewLine);
             tmp += ("Tech:      " + Tech              + Environment.NewLine);
 			tmp += ("Accuracy:  " + Accuracy			+ Environment.NewLine);
 			tmp += ("*Elevated Stats*"					+ Environment.NewLine);
-			tmp += ("Health:    " + HP + "/" + Health   + Environment.NewLine);
-            tmp += ("Energy:    " + MP + "/" + Energy   + Environment.NewLine);
-            tmp += ("Armour:    " + Armour              + Environment.NewLine);
-            tmp += ("Damage:    " + Damage              + Environment.NewLine);
-			tmp += ("Hit:       " + Hit					+ Environment.NewLine);
-			tmp += ("Speed:     " + Speed				+ Environment.NewLine);
-			tmp += ("MentalStr: " + MentalStrength      + Environment.NewLine);
-			tmp += ("MentalDef: " + MentalDefense		+ Environment.NewLine);
-			tmp += ("Analysis:  " + getAnalysisLeft() + Environment.NewLine);
+			tmp += ("Health:    " + String.Format("{0:n0}", HP) + "/" + String.Format("{0:n0}", Health)   + Environment.NewLine);
+            tmp += ("Energy:    " + String.Format("{0:n0}", MP) + "/" + String.Format("{0:n0}", Energy)   + Environment.NewLine);
+            tmp += ("Armour:    " + String.Format("{0:n0}", Armour)              + Environment.NewLine);
+            tmp += ("Damage:    " + String.Format("{0:n0}", Damage )             + Environment.NewLine);
+			tmp += ("Hit:       " + String.Format("{0:n0}", Hit)					+ Environment.NewLine);
+			tmp += ("Speed:     " + String.Format("{0:n0}", Speed)				+ Environment.NewLine);
+			tmp += ("MentalStr: " + String.Format("{0:n0}", MentalStrength)      + Environment.NewLine);
+			tmp += ("MentalDef: " + String.Format("{0:n0}", MentalDefense)		+ Environment.NewLine);
+			tmp += ("Analysis:  " + String.Format("{0:n0}", getAnalysisLeft()) + Environment.NewLine);
 			return tmp;
         }
 	}
