@@ -125,7 +125,7 @@ namespace TrainingProject
 		private int ResearchDevMaint;
 		// variables to determine if 
 		private DateTime SedetaryTime;
-		private DateTime BreakTime;
+		public DateTime BreakTime;
 		private bool Sedetary;
 
 		[JsonProperty]
@@ -380,7 +380,7 @@ namespace TrainingProject
 		public void interval(Timer Timer1)
 		{
 			// update sedetary time
-			if (BreakTime < DateTime.Now && !Sedetary)
+			/*if (BreakTime < DateTime.Now && !Sedetary)
 			{
 				Sedetary = true;
 				if (MessageBox.Show("5 Minute Break", "Take a break!", MessageBoxButtons.OK) == System.Windows.Forms.DialogResult.OK)
@@ -398,7 +398,7 @@ namespace TrainingProject
 					SedetaryTime = DateTime.Now.AddMinutes(20);
 					Sedetary = false;
 				}
-			}
+			}*/
 			CurrentInterval++;
 			if (CurrentInterval > MaxInterval)
 			{
@@ -669,7 +669,7 @@ namespace TrainingProject
 				Label lblShopLvl = new Label { AutoSize = true, Text = "Shop:        " + getShopLvl + " (" + String.Format("{0:n0}", getShopLvlCost) + ") stat:" + getShopMaxStat + " Dur: " + String.Format("{0:n0}", getShopMaxDurability) + " Up: " + getShopUpgradeValue };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				Label lblShopStock = new Label { AutoSize = true, Text = "Stock: " + getShopStock + " Cost: " + String.Format("{0:n0}", getShopStockCost) };
+				Label lblShopStock = new Label { AutoSize = true, Text = "Max Stock: " + getShopStock + " Cost: " + String.Format("{0:n0}", getShopStockCost) };
 				pnlEquipment.Controls.Add(lblShopStock);
 				foreach (Equipment eEquipment in storeEquipment)
 				{
@@ -812,18 +812,19 @@ namespace TrainingProject
 			{
 				// Repair
 				if (GameTeams[team].getCurrency > (shopper.getEquipWeapon.ePrice / 2) 
-					&&  shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eDurability * repairPercent)
+					&&  shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent)
 				{
 					shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
 					GameTeams[team].getCurrency -= (shopper.getEquipWeapon.ePrice / 2);
-					getFightLog = Environment.NewLine + "### " + shopper.getName + " Repaired " + shopper.getEquipWeapon.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + shopper.getName + " Repaired -" + String.Format("{0:n0} ", shopper.getEquipWeapon.ePrice / 2)  + shopper.getEquipWeapon.ToString() + Environment.NewLine;
 				}
 				// upgrade
 				if (GameTeams[team].getCurrency > shopper.getEquipWeapon.eUpgradeCost && !SaveCredits)
 				{
-					GameTeams[team].getCurrency -= (shopper.getEquipWeapon.eUpgradeCost);
+					int tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
+					GameTeams[team].getCurrency -= tmpUpgrade;
 					shopper.getEquipWeapon.upgrade(getShopUpgradeValue);
-					getFightLog = Environment.NewLine + "### " + shopper.getName + " Upgraded " + shopper.getEquipWeapon.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + shopper.getName + " Upgraded -" + String.Format("{0:n0} ", tmpUpgrade) + shopper.getEquipWeapon.ToString() + Environment.NewLine;
 				}
 			}
 			else
@@ -838,7 +839,7 @@ namespace TrainingProject
 						getGameCurrency += eEquip.ePrice;
 						shopper.getEquipWeapon = eEquip;
 						storeEquipment.RemoveAt(index);
-						getFightLog = Environment.NewLine + "### " + shopper.getName + " purchased " + eEquip.ToString() + Environment.NewLine;
+						getFightLog = Environment.NewLine + "### " + shopper.getName + " purchased -" + String.Format("{0:n0} ", eEquip.ePrice) + eEquip.ToString() + Environment.NewLine;
 						break;
 					}
 					index++;
@@ -848,18 +849,19 @@ namespace TrainingProject
 			{
 				// Repair 
 				if (GameTeams[team].getCurrency > (shopper.getEquipArmour.ePrice / 2)
-					&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eDurability * repairPercent)
+					&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent)
 				{
 					shopper.getEquipArmour.eDurability = shopper.getEquipArmour.eMaxDurability = (int)(shopper.getEquipArmour.eMaxDurability * .9);
 					GameTeams[team].getCurrency -= (shopper.getEquipArmour.ePrice / 2);
-					getFightLog = Environment.NewLine + "### " + shopper.getName + " Repaired " + shopper.getEquipArmour.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + shopper.getName + " Repaired -" + String.Format("{0:n0} ", shopper.getEquipArmour.ePrice / 2) + shopper.getEquipArmour.ToString() + Environment.NewLine;
 				}
 				// upgrade
 				if (GameTeams[team].getCurrency > shopper.getEquipArmour.eUpgradeCost && !SaveCredits)
 				{
-					GameTeams[team].getCurrency -= (shopper.getEquipArmour.eUpgradeCost);
+					int tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
+					GameTeams[team].getCurrency -= tmpUpgrade;
 					shopper.getEquipArmour.upgrade(getShopUpgradeValue);
-					getFightLog = Environment.NewLine + "### " + shopper.getName + " Upgraded " + shopper.getEquipArmour.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + shopper.getName + " Upgraded -" + String.Format("{0:n0} ", tmpUpgrade) + shopper.getEquipArmour.ToString() + Environment.NewLine;
 				}
 			}
 			else
@@ -874,7 +876,7 @@ namespace TrainingProject
 						getGameCurrency += eEquip.ePrice;
 						shopper.getEquipArmour = eEquip;
 						storeEquipment.RemoveAt(index);
-						getFightLog = Environment.NewLine + "### " + shopper.getName + " purchased " + eEquip.ToString() + Environment.NewLine;
+						getFightLog = Environment.NewLine + "### " + shopper.getName + " purchased -" + String.Format("{0:n0} ", eEquip.ePrice) + eEquip.ToString() + Environment.NewLine;
 						break;
 					}
 					index++;
@@ -915,7 +917,7 @@ namespace TrainingProject
 					getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("{0:n0}", MaintCost )+ Environment.NewLine;
 					break;
 				case 999:
-					MaintCost += MaxTeams * 1000;
+					MaintCost += MaxTeams * getArenaLvl * 1000;
 					getGameCurrency += MaintCost;
 					getFightLog = Environment.NewLine + "*** Received a sponsor! +" + String.Format("{0:n0}", MaintCost) + Environment.NewLine;
 					break;
@@ -1928,6 +1930,7 @@ namespace TrainingProject
 		public void upgrade(int value)
 		{
 			int Type = RndVal.Next(1, 6);
+			value = RndVal.Next(1, value);
 			switch (Type)
 			{
 				case 1:

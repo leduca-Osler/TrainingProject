@@ -170,7 +170,6 @@
 			// 
 			// btnShop
 			// 
-			this.btnShop.BackgroundImage = global::TrainingProject.Properties.Resources.Shop1;
 			this.btnShop.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.btnShop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnShop.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {

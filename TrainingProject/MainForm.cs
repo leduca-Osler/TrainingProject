@@ -366,13 +366,19 @@ namespace TrainingApp
 			{
 				timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
+				if (DateTime.Now > MyGame.BreakTime)
+					btnAutomatic.BackColor = Color.Purple;
+				else
+					btnAutomatic.BackColor = Color.Red;
 			}
 			else
 			{
 				timer1.Enabled = true;
 				btnAutomatic.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
-					MyGame.SafeTime = DateTime.Now.AddSeconds(MyGame.MaxInterval);
+					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
+				if (DateTime.Now > MyGame.BreakTime)
+					MyGame.BreakTime = DateTime.Now.AddMinutes(60);
 			}
 		}
 
