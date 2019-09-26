@@ -53,6 +53,10 @@
 			this.pauseResumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cboRepairPercent = new System.Windows.Forms.ToolStripComboBox();
 			this.cboSaveCredits = new System.Windows.Forms.ToolStripComboBox();
+			this.btnResearchDev = new System.Windows.Forms.ToolStripButton();
+			this.mnuLongBattle = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuLunch = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -65,6 +69,7 @@
             this.btnAddRobo,
             this.btnArenaLvl,
             this.btnMonsterDen,
+            this.btnResearchDev,
             this.btnShop,
             this.toolStripSeparator1,
             this.btnFight,
@@ -98,7 +103,7 @@
 			this.MainPannel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPannel.Location = new System.Drawing.Point(0, 28);
 			this.MainPannel.Name = "MainPannel";
-			this.MainPannel.Size = new System.Drawing.Size(420, 423);
+			this.MainPannel.Size = new System.Drawing.Size(420, 458);
 			this.MainPannel.TabIndex = 2;
 			// 
 			// btnExport
@@ -185,14 +190,14 @@
 			// mnuShopLevelUp
 			// 
 			this.mnuShopLevelUp.Name = "mnuShopLevelUp";
-			this.mnuShopLevelUp.Size = new System.Drawing.Size(152, 22);
+			this.mnuShopLevelUp.Size = new System.Drawing.Size(119, 22);
 			this.mnuShopLevelUp.Text = "Level Up";
 			this.mnuShopLevelUp.Click += new System.EventHandler(this.levelUpToolStripMenuItem_Click);
 			// 
 			// mnuRestockShop
 			// 
 			this.mnuRestockShop.Name = "mnuRestockShop";
-			this.mnuRestockShop.Size = new System.Drawing.Size(152, 22);
+			this.mnuRestockShop.Size = new System.Drawing.Size(119, 22);
 			this.mnuRestockShop.Text = "Restock";
 			this.mnuRestockShop.Click += new System.EventHandler(this.mnuRestockShop_Click);
 			// 
@@ -215,6 +220,9 @@
 			this.btnAutomatic.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuAutobattle,
             this.pauseResumeToolStripMenuItem,
+            this.mnuWork,
+            this.mnuLongBattle,
+            this.mnuLunch,
             this.cboRepairPercent,
             this.cboSaveCredits});
 			this.btnAutomatic.Image = global::TrainingProject.Properties.Resources.Auto;
@@ -283,12 +291,43 @@
 			this.cboSaveCredits.ToolTipText = "Purchase / upgrade equipment";
 			this.cboSaveCredits.SelectedIndexChanged += new System.EventHandler(this.cboSaveCredits_SelectedIndexChanged);
 			// 
+			// btnResearchDev
+			// 
+			this.btnResearchDev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnResearchDev.Image = global::TrainingProject.Properties.Resources.Repair;
+			this.btnResearchDev.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnResearchDev.Name = "btnResearchDev";
+			this.btnResearchDev.Size = new System.Drawing.Size(23, 22);
+			this.btnResearchDev.Text = "Research and Development";
+			this.btnResearchDev.Click += new System.EventHandler(this.btnResearchDev_Click);
+			// 
+			// mnuLongBattle
+			// 
+			this.mnuLongBattle.Name = "mnuLongBattle";
+			this.mnuLongBattle.Size = new System.Drawing.Size(181, 22);
+			this.mnuLongBattle.Text = "Long Battle";
+			this.mnuLongBattle.Click += new System.EventHandler(this.mnuLongBattle_Click);
+			// 
+			// mnuLunch
+			// 
+			this.mnuLunch.Name = "mnuLunch";
+			this.mnuLunch.Size = new System.Drawing.Size(181, 22);
+			this.mnuLunch.Text = "Lunch";
+			this.mnuLunch.Click += new System.EventHandler(this.mnuLunch_Click);
+			// 
+			// mnuWork
+			// 
+			this.mnuWork.Name = "mnuWork";
+			this.mnuWork.Size = new System.Drawing.Size(181, 22);
+			this.mnuWork.Text = "Back to work";
+			this.mnuWork.Click += new System.EventHandler(this.mnuWork_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(421, 452);
+			this.ClientSize = new System.Drawing.Size(421, 498);
 			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.MainPannel);
 			this.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -326,6 +365,10 @@
 		private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
 		private System.Windows.Forms.ToolStripComboBox cboRepairPercent;
 		private System.Windows.Forms.ToolStripComboBox cboSaveCredits;
+		private System.Windows.Forms.ToolStripButton btnResearchDev;
+		private System.Windows.Forms.ToolStripMenuItem mnuLongBattle;
+		private System.Windows.Forms.ToolStripMenuItem mnuLunch;
+		private System.Windows.Forms.ToolStripMenuItem mnuWork;
 	}
 }
 

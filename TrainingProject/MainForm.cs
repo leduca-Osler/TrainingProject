@@ -42,7 +42,7 @@ namespace TrainingApp
 			}
 			cbTeamSelect.SelectedIndex = 0;
 			// select correct repair percentage, and saveCredits values
-			if (MyGame.SaveCredits)
+			if (MyGame.PurchaseUgrade)
 				cboSaveCredits.SelectedItem = "Yes";
 			else
 				cboSaveCredits.SelectedItem = "No";
@@ -85,6 +85,8 @@ namespace TrainingApp
          * *******************/
 		private void timer1_Tick(object sender, EventArgs e)
 		{
+			if (DateTime.Now > MyGame.BreakTime)
+				btnAutomatic.BackColor = Color.Purple;
 			if (MyGame.SafeTime > DateTime.Now)
 			{
 				update();
@@ -105,7 +107,7 @@ namespace TrainingApp
 			Boolean shopLvl = false;
 			Boolean shopRestock = false;
 			Color shopColour = Color.White;
-			Boolean blacksmithLvl = false;
+			Boolean researchLvl = false;
 			if (MyGame.getAvailableTeams > 0 && MyGame.getGameCurrency > MyGame.getTeamCost)
             {
                 addTeam = true;
@@ -134,10 +136,10 @@ namespace TrainingApp
 				shopLvl = true;
 				shopColour = Color.Blue;
 			}
-			/*if (MyGame.getGameCurrency >= MyGame.getBlacksmithLvlCost)
+			if (MyGame.getGameCurrency >= MyGame.getResearchDevLvlCost)
 			{
-				blacksmithLvl = true;
-			}*/
+				researchLvl = true;
+			}
 			btnAddTeam.Enabled = addTeam;
             btnAddRobo.Enabled = addRobo;
 			btnArenaLvl.Enabled = arenaLvl;
@@ -146,6 +148,7 @@ namespace TrainingApp
 			btnShop.BackColor = shopColour;
 			mnuShopLevelUp.Enabled = shopLvl;
 			mnuRestockShop.Enabled = shopRestock;
+			btnResearchDev.Enabled = researchLvl;
 			// if fight is active
 			if (MyGame.isFighting())
             {
@@ -254,41 +257,58 @@ namespace TrainingApp
 				JsonSerializer serializer = new JsonSerializer();
 				JObject json = (JObject)JToken.ReadFrom(new JsonTextReader(file));
 				int jGoalGameScore = json["getGoalGameScore"] != null ? (int)json["getGoalGameScore"] : 20;
-				int jMaxTeams = (int)json["getMaxTeams"];
-				int jTeamCost = (int)json["getTeamCost"];
-				int jGameCurrency = (int)json["getGameCurrency"];
-				int jArenaLvl = (int)json["getArenaLvl"];
-				int jArenaLvlCost = (int)json["getArenaLvlCost"];
-				int jArenaMaint = (int)json["getArenaLvlMaint"];
-				int jMonsterDenLvl = (int)json["getMonsterDenLvl"];
-				int jMonsterDenLvlCost = (int)json["getMonsterDenLvlCost"];
-				int jMonsterDenMaint = (int)json["getMonsterDenLvlMaint"];
-				int jMonsterDenBonus = (int)json["getMonsterDenBonus"];
+				int jMaxTeams = json["getMaxTeams"] != null ? (int)json["getMaxTeams"] : 2;
+				int jTeamCost = json["getTeamCost"] != null ? (int)json["getTeamCost"] : 500;
+				int jGameCurrency = json["getGameCurrency"] != null ? (int)json["getGameCurrency"] : 0;
+				int jArenaLvl = json["getArenaLvl"] != null ? (int)json["getArenaLvl"] : 1;
+				int jArenaLvlCost = json["getArenaLvlCost"] != null ? (int)json["getArenaLvlCost"] : 100;
+				int jArenaMaint = json["getArenaLvlMaint"] != null ? (int)json["getArenaLvlMaint"] : 1;
+				int jMonsterDenLvl = json["getMonsterDenLvl"] != null ? (int)json["getMonsterDenLvl"] : 1;
+				int jMonsterDenLvlCost = json["getMonsterDenLvlCost"] != null ? (int)json["getMonsterDenLvlCost"]: 100;
+				int jMonsterDenMaint = json["getMonsterDenLvlMaint"] != null ? (int)json["getMonsterDenLvlMaint"] : 1;
+				int jMonsterDenBonus = json["getMonsterDenBonus"] != null ? (int)json["getMonsterDenBonus"] : 10;
 				int jShopLvl = json["getShopLvl"] != null ? (int)json["getShopLvl"] : 1;
 				int jShopLvlCost = json["getShopLvlCost"] != null ? (int)json["getShopLvlCost"] : 100;
-				int jShopMaint = json["getShopLvlMaint"] != null ? (int)json["getShopLvlMaint"] : 0;
+				int jShopMaint = json["getShopLvlMaint"] != null ? (int)json["getShopLvlMaint"] : 1;
 				int jShopStock = json["getShopStock"] != null ? (int)json["getShopStock"] : 1;
 				int jShopStockCost = json["getShopStockCost"] != null ? (int)json["getShopStockCost"] : 12;
 				int jShopMaxStat = json["getShopMaxStat"] != null ? (int)json["getShopMaxStat"] : 5;
 				int jShopMaxDur = json["getShopMaxDurability"] != null ? (int)json["getShopMaxDurability"] : 100;
 				int jShopUpValue = json["getShopUpgradeValue"] != null ? (int)json["getShopUpgradeValue"] : 1;
+				int jResearchDevLvl = json["getResearchDevLvl"] != null ? (int)json["getResearchDevLvl"] : 1;
+				int jResearchDevLvlCost = json["getResearchDevLvlCost"] != null ? (int)json["getResearchDevLvlCost"] : 100;
+				int jResearchDevMaint = json["getResearchDevMaint"] != null ? (int)json["getResearchDevMaint"] : 1;
+				int jResearchDevHealValue = json["getResearchDevHealValue"] != null ? (int)json["getResearchDevHealValue"] : 2;
+				int jResearchDevHealCost =  json["getResearchDevHealCost"] != null ? (int)json["getResearchDevHealCost"] : 1;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jMaxTeams, jTeamCost, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaMaint, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenMaint, jMonsterDenBonus,
-					jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue); 
+					jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, jResearchDevLvl, jResearchDevLvlCost, jResearchDevMaint, jResearchDevHealValue,
+					jResearchDevHealCost); 
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					MyGame.Seating.Add(new ArenaSeating((int)json["Seating"][seatingIndex]["Level"], (int)json["Seating"][seatingIndex]["Price"], (int)json["Seating"][seatingIndex]["Amount"]));
 				}
 				for (int StoreStockIndex = 0; StoreStockIndex < json["storeEquipment"].Count(); StoreStockIndex++)
 				{
+					string jStoreEquipType = json["storeEquipment"][StoreStockIndex]["eType"] != null ? (string)json["storeEquipment"][StoreStockIndex]["eType"] : "";
+					string jStoreEquipName = json["storeEquipment"][StoreStockIndex]["eName"] != null ? (string)json["storeEquipment"][StoreStockIndex]["eName"] : "";
+					int jStoreEquipHealth = json["storeEquipment"][StoreStockIndex]["eHealth"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eHealth"] : 0;
+					int jStoreEquipEnergy = json["storeEquipment"][StoreStockIndex]["eEnergy"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eEnergy"] : 0;
+					int jStoreEquipArmour = json["storeEquipment"][StoreStockIndex]["eArmour"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eArmour"] : 0;
+					int jStoreEquipDamage = json["storeEquipment"][StoreStockIndex]["eDamage"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eDamage"] : 0;
+					int jStoreEquipHit = json["storeEquipment"][StoreStockIndex]["eHit"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eHit"] : 0;
+					int jStoreEquipMStr = json["storeEquipment"][StoreStockIndex]["eMentalStrength"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eMentalStrength"] : 0;
+					int jStoreEquipMDef = json["storeEquipment"][StoreStockIndex]["eMentalDefense"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eMentalDefense"] : 0;
+					int jStoreEquipSpeed = json["storeEquipment"][StoreStockIndex]["eSpeed"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eSpeed"] : 0;
+					int jStoreEquipPrice =  json["storeEquipment"][StoreStockIndex]["ePrice"] != null ? (int)json["storeEquipment"][StoreStockIndex]["ePrice"] : 0;
+					int jStoreEquipDur = json["storeEquipment"][StoreStockIndex]["eDurability"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eDurability"] : 0;
+					int jStoreEquipMDur = json["storeEquipment"][StoreStockIndex]["eMaxDurability"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eMaxDurability"] : 0;
+					int jStoreEquipUCost = json["storeEquipment"][StoreStockIndex]["eUpgradeCost"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eUpgradeCost"] : 0;
 					MyGame.storeEquipment.Add(
-						new Equipment((string)json["storeEquipment"][StoreStockIndex]["eType"], (string)json["storeEquipment"][StoreStockIndex]["eName"],
-							   (int)json["storeEquipment"][StoreStockIndex]["eArmour"], (int)json["storeEquipment"][StoreStockIndex]["eDamage"],
-							   (int)json["storeEquipment"][StoreStockIndex]["eHit"], (int)json["storeEquipment"][StoreStockIndex]["eMentalStrength"],
-							   (int)json["storeEquipment"][StoreStockIndex]["eMentalDefense"], (int)json["storeEquipment"][StoreStockIndex]["eSpeed"],
-							   (int)json["storeEquipment"][StoreStockIndex]["ePrice"], (int)json["storeEquipment"][StoreStockIndex]["eDurability"],
-							   (int)json["storeEquipment"][StoreStockIndex]["eMaxDurability"], (int)json["storeEquipment"][StoreStockIndex]["eUpgradeCost"]
-						));
+						new Equipment(jStoreEquipType, jStoreEquipName,jStoreEquipHealth, jStoreEquipEnergy, jStoreEquipArmour, jStoreEquipDamage, 
+							   jStoreEquipHit, jStoreEquipMStr, jStoreEquipMDef, jStoreEquipSpeed, jStoreEquipPrice, jStoreEquipDur,jStoreEquipMDur,
+							   jStoreEquipUCost )
+					);
 				}
 				for (int GameTeamIndex = 0; GameTeamIndex < json["GameTeams"].Count(); GameTeamIndex++)
 				{
@@ -313,24 +333,42 @@ namespace TrainingApp
 						int jWeaonCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"].Count() : 0;
 						if (jWeaonCount > 0)
 						{
-							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipWeapon = new Equipment(
-								(string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eType"], (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eName"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eArmour"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDamage"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHit"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalStrength"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalDefense"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eSpeed"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["ePrice"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDurability"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMaxDurability"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eUpgradeCost"]);
+							string jWeaponType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eType"] : "";
+							string jWeaponName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eName"] : "";
+							int jWeaponHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHealth"] : 0;
+							int jWeaponEnergy = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eEnergy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eEnergy"] : 0;
+							int jWeaponArmour = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eArmour"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eArmour"] : 0;
+							int jWeaponDamage = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDamage"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDamage"] : 0;
+							int jWeaponHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHit"] : 0;
+							int jWeaponMStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalStrength"] : 0;
+							int jWeaponMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalDefense"] : 0;
+							int jWeaponSpeed = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eSpeed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eSpeed"] : 0;
+							int jWeaponPrice = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["ePrice"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["ePrice"] : 0;
+							int jWeaponDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDurability"] : 0;
+							int jWeaponMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMaxDurability"] : 0;
+							int jWeaponUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eUpgradeCost"] : 0;
+							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipWeapon = new Equipment(jWeaponType, jWeaponName, jWeaponHealth, jWeaponEnergy, jWeaponArmour, 
+								jWeaponDamage, jWeaponHit, jWeaponMStr, jWeaponMDef, jWeaponSpeed, jWeaponPrice, jWeaponDur, jWeaponMDur, jWeaponUCost);
 						}
 						int jArmourCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"].Count() : 0;
 						if (jArmourCount > 0)
 						{
-							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipArmour = new Equipment(
-								(string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eType"], (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eName"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eArmour"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDamage"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHit"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalStrength"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalDefense"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eSpeed"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["ePrice"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDurability"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMaxDurability"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eUpgradeCost"]);
+							string jArmourType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eType"] : "";
+							string jArmourName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eName"] : "";
+							int jArmourHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHealth"] : 0;
+							int jArmourEnergy = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eEnergy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eEnergy"] : 0;
+							int jArmourArmour = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eArmour"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eArmour"] : 0;
+							int jArmourDamage = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDamage"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDamage"] : 0;
+							int jArmourHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHit"] : 0;
+							int jArmourMStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalStrength"] : 0;
+							int jArmourMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalDefense"] : 0;
+							int jArmourSpeed = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eSpeed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eSpeed"] : 0;
+							int jArmourPrice = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["ePrice"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["ePrice"] : 0;
+							int jArmourDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDurability"] : 0;
+							int jArmourMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMaxDurability"] : 0;
+							int jArmourUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eUpgradeCost"] : 0;
+							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipArmour = new Equipment(jArmourType, jArmourName, jArmourHealth, jArmourEnergy, jArmourArmour,
+								jArmourDamage, jArmourHit, jArmourMStr, jArmourMDef, jArmourSpeed, jArmourPrice, jArmourDur, jArmourMDur, jArmourUCost);
 						}
 					}
 				}
@@ -366,10 +404,6 @@ namespace TrainingApp
 			{
 				timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
-				if (DateTime.Now > MyGame.BreakTime)
-					btnAutomatic.BackColor = Color.Purple;
-				else
-					btnAutomatic.BackColor = Color.Red;
 			}
 			else
 			{
@@ -378,7 +412,7 @@ namespace TrainingApp
 				if (DateTime.Now > MyGame.SafeTime)
 					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 				if (DateTime.Now > MyGame.BreakTime)
-					MyGame.BreakTime = DateTime.Now.AddMinutes(60);
+					MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 			}
 		}
 
@@ -421,14 +455,36 @@ namespace TrainingApp
 		private void cboSaveCredits_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (cboSaveCredits.Text == "Yes")
-				MyGame.SaveCredits = true;
+				MyGame.PurchaseUgrade = true;
 			else
-				MyGame.SaveCredits = false;
+				MyGame.PurchaseUgrade = false;
 		}
 
 		private void cboRepairPercent_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			MyGame.repairPercent = double.Parse(cboRepairPercent.Text);
+		}
+
+		private void btnResearchDev_Click(object sender, EventArgs e)
+		{
+			MyGame.ResearchDevLevelUp();
+			update();
+		}
+
+		private void mnuLongBattle_Click(object sender, EventArgs e)
+		{
+			Random rnd = new Random();
+			MyGame.SafeTime = DateTime.Now.AddHours(rnd.Next(1,MyGame.getArenaLvl));
+		}
+
+		private void mnuLunch_Click(object sender, EventArgs e)
+		{
+			MyGame.SafeTime = DateTime.Now.AddHours(1);
+		}
+
+		private void mnuWork_Click(object sender, EventArgs e)
+		{
+			MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 		}
 	}
 	public static class BinarySerialization
