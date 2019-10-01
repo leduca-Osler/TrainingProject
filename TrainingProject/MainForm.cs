@@ -474,7 +474,7 @@ namespace TrainingApp
 		private void mnuLongBattle_Click(object sender, EventArgs e)
 		{
 			Random rnd = new Random();
-			MyGame.SafeTime = DateTime.Now.AddHours(rnd.Next(1,MyGame.getArenaLvl));
+			MyGame.SafeTime = DateTime.Now.AddHours(MyGame.getArenaLvl);
 		}
 
 		private void mnuLunch_Click(object sender, EventArgs e)

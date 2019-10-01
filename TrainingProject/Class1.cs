@@ -109,7 +109,9 @@ namespace TrainingProject
 		[JsonProperty]
 		public IList<Equipment> storeEquipment;
 		public Team GameTeam1;
-        public Team GameTeam2;
+		public Team GameTeam2;
+		public int ArenaOpponent1;
+		public int ArenaOpponent2;
 		public int MonsterCount;
 		public int RoboCount;
 		public int CurrentInterval;
@@ -388,6 +390,8 @@ namespace TrainingProject
 			// Timer
 			CurrentInterval = 1000;
 			MaxInterval = 1000;
+			ArenaOpponent1 = 0;
+			ArenaOpponent2 = 0;
 		}
 		public Game(bool isNew)
         {
@@ -430,6 +434,8 @@ namespace TrainingProject
 			// Timer
 			CurrentInterval = 1000;
 			MaxInterval = 1000;
+			ArenaOpponent1 = 0;
+			ArenaOpponent2 = 0;
 		}
 		
 		public void fixTech()
@@ -588,14 +594,18 @@ namespace TrainingProject
 			// 50% chance to fight teams. 
 			if (RndVal.Next(1000) > 500)
 			{
+				if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; }
+				if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
 				// robot fight
-				Team1Index = RndVal.Next(1,GameTeams.Count);
-				Team2Index = RndVal.Next(1,GameTeams.Count);
+				Team1Index = ArenaOpponent1;
+				Team2Index = ArenaOpponent2;
+				ArenaOpponent2++;
 			}
 			else
 			{
 				// monster fight
 				int Team1Score = RndVal.Next(GameTeams[0].getScore);
+				Team1Index = Team2Index = 0;
 				int tmpScore = 0;
 				for (int i = 1; i < GameTeams.Count; i++)
 				{
@@ -1052,15 +1062,31 @@ namespace TrainingProject
 					maxSpeed = eRobot.getCurrentSpeed;
 				}
 			}
-			Attacker.setStrike();
-			Attacker.turnOver();
-			if (team == 2)
+			// if all characters have zero for current speed, reset speed
+			if (maxSpeed == 0)
 			{
-				Attack(Attacker, GameTeam2, GameTeam1);
+				// all characters speed is zero set speed
+				foreach (Robot eRobot in GameTeam1.MyTeam)
+				{
+					eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getSpeed);
+				}
+				foreach (Robot eRobot in GameTeam2.MyTeam)
+				{
+					eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getSpeed);
+				}
 			}
 			else
 			{
-				Attack(Attacker, GameTeam1, GameTeam2);
+				Attacker.setStrike();
+				Attacker.turnOver();
+				if (team == 2)
+				{
+					Attack(Attacker, GameTeam2, GameTeam1);
+				}
+				else
+				{
+					Attack(Attacker, GameTeam1, GameTeam2);
+				}
 			}
 		}
 
@@ -1554,15 +1580,8 @@ namespace TrainingProject
 		}
 		public int getCurrentSpeed
 		{
-			get
-			{
-				int tmp = CurrentSpeed;
-				if (CurrentSpeed <= 0)
-				{
-					CurrentSpeed = RndVal.Next(1,getTSpeed() * 10);
-				}
-				return tmp;
-			}
+			get { return CurrentSpeed; }
+			set { CurrentSpeed = value; }
 		}
 		public int getLevel
 		{

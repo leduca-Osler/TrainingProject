@@ -31,32 +31,32 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.btnExport = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuExport = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuImport = new System.Windows.Forms.ToolStripMenuItem();
+			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
 			this.btnAddRobo = new System.Windows.Forms.ToolStripButton();
 			this.btnArenaLvl = new System.Windows.Forms.ToolStripButton();
 			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
+			this.btnResearchDev = new System.Windows.Forms.ToolStripButton();
 			this.btnShop = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuShopLevelUp = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuRestockShop = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnFight = new System.Windows.Forms.ToolStripButton();
 			this.btnAutomatic = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuAutobattle = new System.Windows.Forms.ToolStripMenuItem();
 			this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pauseResumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.cboRepairPercent = new System.Windows.Forms.ToolStripComboBox();
-			this.cboSaveCredits = new System.Windows.Forms.ToolStripComboBox();
-			this.btnResearchDev = new System.Windows.Forms.ToolStripButton();
+			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLongBattle = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLunch = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
+			this.cboRepairPercent = new System.Windows.Forms.ToolStripComboBox();
+			this.cboSaveCredits = new System.Windows.Forms.ToolStripComboBox();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -79,32 +79,6 @@
 			this.toolStrip1.Size = new System.Drawing.Size(421, 25);
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
-			// 
-			// cbTeamSelect
-			// 
-			this.cbTeamSelect.Name = "cbTeamSelect";
-			this.cbTeamSelect.Size = new System.Drawing.Size(140, 25);
-			this.cbTeamSelect.DropDownClosed += new System.EventHandler(this.cbTeamSelect_Change);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-			// 
-			// timer1
-			// 
-			this.timer1.Enabled = true;
-			this.timer1.Interval = 2000;
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-			// 
-			// MainPannel
-			// 
-			this.MainPannel.AutoSize = true;
-			this.MainPannel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainPannel.Location = new System.Drawing.Point(0, 28);
-			this.MainPannel.Name = "MainPannel";
-			this.MainPannel.Size = new System.Drawing.Size(420, 458);
-			this.MainPannel.TabIndex = 2;
 			// 
 			// btnExport
 			// 
@@ -132,6 +106,12 @@
 			this.mnuImport.Size = new System.Drawing.Size(110, 22);
 			this.mnuImport.Text = "Import";
 			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
+			// 
+			// cbTeamSelect
+			// 
+			this.cbTeamSelect.Name = "cbTeamSelect";
+			this.cbTeamSelect.Size = new System.Drawing.Size(140, 25);
+			this.cbTeamSelect.DropDownClosed += new System.EventHandler(this.cbTeamSelect_Change);
 			// 
 			// btnAddTeam
 			// 
@@ -173,13 +153,26 @@
 			this.btnMonsterDen.Text = "Monster Den";
 			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
 			// 
+			// btnResearchDev
+			// 
+			this.btnResearchDev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnResearchDev.Image = global::TrainingProject.Properties.Resources.Repair;
+			this.btnResearchDev.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnResearchDev.Name = "btnResearchDev";
+			this.btnResearchDev.Size = new System.Drawing.Size(23, 22);
+			this.btnResearchDev.Text = "Research and Development";
+			this.btnResearchDev.Click += new System.EventHandler(this.btnResearchDev_Click);
+			// 
 			// btnShop
 			// 
+			this.btnShop.BackColor = System.Drawing.SystemColors.Control;
+			this.btnShop.BackgroundImage = global::TrainingProject.Properties.Resources.Shop1;
 			this.btnShop.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.btnShop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnShop.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuShopLevelUp,
             this.mnuRestockShop});
+			this.btnShop.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.btnShop.Image = global::TrainingProject.Properties.Resources.Shop1;
 			this.btnShop.ImageTransparentColor = System.Drawing.Color.White;
 			this.btnShop.Name = "btnShop";
@@ -190,16 +183,21 @@
 			// mnuShopLevelUp
 			// 
 			this.mnuShopLevelUp.Name = "mnuShopLevelUp";
-			this.mnuShopLevelUp.Size = new System.Drawing.Size(119, 22);
+			this.mnuShopLevelUp.Size = new System.Drawing.Size(152, 22);
 			this.mnuShopLevelUp.Text = "Level Up";
 			this.mnuShopLevelUp.Click += new System.EventHandler(this.levelUpToolStripMenuItem_Click);
 			// 
 			// mnuRestockShop
 			// 
 			this.mnuRestockShop.Name = "mnuRestockShop";
-			this.mnuRestockShop.Size = new System.Drawing.Size(119, 22);
+			this.mnuRestockShop.Size = new System.Drawing.Size(152, 22);
 			this.mnuRestockShop.Text = "Restock";
 			this.mnuRestockShop.Click += new System.EventHandler(this.mnuRestockShop_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
 			// 
 			// btnFight
 			// 
@@ -263,6 +261,27 @@
 			this.pauseResumeToolStripMenuItem.Text = "Pause / Resume";
 			this.pauseResumeToolStripMenuItem.Click += new System.EventHandler(this.pauseResumeToolStripMenuItem_Click);
 			// 
+			// mnuWork
+			// 
+			this.mnuWork.Name = "mnuWork";
+			this.mnuWork.Size = new System.Drawing.Size(181, 22);
+			this.mnuWork.Text = "Back to work";
+			this.mnuWork.Click += new System.EventHandler(this.mnuWork_Click);
+			// 
+			// mnuLongBattle
+			// 
+			this.mnuLongBattle.Name = "mnuLongBattle";
+			this.mnuLongBattle.Size = new System.Drawing.Size(181, 22);
+			this.mnuLongBattle.Text = "Long Battle";
+			this.mnuLongBattle.Click += new System.EventHandler(this.mnuLongBattle_Click);
+			// 
+			// mnuLunch
+			// 
+			this.mnuLunch.Name = "mnuLunch";
+			this.mnuLunch.Size = new System.Drawing.Size(181, 22);
+			this.mnuLunch.Text = "Lunch";
+			this.mnuLunch.Click += new System.EventHandler(this.mnuLunch_Click);
+			// 
 			// cboRepairPercent
 			// 
 			this.cboRepairPercent.Items.AddRange(new object[] {
@@ -291,36 +310,20 @@
 			this.cboSaveCredits.ToolTipText = "Purchase / upgrade equipment";
 			this.cboSaveCredits.SelectedIndexChanged += new System.EventHandler(this.cboSaveCredits_SelectedIndexChanged);
 			// 
-			// btnResearchDev
+			// timer1
 			// 
-			this.btnResearchDev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnResearchDev.Image = global::TrainingProject.Properties.Resources.Repair;
-			this.btnResearchDev.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnResearchDev.Name = "btnResearchDev";
-			this.btnResearchDev.Size = new System.Drawing.Size(23, 22);
-			this.btnResearchDev.Text = "Research and Development";
-			this.btnResearchDev.Click += new System.EventHandler(this.btnResearchDev_Click);
+			this.timer1.Enabled = true;
+			this.timer1.Interval = 2000;
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			// 
-			// mnuLongBattle
+			// MainPannel
 			// 
-			this.mnuLongBattle.Name = "mnuLongBattle";
-			this.mnuLongBattle.Size = new System.Drawing.Size(181, 22);
-			this.mnuLongBattle.Text = "Long Battle";
-			this.mnuLongBattle.Click += new System.EventHandler(this.mnuLongBattle_Click);
-			// 
-			// mnuLunch
-			// 
-			this.mnuLunch.Name = "mnuLunch";
-			this.mnuLunch.Size = new System.Drawing.Size(181, 22);
-			this.mnuLunch.Text = "Lunch";
-			this.mnuLunch.Click += new System.EventHandler(this.mnuLunch_Click);
-			// 
-			// mnuWork
-			// 
-			this.mnuWork.Name = "mnuWork";
-			this.mnuWork.Size = new System.Drawing.Size(181, 22);
-			this.mnuWork.Text = "Back to work";
-			this.mnuWork.Click += new System.EventHandler(this.mnuWork_Click);
+			this.MainPannel.AutoSize = true;
+			this.MainPannel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.MainPannel.Location = new System.Drawing.Point(0, 28);
+			this.MainPannel.Name = "MainPannel";
+			this.MainPannel.Size = new System.Drawing.Size(420, 458);
+			this.MainPannel.TabIndex = 2;
 			// 
 			// MainForm
 			// 
