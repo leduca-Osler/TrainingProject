@@ -140,6 +140,11 @@ namespace TrainingApp
 			{
 				researchLvl = true;
 			}
+			// check if we have enough money to buy manager time
+			if (MyGame.getGameCurrency >= MyGame.ManagerCost)
+			{
+				btnAutomatic.BackColor = Color.Gold;
+			}
 			btnAddTeam.Enabled = addTeam;
             btnAddRobo.Enabled = addRobo;
 			btnArenaLvl.Enabled = arenaLvl;
@@ -414,6 +419,9 @@ namespace TrainingApp
 				if (DateTime.Now > MyGame.BreakTime)
 					MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 			}
+			Random rnd = new Random();
+			if (MyGame.getGameCurrency < 0 && rnd.Next(1000) > 900)
+				MyGame.ManagerHrs++;
 		}
 
 		private void levelUpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -473,18 +481,34 @@ namespace TrainingApp
 
 		private void mnuLongBattle_Click(object sender, EventArgs e)
 		{
-			Random rnd = new Random();
-			MyGame.SafeTime = DateTime.Now.AddHours(MyGame.getArenaLvl);
+			if (MyGame.ManagerHrs > 0)
+			{
+				MyGame.SafeTime = DateTime.Now.AddHours(MyGame.ManagerHrs);
+				MyGame.ManagerHrs = 0;
+				MyGame.ManagerCost = 100;
+			}
+			update();
 		}
 
 		private void mnuLunch_Click(object sender, EventArgs e)
 		{
-			MyGame.SafeTime = DateTime.Now.AddHours(1);
+			if (MyGame.ManagerHrs > 0)
+			{
+				MyGame.SafeTime = DateTime.Now.AddHours(1);
+				MyGame.ManagerHrs--;
+				MyGame.ManagerCost /= 2;
+			}
+			update();
 		}
 
 		private void mnuWork_Click(object sender, EventArgs e)
 		{
 			MyGame.SafeTime = DateTime.Now.AddMinutes(20);
+		}
+
+		private void btnPurchaseManager_Click(object sender, EventArgs e)
+		{
+			MyGame.AddManagerHours();
 		}
 	}
 	public static class BinarySerialization

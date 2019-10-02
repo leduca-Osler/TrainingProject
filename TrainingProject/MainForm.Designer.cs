@@ -57,6 +57,7 @@
 			this.cboSaveCredits = new System.Windows.Forms.ToolStripComboBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
+			this.btnPurchaseManager = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -217,6 +218,7 @@
 			this.btnAutomatic.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnAutomatic.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuAutobattle,
+            this.btnPurchaseManager,
             this.pauseResumeToolStripMenuItem,
             this.mnuWork,
             this.mnuLongBattle,
@@ -285,15 +287,15 @@
 			// cboRepairPercent
 			// 
 			this.cboRepairPercent.Items.AddRange(new object[] {
-            ".1",
-            ".2",
-            ".3",
-            ".4",
-            ".5",
-            ".6",
-            ".7",
-            ".8",
-            ".9",
+            "0.1",
+            "0.2",
+            "0.3",
+            "0.4",
+            "0.5",
+            "0.6",
+            "0.7",
+            "0.8",
+            "0.9",
             "1"});
 			this.cboRepairPercent.Name = "cboRepairPercent";
 			this.cboRepairPercent.Size = new System.Drawing.Size(121, 23);
@@ -324,6 +326,13 @@
 			this.MainPannel.Name = "MainPannel";
 			this.MainPannel.Size = new System.Drawing.Size(420, 458);
 			this.MainPannel.TabIndex = 2;
+			// 
+			// btnPurchaseManager
+			// 
+			this.btnPurchaseManager.Name = "btnPurchaseManager";
+			this.btnPurchaseManager.Size = new System.Drawing.Size(181, 22);
+			this.btnPurchaseManager.Text = "Purchase Manager";
+			this.btnPurchaseManager.Click += new System.EventHandler(this.btnPurchaseManager_Click);
 			// 
 			// MainForm
 			// 
@@ -372,6 +381,7 @@
 		private System.Windows.Forms.ToolStripMenuItem mnuLongBattle;
 		private System.Windows.Forms.ToolStripMenuItem mnuLunch;
 		private System.Windows.Forms.ToolStripMenuItem mnuWork;
+		private System.Windows.Forms.ToolStripMenuItem btnPurchaseManager;
 	}
 }
 
