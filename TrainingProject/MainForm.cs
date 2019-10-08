@@ -77,6 +77,7 @@ namespace TrainingApp
 			{
 				isShown = false;
 				MyGame.startFight();
+				update();
 			}
 		}
 		/***********************
@@ -87,6 +88,10 @@ namespace TrainingApp
 		{
 			if (DateTime.Now > MyGame.BreakTime)
 				btnAutomatic.BackColor = Color.Purple;
+			else if (MyGame.getGameCurrency >= MyGame.ManagerCost)
+				btnAutomatic.BackColor = Color.Gold;
+			else
+				btnAutomatic.BackColor = Color.White;
 			if (MyGame.SafeTime > DateTime.Now)
 			{
 				update();
@@ -140,11 +145,7 @@ namespace TrainingApp
 			{
 				researchLvl = true;
 			}
-			// check if we have enough money to buy manager time
-			if (MyGame.getGameCurrency >= MyGame.ManagerCost)
-			{
-				btnAutomatic.BackColor = Color.Gold;
-			}
+
 			btnAddTeam.Enabled = addTeam;
             btnAddRobo.Enabled = addRobo;
 			btnArenaLvl.Enabled = arenaLvl;
@@ -154,6 +155,7 @@ namespace TrainingApp
 			mnuShopLevelUp.Enabled = shopLvl;
 			mnuRestockShop.Enabled = shopRestock;
 			btnResearchDev.Enabled = researchLvl;
+			mnuLongBattle.Text = "Long Battle (" + MyGame.ManagerHrs + ")";
 			// if fight is active
 			if (MyGame.isFighting())
             {
@@ -165,12 +167,12 @@ namespace TrainingApp
 						eControl.Dispose();
 					}
 					MainPannel.Controls.Clear();
-					MainPannel.Controls.Add(MyGame.continueFight());
+					MainPannel.Controls.Add(MyGame.continueFight(true));
 					isShown = true;
 				}
 				else
 				{
-					MyGame.continueFight();
+					MyGame.continueFight(false);
 				}
 				if (!MyGame.isFighting())
 					isShown = false;
@@ -187,7 +189,7 @@ namespace TrainingApp
 					btnFight.BackColor = Color.Yellow;
 				}
 				// five percent chance to start a new fight 
-				if (Game.RndVal.Next(100) > 95)
+				if (Game.RndVal.Next(100) > 90)
 				{
 					MyGame.startFight();
 					isShown = false;
