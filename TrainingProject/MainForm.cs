@@ -32,6 +32,7 @@ namespace TrainingApp
 				MyGame = new Game(true);
 			}
 			InitializeComponent();
+			MyGame.MainFormPanel = MainPannel;
 			// set interval
 			MyGame.interval(timer1);
 			// add teams to the drop down list
@@ -252,7 +253,8 @@ namespace TrainingApp
 		}
 		public void WriteJSON()
 		{
-			var JSON = new JavaScriptSerializer().Serialize(MyGame);
+			//var JSON = new JavaScriptSerializer().Serialize(MyGame);
+			var JSON = JsonConvert.SerializeObject(MyGame, Formatting.Indented);
 			System.IO.File.WriteAllText("data\\" + DateTime.Now.ToString("yyyyMMdd") + "_" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "_TrainingProject.JSON", JSON);
 		}
 		public void ReadJSON()
@@ -263,30 +265,30 @@ namespace TrainingApp
 			{
 				JsonSerializer serializer = new JsonSerializer();
 				JObject json = (JObject)JToken.ReadFrom(new JsonTextReader(file));
-				int jGoalGameScore = json["getGoalGameScore"] != null ? (int)json["getGoalGameScore"] : 20;
-				int jMaxTeams = json["getMaxTeams"] != null ? (int)json["getMaxTeams"] : 2;
-				int jTeamCost = json["getTeamCost"] != null ? (int)json["getTeamCost"] : 500;
-				int jGameCurrency = json["getGameCurrency"] != null ? (int)json["getGameCurrency"] : 0;
-				int jArenaLvl = json["getArenaLvl"] != null ? (int)json["getArenaLvl"] : 1;
-				int jArenaLvlCost = json["getArenaLvlCost"] != null ? (int)json["getArenaLvlCost"] : 100;
-				int jArenaMaint = json["getArenaLvlMaint"] != null ? (int)json["getArenaLvlMaint"] : 1;
-				int jMonsterDenLvl = json["getMonsterDenLvl"] != null ? (int)json["getMonsterDenLvl"] : 1;
-				int jMonsterDenLvlCost = json["getMonsterDenLvlCost"] != null ? (int)json["getMonsterDenLvlCost"]: 100;
-				int jMonsterDenMaint = json["getMonsterDenLvlMaint"] != null ? (int)json["getMonsterDenLvlMaint"] : 1;
-				int jMonsterDenBonus = json["getMonsterDenBonus"] != null ? (int)json["getMonsterDenBonus"] : 10;
-				int jShopLvl = json["getShopLvl"] != null ? (int)json["getShopLvl"] : 1;
-				int jShopLvlCost = json["getShopLvlCost"] != null ? (int)json["getShopLvlCost"] : 100;
-				int jShopMaint = json["getShopLvlMaint"] != null ? (int)json["getShopLvlMaint"] : 1;
-				int jShopStock = json["getShopStock"] != null ? (int)json["getShopStock"] : 1;
-				int jShopStockCost = json["getShopStockCost"] != null ? (int)json["getShopStockCost"] : 12;
-				int jShopMaxStat = json["getShopMaxStat"] != null ? (int)json["getShopMaxStat"] : 5;
-				int jShopMaxDur = json["getShopMaxDurability"] != null ? (int)json["getShopMaxDurability"] : 100;
-				int jShopUpValue = json["getShopUpgradeValue"] != null ? (int)json["getShopUpgradeValue"] : 1;
-				int jResearchDevLvl = json["getResearchDevLvl"] != null ? (int)json["getResearchDevLvl"] : 1;
-				int jResearchDevLvlCost = json["getResearchDevLvlCost"] != null ? (int)json["getResearchDevLvlCost"] : 100;
-				int jResearchDevMaint = json["getResearchDevMaint"] != null ? (int)json["getResearchDevMaint"] : 1;
-				int jResearchDevHealValue = json["getResearchDevHealValue"] != null ? (int)json["getResearchDevHealValue"] : 2;
-				int jResearchDevHealCost =  json["getResearchDevHealCost"] != null ? (int)json["getResearchDevHealCost"] : 1;
+				int jGoalGameScore = json["GoalGameScore"] != null ? (int)json["GoalGameScore"] : 20;
+				int jMaxTeams = json["MaxTeams"] != null ? (int)json["MaxTeams"] : 2;
+				int jTeamCost = json["TeamCost"] != null ? (int)json["TeamCost"] : 500;
+				int jGameCurrency = json["GameCurrency"] != null ? (int)json["GameCurrency"] : 0;
+				int jArenaLvl = json["ArenaLvl"] != null ? (int)json["ArenaLvl"] : 1;
+				int jArenaLvlCost = json["ArenaLvlCost"] != null ? (int)json["ArenaLvlCost"] : 100;
+				int jArenaMaint = json["ArenaLvlMaint"] != null ? (int)json["ArenaLvlMaint"] : 1;
+				int jMonsterDenLvl = json["MonsterDenLvl"] != null ? (int)json["MonsterDenLvl"] : 1;
+				int jMonsterDenLvlCost = json["MonsterDenLvlCost"] != null ? (int)json["MonsterDenLvlCost"] : 100;
+				int jMonsterDenMaint = json["MonsterDenLvlMaint"] != null ? (int)json["MonsterDenLvlMaint"] : 1;
+				int jMonsterDenBonus = json["MonsterDenBonus"] != null ? (int)json["MonsterDenBonus"] : 10;
+				int jShopLvl = json["ShopLvl"] != null ? (int)json["ShopLvl"] : 1;
+				int jShopLvlCost = json["ShopLvlCost"] != null ? (int)json["ShopLvlCost"] : 100;
+				int jShopMaint = json["ShopLvlMaint"] != null ? (int)json["ShopLvlMaint"] : 1;
+				int jShopStock = json["ShopStock"] != null ? (int)json["ShopStock"] : 1;
+				int jShopStockCost = json["ShopStockCost"] != null ? (int)json["ShopStockCost"] : 12;
+				int jShopMaxStat = json["ShopMaxStat"] != null ? (int)json["ShopMaxStat"] : 5;
+				int jShopMaxDur = json["ShopMaxDurability"] != null ? (int)json["ShopMaxDurability"] : 100;
+				int jShopUpValue = json["ShopUpgradeValue"] != null ? (int)json["ShopUpgradeValue"] : 1;
+				int jResearchDevLvl = json["ResearchDevLvl"] != null ? (int)json["ResearchDevLvl"] : 1;
+				int jResearchDevLvlCost = json["ResearchDevLvlCost"] != null ? (int)json["ResearchDevLvlCost"] : 100;
+				int jResearchDevMaint = json["ResearchDevMaint"] != null ? (int)json["ResearchDevMaint"] : 1;
+				int jResearchDevHealValue = json["ResearchDevHealValue"] != null ? (int)json["ResearchDevHealValue"] : 2;
+				int jResearchDevHealCost =  json["ResearchDevHealCost"] != null ? (int)json["ResearchDevHealCost"] : 1;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jMaxTeams, jTeamCost, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaMaint, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenMaint, jMonsterDenBonus,
 					jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, jResearchDevLvl, jResearchDevLvlCost, jResearchDevMaint, jResearchDevHealValue,
@@ -320,22 +322,22 @@ namespace TrainingApp
 				for (int GameTeamIndex = 0; GameTeamIndex < json["GameTeams"].Count(); GameTeamIndex++)
 				{
 					MyGame.GameTeams.Add(
-						new Team((int)json["GameTeams"][GameTeamIndex]["getScore"], (int)json["GameTeams"][GameTeamIndex]["getGoalScore"], (int)json["GameTeams"][GameTeamIndex]["getCurrency"], 
-							(int)json["GameTeams"][GameTeamIndex]["getDifficulty"], (int)json["GameTeams"][GameTeamIndex]["getMaxRobos"], (int)json["GameTeams"][GameTeamIndex]["getRoboCost"], 
-							(string)json["GameTeams"][GameTeamIndex]["getName"])
+						new Team( (int)json["GameTeams"][GameTeamIndex]["Score"], (int)json["GameTeams"][GameTeamIndex]["GoalScore"], (int)json["GameTeams"][GameTeamIndex]["Currency"], 
+							(int)json["GameTeams"][GameTeamIndex]["Difficulty"], (int)json["GameTeams"][GameTeamIndex]["MaxRobo"], (int)json["GameTeams"][GameTeamIndex]["RoboCost"], 
+							(string)json["GameTeams"][GameTeamIndex]["TeamName"])
 					);
 					for (int RobotIndex = 0; RobotIndex < json["GameTeams"][GameTeamIndex]["MyTeam"].Count(); RobotIndex++)
 					{
 						MyGame.GameTeams[GameTeamIndex].MyTeam.Add(
-							new Robot((string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getName"],(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getDexterity"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getStrength"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getAgility"], 
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getTech"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getAccuracy"], 
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getHealth"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEnergy"], 
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getArmour"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getDamage"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getHit"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getMentalStrength"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getMentalDefense"], (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getRobotImage"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getSpeed"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getLevel"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getAnalysis"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getCurrentAnalysis"])
+							new Robot((string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RobotName"],(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Dexterity"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Strength"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Agility"], 
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Tech"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Accuracy"], 
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Health"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Energy"], 
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Armour"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Damage"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Hit"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalStrength"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalDefense"], (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Image"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Speed"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Level"],
+								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Analysis"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["CurrentAnalysis"])
 						);
 						int jWeaonCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"].Count() : 0;
 						if (jWeaonCount > 0)
