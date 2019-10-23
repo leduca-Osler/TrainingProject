@@ -42,15 +42,31 @@ namespace TrainingProject
 			"Monster9.png",
 		};
 		[JsonIgnore]
-		public string strike = "Strike.jpg";
+		public static string strike = "Strike.jpg";
 		[JsonIgnore]
-		public string hurt = "Hurt.png";
+		public static string pound = "Strike.jpg";
 		[JsonIgnore]
-		public string KO = "KO.jpg";
+		public static string shrapnel = "Strike.jpg";
 		[JsonIgnore]
-		public string miss = "dodge.png";
+		public static string Electrode = "Strike.jpg";
 		[JsonIgnore]
-		public string blocked = "block.png";
+		public static string Laser = "Strike.jpg";
+		[JsonIgnore]
+		public static string hurt = "Hurt.png";
+		[JsonIgnore]
+		public static string KO = "KO.jpg";
+		[JsonIgnore]
+		public static string miss = "dodge.png";
+		[JsonIgnore]
+		public static string blocked = "block.png";
+		[JsonIgnore]
+		public static Skill[] AllSkills = {
+			new Skill("Attack", "Enemy", 100, "Single attack", strike),
+			new Skill("Pound", "Enemy", 110, "Single attack", pound),
+			new Skill("Shrapnel", "Enemy", 50, "Multiple attack", shrapnel),
+			new Skill("Electrode", "Enemy", 110, "Single tech", Electrode),
+			new Skill("Laser", "Enemy", 50, "Multiple tech", Laser)
+		};
 		[JsonIgnore]
 		public string[] name1 = { "Green", "Blue", "Yellow", "Orange", "Black", "Pink", "Great", "Strong", "Cunning" };
 		[JsonIgnore]
@@ -71,7 +87,6 @@ namespace TrainingProject
 		}
 		public static string ToRoman(int number)
 		{
-			if ((number < 0) || (number > 3999)) throw new ArgumentOutOfRangeException("insert value betwheen 1 and 3999");
 			if (number < 1) return string.Empty;
 			if (number >= 1000) return "M" + ToRoman(number - 1000);
 			if (number >= 900) return "CM" + ToRoman(number - 900);
@@ -146,6 +161,7 @@ namespace TrainingProject
 		public Team MonsterOutbreak;
 		private int findMonster;
 		private int Numeral;
+		private int maxNumeral;
 		public int ArenaOpponent1;
 		public int ArenaOpponent2;
 		public int ManagerHrs;
@@ -362,8 +378,11 @@ namespace TrainingProject
 			get { return Numeral; }
 			set
 			{
-				if (Numeral > 3999)
+				if (Numeral > maxNumeral)
+				{
 					Numeral = 1;
+					maxNumeral++;
+				}
 				else
 					Numeral = value;
 			}
@@ -417,6 +436,7 @@ namespace TrainingProject
 			ArenaOpponent1 = 0;
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
+			maxNumeral = 1000;
 		}
 		public Game(bool isNew)
         {
@@ -465,6 +485,7 @@ namespace TrainingProject
 			ArenaOpponent1 = 0;
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
+			maxNumeral = 1000;
 		}
 		public bool ShouldSerializeMainFormPanel()
 		{
@@ -711,12 +732,14 @@ namespace TrainingProject
                 GameTeam2 = GameTeams[Team2Index];
 				PotScore += GameTeam2.getScore;
 			}
-			PotScore += MonsterDenBonus;
+			PotScore += getMonsterDenBonus;
 			string msg = "     Attendance: " + Environment.NewLine;
 			// Get money for the pot
 			foreach (ArenaSeating eSeating in Seating)
 			{
-				int NumSeats = RndVal.Next(1, PotScore > eSeating.Amount ? eSeating.Amount : PotScore);
+				int min = (getMonsterDenBonus <= eSeating.Amount / 2 ? getMonsterDenBonus : eSeating.Amount / 2);
+				int max = (PotScore > eSeating.Amount ? eSeating.Amount : PotScore);
+				int NumSeats = RndVal.Next(min, max);
 				msg += "        Level " + eSeating.Level + " " + NumSeats + " seats " + Environment.NewLine;
 				Jackpot += eSeating.Price * NumSeats;
 			}
@@ -766,6 +789,8 @@ namespace TrainingProject
 		public FlowLayoutPanel showHeader()
 		{
 			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+			Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
+			HeaderPanel.Controls.Add(lblBlank);
 			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 200, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
 			Label lblTime = new Label { AutoSize = true, Text = "Time:  " + DateTime.Now.ToString("HH:mm") + " (" + SafeTime.ToString("HH:mm") + ") (" + BreakTime.ToString("HH:mm") + ")" };
@@ -857,7 +882,7 @@ namespace TrainingProject
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-			Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + MonsterOutbreak.getName };
+			Label lblTeamName = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine + "Team Name:  " + MonsterOutbreak.getName };
 			Label lblRobots = new Label { AutoSize = true, Text =   "Monsters:   " + MonsterOutbreak.MyTeam.Count };
 			MainPanel.Controls.Add(lblTeamName);
 			MainPanel.Controls.Add(lblRobots);
@@ -960,16 +985,17 @@ namespace TrainingProject
 					Label lblWinner = new Label { AutoSize = true };
 					if (GameTeam1.getNumRobos() > 0)
 					{
-						lblWinner.Text = getFightLog = "Arena suppressed the Monster outbreak @ " + DateTime.Now.ToString() + Environment.NewLine;
+						findMonster++;
+						lblWinner.Text = getFightLog = "Arena suppressed the Monster outbreak" + String.Format("({1})", findMonster) + " @ " + DateTime.Now.ToString() + Environment.NewLine;
 						// Reset MonsterOutbreak
 						MonsterOutbreak.MyTeam = new List<Robot> { new Robot(1, "Monster", 1, true) };
 						// more new monsters
-						findMonster--;
 					}
 					else
 					{
+						findMonster--;
 						getGameCurrency -= Jackpot;
-						lblWinner.Text = getFightLog = "Arena suffered damages from Monster outbreak -" + String.Format("{0:n0}", Jackpot) + " @ " + DateTime.Now.ToString() + Environment.NewLine;
+						lblWinner.Text = getFightLog = "Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1})", Jackpot, findMonster) + " @ " + DateTime.Now.ToString() + Environment.NewLine;
 						for (int i = 0; i < MonsterOutbreak.MyTeam.Count; i++)
 						{
 							if (MonsterOutbreak.MyTeam[i].HP == 0)
@@ -978,7 +1004,6 @@ namespace TrainingProject
 							}
 						}
 						// fewer new monsters
-						findMonster++;
 					}
 					Jackpot = 0;
 					MainPanel.Controls.Add(lblWinner);
@@ -1074,9 +1099,10 @@ namespace TrainingProject
 				if (GameTeams[team].getCurrency > (shopper.getEquipWeapon.ePrice / 10) 
 					&&  shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent)
 				{
+					int orig = shopper.getEquipWeapon.eDurability;
 					shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
 					GameTeams[team].getCurrency -= (shopper.getEquipWeapon.ePrice / 10);
-					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipWeapon.ePrice / 10, shopper.getEquipWeapon.eName)  + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipWeapon.ePrice / 10, shopper.getEquipWeapon.eName)  + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString(orig) + Environment.NewLine;
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
 				}
 				// upgrade
@@ -1114,9 +1140,10 @@ namespace TrainingProject
 				if (GameTeams[team].getCurrency > (shopper.getEquipArmour.ePrice / 10)
 					&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent)
 				{
+					int orig = shopper.getEquipArmour.eDurability;
 					shopper.getEquipArmour.eDurability = shopper.getEquipArmour.eMaxDurability = (int)(shopper.getEquipArmour.eMaxDurability * .9);
 					GameTeams[team].getCurrency -= (shopper.getEquipArmour.ePrice / 10);
-					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipArmour.ePrice / 10, shopper.getEquipArmour.eName) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipArmour.ePrice / 10, shopper.getEquipArmour.eName) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString(orig) + Environment.NewLine;
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName ;
 				}
 				// upgrade
@@ -1203,12 +1230,14 @@ namespace TrainingProject
 					MaintCost = (int)(RndVal.Next(ArenaLvlMaint) + RndVal.Next(MonsterDenLvlMaint) + RndVal.Next(ShopLvlMaint) + RndVal.Next(ResearchDevMaint));
 					startMonsterOutbreak(MaintCost);
 					break;
+				case 95:
+				case 96:
 				case 97:
 				case 98:
 					if (ShopStock > storeEquipment.Count && getGameCurrency <= 0)
 					{
 						getFightLog = Environment.NewLine + "!!! Free stock " + Environment.NewLine;
-						storeEquipment.Add(new Equipment(AddArmour(), 5, 100,RndVal));
+						storeEquipment.Add(new Equipment(AddArmour(), RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal));
 					}
 					break;
 				case 99:
@@ -1271,7 +1300,6 @@ namespace TrainingProject
 			}
 			else
 			{
-				Attacker.setStrike();
 				Attacker.turnOver();
 				if (team == 2)
 				{
@@ -1287,12 +1315,13 @@ namespace TrainingProject
         public void Attack(Robot attacker, Team attackers, Team defenders)
         {
 			Robot defender = new Robot(1, "test", 1, false);
+			Skill currSkill = new Skill();
 			// Loop through attackers strategies
 			foreach (Strategy currStrategy in  attacker.RoboStrategy)
 			{
 				if (currStrategy.StrategicSkill.target == "Enemy")
 				{
-					if (currStrategy.StrategicSkill.type == "Single attack")
+					if (currStrategy.StrategicSkill.type == "Single attack" || currStrategy.StrategicSkill.type == "Single tech")
 					{
 						// check if conditions are met to use skill
 						switch (currStrategy.FieldCondition)
@@ -1302,42 +1331,8 @@ namespace TrainingProject
 								{
 									if (defenders.getNumRobos() > currStrategy.ConditionValue)
 									{
-										// loop through defenders
-										foreach (Robot eDefender in defenders.MyTeam)
-										{
-											// decide which one is being attacked
-											switch (currStrategy.Field)
-											{
-												case "HP":
-													if (currStrategy.Focus == "Lowest")
-													{
-														if (defender.HP > eDefender.HP || defender.getName == "test")
-														{
-															if (eDefender.HP > 0)
-																defender = eDefender;
-														}
-													}
-													if (currStrategy.Focus == "Highest")
-													{
-														if (defender.HP < eDefender.HP || defender.getName == "test")
-														{
-															if (eDefender.HP > 0)
-																defender = eDefender;
-														}
-													}
-													break;
-												case "Level":
-													if (currStrategy.Focus == "Current")
-													{
-														if ((eDefender.getLevel >= attacker.getLevel && (eDefender.getLevel < defender.getLevel || defender.getLevel < attacker.getLevel)) || defender.getName == "test")
-														{
-															if (eDefender.HP > 0)
-																defender = eDefender;
-														}
-													}
-													break;
-											}
-										}
+										defender = getDefender(attacker, defenders, currStrategy);
+										currSkill = currStrategy.StrategicSkill;
 									}
 								}
 								break;
@@ -1345,7 +1340,8 @@ namespace TrainingProject
 					}
 				}
 			}
-			defender.damage(attacker);
+			attacker.setStrike(currSkill);
+			defender.damage(attacker, currSkill);
 			if (defender.RobotLog.Length > 0)
 			{
 				defenders.getTeamLog = defender.RobotLog;
@@ -1356,6 +1352,53 @@ namespace TrainingProject
 				attackers.getTeamLog = attacker.RobotLog;
 				attacker.RobotLog = "";
 			}
+		}
+		public Robot getDefender(Robot attacker, Team defenders, Strategy currStrategy)
+		{
+			Robot defender = new Robot(1, "test", 1, false);
+			// loop through defenders
+			foreach (Robot eDefender in defenders.MyTeam)
+			{
+				// decide which one is being attacked
+				switch (currStrategy.Field)
+				{
+					case "HP":
+						if (currStrategy.Focus == "Lowest")
+						{
+							if (defender.HP > eDefender.HP || defender.getName == "test")
+							{
+								if (eDefender.HP > 0)
+								{
+									defender = eDefender;
+								}
+							}
+						}
+						if (currStrategy.Focus == "Highest")
+						{
+							if (defender.HP < eDefender.HP || defender.getName == "test")
+							{
+								if (eDefender.HP > 0)
+								{
+									defender = eDefender;
+								}
+							}
+						}
+						break;
+					case "Level":
+						if (currStrategy.Focus == "Current")
+						{
+							if ((eDefender.getLevel >= attacker.getLevel && (eDefender.getLevel < defender.getLevel || defender.getLevel < attacker.getLevel)) || defender.getName == "test")
+							{
+								if (eDefender.HP > 0)
+								{
+									defender = eDefender;
+								}
+							}
+						}
+						break;
+				}
+			}
+			return defender;
 		}
 	}
 	[Serializable]
@@ -1663,7 +1706,7 @@ namespace TrainingProject
 	class Robot : Common, IComparable<Robot>
 	{
 		public Skill[] ListSkills = {
-			new Skill("Attack", "Enemy", 1, "Single attack")
+			AllSkills[0]
 		};
 		public IList<Strategy> RoboStrategy;
 		[JsonProperty]
@@ -1719,7 +1762,6 @@ namespace TrainingProject
 		public string RobotLog;
 		public bool bStrike = false;
 		public bool bHurt = false;
-		public bool bKOd = false;
 		public bool bMissed = false;
 		public bool bBlocked = false;
 		public bool bMonster = false;
@@ -1828,7 +1870,6 @@ namespace TrainingProject
 				{
 					getKO++;
 					tmp = KO;
-					bKOd = true;
 				}
 				else if (tmpImage.Length > 0)
 				{
@@ -1930,7 +1971,7 @@ namespace TrainingProject
 		{
 			int RandomValue = 0;
 			getName = strName;
-			Analysis = 90;
+			Analysis = 95;
 			CurrentAnalysis = 0;
 			Level = 0;
 			message = "";
@@ -2066,18 +2107,24 @@ namespace TrainingProject
 		public string getRoboStats(int PadRight)
 		{
 			string strMarker = "";
+			string strStats = "";
 			if (bStrike)
 				strMarker += "*";
 			if (bHurt)
 				strMarker += "#";
 			else if (bMissed || bBlocked)
 				strMarker += "!";
-			if (bKOd )
+			if (HP == 0)
+			{
 				strMarker += "-";
-			bMissed = bBlocked = bHurt = bStrike = bKOd = false;
-			string strStats = Environment.NewLine + strMarker.PadLeft(3) + getName.PadRight(PadRight) + " L:" + getLevel.ToString().PadLeft(2) + " (" + LevelLog + ")";
-			strStats += " A:" + String.Format("{0:n0}", getAnalysisLeft()).PadLeft(3) + " (" + String.Format("{0:n0}", AnalysisLog).PadLeft(3) + ")";
-			strStats += " HP:" + String.Format("{0:n0}", HP).PadLeft(3);
+				getKO++;
+			}
+			if (rebuildCost() > 100)
+				strMarker += "^";
+			bMissed = bBlocked = bHurt = bStrike = false;
+			if (getKO <= 3)
+				strStats = Environment.NewLine + strMarker.PadLeft(3) + getName.PadRight(PadRight) + " L:" + getLevel.ToString().PadLeft(2) + " (" + LevelLog + ") A:" + String.Format("{0:n0}", getAnalysisLeft()).PadLeft(3) + 
+					" (" + String.Format("{0:n0}", AnalysisLog).PadLeft(3) + ") HP:" + String.Format("{0:n0}", HP).PadLeft(3) + " " + message;
 			return strStats;
 		}
 		public int rebuildCost()
@@ -2091,9 +2138,9 @@ namespace TrainingProject
 			return cost;
 		}
 		
-        public void setStrike()
+        public void setStrike(Skill usedSkill)
         {
-            tmpImage = strike;
+            tmpImage = usedSkill.img;
 			bStrike = true;
 		}
 		public void setHurt()
@@ -2131,7 +2178,8 @@ namespace TrainingProject
 		{
 			LevelLog++;
 			Level++;
-			Analysis += RndVal.Next(10);
+			Analysis += 5;
+			AnalysisLog = 0;
 			CurrentAnalysis = 0;
 			Health += Dexterity + Strength + Agility;
 			Energy += Tech + Accuracy;
@@ -2144,55 +2192,68 @@ namespace TrainingProject
 			RobotLog = Environment.NewLine + getName + " reached level " + getLevel; 
 		}
 
-		public void damage(Robot attacker)
+		public void damage(Robot attacker, Skill currSkill)
 		{
-			// If agility greater than hit attacker missed
-			if (RndVal.Next(getTSpeed()) > RndVal.Next(attacker.getTHit()))
+			if (currSkill.type.Equals("Single attack"))
 			{
-				setMiss();
-			}
-			// if armour greater than strength attack is blocked
-			else if (RndVal.Next(getTArmour()) > RndVal.Next(attacker.getTHit()))
-			{
-				setBlock();
-			}
-			// damaged
-			else
-			{
-				setHurt();
-				int dmg = RndVal.Next(1, attacker.getTDamage());
-				HP -= dmg;
-				message = dmg.ToString() + " dmg!";
-				if (EquipArmour != null)
+				bool critical = RndVal.Next(100) > 95;
+				// If agility greater than hit attacker missed
+				if (RndVal.Next(getTSpeed()) > RndVal.Next(attacker.getTHit()) && !critical)
 				{
-					EquipArmour.eDurability--;
-					if (EquipArmour.eDurability == 0)
+					setMiss();
+				}
+				// if armour greater than strength attack is blocked
+				else if (RndVal.Next(getTArmour()) > RndVal.Next(attacker.getTHit()) && !critical)
+				{
+					setBlock();
+				}
+				// damaged
+				else
+				{
+					setHurt();
+					if (critical)
 					{
-						message += Environment.NewLine + EquipArmour.eName + " broke!";
-						RobotLog = Environment.NewLine + getName + " " + EquipArmour.eName + " broke!";
-						EquipArmour = null;
+						int dmg = attacker.getTDamage();
+						HP -= dmg;
+						message = "Crit " + dmg.ToString();
 					}
-				}
-				if (attacker.EquipWeapon != null)
-				{
-					attacker.EquipWeapon.eDurability--;
-					if (attacker.EquipWeapon.eDurability == 0)
+					else
 					{
-						attacker.message += attacker.EquipWeapon.eName + " broke!";
-						attacker.RobotLog = Environment.NewLine + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
-						attacker.EquipWeapon = null;
+						int dmg = RndVal.Next(1, attacker.getTDamage());
+						HP -= dmg;
+						message = dmg.ToString() + " dmg!";
 					}
-				}
-				// get experience if attackers level is not higher
-				if (attacker.getLevel <= getLevel)
-				{
-					attacker.getCurrentAnalysis += getLevel - attacker.getLevel + 1;
-					if (HP == 0) { attacker.getCurrentAnalysis += 10; }
-				}
-				// if attacker is higher level, get less exp
-				else if (RndVal.Next(100) > 80)
-				{
-					attacker.getCurrentAnalysis++;
+					if (EquipArmour != null)
+					{
+						EquipArmour.eDurability--;
+						if (EquipArmour.eDurability == 0)
+						{
+							message += Environment.NewLine + EquipArmour.eName + " broke!";
+							RobotLog = Environment.NewLine + getName + " " + EquipArmour.eName + " broke!";
+							EquipArmour = null;
+						}
+					}
+					if (attacker.EquipWeapon != null)
+					{
+						attacker.EquipWeapon.eDurability--;
+						if (attacker.EquipWeapon.eDurability == 0)
+						{
+							attacker.message += attacker.EquipWeapon.eName + " broke!";
+							attacker.RobotLog = Environment.NewLine + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
+							attacker.EquipWeapon = null;
+						}
+					}
+					// get experience if attackers level is not higher
+					if (attacker.getLevel <= getLevel)
+					{
+						attacker.getCurrentAnalysis += getLevel - attacker.getLevel + 1;
+						if (HP == 0) { attacker.getCurrentAnalysis += 10; }
+					}
+					// if attacker is higher level, get less exp
+					else if (RndVal.Next(100) > 80)
+					{
+						attacker.getCurrentAnalysis++;
+					}
 				}
 			}
 		}
@@ -2270,16 +2331,18 @@ namespace TrainingProject
         public string name;
         public string target; // Enemy or Ally
         public int strength; // int representing amount of damage / healing 
-        public string type; // healing single, healing multiple, damage single, or damage multiple
+        public string type; // damage single, or damage multiple
 		public int cost; // energy cost
+		public string img;
 		public Skill() { }
-        public Skill(string skillName, string skillTarget, int skillStrength, string skilltype)
+        public Skill(string skillName, string skillTarget, int skillStrength, string skilltype, string image)
         {
             name = skillName;
             target = skillTarget;
             strength = skillStrength;
             type = skilltype;
 			cost = 0;
+			img = image;
         }
 	}
 	[Serializable]
@@ -2325,19 +2388,33 @@ namespace TrainingProject
 	[JsonObject(MemberSerialization.OptIn)]
 	class Equipment
 	{
+		[JsonProperty]
 		public string eType = "";
+		[JsonProperty]
 		public string eName = "";
+		[JsonProperty]
 		public int eHealth = 0;
+		[JsonProperty]
 		public int eEnergy = 0;
+		[JsonProperty]
 		public int eArmour = 0;
+		[JsonProperty]
 		public int eDamage = 0;
+		[JsonProperty]
 		public int eHit = 0;
+		[JsonProperty]
 		public int eMentalStrength = 0;
+		[JsonProperty]
 		public int eMentalDefense = 0;
+		[JsonProperty]
 		public int eSpeed = 0;
+		[JsonProperty]
 		public int ePrice = 0;
+		[JsonProperty]
 		public int eDurability = 0;
+		[JsonProperty]
 		public int eMaxDurability = 0;
+		[JsonProperty]
 		public int eUpgradeCost = 0;
 		public Equipment(bool addWeapon, int value, int durability, Random RndVal)
 		{
@@ -2442,10 +2519,13 @@ namespace TrainingProject
 			}
 			eUpgradeCost += RndVal.Next(1, eUpgradeCost);
 		}
-		public override string ToString()
+		public string ToString(int originalDur = 0)
 		{
 			string retval = eName.PadRight(12);
-			retval += " Dur:" + eDurability;
+			if (originalDur > 0)
+				retval += String.Format(" Dur: {0:n0}->{1:n0}", originalDur, eDurability);
+			else
+				retval += String.Format(" Dur: {0:n0}", eDurability);
 			if (eHealth > 0)			{ retval += " Hea+" + eHealth;			}
 			if (eEnergy > 0)			{ retval += " Enr+" + eEnergy;			}
 			if (eDamage > 0)			{ retval += " dam+" + eDamage;			}

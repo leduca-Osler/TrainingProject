@@ -18,7 +18,8 @@ namespace TrainingApp
 	public partial class MainForm : Form
 	{
 		private Game MyGame;
-		private bool isShown;
+		private int shownCount;
+		private int maxCount = 1000;
 		public MainForm()
 		{
 			try
@@ -58,7 +59,7 @@ namespace TrainingApp
 			}
 			MainPannel.Controls.Clear();
 			MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex));
-			isShown = true;
+			shownCount = maxCount;
 		}
         private void btnAddTeam_Click(object sender, EventArgs e)
         {
@@ -76,7 +77,7 @@ namespace TrainingApp
 		{
 			if (!MyGame.isFighting())
 			{
-				isShown = false;
+				shownCount = maxCount;
 				MyGame.startFight();
 				update();
 			}
@@ -161,22 +162,23 @@ namespace TrainingApp
 			if (MyGame.isFighting())
             {
 				btnFight.BackColor = Color.Red;
-				if (!isShown || Game.RndVal.Next(100) > 90 || !MyGame.isAuto())
+				if (shownCount++ > (MyGame.GameTeam1.getNumRobos() + MyGame.GameTeam2.getNumRobos()) / 2 || !MyGame.isAuto())
 				{
+					MessageBox.Show(shownCount.ToString());
 					foreach (Control eControl in MainPannel.Controls)
 					{
 						eControl.Dispose();
 					}
 					MainPannel.Controls.Clear();
 					MainPannel.Controls.Add(MyGame.continueFight(true));
-					isShown = true;
+					shownCount = 0;
 				}
 				else
 				{
 					MyGame.continueFight(false);
 				}
 				if (!MyGame.isFighting())
-					isShown = false;
+					shownCount = maxCount;
 			}
 			else
 			{
@@ -193,12 +195,12 @@ namespace TrainingApp
 				if (Game.RndVal.Next(100) > 90)
 				{
 					MyGame.startFight();
-					isShown = false;
+					shownCount = maxCount;
 				}
 				else
 				{
 					MyGame.equip();
-					if (!isShown || Game.RndVal.Next(100) > 90)
+					if (shownCount++ > 5)
 					{
 						foreach (Control eControl in MainPannel.Controls)
 						{
@@ -206,7 +208,7 @@ namespace TrainingApp
 						}
 						MainPannel.Controls.Clear();
 						MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex));
-						isShown = true;
+						shownCount = 0;
 					}
 				}
 			}
@@ -339,43 +341,43 @@ namespace TrainingApp
 								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Speed"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Level"],
 								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Analysis"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["CurrentAnalysis"])
 						);
-						int jWeaonCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"].Count() : 0;
+						int jWeaonCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"].Count() : 0;
 						if (jWeaonCount > 0)
 						{
-							string jWeaponType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eType"] : "";
-							string jWeaponName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eName"] : "";
-							int jWeaponHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHealth"] : 0;
-							int jWeaponEnergy = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eEnergy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eEnergy"] : 0;
-							int jWeaponArmour = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eArmour"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eArmour"] : 0;
-							int jWeaponDamage = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDamage"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDamage"] : 0;
-							int jWeaponHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eHit"] : 0;
-							int jWeaponMStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalStrength"] : 0;
-							int jWeaponMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMentalDefense"] : 0;
-							int jWeaponSpeed = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eSpeed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eSpeed"] : 0;
-							int jWeaponPrice = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["ePrice"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["ePrice"] : 0;
-							int jWeaponDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eDurability"] : 0;
-							int jWeaponMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eMaxDurability"] : 0;
-							int jWeaponUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipWeapon"]["eUpgradeCost"] : 0;
+							string jWeaponType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eType"] : "";
+							string jWeaponName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eName"] : "";
+							int jWeaponHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eHealth"] : 0;
+							int jWeaponEnergy = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eEnergy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eEnergy"] : 0;
+							int jWeaponArmour = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eArmour"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eArmour"] : 0;
+							int jWeaponDamage = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eDamage"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eDamage"] : 0;
+							int jWeaponHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eHit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eHit"] : 0;
+							int jWeaponMStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMentalStrength"] : 0;
+							int jWeaponMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMentalDefense"] : 0;
+							int jWeaponSpeed = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eSpeed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eSpeed"] : 0;
+							int jWeaponPrice = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["ePrice"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["ePrice"] : 0;
+							int jWeaponDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eDurability"] : 0;
+							int jWeaponMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMaxDurability"] : 0;
+							int jWeaponUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eUpgradeCost"] : 0;
 							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipWeapon = new Equipment(jWeaponType, jWeaponName, jWeaponHealth, jWeaponEnergy, jWeaponArmour, 
 								jWeaponDamage, jWeaponHit, jWeaponMStr, jWeaponMDef, jWeaponSpeed, jWeaponPrice, jWeaponDur, jWeaponMDur, jWeaponUCost);
 						}
-						int jArmourCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"].Count() : 0;
+						int jArmourCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"].Count() : 0;
 						if (jArmourCount > 0)
 						{
-							string jArmourType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eType"] : "";
-							string jArmourName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eName"] : "";
-							int jArmourHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHealth"] : 0;
-							int jArmourEnergy = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eEnergy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eEnergy"] : 0;
-							int jArmourArmour = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eArmour"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eArmour"] : 0;
-							int jArmourDamage = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDamage"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDamage"] : 0;
-							int jArmourHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eHit"] : 0;
-							int jArmourMStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalStrength"] : 0;
-							int jArmourMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMentalDefense"] : 0;
-							int jArmourSpeed = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eSpeed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eSpeed"] : 0;
-							int jArmourPrice = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["ePrice"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["ePrice"] : 0;
-							int jArmourDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eDurability"] : 0;
-							int jArmourMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eMaxDurability"] : 0;
-							int jArmourUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["getEquipArmour"]["eUpgradeCost"] : 0;
+							string jArmourType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eType"] : "";
+							string jArmourName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eName"] : "";
+							int jArmourHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eHealth"] : 0;
+							int jArmourEnergy = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eEnergy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eEnergy"] : 0;
+							int jArmourArmour = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eArmour"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eArmour"] : 0;
+							int jArmourDamage = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eDamage"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eDamage"] : 0;
+							int jArmourHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eHit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eHit"] : 0;
+							int jArmourMStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMentalStrength"] : 0;
+							int jArmourMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMentalDefense"] : 0;
+							int jArmourSpeed = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eSpeed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eSpeed"] : 0;
+							int jArmourPrice = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["ePrice"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["ePrice"] : 0;
+							int jArmourDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eDurability"] : 0;
+							int jArmourMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMaxDurability"] : 0;
+							int jArmourUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eUpgradeCost"] : 0;
 							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipArmour = new Equipment(jArmourType, jArmourName, jArmourHealth, jArmourEnergy, jArmourArmour,
 								jArmourDamage, jArmourHit, jArmourMStr, jArmourMDef, jArmourSpeed, jArmourPrice, jArmourDur, jArmourMDur, jArmourUCost);
 						}

@@ -49,6 +49,7 @@
 			this.mnuAutobattle = new System.Windows.Forms.ToolStripMenuItem();
 			this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.btnPurchaseManager = new System.Windows.Forms.ToolStripMenuItem();
 			this.pauseResumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLongBattle = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,7 +58,6 @@
 			this.cboSaveCredits = new System.Windows.Forms.ToolStripComboBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
-			this.btnPurchaseManager = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -184,14 +184,14 @@
 			// mnuShopLevelUp
 			// 
 			this.mnuShopLevelUp.Name = "mnuShopLevelUp";
-			this.mnuShopLevelUp.Size = new System.Drawing.Size(152, 22);
+			this.mnuShopLevelUp.Size = new System.Drawing.Size(119, 22);
 			this.mnuShopLevelUp.Text = "Level Up";
 			this.mnuShopLevelUp.Click += new System.EventHandler(this.levelUpToolStripMenuItem_Click);
 			// 
 			// mnuRestockShop
 			// 
 			this.mnuRestockShop.Name = "mnuRestockShop";
-			this.mnuRestockShop.Size = new System.Drawing.Size(152, 22);
+			this.mnuRestockShop.Size = new System.Drawing.Size(119, 22);
 			this.mnuRestockShop.Text = "Restock";
 			this.mnuRestockShop.Click += new System.EventHandler(this.mnuRestockShop_Click);
 			// 
@@ -255,6 +255,13 @@
 			this.showToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
 			this.showToolStripMenuItem.Text = "Show";
 			this.showToolStripMenuItem.Click += new System.EventHandler(this.mnuShowStats_Click);
+			// 
+			// btnPurchaseManager
+			// 
+			this.btnPurchaseManager.Name = "btnPurchaseManager";
+			this.btnPurchaseManager.Size = new System.Drawing.Size(181, 22);
+			this.btnPurchaseManager.Text = "Purchase Manager";
+			this.btnPurchaseManager.Click += new System.EventHandler(this.btnPurchaseManager_Click);
 			// 
 			// pauseResumeToolStripMenuItem
 			// 
@@ -320,19 +327,14 @@
 			// 
 			// MainPannel
 			// 
-			this.MainPannel.AutoSize = true;
+			this.MainPannel.AutoScroll = true;
+			this.MainPannel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPannel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainPannel.Location = new System.Drawing.Point(0, 28);
+			this.MainPannel.Location = new System.Drawing.Point(0, 0);
 			this.MainPannel.Name = "MainPannel";
-			this.MainPannel.Size = new System.Drawing.Size(420, 458);
+			this.MainPannel.Size = new System.Drawing.Size(421, 498);
 			this.MainPannel.TabIndex = 2;
-			// 
-			// btnPurchaseManager
-			// 
-			this.btnPurchaseManager.Name = "btnPurchaseManager";
-			this.btnPurchaseManager.Size = new System.Drawing.Size(181, 22);
-			this.btnPurchaseManager.Text = "Purchase Manager";
-			this.btnPurchaseManager.Click += new System.EventHandler(this.btnPurchaseManager_Click);
+			this.MainPannel.WrapContents = false;
 			// 
 			// MainForm
 			// 
