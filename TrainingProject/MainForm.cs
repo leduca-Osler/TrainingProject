@@ -270,6 +270,7 @@ namespace TrainingApp
 			{
 				JsonSerializer serializer = new JsonSerializer();
 				JObject json = (JObject)JToken.ReadFrom(new JsonTextReader(file));
+				// get variables for the game
 				int jGoalGameScore = json["GoalGameScore"] != null ? (int)json["GoalGameScore"] : 20;
 				int jMaxTeams = json["MaxTeams"] != null ? (int)json["MaxTeams"] : 2;
 				int jTeamCost = json["TeamCost"] != null ? (int)json["TeamCost"] : 500;
@@ -300,10 +301,17 @@ namespace TrainingApp
 					jResearchDevHealCost);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
-					MyGame.Seating.Add(new ArenaSeating((int)json["Seating"][seatingIndex]["Level"], (int)json["Seating"][seatingIndex]["Price"], (int)json["Seating"][seatingIndex]["Amount"]));
+					// get variables for seating
+					int jSeatingLevel = json["Seating"][seatingIndex]["Level"] != null ? (int)json["Seating"][seatingIndex]["Level"] : 1;
+					int jSeatingPrice = json["Seating"][seatingIndex]["Price"] != null ? (int)json["Seating"][seatingIndex]["Price"] : 1;
+					int jSeatingAmount = json["Seating"][seatingIndex]["Amount"] != null ? (int)json["Seating"][seatingIndex]["Amount"] : 5;
+					// add to seating list
+					MyGame.Seating.Add(new ArenaSeating(jSeatingLevel, jSeatingPrice, jSeatingAmount));
 				}
+				// Loop through stock
 				for (int StoreStockIndex = 0; StoreStockIndex < json["storeEquipment"].Count(); StoreStockIndex++)
 				{
+					// get variables for Stock
 					string jStoreEquipType = json["storeEquipment"][StoreStockIndex]["eType"] != null ? (string)json["storeEquipment"][StoreStockIndex]["eType"] : "";
 					string jStoreEquipName = json["storeEquipment"][StoreStockIndex]["eName"] != null ? (string)json["storeEquipment"][StoreStockIndex]["eName"] : "";
 					int jStoreEquipHealth = json["storeEquipment"][StoreStockIndex]["eHealth"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eHealth"] : 0;
@@ -318,35 +326,57 @@ namespace TrainingApp
 					int jStoreEquipDur = json["storeEquipment"][StoreStockIndex]["eDurability"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eDurability"] : 0;
 					int jStoreEquipMDur = json["storeEquipment"][StoreStockIndex]["eMaxDurability"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eMaxDurability"] : 0;
 					int jStoreEquipUCost = json["storeEquipment"][StoreStockIndex]["eUpgradeCost"] != null ? (int)json["storeEquipment"][StoreStockIndex]["eUpgradeCost"] : 0;
+					// add stock
 					MyGame.storeEquipment.Add(
 						new Equipment(jStoreEquipType, jStoreEquipName, jStoreEquipHealth, jStoreEquipEnergy, jStoreEquipArmour, jStoreEquipDamage,
 							   jStoreEquipHit, jStoreEquipMStr, jStoreEquipMDef, jStoreEquipSpeed, jStoreEquipPrice, jStoreEquipDur, jStoreEquipMDur,
 							   jStoreEquipUCost)
 					);
 				}
+				// Loop through teams
 				for (int GameTeamIndex = 0; GameTeamIndex < json["GameTeams"].Count(); GameTeamIndex++)
 				{
-					MyGame.GameTeams.Add(
-						new Team((int)json["GameTeams"][GameTeamIndex]["Score"], (int)json["GameTeams"][GameTeamIndex]["GoalScore"], (int)json["GameTeams"][GameTeamIndex]["Currency"],
-							(int)json["GameTeams"][GameTeamIndex]["Difficulty"], (int)json["GameTeams"][GameTeamIndex]["MaxRobo"], (int)json["GameTeams"][GameTeamIndex]["RoboCost"],
-							(string)json["GameTeams"][GameTeamIndex]["TeamName"])
-					);
+					// get variables for Team
+					int jTeamScore = json["GameTeams"][GameTeamIndex]["Score"] != null ? (int)json["GameTeams"][GameTeamIndex]["Score"] : 0;
+					int jTeamGoalScore = json["GameTeams"][GameTeamIndex]["GoalScore"] != null ? (int)json["GameTeams"][GameTeamIndex]["GoalScore"] : 0;
+					int jTeamCurrency = json["GameTeams"][GameTeamIndex]["Currency"] != null ? (int)json["GameTeams"][GameTeamIndex]["Currency"] : 0;
+					int jTeamDiff = json["GameTeams"][GameTeamIndex]["Difficulty"] != null ? (int)json["GameTeams"][GameTeamIndex]["Difficulty"] : 0;
+					int jTeamMaxRobot = json["GameTeams"][GameTeamIndex]["MaxRobo"] != null ? (int)json["GameTeams"][GameTeamIndex]["MaxRobo"] : 0;
+					int jTeamRobotCost = json["GameTeams"][GameTeamIndex]["RoboCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["RoboCost"] : 0;
+					string jTeamName = json["GameTeams"][GameTeamIndex]["TeamName"] != null ? (string)json["GameTeams"][GameTeamIndex]["TeamName"] : "";
+					// get variables for seating
+					MyGame.GameTeams.Add( new Team(jTeamScore, jTeamGoalScore, jTeamCurrency, jTeamDiff, jTeamMaxRobot, jTeamRobotCost, jTeamName) );
+					// Loop through robots
 					for (int RobotIndex = 0; RobotIndex < json["GameTeams"][GameTeamIndex]["MyTeam"].Count(); RobotIndex++)
 					{
+						// get variables for robot
+						string jRoboName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RobotName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RobotName"] : "";
+						int jRoboDex = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Dexterity"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Dexterity"] : 1;
+						int jRoboStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Strength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Strength"] : 1;
+						int jRoboAgi = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Agility"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Agility"] : 1;
+						int jRoboTec = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Tech"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Tech"] : 1;
+						int jRoboAcc = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Accuracy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Accuracy"] : 1;
+						int jRoboHea = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Health"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Health"] : 1;
+						int jRoboEnr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Energy"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Energy"] : 1;
+						int jRoboArm = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Armour"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Armour"] : 1;
+						int jRoboDam = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Damage"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Damage"] : 1;
+						int jRoboHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Hit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Hit"] : 1;
+						int jRoboMstr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalStrength"] : 1;
+						int jRoboMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalDefense"] : 1;
+						string jRoboImg = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Image"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Image"] : "";
+						int jRoboSpd = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Speed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Speed"] : 1;
+						int jRoboLvl = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Level"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Level"] : 1;
+						int jRoboAnl = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Analysis"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Analysis"] : 100;
+						int jRoboCurAnl = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["CurrentAnalysis"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["CurrentAnalysis"] : 0;
+						// add robot
 						MyGame.GameTeams[GameTeamIndex].MyTeam.Add(
-							new Robot((string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RobotName"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Dexterity"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Strength"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Agility"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Tech"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Accuracy"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Health"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Energy"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Armour"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Damage"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Hit"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalStrength"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalDefense"], (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Image"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Speed"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Level"],
-								(int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Analysis"], (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["CurrentAnalysis"])
+							new Robot(jRoboName, jRoboDex, jRoboStr, jRoboAgi, jRoboTec, jRoboAcc, jRoboHea, jRoboEnr, jRoboArm, jRoboDam, jRoboHit, jRoboMstr, jRoboMDef, jRoboImg, jRoboSpd, jRoboLvl, jRoboAnl, jRoboCurAnl)
 						);
+						// if robot has a weapon
 						int jWeaonCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"].Count() : 0;
 						if (jWeaonCount > 0)
 						{
+							// get variables for weapon
 							string jWeaponType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eType"] : "";
 							string jWeaponName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eName"] : "";
 							int jWeaponHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eHealth"] : 0;
@@ -361,12 +391,15 @@ namespace TrainingApp
 							int jWeaponDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eDurability"] : 0;
 							int jWeaponMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eMaxDurability"] : 0;
 							int jWeaponUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"]["eUpgradeCost"] : 0;
+							// add weapon
 							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipWeapon = new Equipment(jWeaponType, jWeaponName, jWeaponHealth, jWeaponEnergy, jWeaponArmour,
 								jWeaponDamage, jWeaponHit, jWeaponMStr, jWeaponMDef, jWeaponSpeed, jWeaponPrice, jWeaponDur, jWeaponMDur, jWeaponUCost);
 						}
+						// if robot has armour
 						int jArmourCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"].Count() : 0;
 						if (jArmourCount > 0)
 						{
+							// get variables for armour
 							string jArmourType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eType"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eType"] : "";
 							string jArmourName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eName"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eName"] : "";
 							int jArmourHealth = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eHealth"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eHealth"] : 0;
@@ -381,29 +414,33 @@ namespace TrainingApp
 							int jArmourDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eDurability"] : 0;
 							int jArmourMDur = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMaxDurability"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eMaxDurability"] : 0;
 							int jArmourUCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eUpgradeCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipArmour"]["eUpgradeCost"] : 0;
+							// add armour
 							MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].getEquipArmour = new Equipment(jArmourType, jArmourName, jArmourHealth, jArmourEnergy, jArmourArmour,
 								jArmourDamage, jArmourHit, jArmourMStr, jArmourMDef, jArmourSpeed, jArmourPrice, jArmourDur, jArmourMDur, jArmourUCost);
 						}
-						int jSkillCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"].Count() : 0;
-						if (jSkillCount > 0)
+						int jStrategyCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"].Count() : 0;
+						// if skills are present
+						if (jStrategyCount > 0)
 						{
-							for (int SkillIndex = 0; SkillIndex < jSkillCount; SkillIndex++)
+							// loop through skills
+							for (int StrategyIndex = 0; StrategyIndex < jStrategyCount; StrategyIndex++)
 							{
 								// get skill values
-								string jSkillName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["name"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["name"] : "";
-								string jSkillTarget = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["target"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["target"] : "";
-								int jSkillStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["strength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["strength"] : 0;
-								string jSkillType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["type"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["type"] : "";
-								int jSKillCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["cost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["cost"] : 0;
-								string jSkillImg = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["img"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["ListSkills"][SkillIndex]["img"] : "";
+								string jSkillName = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["name"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["name"] : "";
+								string jSkillTarget = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["target"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["target"] : "";
+								int jSkillStr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["strength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["strength"] : 0;
+								string jSkillType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["type"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["type"] : "";
+								int jSKillCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cost"] : 0;
+								string jSkillImg = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["img"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["img"] : "";
+								char jSkillSChar = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cSkill"] != null ? (char)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cSkill"] : '*';
 								// add skill
-								MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].ListSkills.Add(new Skill(jSkillName, jSkillTarget, jSkillStr, jSkillType, jSKillCost, jSkillImg));
+								MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].ListSkills.Add(new Skill(jSkillName, jSkillTarget, jSkillStr, jSkillType, jSKillCost, jSkillImg, jSkillSChar));
 								// Get Strategy values
-								string jStratFieldCond = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["FieldCondition"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["FieldCondition"] : "";
-								string jStratCond = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["Condition"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["Condition"] : "";
-								int jStratCondValue = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["ConditionValue"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["ConditionValue"] : 0;
-								string jStratFocus = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["Focus"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["Focus"] : "";
-								string jStratField = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["Field"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][SkillIndex]["Field"] : "";
+								string jStratFieldCond = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["FieldCondition"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["FieldCondition"] : "";
+								string jStratCond = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["Condition"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["Condition"] : "";
+								int jStratCondValue = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["ConditionValue"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["ConditionValue"] : 0;
+								string jStratFocus = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["Focus"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["Focus"] : "";
+								string jStratField = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["Field"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["Field"] : "";
 								// add skill
 								MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].RoboStrategy.Add(new Strategy(MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].ListSkills[MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].ListSkills.Count - 1],
 									jStratFieldCond, jStratCond, jStratCondValue, jStratFocus, jStratField));
@@ -537,6 +574,18 @@ namespace TrainingApp
 
 		private void mnuWork_Click(object sender, EventArgs e)
 		{
+			// recover unused hours
+			if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
+			{
+				int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
+				while (hrs > 0)
+				{
+					MyGame.ManagerHrs++;
+					MyGame.ManagerCost *= 2;
+					MyGame.ManagerCost = MyGame.roundValues(MyGame.ManagerCost);
+					hrs--;
+				}
+			}
 			MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 		}
 
