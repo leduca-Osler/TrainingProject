@@ -344,8 +344,9 @@ namespace TrainingApp
 					int jTeamMaxRobot = json["GameTeams"][GameTeamIndex]["MaxRobo"] != null ? (int)json["GameTeams"][GameTeamIndex]["MaxRobo"] : 0;
 					int jTeamRobotCost = json["GameTeams"][GameTeamIndex]["RoboCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["RoboCost"] : 0;
 					string jTeamName = json["GameTeams"][GameTeamIndex]["TeamName"] != null ? (string)json["GameTeams"][GameTeamIndex]["TeamName"] : "";
+					bool jTeamAutomated = json["GameTeams"][GameTeamIndex]["Automated"] != null ? (bool)json["GameTeams"][GameTeamIndex]["Automated"] : false;
 					// get variables for seating
-					MyGame.GameTeams.Add( new Team(jTeamScore, jTeamGoalScore, jTeamCurrency, jTeamDiff, jTeamMaxRobot, jTeamRobotCost, jTeamName) );
+					MyGame.GameTeams.Add(new Team(jTeamScore, jTeamGoalScore, jTeamCurrency, jTeamDiff, jTeamMaxRobot, jTeamRobotCost, jTeamName, jTeamAutomated));
 					// Loop through robots
 					for (int RobotIndex = 0; RobotIndex < json["GameTeams"][GameTeamIndex]["MyTeam"].Count(); RobotIndex++)
 					{
@@ -522,6 +523,8 @@ namespace TrainingApp
 		private void mnuShowStats_Click(object sender, EventArgs e)
 		{
 			MyGame.setAuto();
+			MyGame.GameTeam1.clean();
+			MyGame.GameTeam2.clean();
 			update();
 		}
 
@@ -592,6 +595,17 @@ namespace TrainingApp
 		private void btnPurchaseManager_Click(object sender, EventArgs e)
 		{
 			MyGame.AddManagerHours();
+		}
+		private void BreakTimer_Tick(object sender, EventArgs e)
+		{
+			Random tmp = new Random();
+			if (DateTime.Now > MyGame.BreakTime)
+				btnAutomatic.BackColor = Color.Purple;
+			if (tmp.Next(100) > 98)
+			{
+				update();
+				BreakTimer.Interval++;
+			}
 		}
 	}
 	public static class BinarySerialization

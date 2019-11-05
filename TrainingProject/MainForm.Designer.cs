@@ -53,11 +53,11 @@
 			this.pauseResumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLongBattle = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuLunch = new System.Windows.Forms.ToolStripMenuItem();
 			this.cboRepairPercent = new System.Windows.Forms.ToolStripComboBox();
 			this.cboSaveCredits = new System.Windows.Forms.ToolStripComboBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
+			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -222,7 +222,6 @@
             this.pauseResumeToolStripMenuItem,
             this.mnuWork,
             this.mnuLongBattle,
-            this.mnuLunch,
             this.cboRepairPercent,
             this.cboSaveCredits});
 			this.btnAutomatic.Image = global::TrainingProject.Properties.Resources.Auto;
@@ -245,14 +244,14 @@
 			// resetToolStripMenuItem
 			// 
 			this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-			this.resetToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.resetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.resetToolStripMenuItem.Text = "Reset";
 			this.resetToolStripMenuItem.Click += new System.EventHandler(this.mnuResetAuto_Click);
 			// 
 			// showToolStripMenuItem
 			// 
 			this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-			this.showToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.showToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.showToolStripMenuItem.Text = "Show";
 			this.showToolStripMenuItem.Click += new System.EventHandler(this.mnuShowStats_Click);
 			// 
@@ -283,13 +282,6 @@
 			this.mnuLongBattle.Size = new System.Drawing.Size(181, 22);
 			this.mnuLongBattle.Text = "Long Battle";
 			this.mnuLongBattle.Click += new System.EventHandler(this.mnuLongBattle_Click);
-			// 
-			// mnuLunch
-			// 
-			this.mnuLunch.Name = "mnuLunch";
-			this.mnuLunch.Size = new System.Drawing.Size(181, 22);
-			this.mnuLunch.Text = "Lunch";
-			this.mnuLunch.Click += new System.EventHandler(this.mnuLunch_Click);
 			// 
 			// cboRepairPercent
 			// 
@@ -336,6 +328,11 @@
 			this.MainPannel.TabIndex = 2;
 			this.MainPannel.WrapContents = false;
 			// 
+			// BreakTimer
+			// 
+			this.BreakTimer.Interval = 1000;
+			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -381,9 +378,9 @@
 		private System.Windows.Forms.ToolStripComboBox cboSaveCredits;
 		private System.Windows.Forms.ToolStripButton btnResearchDev;
 		private System.Windows.Forms.ToolStripMenuItem mnuLongBattle;
-		private System.Windows.Forms.ToolStripMenuItem mnuLunch;
 		private System.Windows.Forms.ToolStripMenuItem mnuWork;
 		private System.Windows.Forms.ToolStripMenuItem btnPurchaseManager;
+		private System.Windows.Forms.Timer BreakTimer;
 	}
 }
 

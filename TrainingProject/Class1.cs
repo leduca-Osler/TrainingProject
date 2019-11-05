@@ -16,6 +16,8 @@ namespace TrainingProject
 	{
 		[JsonIgnore]
 		public static readonly Random RndVal = new Random();
+		[JsonIgnore]
+		public static string Globalmessage;
 		//public Random RndVal = new Random();
 		[JsonIgnore]
 		public string[] RoboImages = {
@@ -101,6 +103,20 @@ namespace TrainingProject
 				value += (int)Math.Pow(10, value.ToString().Length - 1);
 			}
 			return value;
+		}
+		public int upgradeValue(int value, bool half)
+		{
+			double factor = 1;
+			if (half)
+				factor = .5;
+			int retval = value;
+			int amt = RndVal.Next(1, (int)((value * factor) >= 1 ? (value * factor) : 1));
+			int power = (int)Math.Pow(10, value.ToString().Length - 1);
+			if (Math.Round((double)(amt + value) / power) * power > value)
+				retval = (int)Math.Round((double)(amt + value) / power) * power;
+			else
+				retval = (amt + value);
+			return retval;
 		}
 		public static string ToRoman(int number)
 		{
@@ -459,6 +475,7 @@ namespace TrainingProject
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
 			maxNumeral = 1000;
+			Globalmessage = "";
 		}
 		public Game(bool isNew)
         {
@@ -508,6 +525,7 @@ namespace TrainingProject
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
 			maxNumeral = 1000;
+			Globalmessage = "";
 		}
 		public bool ShouldSerializeMainFormPanel()
 		{
@@ -582,20 +600,6 @@ namespace TrainingProject
 			ShopMaxStat = upgradeValue(ShopMaxStat, true);
 			ShopUpgradeValue++;
 			ShopStockCost = ((ShopMaxStat * 10) + ShopMaxDurability) / 2;
-		}
-		public int upgradeValue(int value, bool half)
-		{
-			double factor = 1;
-			if (half)
-				factor = .5;
-			int retval = value;
-			int amt = RndVal.Next(1, (int)((value * factor) >= 1 ? (value * factor) : 1));
-			int power = (int)Math.Pow(10, value.ToString().Length - 1);
-			if (Math.Round((double)(amt + value) / power) * power > value)
-				retval = (int)Math.Round((double)(amt + value) / power) * power;
-			else
-				retval = (amt + value);
-			return retval;
 		}
 		public void AddStock()
 		{
@@ -720,14 +724,14 @@ namespace TrainingProject
 		public void startMonsterOutbreak(int cost)
 		{
 			fighting = true;
-			GameTeam1 = new Team(0,0,0,0,0,0,"Arena");
+			GameTeam1 = new Team(0,0,0,0,0,0,"Arena",false);
 			foreach (Team eTeam in GameTeams)
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
 					GameTeam1.MyTeam.Add(eRobo);
 			}
 			GameTeam1.MyTeam.Sort();
-			GameTeam2 = new Team(0, 0, 0, 0, 0, 0, "Outbreak");
+			GameTeam2 = new Team(0, 0, 0, 0, 0, 0, "Outbreak", false);
 			for (int i = 0; i < MonsterOutbreak.MyTeam.Count; i++)
 			{
 				if (RndVal.Next(100) > findMonster)
@@ -807,6 +811,8 @@ namespace TrainingProject
 			}
 			getFightLog = GameTeam1.getName + " VS " + GameTeam2.getName + " @ " + DateTime.Now.ToString() + Environment.NewLine + msg + Environment.NewLine;
 			sortSkills();
+			GameTeam1.clean();
+			GameTeam2.clean();
 		}
 		public Boolean isFighting()
 		{
@@ -875,11 +881,14 @@ namespace TrainingProject
 				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getScore) + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getGoalScore) + ")" };
 				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getRoboCost) + ")" };
 				Label lblDifficulty = new Label { AutoSize = true, Text = "Difficulty: " + GameTeams[TeamSelect - 1].getDifficulty };
+				Label lblAutomatic = new Label { AutoSize = true, Text = "Automated:  " + GameTeams[TeamSelect - 1].Automated };
+				lblAutomatic.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].changeAutomated());
 				MainPanel.Controls.Add(lblTeamName);
 				MainPanel.Controls.Add(lblTeamCurrency);
 				MainPanel.Controls.Add(lblScore);
 				MainPanel.Controls.Add(lblRobots);
 				MainPanel.Controls.Add(lblDifficulty);
+				MainPanel.Controls.Add(lblAutomatic);
 				int index = 0;
 				foreach (Robot eRobo in GameTeams[TeamSelect - 1].MyTeam)
 				{
@@ -991,6 +1000,13 @@ namespace TrainingProject
 		}
 		public FlowLayoutPanel continueFight(bool display)
         {
+			if (Globalmessage == null)
+				Globalmessage = "";
+			if (Globalmessage.Length > 0)
+			{
+				getFightLog = Globalmessage;
+				Globalmessage = "";
+			}
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" };
@@ -1153,6 +1169,26 @@ namespace TrainingProject
 			// pick random robot
 			int team = RndVal.Next(0, GameTeams.Count);
 			shopper = GameTeams[team].MyTeam[RndVal.Next(0, GameTeams[team].MyTeam.Count)];
+			bool bAutomated = GameTeams[team].Automated;
+			// Automated teams automatically build new robots and rebuild robots
+			if (bAutomated)
+			{
+				// Add Robot
+				if (GameTeams[team].getCurrency >= GameTeams[team].getRoboCost && GameTeams[team].getAvailableRobo > 0)
+				{
+					addRobo(team);
+					GameTeams[team].getTeamLog = getFightLog = Environment.NewLine + "+++ " + GameTeams[team].getName + " built a new robot ";
+				}
+				// Rebuild Robot
+				for (int i = 0; i < GameTeams[team].MyTeam.Count; i++)
+				{
+					if (GameTeams[team].getCurrency >= GameTeams[team].MyTeam[i].rebuildCost() && GameTeams[team].MyTeam[i].rebuildCost() > 100)
+					{
+						GameTeams[team].Rebuild(i, true);
+						GameTeams[team].getTeamLog = getFightLog = Environment.NewLine + "+++ " + GameTeams[team].getName + " : " + GameTeams[team].MyTeam[i].getName + " has been rebuilt!";
+					}
+				}
+			}
 			// if has equipment repair / upgrade it
 			if (shopper.getEquipWeapon != null)
 			{
@@ -1169,14 +1205,14 @@ namespace TrainingProject
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
 				}
 				// upgrade
-				if (GameTeams[team].getCurrency > shopper.getEquipWeapon.eUpgradeCost && PurchaseUgrade)
+				if (GameTeams[team].getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated))
 				{
 					int tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
 					GameTeams[team].getCurrency -= tmpUpgrade;
 					// Arena makes 10%
 					getGameCurrency += (tmpUpgrade) / 10;
 					shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
-					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString() + Environment.NewLine;
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipWeapon.eName;
 				}
 			}
@@ -1186,7 +1222,7 @@ namespace TrainingProject
 				int index = 0;
 				foreach (Equipment eEquip in storeEquipment)
 				{
-					if (GameTeams[team].getCurrency > eEquip.ePrice && eEquip.eType == "Weapon" && PurchaseUgrade)
+					if (GameTeams[team].getCurrency > eEquip.ePrice && eEquip.eType == "Weapon" && (PurchaseUgrade || bAutomated))
 					{
 						GameTeams[team].getCurrency -= eEquip.ePrice;
 						getGameCurrency += eEquip.ePrice;
@@ -1214,14 +1250,14 @@ namespace TrainingProject
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName ;
 				}
 				// upgrade
-				if (GameTeams[team].getCurrency > shopper.getEquipArmour.eUpgradeCost && PurchaseUgrade)
+				if (GameTeams[team].getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated))
 				{ 
 					int tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
 					GameTeams[team].getCurrency -= tmpUpgrade;
 					// Arena makes 10%
 					getGameCurrency += (tmpUpgrade) / 10;
 					shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
-					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString() + Environment.NewLine;
+					getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString() + Environment.NewLine;
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipArmour.eName ;
 				}
 			}
@@ -1231,7 +1267,7 @@ namespace TrainingProject
 				int index = 0;
 				foreach (Equipment eEquip in storeEquipment)
 				{
-					if (GameTeams[team].getCurrency > eEquip.ePrice && eEquip.eType == "Armour" && PurchaseUgrade)
+					if (GameTeams[team].getCurrency > eEquip.ePrice && eEquip.eType == "Armour" && (PurchaseUgrade || bAutomated))
 					{
 						GameTeams[team].getCurrency -= eEquip.ePrice;
 						getGameCurrency += eEquip.ePrice;
@@ -1538,6 +1574,8 @@ namespace TrainingProject
 		[JsonProperty]
 		private string TeamName;
 		public Boolean isMonster;
+		[JsonProperty]
+		public Boolean Automated;
 		[JsonIgnore]
 		private string TeamLog;
 
@@ -1613,7 +1651,7 @@ namespace TrainingProject
 			set { MyTeam = value; }
 		}
 
-		public Team(int pScore, int pGoalScore, int pCurrency, int pDifficulty, int pMaxRobo, int pRoboCost, string pTeamName)
+		public Team(int pScore, int pGoalScore, int pCurrency, int pDifficulty, int pMaxRobo, int pRoboCost, string pTeamName, bool pAutomated)
 		{
 			MyTeam = new List<Robot> { };
 			Score = pScore;
@@ -1626,6 +1664,7 @@ namespace TrainingProject
 			isMonster = false;
 			TeamName = pTeamName;
 			TeamLog = "";
+			Automated = pAutomated;
 		}
 
 		public Team(int baseStats)
@@ -1638,7 +1677,8 @@ namespace TrainingProject
 			RoboCost = 100;
 			isMonster = false;
 			TeamLog = "";
-            TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
+			Automated = true;
+			TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
         }
         public Team(int numMonsters, int Difficulty, int MonsterLvl, int findMonster, ref Team MonsterOutbreak)
         {
@@ -1690,6 +1730,7 @@ namespace TrainingProject
 			isMonster = true;
 			TeamLog = "";
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name2[RndVal.Next(name2.Length)];
+			Automated = false;
 		}
 		[JsonIgnore]
 		public string getTeamLog
@@ -1705,6 +1746,15 @@ namespace TrainingProject
 				}
 			}
 			get { return TeamLog; }
+		}
+		public void clean()
+		{
+			foreach (Robot eRobot in MyTeam)
+				eRobot.clean();
+		}
+		public void changeAutomated()
+		{
+			Automated = !Automated;
 		}
 		public void rename(string newName)
 		{
@@ -1882,6 +1932,7 @@ namespace TrainingProject
 		public bool bMissed = false;
 		public bool bBlocked = false;
 		public bool bMonster = false;
+		public bool bIsMonster = false;
 		public String getName
 		{
 			get { return RobotName; }
@@ -2100,6 +2151,7 @@ namespace TrainingProject
 			{
 				Image = MonsterImages[imageIndex];
 				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Highest", "HP") };
+				bMonster = true;
 			}
 			else
 			{
@@ -2151,6 +2203,13 @@ namespace TrainingProject
 			levelUp(RndVal);
 			CurrentHealth = getTHealth();
 			CurrentEnergy = getTEnergy();
+			crit = false;
+			dmg = 0;
+		}
+		public void clean()
+		{
+			message = "";
+			tmpImage = "";
 			crit = false;
 			dmg = 0;
 		}
@@ -2311,7 +2370,9 @@ namespace TrainingProject
 		
 		public long getAnalysisLeft()
 		{
-			return (Analysis - CurrentAnalysis);
+			int retval = Analysis - CurrentAnalysis;
+			if (retval < 0) retval = 0;
+			return retval;
 		}
 		public void turnOver()
         {
@@ -2340,7 +2401,7 @@ namespace TrainingProject
 			MentalStrength += Tech;
 			MentalDefense += Tech;
 			RobotLog = Environment.NewLine + getName + " reached level " + getLevel;
-			if (tmp.Next(100) > 75)
+			if (Level % 3 == 0) // new skills every 3 levels
 			{
 				bool found = false;
 				int skill = tmp.Next(AllSkills.Length);
@@ -2364,9 +2425,14 @@ namespace TrainingProject
 				{
 					ListSkills.Add(AllSkills[skill].getSkill());
 					if (AllSkills[skill].type.Equals("Single attack") || AllSkills[skill].type.Equals("Single tech"))
-						RoboStrategy.Add(new Strategy(ListSkills[ListSkills.Count-1], "Num Enemies", "Greater than", 0, "Current", "Level"));
+					{
+						if (!bIsMonster)
+							RoboStrategy.Add(new Strategy(ListSkills[ListSkills.Count - 1], "Num Enemies", "Greater than", 0, "Current", "Level"));
+						else
+							RoboStrategy.Add(new Strategy(ListSkills[ListSkills.Count - 1], "Num Enemies", "Greater than", 0, "Highest", "HP"));
+					}
 					else
-						RoboStrategy.Add(new Strategy(ListSkills[ListSkills.Count-1], "Num Enemies", "Greater than", 3, "Current", "Level"));
+						RoboStrategy.Add(new Strategy(ListSkills[ListSkills.Count - 1], "Num Enemies", "Greater than", 3, "Current", "Level"));
 
 					sortSkills();
 				}
@@ -2434,7 +2500,7 @@ namespace TrainingProject
 				dmg += tmpDmg;
 				message += " " + tmpDmg.ToString() + " dmg" + strCrit;
 				// don't bring down durability all the time for multiple tech and multiple attack
-				if (currSkill.type.Equals("Single Attack") || currSkill.type.Equals("Single tech") || RndVal.Next(100) > 70)
+				if (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Single tech") || RndVal.Next(100) > 70)
 				{
 					if (EquipArmour != null)
 					{
@@ -2443,6 +2509,7 @@ namespace TrainingProject
 						{
 							message += Environment.NewLine + EquipArmour.eName + " broke!";
 							RobotLog = Environment.NewLine + getName + " " + EquipArmour.eName + " broke!";
+							Globalmessage = Environment.NewLine + "--- " + getName + " " + EquipArmour.eName + " broke!" + Environment.NewLine;
 							EquipArmour = null;
 							if (HP > getTHealth()) HP = getTHealth();
 							if (MP > getTEnergy()) MP = getTEnergy();
@@ -2455,6 +2522,7 @@ namespace TrainingProject
 						{
 							attacker.message += attacker.EquipWeapon.eName + " broke!";
 							attacker.RobotLog = Environment.NewLine + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
+							Globalmessage = Environment.NewLine + "--- " + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!" + Environment.NewLine;
 							attacker.EquipWeapon = null;
 							if (attacker.HP > attacker.getTHealth()) attacker.HP = attacker.getTHealth();
 							if (attacker.MP > attacker.getTEnergy()) attacker.MP = attacker.getTEnergy();
@@ -2640,7 +2708,7 @@ namespace TrainingProject
 	}
 	[Serializable]
 	[JsonObject(MemberSerialization.OptIn)]
-	class Equipment
+	class Equipment : Common
 	{
 		[JsonProperty]
 		public string eType = "";
@@ -2771,7 +2839,7 @@ namespace TrainingProject
 					eMentalDefense += value;
 					break;
 			}
-			eUpgradeCost += RndVal.Next(1, eUpgradeCost);
+			eUpgradeCost = upgradeValue(eUpgradeCost, false);
 		}
 		public string ToString(int originalDur = 0)
 		{
