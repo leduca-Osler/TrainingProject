@@ -635,12 +635,16 @@ namespace TrainingProject
 		}
 		public void AddManagerHours()
 		{
-			while (getGameCurrency > ManagerCost)
+			// only add Manager hours if there is less than one hour to safe time
+			if ((SafeTime - DateTime.Now).TotalHours < 1)
 			{
-				getGameCurrency -= ManagerCost;
-				ManagerHrs++;
-				ManagerCost *= 2;
-				ManagerCost = roundValues(ManagerCost);
+				while (getGameCurrency > ManagerCost)
+				{
+					getGameCurrency -= ManagerCost;
+					ManagerHrs++;
+					ManagerCost *= 2;
+					ManagerCost = roundValues(ManagerCost);
+				}
 			}
 		}
 		public string addTeam()
@@ -731,10 +735,10 @@ namespace TrainingProject
 					GameTeam1.MyTeam.Add(eRobo);
 			}
 			GameTeam1.MyTeam.Sort();
-			GameTeam2 = new Team(0, 0, 0, 0, 0, 0, "Outbreak", false);
+			GameTeam2 = new Team(0, 0, 0, 0, 0, 0, "Monster Outbreak", false);
 			for (int i = 0; i < MonsterOutbreak.MyTeam.Count; i++)
 			{
-				if (RndVal.Next(100) > findMonster)
+				if (RndVal.Next(100) < findMonster)
 				{
 					GameTeam2.MyTeam.Add(MonsterOutbreak.MyTeam[i]);
 					MonsterOutbreak.MyTeam.RemoveAt(i);
@@ -864,7 +868,7 @@ namespace TrainingProject
 			HeaderPanel.Controls.Add(lblBlank);
 			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 200, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
-			Label lblTime = new Label { AutoSize = true, Text = "Time:  " + DateTime.Now.ToString("HH:mm") + " (" + SafeTime.ToString("HH:mm") + ") (" + BreakTime.ToString("HH:mm") + ")" };
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} ({1}) [{2}] -> {3:n0} ({4:n1})", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
@@ -1481,7 +1485,7 @@ namespace TrainingProject
 				int count = 0;
 				foreach (Robot eDefender in defenders.MyTeam)
 				{
-					if (eDefender.HP > 0 && count <= RndVal.Next(3,10))
+					if (eDefender.HP > 0 && count <= RndVal.Next(defenders.MyTeam.Count))
 					{
 						eDefender.damage(attacker, currSkill);
 						count++;
@@ -2151,7 +2155,7 @@ namespace TrainingProject
 			{
 				Image = MonsterImages[imageIndex];
 				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Highest", "HP") };
-				bMonster = true;
+				bIsMonster = true;
 			}
 			else
 			{
@@ -2509,7 +2513,8 @@ namespace TrainingProject
 						{
 							message += Environment.NewLine + EquipArmour.eName + " broke!";
 							RobotLog = Environment.NewLine + getName + " " + EquipArmour.eName + " broke!";
-							Globalmessage = Environment.NewLine + "--- " + getName + " " + EquipArmour.eName + " broke!" + Environment.NewLine;
+							if (!bIsMonster)
+								Globalmessage = Environment.NewLine + "--- " + getName + " " + EquipArmour.eName + " broke!" + Environment.NewLine;
 							EquipArmour = null;
 							if (HP > getTHealth()) HP = getTHealth();
 							if (MP > getTEnergy()) MP = getTEnergy();
@@ -2522,7 +2527,8 @@ namespace TrainingProject
 						{
 							attacker.message += attacker.EquipWeapon.eName + " broke!";
 							attacker.RobotLog = Environment.NewLine + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
-							Globalmessage = Environment.NewLine + "--- " + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!" + Environment.NewLine;
+							if (!attacker.bIsMonster)
+								Globalmessage = Environment.NewLine + "--- " + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!" + Environment.NewLine;
 							attacker.EquipWeapon = null;
 							if (attacker.HP > attacker.getTHealth()) attacker.HP = attacker.getTHealth();
 							if (attacker.MP > attacker.getTEnergy()) attacker.MP = attacker.getTEnergy();
