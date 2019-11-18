@@ -26,6 +26,9 @@ namespace TrainingApp
 			{
 				MyGame = BinarySerialization.ReadFromBinaryFile<Game>("data\\TrainingProject.bin");
 				//MyGame.fixTech();
+				// temp
+				if (MyGame.getResearchDevHealBays < 1)
+					MyGame.getResearchDevHealBays = 1;
 			}
 			catch
 			{
@@ -59,7 +62,7 @@ namespace TrainingApp
 				eControl.Dispose();
 			}
 			MainPannel.Controls.Clear();
-			MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex));
+			MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex, true));
 			shownCount = maxCount;
 		}
 		private void btnAddTeam_Click(object sender, EventArgs e)
@@ -166,7 +169,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if (shownCount++ > (MyGame.GameTeam1.getNumRobos() + MyGame.GameTeam2.getNumRobos()) / 2 || !MyGame.isAuto())
+				if (shownCount++ >= (MyGame.GameTeam1.getNumRobos() + MyGame.GameTeam2.getNumRobos()) / 2 || !MyGame.isAuto())
 				{
 					foreach (Control eControl in MainPannel.Controls)
 					{
@@ -195,7 +198,7 @@ namespace TrainingApp
 					btnFight.BackColor = Color.Yellow;
 				}
 				// five percent chance to start a new fight 
-				if (Game.RndVal.Next(100) > 90)
+				if (Game.RndVal.Next(100) > MyGame.FightBreak)
 				{
 					MyGame.startFight();
 					shownCount = maxCount;
@@ -210,7 +213,7 @@ namespace TrainingApp
 							eControl.Dispose();
 						}
 						MainPannel.Controls.Clear();
-						MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex));
+						MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex, false));
 						shownCount = 0;
 					}
 				}
@@ -294,11 +297,12 @@ namespace TrainingApp
 				int jResearchDevLvlCost = json["ResearchDevLvlCost"] != null ? (int)json["ResearchDevLvlCost"] : 100;
 				int jResearchDevMaint = json["ResearchDevMaint"] != null ? (int)json["ResearchDevMaint"] : 1;
 				int jResearchDevHealValue = json["ResearchDevHealValue"] != null ? (int)json["ResearchDevHealValue"] : 2;
+				int jResearchDevHealBays = json["ResearchDevHealBays"] != null ? (int)json["ResearchDevHealBays"] : 1;
 				int jResearchDevHealCost = json["ResearchDevHealCost"] != null ? (int)json["ResearchDevHealCost"] : 1;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jMaxTeams, jTeamCost, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaMaint, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenMaint, jMonsterDenBonus,
 					jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, jResearchDevLvl, jResearchDevLvlCost, jResearchDevMaint, jResearchDevHealValue,
-					jResearchDevHealCost);
+					jResearchDevHealBays, jResearchDevHealCost);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating
@@ -517,6 +521,7 @@ namespace TrainingApp
 
 		private void btnAutomatic_ButtonClick(object sender, EventArgs e)
 		{
+			BreakTimer.Interval = 1000;
 			pause();
 		}
 
@@ -600,7 +605,15 @@ namespace TrainingApp
 		{
 			Random tmp = new Random();
 			if (DateTime.Now > MyGame.BreakTime)
+			{
 				btnAutomatic.BackColor = Color.Purple;
+				foreach (Control eControl in MainPannel.Controls)
+				{
+					eControl.Dispose();
+				}
+				MainPannel.Controls.Clear();
+				MainPannel.Controls.Add(MyGame.showCountdown());
+			}
 			if (tmp.Next(100) > 98)
 			{
 				update();

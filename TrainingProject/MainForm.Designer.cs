@@ -244,14 +244,14 @@
 			// resetToolStripMenuItem
 			// 
 			this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-			this.resetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.resetToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
 			this.resetToolStripMenuItem.Text = "Reset";
 			this.resetToolStripMenuItem.Click += new System.EventHandler(this.mnuResetAuto_Click);
 			// 
 			// showToolStripMenuItem
 			// 
 			this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-			this.showToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.showToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
 			this.showToolStripMenuItem.Text = "Show";
 			this.showToolStripMenuItem.Click += new System.EventHandler(this.mnuShowStats_Click);
 			// 
@@ -330,6 +330,7 @@
 			// 
 			// BreakTimer
 			// 
+			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
 			// 

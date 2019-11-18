@@ -201,6 +201,7 @@ namespace TrainingProject
 		public int ManagerCost;
 		public int CurrentInterval;
 		public int MaxInterval;
+		public int FightBreak;
 		public DateTime SafeTime;
 		public DateTime BreakTime;
 		public double repairPercent;
@@ -257,6 +258,8 @@ namespace TrainingProject
 		private int ResearchDevMaint;
 		[JsonProperty]
 		private int ResearchDevHealValue;
+		[JsonProperty]
+		private int ResearchDevHealBays;
 		[JsonProperty]
 		private int ResearchDevHealCost;
 		public int getMonsterDenBonus
@@ -390,6 +393,11 @@ namespace TrainingProject
 			get { return ResearchDevHealValue; }
 			set { ResearchDevHealValue = value; }
 		}
+		public int getResearchDevHealBays
+		{
+			get { return ResearchDevHealBays; }
+			set { ResearchDevHealBays = value; }
+		}
 		public int getResearchDevHealCost
 		{
 			get { return ResearchDevHealCost; }
@@ -427,7 +435,7 @@ namespace TrainingProject
 		}
 		public Game(int pGoalGameScore, int pMaxTeams, int pTeamCost, int pGameCurrency, int pArenaLvl, int pArenaLvlCost, int pArenaLvlMaint, int pMonsterDenLvl, int pMonsterDenLvlCost, int pMonsterDenLvlMaint, 
 			int pMonsterDenBonus, int pShopLvl, int pShopLvlCost, int pShopLvlMaint, int pShopStock, int pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl, 
-			int pResearchDevLvlCost , int pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealCost)
+			int pResearchDevLvlCost , int pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealBays, int pResearchDevHealCost)
 		{
 			GameTeams = new List<Team> { };
 			Seating = new List<ArenaSeating> { };
@@ -463,6 +471,7 @@ namespace TrainingProject
 			ResearchDevLvlCost = pResearchDevLvlCost;
 			ResearchDevMaint = pResearchDevMaint;
 			ResearchDevHealValue = pResearchDevHealValue;
+			ResearchDevHealBays = pResearchDevHealBays;
 			ResearchDevHealCost = pResearchDevHealCost;
 			ManagerHrs = 0;
 			ManagerCost = 100;
@@ -476,6 +485,7 @@ namespace TrainingProject
 			getNumeral = 1;
 			maxNumeral = 1000;
 			Globalmessage = "";
+			FightBreak = 80;
 		}
 		public Game(bool isNew)
         {
@@ -513,6 +523,7 @@ namespace TrainingProject
 			ResearchDevLvlCost = 100;
 			ResearchDevMaint = 1;
 			ResearchDevHealValue = 2;
+			ResearchDevHealBays = 1;
 			ResearchDevHealCost = 1;
 			ManagerHrs = 0;
 			ManagerCost = 100;
@@ -526,6 +537,7 @@ namespace TrainingProject
 			getNumeral = 1;
 			maxNumeral = 1000;
 			Globalmessage = "";
+			FightBreak = 80;
 		}
 		public bool ShouldSerializeMainFormPanel()
 		{
@@ -576,7 +588,7 @@ namespace TrainingProject
 				eSeating.Amount = upgradeValue(eSeating.Amount, false);
 				eSeating.Price++;
 			}
-			// 10% chance to add a new level of seating
+			// 20% chance to add a new level of seating
 			if (RndVal.Next(1000) > 800) { Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price * 2, 5)); }
 		}
 		public void MonsterDenLevelUp()
@@ -632,6 +644,12 @@ namespace TrainingProject
 			ResearchDevLvlCost = roundValues(ResearchDevLvlCost);
 			ResearchDevHealCost++;
 			ResearchDevHealValue = upgradeValue(ResearchDevHealValue, false);
+			// 5% chance to add a new healing bay #update
+			int chance = 950;
+			// 20% if there is not one room for every four teams
+			if (getMaxTeams / 4 > ResearchDevHealBays)
+				chance = 800;
+			if (RndVal.Next(1000) > chance) { ResearchDevHealBays++; }
 		}
 		public void AddManagerHours()
 		{
@@ -673,8 +691,22 @@ namespace TrainingProject
 				if (eTeam.getScore > rebuild.getScore)
 					rebuild = eTeam;
 			}
-			rebuild.getScore = 0;
-			rebuild.getCurrency = 0;
+			// Add analysis points for score 
+			int roboIndex = rebuild.MyTeam.Count - 1;
+			while (rebuild.getScore > 0)
+			{
+				Robot robo = rebuild.MyTeam[roboIndex--];
+				int score = RndVal.Next(1, (int)(rebuild.getScore > robo.getAnalysisLeft() ? robo.getAnalysisLeft() : rebuild.getScore));
+				if (roboIndex < 0)
+					roboIndex = rebuild.MyTeam.Count - 1;
+				robo.getCurrentAnalysis += score;
+				rebuild.getScore -= score;
+				if (robo.getAnalysisLeft() <= 0)
+				{
+					robo.levelUp(RndVal);
+					rebuild.getTeamLog = (string.Format(" {0} reached level {1}", robo.getName, robo.getLevel));
+				}
+			}
 			rebuild.getDifficulty = 0;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 				rebuild.Rebuild(i, false);
@@ -709,11 +741,13 @@ namespace TrainingProject
 		public Boolean Repair()
 		{
 			Boolean fullHP = true;
-			int teamHeal = RndVal.Next(GameTeams.Count);
+			Team[] teamHeal = new Team[ResearchDevHealBays];
+			for (int i = 0; i < teamHeal.Length; i++)
+				teamHeal[i] = GameTeams[RndVal.Next(GameTeams.Count)];
 			foreach (Team eTeam in GameTeams)
 			{
 				Boolean tmpFullHP = true;
-				if (!PurchaseUgrade || !eTeam.Equals(GameTeams[teamHeal]))
+				if ( !Array.Exists(teamHeal, element => element.Equals(eTeam)) )  //!eTeam.Equals(GameTeams[teamHeal]))
 					tmpFullHP = eTeam.healRobos(0, 1);
 				else
 					tmpFullHP = eTeam.healRobos(ResearchDevHealCost, ResearchDevHealValue);
@@ -872,7 +906,7 @@ namespace TrainingProject
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
-		public FlowLayoutPanel showSelectedTeam(int TeamSelect)
+		public FlowLayoutPanel showSelectedTeam(int TeamSelect, bool showAll)
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
@@ -923,25 +957,38 @@ namespace TrainingProject
 				Label lblArenaLvl = new Label { AutoSize = true, Text =   "Arena Level: " + getArenaLvl + " (" + String.Format("{0:n0}", getArenaLvlCost) + ")" };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
+				int index = 0;
 				foreach (ArenaSeating eSeating in Seating)
 				{
-					Label lblArenaSeating = new Label { AutoSize = true, Text = "  Level: " + eSeating.Level + " Price " + String.Format("{0:n0}", eSeating.Price) + " Seats " + 
-						String.Format("{0:n0}", eSeating.Amount) + Environment.NewLine};
-					pnlSeating.Controls.Add(lblArenaSeating);
+					if (showAll || index <= 2)
+					{
+						string ending = "";
+						if (index == 2 && !showAll && Seating.Count > 3) ending = "...";
+						Label lblArenaSeating = new Label { AutoSize = true, Text = "  Level: " + eSeating.Level + " Price " + String.Format(" Price {0:n0} Seats {1:n0}{2}\n", eSeating.Price, eSeating.Amount, ending) };
+						pnlSeating.Controls.Add(lblArenaSeating);
+						index++;
+					}
 				}
 				MainPanel.Controls.Add(pnlSeating);
 				Label lblShopLvl = new Label { AutoSize = true, Text = "Shop:        " + getShopLvl + " (" + String.Format("{0:n0}", getShopLvlCost) + ") Upgrade: " + getShopUpgradeValue };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				Label lblShopStock = new Label { AutoSize = true, Text = " Max Stock: " + getShopStock + " Cost: " + String.Format("{0:n0}", getShopStockCost) + " stat:" + String.Format("{0:n0}", getShopMaxStat) + " Dur: " + String.Format("{0:n0}", getShopMaxDurability) };
+				Label lblShopStock = new Label { AutoSize = true, Text = String.Format(" Max Stock: {4}/{0} Dur: {1:n0} sta+{2:n0} Cost: {3:n0}", getShopStock, getShopMaxDurability, getShopMaxStat, getShopStockCost, storeEquipment.Count) };
 				pnlEquipment.Controls.Add(lblShopStock);
+				index = 0;
 				foreach (Equipment eEquipment in storeEquipment)
 				{
-					Label lblEquipment = new Label { AutoSize = true, Text = "  " + eEquipment.ToString() + Environment.NewLine };
-					pnlEquipment.Controls.Add(lblEquipment);
+					if (showAll || index <= 2)
+					{
+						string ending = "";
+						if (index == 2 && !showAll && storeEquipment.Count > 3) ending = "...";
+						Label lblEquipment = new Label { AutoSize = true, Text = "  " + eEquipment.ToString() + ending + Environment.NewLine };
+						pnlEquipment.Controls.Add(lblEquipment);
+						index++;
+					}
 				}
 				MainPanel.Controls.Add(pnlEquipment);
-				Label lblResearchLvl = new Label { AutoSize = true, Text = "Research Lvl:" + getResearchDevLvl + " (" + String.Format("{0:n0}", getResearchDevLvlCost) + ") Heal:" + getResearchDevHealValue + " Cost: " + String.Format("{0:n0}", getResearchDevHealCost) };
+				Label lblResearchLvl = new Label { AutoSize = true, Text = "Research Lvl:" + getResearchDevLvl + " (" + String.Format("{0:n0}", getResearchDevLvlCost) + ") Heal:" + getResearchDevHealValue + " Cost: " + String.Format("{0:n0}", getResearchDevHealCost) + " Bays: " + String.Format("{0:n0}", getResearchDevHealBays) };
 				MainPanel.Controls.Add(lblResearchLvl);
 				Label lblMonsterDen = new Label { AutoSize = true, Text =  "Monster Den: " + getMonsterDenLvl + " (" + String.Format("{0:n0}", getMonsterDenLvlCost) + ") #" + String.Format("{0:n0}", MonsterOutbreak.MyTeam.Count) + " +" + String.Format("{0:n0}", MonsterDenBonus) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters());
@@ -1001,6 +1048,34 @@ namespace TrainingProject
 					maxLength = eRobo.getName.Length;
 			}
 			return maxLength;
+		}
+		public FlowLayoutPanel showCountdown()
+		{
+			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+			MainPanel.Controls.Add(showHeader());
+			List<KeyValuePair<String, DateTime>> countdown = new List<KeyValuePair<String, DateTime>>();
+			countdown.Add(new KeyValuePair<string, DateTime>("Carilee", new DateTime(DateTime.Today.Year, 3, 3)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Mac", new DateTime(DateTime.Today.Year, 3, 11)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Easter", new DateTime(DateTime.Today.Year, 04, 12)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Al", new DateTime(DateTime.Today.Year, 4, 14)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Aiden", new DateTime(DateTime.Today.Year, 4, 24)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Oakley", new DateTime(DateTime.Today.Year, 7, 7)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Bren", new DateTime(DateTime.Today.Year, 12, 11)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Christmas", new DateTime(DateTime.Today.Year, 12, 25)));
+			List<KeyValuePair<String, DateTime>> beforeToday = new List<KeyValuePair<String, DateTime>>();
+			string Countdown = "";
+			foreach (KeyValuePair<String, DateTime> eDate in countdown)
+			{
+				if (eDate.Value < DateTime.Today)
+					beforeToday.Add(new KeyValuePair<string, DateTime>(eDate.Key, new DateTime(eDate.Value.Year + 1, eDate.Value.Month, eDate.Value.Day)));
+				else
+					Countdown += String.Format("{0} {1:n0} days\n", eDate.Key.PadRight(10), (eDate.Value - DateTime.Today).TotalDays);
+			}
+			foreach (KeyValuePair<String, DateTime> eDate in beforeToday)
+				Countdown += String.Format("{0} {1:n0} days\n", eDate.Key.PadRight(10), (eDate.Value - DateTime.Today).TotalDays);
+			Label lblCountdown = new Label { AutoSize = true, Text = "Countdown" + Environment.NewLine + Countdown };
+			MainPanel.Controls.Add(lblCountdown);
+			return MainPanel;
 		}
 		public FlowLayoutPanel continueFight(bool display)
         {
@@ -1093,6 +1168,7 @@ namespace TrainingProject
 					Label lblWinner = new Label { AutoSize = true };
 					if (GameTeam1.getNumRobos() > 0)
 					{
+						FightBreak += 5;
 						lblWinner.Text = GameTeam1.getName + " wins!";
 						int tmp = (int)(Jackpot * .4);
 						GameTeam1.getCurrency += tmp;
@@ -1114,6 +1190,7 @@ namespace TrainingProject
 					}
 					else
 					{
+						FightBreak = 80;
 						lblWinner.Text = GameTeam2.getName + " winns!";
 						GameTeam2.getScore++;
 						// decrease difficulty if monster won
@@ -1209,7 +1286,7 @@ namespace TrainingProject
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
 				}
 				// upgrade
-				if (GameTeams[team].getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated))
+				if (GameTeams[team].getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipWeapon.eMaxDurability > 50)
 				{
 					int tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
 					GameTeams[team].getCurrency -= tmpUpgrade;
@@ -1254,7 +1331,7 @@ namespace TrainingProject
 					GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName ;
 				}
 				// upgrade
-				if (GameTeams[team].getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated))
+				if (GameTeams[team].getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipArmour.eMaxDurability > 50)
 				{ 
 					int tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
 					GameTeams[team].getCurrency -= tmpUpgrade;
@@ -1695,6 +1772,7 @@ namespace TrainingProject
 			{
 				int Monster = RndVal.Next(MonsterLvl);
 				Robot tmpMon = new Robot((Difficulty / 5), setName(false, Monster), Monster, true);
+				minLvl = maxLvl - i > 0 ? maxLvl - i : 1;
 				int index = -1;
 				if (MonsterOutbreak != null)
 				{
@@ -1715,7 +1793,6 @@ namespace TrainingProject
 					// Add equipment
 					MyTeam[i].getEquipWeapon = new Equipment(true, RndVal.Next(1, Difficulty), 100, RndVal);
 					MyTeam[i].getEquipArmour = new Equipment(false, RndVal.Next(1, Difficulty), 100, RndVal);
-					minLvl = maxLvl - i > 0 ? maxLvl - i : 1;
 					int tmp = RndVal.Next(minLvl, maxLvl);
 					for (int ii = 1; ii < tmp; ii++)
 					{
@@ -1932,9 +2009,6 @@ namespace TrainingProject
 		private int AnalysisLog;
 		public string RobotLog;
 		public char cSkill = ' ';
-		public bool bStrike = false;
-		public bool bMissed = false;
-		public bool bBlocked = false;
 		public bool bMonster = false;
 		public bool bIsMonster = false;
 		public String getName
@@ -2305,23 +2379,15 @@ namespace TrainingProject
 
 		public string getRoboStats(int PadRight)
 		{
-			string strMarker = "";
+			char cRebuild = ' ';
 			string strStats = "";
 			string strMsg = "";
-			if (bMissed || bBlocked)
-				strMarker += "!";
-			if (bStrike)
-			{
-				strMarker += cSkill;
-			}
 			if (HP == 0)
 			{
-				strMarker += "-";
 				getKO++;
 			}
 			if (rebuildCost() > 100)
-				strMarker += "|";
-			bMissed = bBlocked = bStrike = false;
+				cRebuild = '|';
 			if (dmg > 0)
 			{
 				strMsg = " " + dmg.ToString() + " dmg";
@@ -2329,10 +2395,11 @@ namespace TrainingProject
 				dmg = 0;
 				crit = false;
 			}
-			cSkill = ' ';
 			if (getKO <= 3)
-				strStats = Environment.NewLine + strMarker.PadLeft(3) + getName.PadRight(PadRight) + " L:" + getLevel.ToString().PadLeft(2) + "(" + LevelLog + ") A:" + String.Format("{0:n0}", getAnalysisLeft()).PadLeft(3) +
+				strStats = Environment.NewLine + cRebuild + cSkill + getName.PadRight(PadRight) + " L:" + getLevel.ToString().PadLeft(2) + "(" + LevelLog + ") A:" + String.Format("{0:n0}", getAnalysisLeft()).PadLeft(3) +
 					" MP:" + String.Format("{0:n0}", MP).PadLeft(3) + " HP:" + String.Format("{0:n0}", HP).PadLeft(3) + strMsg;
+
+			cSkill = ' ';
 			return strStats;
 		}
 		public int rebuildCost()
@@ -2350,7 +2417,6 @@ namespace TrainingProject
         {
             tmpImage = usedSkill.img;
 			cSkill = usedSkill.sChar;
-			bStrike = true;
 		}
 		public void setHurt()
 		{
@@ -2359,17 +2425,14 @@ namespace TrainingProject
 		public void setBlock()
 		{
 			tmpImage = blocked;
-			bBlocked = true;
 		}
 		public void setField()
 		{
 			tmpImage = field;
-			bBlocked = true;
 		}
 		public void setMiss()
 		{
 			tmpImage = miss;
-			bMissed = true;
 		}
 		
 		public long getAnalysisLeft()
@@ -2514,7 +2577,7 @@ namespace TrainingProject
 							message += Environment.NewLine + EquipArmour.eName + " broke!";
 							RobotLog = Environment.NewLine + getName + " " + EquipArmour.eName + " broke!";
 							if (!bIsMonster)
-								Globalmessage = Environment.NewLine + "--- " + getName + " " + EquipArmour.eName + " broke!" + Environment.NewLine;
+								Globalmessage = Environment.NewLine + string.Format("--- {0} {1} broke! ({2:n0})\n", getName, EquipArmour.eName, EquipArmour.eMaxDurability);
 							EquipArmour = null;
 							if (HP > getTHealth()) HP = getTHealth();
 							if (MP > getTEnergy()) MP = getTEnergy();
