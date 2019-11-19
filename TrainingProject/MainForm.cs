@@ -189,7 +189,7 @@ namespace TrainingApp
 			else
 			{
 				// Repair robots who fought
-				if (MyGame.Repair())
+				if (MyGame.Repair(true))
 				{
 					btnFight.BackColor = Color.White;
 				}
@@ -619,6 +619,7 @@ namespace TrainingApp
 				update();
 				BreakTimer.Interval++;
 			}
+			else MyGame.Repair(false);
 		}
 	}
 	public static class BinarySerialization

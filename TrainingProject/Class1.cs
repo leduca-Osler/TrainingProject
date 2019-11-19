@@ -738,7 +738,7 @@ namespace TrainingProject
 			for (int i = 0; i < GameTeams.Count; i++) { iTmpScore += GameTeams[i].getScoreLog; }
 			return iTmpScore;
 		}
-		public Boolean Repair()
+		public Boolean Repair(bool RepairAll)
 		{
 			Boolean fullHP = true;
 			Team[] teamHeal = new Team[ResearchDevHealBays];
@@ -747,13 +747,14 @@ namespace TrainingProject
 			foreach (Team eTeam in GameTeams)
 			{
 				Boolean tmpFullHP = true;
-				if ( !Array.Exists(teamHeal, element => element.Equals(eTeam)) )  //!eTeam.Equals(GameTeams[teamHeal]))
-					tmpFullHP = eTeam.healRobos(0, 1);
-				else
-					tmpFullHP = eTeam.healRobos(ResearchDevHealCost, ResearchDevHealValue);
-				if (tmpFullHP == false)
+				if (RepairAll || (!GameTeam1.getName.Equals(eTeam.getName) && !GameTeam2.getName.Equals(eTeam.getName) && !GameTeam1.getName.Equals("arena")))
 				{
-					fullHP = false;
+					if (!Array.Exists(teamHeal, element => element.Equals(eTeam)))  //!eTeam.Equals(GameTeams[teamHeal]))
+						tmpFullHP = eTeam.healRobos(0, 1);
+					else
+						tmpFullHP = eTeam.healRobos(ResearchDevHealCost, ResearchDevHealValue);
+					if (tmpFullHP == false)
+						fullHP = false;
 				}
 			}
 			MonsterOutbreak.healRobos(0, 1);
@@ -770,12 +771,16 @@ namespace TrainingProject
 			}
 			GameTeam1.MyTeam.Sort();
 			GameTeam2 = new Team(0, 0, 0, 0, 0, 0, "Monster Outbreak", false);
-			for (int i = 0; i < MonsterOutbreak.MyTeam.Count; i++)
+			for (int i = 0; i < MonsterOutbreak.MyTeam.Count;)
 			{
 				if (RndVal.Next(100) < findMonster)
 				{
 					GameTeam2.MyTeam.Add(MonsterOutbreak.MyTeam[i]);
 					MonsterOutbreak.MyTeam.RemoveAt(i);
+				}
+				else
+				{
+					i++;
 				}
 			}
 			Jackpot += cost;
@@ -1234,6 +1239,8 @@ namespace TrainingProject
 									eMonster.getName += " " + ToRoman(getNumeral++);
 									eMonster.bMonster = true;
 								}
+								if (findMonster > 100)
+									eMonster.getCurrentAnalysis += RndVal.Next(findMonster - 100);
 								MonsterOutbreak.MyTeam.Add(eMonster);
 							}
 						}
@@ -1422,8 +1429,6 @@ namespace TrainingProject
 					break;
 				case 95:
 				case 96:
-				case 97:
-				case 98:
 					if (ShopStock > storeEquipment.Count && getGameCurrency <= 0)
 					{
 						getFightLog = Environment.NewLine + "!!! Free stock " + Environment.NewLine;
