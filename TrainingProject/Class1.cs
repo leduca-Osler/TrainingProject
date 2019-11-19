@@ -773,7 +773,7 @@ namespace TrainingProject
 			GameTeam2 = new Team(0, 0, 0, 0, 0, 0, "Monster Outbreak", false);
 			for (int i = 0; i < MonsterOutbreak.MyTeam.Count;)
 			{
-				if (RndVal.Next(100) < findMonster)
+				if (RndVal.Next(100) < findMonster) 
 				{
 					GameTeam2.MyTeam.Add(MonsterOutbreak.MyTeam[i]);
 					MonsterOutbreak.MyTeam.RemoveAt(i);
