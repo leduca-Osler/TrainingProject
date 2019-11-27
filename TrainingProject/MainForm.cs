@@ -123,22 +123,14 @@ namespace TrainingApp
 			Color shopColour = Color.White;
 			Boolean researchLvl = false;
 			if (MyGame.getAvailableTeams > 0)
-			{
 				addTeam = true;
-			}
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
 					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost)
-			{
 				addRobo = true;
-			}
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)
-			{
 				arenaLvl = true;
-			}
 			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)
-			{
 				monsterLvl = true;
-			}
 			// enough money to upgrade or re-stock
 			if (MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
 			{
@@ -151,9 +143,7 @@ namespace TrainingApp
 				shopColour = Color.Blue;
 			}
 			if (MyGame.getGameCurrency >= MyGame.getResearchDevLvlCost)
-			{
 				researchLvl = true;
-			}
 
 			btnAddTeam.Enabled = addTeam;
 			btnAddRobo.Enabled = addRobo;
@@ -169,7 +159,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if (shownCount++ >= (MyGame.GameTeam1.getNumRobos() + MyGame.GameTeam2.getNumRobos()) / 2 || !MyGame.isAuto())
+				if (shownCount++ >= (getNumRobos()) / 2 || !MyGame.isAuto())
 				{
 					foreach (Control eControl in MainPannel.Controls)
 					{
@@ -188,15 +178,6 @@ namespace TrainingApp
 			}
 			else
 			{
-				// Repair robots who fought
-				if (MyGame.Repair(true))
-				{
-					btnFight.BackColor = Color.White;
-				}
-				else
-				{
-					btnFight.BackColor = Color.Yellow;
-				}
 				// five percent chance to start a new fight 
 				if (Game.RndVal.Next(100) > MyGame.FightBreak)
 				{
@@ -205,7 +186,6 @@ namespace TrainingApp
 				}
 				else
 				{
-					MyGame.equip();
 					if (shownCount++ > 5)
 					{
 						foreach (Control eControl in MainPannel.Controls)
@@ -232,7 +212,13 @@ namespace TrainingApp
 			catch { }
 			MainPannel.AutoScrollPosition = new Point(0, 0);
 		}
-
+		private int getNumRobos()
+		{
+			int total = 0;
+			total += MyGame.GameTeam1[0].getNumRobos();
+			total += MyGame.GameTeam2[0].getNumRobos();
+			return total;
+		}
 		private void btnArenaLvl_Click(object sender, EventArgs e)
 		{
 			MyGame.arenaLevelUp();
@@ -528,8 +514,10 @@ namespace TrainingApp
 		private void mnuShowStats_Click(object sender, EventArgs e)
 		{
 			MyGame.setAuto();
-			MyGame.GameTeam1.clean();
-			MyGame.GameTeam2.clean();
+			foreach (Team eTeam in MyGame.GameTeam1)
+				eTeam.clean();
+			foreach (Team eTeam in MyGame.GameTeam2)
+				eTeam.clean();
 			update();
 		}
 
@@ -614,12 +602,23 @@ namespace TrainingApp
 				MainPannel.Controls.Clear();
 				MainPannel.Controls.Add(MyGame.showCountdown());
 			}
+            // don't heal if Arena fight is on
+			if ((MyGame.GameTeam1.Count == 0 || !MyGame.GameTeam1[0].getName.Equals("Arena")))
+			{
+				Color tmpColour = Color.Yellow;
+				if (MyGame.Repair())
+					tmpColour = Color.White;
+				MyGame.equip();
+				if (MyGame.isFighting() && tmp.Next(100) > 98)
+					MyGame.startFight();
+				if (!MyGame.isFighting())
+					btnFight.BackColor = tmpColour;
+			}
 			if (tmp.Next(100) > 98)
 			{
 				update();
 				BreakTimer.Interval++;
 			}
-			else MyGame.Repair(false);
 		}
 	}
 	public static class BinarySerialization
