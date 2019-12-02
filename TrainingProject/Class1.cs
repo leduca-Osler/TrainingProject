@@ -1276,7 +1276,7 @@ namespace TrainingProject
 								msg = GameTeam2[i].getName + " Won against " + GameTeam1[i].getName + msg;
 							}
 							getGameCurrency += Jackpot;
-							getFightLog = msg + Environment.NewLine + "     Arena made " + String.Format("{0:n0}", Jackpot) + " @ " + DateTime.Now.ToString();
+							getFightLog = Environment.NewLine + msg + Environment.NewLine + "     Arena made " + String.Format("{0:n0}", Jackpot) + " @ " + DateTime.Now.ToString();
 							Jackpot = 0;
 							MainPanel.Controls.Add(lblWinner);
 							fighting = false;
@@ -1978,18 +1978,20 @@ namespace TrainingProject
 			Boolean fullHP = true;
 			foreach (Robot robo in MyTeam)
 			{
-				if (robo.HP < robo.getTHealth())
-				{
-					while (getCurrency < cost && cost > 0)
-					{
-						cost--;
-						value--;
-					}
-					getCurrency -= cost;
-					robo.HP += value;
-					robo.MP += value;
-					robo.getKO = 0;
-				}
+                if (robo.HP < robo.getTHealth())
+                {
+                    while (getCurrency < cost && cost > 0)
+                    {
+                        cost--;
+                        value--;
+                    }
+                    getCurrency -= cost;
+                    robo.HP += value;
+                    robo.MP += value;
+                    robo.getKO = 0;
+                }
+                else if (robo.MP < robo.getTEnergy())
+                    robo.MP++;
 				if (robo.HP < robo.getTHealth()) { fullHP = false; }
 				// level up
 				if (robo.getAnalysisLeft() <= 0)
@@ -2552,11 +2554,23 @@ namespace TrainingProject
 			RobotLog = Environment.NewLine + getName + " reached level " + getLevel;
 			if (Level % 3 == 0) // new skills every 3 levels
 			{
+				Skill upSkill = ListSkills[tmp.Next(ListSkills.Count)];
+				if (upSkill.cost == 0)
+					upSkill.strength++;
+				// others add ten percent but also add an extra cost if they can afford it. 
+				else if (upSkill.cost < Energy)
+				{
+					upSkill.strength += 10;
+					upSkill.cost += (upSkill.cost / 10 > 1 ? upSkill.cost / 10 : 1);
+				}
+			}
+			else
+			{
 				bool found = false;
-				int skill = tmp.Next(AllSkills.Length);
+				Skill upSkill = AllSkills[tmp.Next(AllSkills.Length)];
 				foreach (Skill eSkill in ListSkills)
 				{
-					if (eSkill.name.Equals(AllSkills[skill].name))
+					if (eSkill.name.Equals(upSkill.name))
 					{
 						// attack just add one percent
 						if (eSkill.cost == 0)
@@ -2572,8 +2586,8 @@ namespace TrainingProject
 				}
 				if (!found)
 				{
-					ListSkills.Add(AllSkills[skill].getSkill());
-					if (AllSkills[skill].type.Equals("Single attack") || AllSkills[skill].type.Equals("Single tech"))
+					ListSkills.Add(upSkill.getSkill());
+					if (upSkill.type.Equals("Single attack") || upSkill.type.Equals("Single tech"))
 					{
 						if (!bIsMonster)
 							RoboStrategy.Add(new Strategy(ListSkills[ListSkills.Count - 1], "Num Enemies", "Greater than", 0, "Current", "Level"));
