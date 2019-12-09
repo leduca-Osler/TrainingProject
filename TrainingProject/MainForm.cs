@@ -285,10 +285,14 @@ namespace TrainingApp
 				int jResearchDevHealValue = json["ResearchDevHealValue"] != null ? (int)json["ResearchDevHealValue"] : 2;
 				int jResearchDevHealBays = json["ResearchDevHealBays"] != null ? (int)json["ResearchDevHealBays"] : 1;
 				int jResearchDevHealCost = json["ResearchDevHealCost"] != null ? (int)json["ResearchDevHealCost"] : 1;
+				int jBossLvl = json["BossLvl"] != null ? (int)json["BossLvl"] : 10;
+				int jBossCount = json["BossCount"] != null ? (int)json["BossCount"] : 1;
+				int jBossDifficulty = json["BossDifficulty"] != null ? (int)json["BossDifficulty"] : 10;
+				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jMaxTeams, jTeamCost, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaMaint, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenMaint, jMonsterDenBonus,
 					jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, jResearchDevLvl, jResearchDevLvlCost, jResearchDevMaint, jResearchDevHealValue,
-					jResearchDevHealBays, jResearchDevHealCost);
+					jResearchDevHealBays, jResearchDevHealCost, jBossLvl, jBossCount, jBossDifficulty, jBossReward);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating
@@ -467,6 +471,7 @@ namespace TrainingApp
 
 		private void pause()
 		{
+			MyGame.roundCount = 0;
 			if (timer1.Enabled)
 			{
 				timer1.Enabled = false;
@@ -619,6 +624,11 @@ namespace TrainingApp
 				update();
 				BreakTimer.Interval++;
 			}
+		}
+
+		private void mnuBossFight_Click(object sender, EventArgs e)
+		{
+			MyGame.bossFight = true;
 		}
 	}
 	public static class BinarySerialization
