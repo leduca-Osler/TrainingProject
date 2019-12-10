@@ -754,7 +754,9 @@ namespace TrainingProject
 			rebuild.getDifficulty = 0;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 				rebuild.Rebuild(i, false);
-            return TeamName;
+			foreach (Team eTeam in GameTeams)
+				eTeam.getScore = 0;
+			return TeamName;
         }
         public void addRobo(int Team)
         {
@@ -1348,8 +1350,9 @@ namespace TrainingProject
 								// decrease difficulty if monster won
 								if (GameTeam2[i].isMonster)
 								{
-									GameTeam1[i].getDifficulty--;
-									// pay loosing team 20%
+									while (RndVal.Next(GameTeam1[i].MyTeam[0].getLevel * 2) < GameTeam1[i].getDifficulty)
+										GameTeam1[i].getDifficulty--;
+									// pay loosing team
 									int tmp = (int)(Jackpot * .25);
 									GameTeam1[i].getCurrency += tmp;
 									Jackpot -= tmp;
