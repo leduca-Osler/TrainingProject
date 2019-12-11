@@ -917,6 +917,9 @@ namespace TrainingProject
 
 				if (Team1Index == Team2Index)
 				{
+					// Reset difficulty
+					if (RndVal.Next(100) > 95 && GameTeam1.Count == 1)
+						GameTeam1[GameTeam1.Count - 1].getDifficulty = 0;
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getMaxRobos, GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak));
 				}
@@ -1327,6 +1330,7 @@ namespace TrainingProject
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
 									getFightLog = Environment.NewLine + GameTeam1[i].getName + " VS " + GameTeam2[i].getName + " @ " + DateTime.Now.ToString();
+									GameTeam1[i].healRobos(0, 1);
 									// exit function so we continue fight
 									return MainPanel;
 								}
@@ -1350,8 +1354,6 @@ namespace TrainingProject
 								// decrease difficulty if monster won
 								if (GameTeam2[i].isMonster)
 								{
-									while (RndVal.Next(GameTeam1[i].MyTeam[0].getLevel * 2) < GameTeam1[i].getDifficulty)
-										GameTeam1[i].getDifficulty--;
 									// pay loosing team
 									int tmp = (int)(Jackpot * .25);
 									GameTeam1[i].getCurrency += tmp;
@@ -1889,9 +1891,7 @@ namespace TrainingProject
 		{
 			set
 			{
-				int tmp = value;
-				if (tmp > 0)
-					DifficultyLog += value - Difficulty;
+				DifficultyLog += value - Difficulty;
 				Difficulty = value;
 			}
 			get { return Difficulty; }
