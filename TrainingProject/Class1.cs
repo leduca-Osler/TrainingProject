@@ -757,14 +757,19 @@ namespace TrainingProject
 			foreach (Team eTeam in GameTeams)
 				eTeam.getScore = 0;
 			return TeamName;
-        }
-        public void addRobo(int Team)
-        {
-			GameTeams[Team].getCurrency -= GameTeams[Team].getRoboCost;
-			GameTeams[Team].getRoboCost *= 2;
-			GameTeams[Team].getRoboCost = roundValues(GameTeams[Team].getRoboCost);
-			Robot tmp = new Robot(1,GameTeams[Team].setName("robot"), RndVal.Next(8), false);
-            GameTeams[Team].MyTeam.Add(tmp);
+		}
+		public void addRobo(int Team)
+		{
+			addRobo(GameTeams[Team]);
+		}
+
+		public void addRobo(Team Team)
+		{
+			Team.getCurrency -= Team.getRoboCost;
+			Team.getRoboCost *= 2;
+			Team.getRoboCost = roundValues(Team.getRoboCost);
+			Robot tmp = new Robot(1,Team.setName("robot"), RndVal.Next(8), false);
+            Team.MyTeam.Add(tmp);
         }
         public int getScore()
         {
@@ -1331,6 +1336,7 @@ namespace TrainingProject
 									GameTeam2[i] = tmpTeam;
 									getFightLog = Environment.NewLine + GameTeam1[i].getName + " VS " + GameTeam2[i].getName + " @ " + DateTime.Now.ToString();
 									GameTeam1[i].healRobos(0, 1);
+									equip(GameTeam1[i]);
 									// exit function so we continue fight
 									return MainPanel;
 								}
@@ -1435,29 +1441,32 @@ namespace TrainingProject
 
 		public void equip()
 		{
+			equip(GameTeams[RndVal.Next(GameTeams.Count)]);
+		}
+		public void equip(Team eTeam)
+		{
+			//GameTeams[team]
 			Robot shopper;
-			// pick random robot
-			int team = RndVal.Next(0, GameTeams.Count);
-			if (!isFighting(GameTeams[team].getName))
+			if (!isFighting(eTeam.getName))
 			{
-				shopper = GameTeams[team].MyTeam[RndVal.Next(0, GameTeams[team].MyTeam.Count)];
-				bool bAutomated = GameTeams[team].Automated;
+				shopper = eTeam.MyTeam[RndVal.Next(0, eTeam.MyTeam.Count)];
+				bool bAutomated = eTeam.Automated;
 				// Automated teams automatically build new robots and rebuild robots
 				if (bAutomated)
 				{
 					// Add Robot
-					if (GameTeams[team].getCurrency >= GameTeams[team].getRoboCost && GameTeams[team].getAvailableRobo > 0)
+					if (eTeam.getCurrency >= eTeam.getRoboCost && eTeam.getAvailableRobo > 0)
 					{
-						addRobo(team);
-						GameTeams[team].getTeamLog = getFightLog = Environment.NewLine + "+++ " + GameTeams[team].getName + " built a new robot ";
+						addRobo(eTeam);
+						eTeam.getTeamLog = getFightLog = Environment.NewLine + "+++ " + eTeam.getName + " built a new robot ";
 					}
 					// Rebuild Robot
-					for (int i = 0; i < GameTeams[team].MyTeam.Count; i++)
+					for (int i = 0; i < eTeam.MyTeam.Count; i++)
 					{
-						if (GameTeams[team].getCurrency >= GameTeams[team].MyTeam[i].rebuildCost() && GameTeams[team].MyTeam[i].rebuildCost() > 100)
+						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost() && eTeam.MyTeam[i].rebuildCost() > 100)
 						{
-							GameTeams[team].Rebuild(i, true);
-							GameTeams[team].getTeamLog = getFightLog = Environment.NewLine + "+++ " + GameTeams[team].getName + " : " + GameTeams[team].MyTeam[i].getName + " has been rebuilt!";
+							eTeam.Rebuild(i, true);
+							eTeam.getTeamLog = getFightLog = Environment.NewLine + "+++ " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " has been rebuilt!";
 						}
 					}
 				}
@@ -1465,27 +1474,27 @@ namespace TrainingProject
 				if (shopper.getEquipWeapon != null)
 				{
 					// Repair
-					if (GameTeams[team].getCurrency > (shopper.getEquipWeapon.ePrice / 10)
+					if (eTeam.getCurrency > (shopper.getEquipWeapon.ePrice / 10)
 						&& shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent)
 					{
 						int orig = shopper.getEquipWeapon.eDurability;
 						shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
-						GameTeams[team].getCurrency -= (shopper.getEquipWeapon.ePrice / 10);
+						eTeam.getCurrency -= (shopper.getEquipWeapon.ePrice / 10);
 						// Arena makes 10%
 						getGameCurrency += (shopper.getEquipWeapon.ePrice / 100);
-						getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipWeapon.ePrice / 10, shopper.getEquipWeapon.eName) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString(orig);
-						GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
+						getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipWeapon.ePrice / 10, shopper.getEquipWeapon.eName) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString(orig);
+						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
 					}
 					// upgrade
-					if (GameTeams[team].getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipWeapon.eMaxDurability > 50)
+					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipWeapon.eMaxDurability > 50)
 					{
 						int tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
-						GameTeams[team].getCurrency -= tmpUpgrade;
+						eTeam.getCurrency -= tmpUpgrade;
 						// Arena makes 10%
 						getGameCurrency += (tmpUpgrade) / 10;
 						shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
-						getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString();
-						GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipWeapon.eName;
+						getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString();
+						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipWeapon.eName;
 					}
 				}
 				else
@@ -1494,14 +1503,14 @@ namespace TrainingProject
 					int index = 0;
 					foreach (Equipment eEquip in storeEquipment)
 					{
-						if (GameTeams[team].getCurrency > eEquip.ePrice && eEquip.eType == "Weapon" && (PurchaseUgrade || bAutomated))
+						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Weapon" && (PurchaseUgrade || bAutomated))
 						{
-							GameTeams[team].getCurrency -= eEquip.ePrice;
+							eTeam.getCurrency -= eEquip.ePrice;
 							getGameCurrency += eEquip.ePrice;
 							shopper.getEquipWeapon = eEquip;
 							storeEquipment.RemoveAt(index);
-							getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
-							GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " purchased " + String.Format("({0:n0}) ", eEquip.ePrice) + eEquip.eName;
+							getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
+							eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " purchased " + String.Format("({0:n0}) ", eEquip.ePrice) + eEquip.eName;
 							break;
 						}
 						index++;
@@ -1510,27 +1519,27 @@ namespace TrainingProject
 				if (shopper.getEquipArmour != null)
 				{
 					// Repair 
-					if (GameTeams[team].getCurrency > (shopper.getEquipArmour.ePrice / 10)
+					if (eTeam.getCurrency > (shopper.getEquipArmour.ePrice / 10)
 						&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent)
 					{
 						int orig = shopper.getEquipArmour.eDurability;
 						shopper.getEquipArmour.eDurability = shopper.getEquipArmour.eMaxDurability = (int)(shopper.getEquipArmour.eMaxDurability * .9);
-						GameTeams[team].getCurrency -= (shopper.getEquipArmour.ePrice / 10);
+						eTeam.getCurrency -= (shopper.getEquipArmour.ePrice / 10);
 						// Arena makes 10%
 						getGameCurrency += (shopper.getEquipArmour.ePrice / 100);
-						getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipArmour.ePrice / 10, shopper.getEquipArmour.eName) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString(orig);
-						GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName;
+						getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipArmour.ePrice / 10, shopper.getEquipArmour.eName) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString(orig);
+						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName;
 					}
 					// upgrade
-					if (GameTeams[team].getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipArmour.eMaxDurability > 50)
+					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipArmour.eMaxDurability > 50)
 					{
 						int tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
-						GameTeams[team].getCurrency -= tmpUpgrade;
+						eTeam.getCurrency -= tmpUpgrade;
 						// Arena makes 10%
 						getGameCurrency += (tmpUpgrade) / 10;
 						shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
-						getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString();
-						GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipArmour.eName;
+						getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString();
+						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipArmour.eName;
 					}
 				}
 				else
@@ -1539,14 +1548,14 @@ namespace TrainingProject
 					int index = 0;
 					foreach (Equipment eEquip in storeEquipment)
 					{
-						if (GameTeams[team].getCurrency > eEquip.ePrice && eEquip.eType == "Armour" && (PurchaseUgrade || bAutomated))
+						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Armour" && (PurchaseUgrade || bAutomated))
 						{
-							GameTeams[team].getCurrency -= eEquip.ePrice;
+							eTeam.getCurrency -= eEquip.ePrice;
 							getGameCurrency += eEquip.ePrice;
 							shopper.getEquipArmour = eEquip;
 							storeEquipment.RemoveAt(index);
-							getFightLog = Environment.NewLine + "### " + GameTeams[team].getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
-							GameTeams[team].getTeamLog = Environment.NewLine + " " + shopper.getName + " purchased " + String.Format("({0:n0}) ", eEquip.ePrice) + eEquip.eName;
+							getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
+							eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " purchased " + String.Format("({0:n0}) ", eEquip.ePrice) + eEquip.eName;
 							break;
 						}
 						index++;
