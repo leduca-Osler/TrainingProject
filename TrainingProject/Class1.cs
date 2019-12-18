@@ -93,7 +93,7 @@ namespace TrainingProject
 		[JsonIgnore]
 		public string[] name3 = { "Blades", "Arrows", "Staffs", "Sparks", "Factory", "Snipers", "Calvary" };
 		[JsonIgnore]
-		public string[] RoboName = { "Bolt", "Tink", "Hmr", "Golm", "Droi", "Trs", "Gun", "Rep", "Bot" };
+		public string[] RoboName = { "Bolt", "Tinker", "Hammer", "Golem", "Droid", "Tank", "Gunner", "Blaster", "Bot" };
 		[JsonIgnore]
 		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp", "Element", "HandEye" };
 		[JsonIgnore]
@@ -178,6 +178,12 @@ namespace TrainingProject
 			DialogResult dialogResult = form.ShowDialog();
 			return textBox.Text;
 		}
+		public static string RandomString(int length)
+		{
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			return new string(Enumerable.Repeat(chars, length)
+			  .Select(s => s[RndVal.Next(s.Length)]).ToArray());
+		}
 	}
     [Serializable]
 	[JsonObject(MemberSerialization.OptIn)]
@@ -193,6 +199,7 @@ namespace TrainingProject
 		public IList<Equipment> storeEquipment;
 		public IList<Team> GameTeam1;
 		public IList<Team> GameTeam2;
+		public List<KeyValuePair<String, DateTime>> countdown;
 		public Team MonsterOutbreak;
 		public Team Bosses;
 		private int findMonster;
@@ -458,6 +465,7 @@ namespace TrainingProject
 			storeEquipment = new List<Equipment> { };
 			MonsterOutbreak = new Team(1,1,1,findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
+			countdown = new List<KeyValuePair<String, DateTime>>();
 			Bosses = new Team(1, 10, 10);
 			findMonster = 50;
 			GoalGameScore = pGoalGameScore;
@@ -519,6 +527,7 @@ namespace TrainingProject
 			storeEquipment = new List<Equipment> { };
 			MonsterOutbreak = new Team(1, 1, 1, findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
+			countdown = new List<KeyValuePair<String, DateTime>>();
 			Bosses = new Team(1, 10, 10);
 			findMonster = 50;
 			GameCurrency = 0;
@@ -718,7 +727,7 @@ namespace TrainingProject
 				getGameCurrency -= TeamCost;
 				TeamCost *= 2;
 				TeamCost = roundValues(TeamCost);
-				Team tmp = new Team(GameTeams.Count);
+				Team tmp = new Team(GameTeams.Count*3);
 				TeamName = tmp.getName;
 				GameTeams.Add(tmp);
 			}
@@ -752,6 +761,7 @@ namespace TrainingProject
 				}
 			}
 			rebuild.getDifficulty = 0;
+			rebuild.Win++;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 				rebuild.Rebuild(i, false);
 			foreach (Team eTeam in GameTeams)
@@ -829,14 +839,14 @@ namespace TrainingProject
 		public void startMonsterOutbreak(int cost)
 		{
 			fighting = true;
-			GameTeam1.Add(new Team(0,0,0,0,0,0,"Arena",false));
+			GameTeam1.Add(new Team(0,0,0,0,0,0,0,"Arena",false));
 			foreach (Team eTeam in GameTeams)
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
 					GameTeam1[GameTeam1.Count-1].MyTeam.Add(eRobo);
 			}
 			GameTeam1[GameTeam1.Count - 1].MyTeam.Sort();
-			GameTeam2.Add(new Team(0, 0, 0, 0, 0, 0, "Monster Outbreak", false));
+			GameTeam2.Add(new Team(0,0,0,0,0,0,0,"Monster Outbreak",false));
 			for (int i = 0; i < MonsterOutbreak.MyTeam.Count;)
 			{
 				if (RndVal.Next(100) < findMonster) 
@@ -856,7 +866,7 @@ namespace TrainingProject
 		{
 			fighting = true;
 			bossFight = false;
-			GameTeam1.Add(new Team(0, 0, 0, 0, 0, 0, "Arena", false));
+			GameTeam1.Add(new Team(0,0,0,0,0,0,0,"Arena",false));
 			foreach (Team eTeam in GameTeams)
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
@@ -907,7 +917,7 @@ namespace TrainingProject
 					{
 						tmpScore = GameTeams[i].getScore;
 						// if new score is lower than previous
-						if (Team1Score > tmpScore && !isFighting(GameTeams[i].getName))
+						if ((Team1Score > tmpScore || (Team1Score == tmpScore && RndVal.Next(100) > 50)) && !isFighting(GameTeams[i].getName))
 						{
 							Team1Index = i;
 							Team2Index = i;
@@ -924,7 +934,11 @@ namespace TrainingProject
 				{
 					// Reset difficulty
 					if (RndVal.Next(100) > 95 && GameTeam1.Count == 1)
-						GameTeam1[GameTeam1.Count - 1].getDifficulty = 0;
+					{
+						GameTeam1[GameTeam1.Count - 1].getDifficulty = RndVal.Next(GameTeam1[GameTeam1.Count - 1].getDifficulty);
+						getFightLog = string.Format("\n--Difficulty reset to {0}", GameTeam1[GameTeam1.Count - 1].getDifficulty);
+
+					}
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getMaxRobos, GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak));
 				}
@@ -1027,6 +1041,7 @@ namespace TrainingProject
 				lblTeamName.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].rename(InputBox("Enter Name ", "Enter Name")));
 				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getCurrency) };
 				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getScore) + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getGoalScore) + ")" };
+				Label lblWin = new Label { AutoSize = true, Text = String.Format("Winns:      {0:n0}", GameTeams[TeamSelect - 1].Win) };
 				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getRoboCost) + ")" };
 				Label lblDifficulty = new Label { AutoSize = true, Text = "Difficulty: " + GameTeams[TeamSelect - 1].getDifficulty };
 				Label lblAutomatic = new Label { AutoSize = true, Text = "Automated:  " + GameTeams[TeamSelect - 1].Automated };
@@ -1034,6 +1049,7 @@ namespace TrainingProject
 				MainPanel.Controls.Add(lblTeamName);
 				MainPanel.Controls.Add(lblTeamCurrency);
 				MainPanel.Controls.Add(lblScore);
+				MainPanel.Controls.Add(lblWin);
 				MainPanel.Controls.Add(lblRobots);
 				MainPanel.Controls.Add(lblDifficulty);
 				MainPanel.Controls.Add(lblAutomatic);
@@ -1149,24 +1165,60 @@ namespace TrainingProject
 				MainFormPanel.Controls.Add(MainPanel);
 			}
 		}
-		public int maxNameLength()
+		public int[] maxNameLength(bool tmpFighting)
 		{
-			int maxLength = 10;
-			foreach (Team eTeam in GameTeam1)
-				foreach (Robot eRobo in eTeam.MyTeam)
-					if (eRobo.getName.Length > maxLength)
-						maxLength = eRobo.getName.Length;
-			foreach (Team eTeam in GameTeam2)
-				foreach (Robot eRobo in eTeam.MyTeam)
-					if (eRobo.getName.Length > maxLength)
-						maxLength = eRobo.getName.Length;
+			int[] maxLength = 
+				{ 10 // Name 
+				, 1 // Level
+				, 1 // LevelLog
+				, 1 // Annalysis
+				, 1 // MP
+				, 1 // HP
+			};
+			if (tmpFighting)
+			{
+				foreach (Team eTeam in GameTeam1)
+					foreach (Robot eRobo in eTeam.MyTeam)
+						maxLength = checkLength(maxLength, eRobo);
+				foreach (Team eTeam in GameTeam2)
+					foreach (Robot eRobo in eTeam.MyTeam)
+						maxLength = checkLength(maxLength, eRobo);
+			}
+			else
+			{
+				foreach (Team eTeam in GameTeams)
+					foreach (Robot eRobo in eTeam.MyTeam)
+						maxLength = checkLength(maxLength, eRobo);
+			}
+			return maxLength;
+		}
+		public int[] checkLength(int[] maxLength, Robot eRobo)
+		{
+			// Name
+			if (eRobo.getName.Length > maxLength[0])
+				maxLength[0] = eRobo.getName.Length;
+			// Level
+			if (string.Format("{0:n0}", eRobo.getLevel).Length > maxLength[1])
+				maxLength[1] = string.Format("{0:n0}", eRobo.getLevel).Length;
+			// LevelLog
+			if (string.Format("{0:n0}", eRobo.getLevelLog).Length > maxLength[2])
+				maxLength[2] = string.Format("{0:n0}", eRobo.getLevelLog).Length;
+			// Annalysis
+			if (string.Format("{0:n0}", eRobo.getAnalysisLeft()).Length > maxLength[3])
+				maxLength[3] = string.Format("{0:n0}", eRobo.getAnalysisLeft()).Length;
+			// MP
+			if (string.Format("{0:n0}", eRobo.MP).Length > maxLength[4])
+				maxLength[4] = string.Format("{0:n0}", eRobo.MP).Length;
+			// HP
+			if (string.Format("{0:n0}", eRobo.HP).Length > maxLength[5])
+				maxLength[5] = string.Format("{0:n0}", eRobo.HP).Length;
 			return maxLength;
 		}
 		public FlowLayoutPanel showCountdown()
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
-			List<KeyValuePair<String, DateTime>> countdown = new List<KeyValuePair<String, DateTime>>();
+			/*List<KeyValuePair<String, DateTime>> countdown = new List<KeyValuePair<String, DateTime>>();
 			countdown.Add(new KeyValuePair<string, DateTime>("Carilee", new DateTime(DateTime.Today.Year, 3, 3)));
 			countdown.Add(new KeyValuePair<string, DateTime>("Mac", new DateTime(DateTime.Today.Year, 3, 11)));
 			countdown.Add(new KeyValuePair<string, DateTime>("Easter", new DateTime(DateTime.Today.Year, 04, 12)));
@@ -1174,13 +1226,13 @@ namespace TrainingProject
 			countdown.Add(new KeyValuePair<string, DateTime>("Aiden", new DateTime(DateTime.Today.Year, 4, 24)));
 			countdown.Add(new KeyValuePair<string, DateTime>("Oakley", new DateTime(DateTime.Today.Year, 7, 7)));
 			countdown.Add(new KeyValuePair<string, DateTime>("Bren", new DateTime(DateTime.Today.Year, 12, 11)));
-			countdown.Add(new KeyValuePair<string, DateTime>("Christmas", new DateTime(DateTime.Today.Year, 12, 25)));
+			countdown.Add(new KeyValuePair<string, DateTime>("Christmas", new DateTime(DateTime.Today.Year, 12, 25)));*/
 			List<KeyValuePair<String, DateTime>> beforeToday = new List<KeyValuePair<String, DateTime>>();
 			string Countdown = "";
 			foreach (KeyValuePair<String, DateTime> eDate in countdown)
 			{
 				if (eDate.Value < DateTime.Today)
-					beforeToday.Add(new KeyValuePair<string, DateTime>(eDate.Key, new DateTime(eDate.Value.Year + 1, eDate.Value.Month, eDate.Value.Day)));
+					beforeToday.Add(new KeyValuePair<string, DateTime>(eDate.Key, new DateTime(DateTime.Today.Year + 1, eDate.Value.Month, eDate.Value.Day)));
 				else
 					Countdown += String.Format("{0} {1:n0} days\n", eDate.Key.PadRight(10), (eDate.Value - DateTime.Today).TotalDays);
 			}
@@ -1221,26 +1273,10 @@ namespace TrainingProject
 							Color background = Color.Transparent;
 							if (i % 2 == 1)
 								background = Color.LightGray;
-							Label lblTeam1stats = new Label { AutoSize = true,BackColor = background , Text = GameTeam1[i].getTeamStats(maxNameLength()) };
+							Label lblTeam1stats = new Label { AutoSize = true,BackColor = background , Text = GameTeam1[i].getTeamStats(maxNameLength(true)) };
 							MainPanel.Controls.Add(lblTeam1stats);
-							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength()) };
+							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true)) };
 							MainPanel.Controls.Add(lblTeam2stats);
-							// last team add extra details
-							if (i == GameTeam1.Count - 1)
-							{
-								// Add a space
-								MainPanel.Controls.Add(new Label { AutoSize = true, Text = "" });
-								foreach (Team eTeam in GameTeams)
-								{
-									if (!isFighting(eTeam.getName))
-									{
-										Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(10) };
-										MainPanel.Controls.Add(lblTeamstats);
-									}
-								}
-								Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
-								MainPanel.Controls.Add(lblFightLog);
-							}
 						}
 						else
 						{
@@ -1313,6 +1349,7 @@ namespace TrainingProject
 					}
 					else
 					{
+						bool newMonster = false;
 						if (i == 0)
 						{
 							string msg = "";
@@ -1336,9 +1373,8 @@ namespace TrainingProject
 									GameTeam2[i] = tmpTeam;
 									getFightLog = Environment.NewLine + GameTeam1[i].getName + " VS " + GameTeam2[i].getName + " @ " + DateTime.Now.ToString();
 									GameTeam1[i].healRobos(0, 1);
-									equip(GameTeam1[i]);
-									// exit function so we continue fight
-									return MainPanel;
+									equip(GameTeam1[i], true);
+									newMonster = true;
 								}
 								else
 								{
@@ -1381,32 +1417,55 @@ namespace TrainingProject
 								}
 								msg = GameTeam2[i].getName + " Won against " + GameTeam1[i].getName + msg;
 							}
-							getGameCurrency += Jackpot;
-							getFightLog = Environment.NewLine + msg + Environment.NewLine + "     Arena made " + String.Format("{0:n0}", Jackpot) + " @ " + DateTime.Now.ToString();
-							Jackpot = 0;
 							MainPanel.Controls.Add(lblWinner);
-							fighting = false;
-						}
-						if (i > 0)
-						{
-							addMonsters(GameTeam2[i]);
-							GameTeam1.RemoveAt(i);
-							GameTeam2.RemoveAt(i);
-							// decrement i so it stays at the same value. 
-							i--;
-						}
-						else
-						{
-							// add all monsters to Monster Outbreak
-							foreach (Team eTeam in GameTeam2)
+							if (!newMonster)
 							{
-								addMonsters(eTeam);
+								getGameCurrency += Jackpot;
+								getFightLog = Environment.NewLine + msg + Environment.NewLine + "     Arena made " + String.Format("{0:n0}", Jackpot) + " @ " + DateTime.Now.ToString();
+								Jackpot = 0;
+								fighting = false;
 							}
-							GameTeam1.Clear();
-							GameTeam2.Clear();
-							buildingMaintenance();
+						}
+						// Don't remove team if new monster selected
+						if (!newMonster)
+						{
+							if (i > 0)
+							{
+								addMonsters(GameTeam2[i]);
+								GameTeam1.RemoveAt(i);
+								GameTeam2.RemoveAt(i);
+								// decrement i so it stays at the same value. 
+								i--;
+							}
+							else
+							{
+								// add all monsters to Monster Outbreak
+								foreach (Team eTeam in GameTeam2)
+								{
+									addMonsters(eTeam);
+								}
+								GameTeam1.Clear();
+								GameTeam2.Clear();
+								buildingMaintenance();
+							}
 						}
 					}
+				}
+				// last team add extra details
+				if (i == GameTeam1.Count - 1 && !GameTeam1[0].getName.Equals("Arena"))
+				{
+					// Add a space
+					MainPanel.Controls.Add(new Label { AutoSize = true, Text = "" });
+					foreach (Team eTeam in GameTeams)
+					{
+						if (!isFighting(eTeam.getName))
+						{
+							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false)) };
+							MainPanel.Controls.Add(lblTeamstats);
+						}
+					}
+					Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
+					MainPanel.Controls.Add(lblFightLog);
 				}
 			}
 			return MainPanel;
@@ -1441,13 +1500,13 @@ namespace TrainingProject
 
 		public void equip()
 		{
-			equip(GameTeams[RndVal.Next(GameTeams.Count)]);
+			equip(GameTeams[RndVal.Next(GameTeams.Count)], false);
 		}
-		public void equip(Team eTeam)
+		public void equip(Team eTeam, bool checkFight)
 		{
 			//GameTeams[team]
 			Robot shopper;
-			if (!isFighting(eTeam.getName))
+			if (!isFighting(eTeam.getName) || checkFight)
 			{
 				shopper = eTeam.MyTeam[RndVal.Next(0, eTeam.MyTeam.Count)];
 				bool bAutomated = eTeam.Automated;
@@ -1627,7 +1686,6 @@ namespace TrainingProject
 					startMonsterOutbreak(MaintCost);
 					break;
 				case 95:
-				case 96:
 					if (ShopStock > storeEquipment.Count && getGameCurrency <= 0)
 					{
 						getFightLog = Environment.NewLine + "!!! Free stock ";
@@ -1646,7 +1704,7 @@ namespace TrainingProject
 					// sponsored a team
 					else
 					{
-						MaintCost += getArenaLvl * 1000;
+						MaintCost += getArenaLvl * 1000 + (GameTeams[team].Win * 1000);
 						GameTeams[team].getCurrency += MaintCost;
 						getFightLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost) ;
 					}
@@ -1837,6 +1895,8 @@ namespace TrainingProject
 		private int Score;
 		private int ScoreLog;
 		[JsonProperty]
+		public int Win;
+		[JsonProperty]
 		private int GoalScore;
 		[JsonProperty]
 		private int Currency;
@@ -1926,7 +1986,7 @@ namespace TrainingProject
 			set { MyTeam = value; }
 		}
 
-		public Team(int pScore, int pGoalScore, int pCurrency, int pDifficulty, int pMaxRobo, int pRoboCost, string pTeamName, bool pAutomated)
+		public Team(int pScore, int pGoalScore, int pWin, int pCurrency, int pDifficulty, int pMaxRobo, int pRoboCost, string pTeamName, bool pAutomated)
 		{
 			MyTeam = new List<Robot> { };
 			Score = pScore;
@@ -1940,6 +2000,7 @@ namespace TrainingProject
 			TeamName = pTeamName;
 			TeamLog = "";
 			Automated = pAutomated;
+			Win = pWin;
 		}
 
 		public Team(int baseStats)
@@ -1953,6 +2014,7 @@ namespace TrainingProject
 			isMonster = false;
 			TeamLog = "";
 			Automated = true;
+			Win = 0;
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
 		}
 		public Team(int numMonsters, int Difficulty, int MonsterLvl)
@@ -1979,6 +2041,7 @@ namespace TrainingProject
 			RoboCost = 0;
 			isMonster = true;
 			TeamLog = "";
+			Win = 0;
 			TeamName = BossName[RndVal.Next(BossName.Length)] + " " + name2[RndVal.Next(name2.Length)];
 			Automated = false;
 		}
@@ -2071,7 +2134,7 @@ namespace TrainingProject
 			foreach (Robot eRobo in MyTeam) { eRobo.resetLog(); }
 		}
 
-		public string getTeamStats(int PadRight)
+		public string getTeamStats(int[] PadRight)
 		{
 			string strStats = "";
 			// If this team is not in Team1 or Team1 list
@@ -2156,7 +2219,10 @@ namespace TrainingProject
             string name = "";
             if (type.Equals("robot"))
             {
-                name = (RoboName[RndVal.Next(RoboName.Length)] + RndVal.Next(1000).ToString());
+				if (RndVal.Next(100) > 10)
+					name = (RoboName[RndVal.Next(RoboName.Length)] + RandomString(4));
+				else
+					name = RandomString(10);
 			}
 			else if (type.Equals("monster"))
 			{
@@ -2362,6 +2428,10 @@ namespace TrainingProject
 		{
 			get { return Level; }
 			set { Level = value; }
+		}
+		public int getLevelLog
+		{
+			get { return LevelLog; }
 		}
 		public int getCurrentAnalysis
 		{
@@ -2604,7 +2674,7 @@ namespace TrainingProject
 			AnalysisLog = 0;
 		}
 
-		public string getRoboStats(int PadRight)
+		public string getRoboStats(int[] PadRight)
 		{
 			char cRebuild = ' ';
 			string strStats = "";
@@ -2623,8 +2693,14 @@ namespace TrainingProject
 				crit = false;
 			}
 			if (getKO <= 3)
-				strStats = Environment.NewLine + cRebuild + cSkill + getName.PadRight(PadRight) + " L:" + getLevel.ToString().PadLeft(2) + "(" + LevelLog + ") A:" + String.Format("{0:n0}", getAnalysisLeft()).PadLeft(3) +
-					" MP:" + String.Format("{0:n0}", MP).PadLeft(3) + " HP:" + String.Format("{0:n0}", HP).PadLeft(3) + strMsg;
+				strStats = string.Format("\n{0}{1}{2} L:{3}(4) A:{5} MP:{6} HP:{7}{8}",cRebuild, cSkill, 
+					getName.PadRight(PadRight[0]),
+					String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
+					String.Format("{0:n0}", LevelLog).PadLeft(PadRight[2]),
+					String.Format("{0:n0}", getAnalysisLeft()).PadLeft(PadRight[3]),
+					String.Format("{0:n0}", MP).PadLeft(PadRight[4]), 
+					String.Format("{0:n0}", HP).PadLeft(PadRight[5]), 
+					strMsg);
 
 			cSkill = ' ';
 			return strStats;

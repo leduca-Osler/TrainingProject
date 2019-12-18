@@ -247,9 +247,26 @@ namespace TrainingApp
 		}
 		public void WriteJSON()
 		{
-			//var JSON = new JavaScriptSerializer().Serialize(MyGame);
 			var JSON = JsonConvert.SerializeObject(MyGame, Formatting.Indented);
 			System.IO.File.WriteAllText("data\\" + DateTime.Now.ToString("yyyyMMdd") + "_" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "_TrainingProject.JSON", JSON);
+		}
+		public void ReadCountdownJSON()
+		{
+			using (StreamReader file = File.OpenText("data\\countdown.json"))
+			{
+				JsonSerializer serializer = new JsonSerializer();
+				JObject json = (JObject)JToken.ReadFrom(new JsonTextReader(file));
+				MyGame.countdown = new List<KeyValuePair<String, DateTime>>();
+				// get variables for the countdown
+				for (int i = 0; i < json["countdown"].Count(); i++)
+				{
+					// get variables for seating
+					string jKey = json["countdown"][i]["Key"] != null ? (string)json["countdown"][i]["Key"] : "NA";
+					DateTime jValue = json["countdown"][i]["Value"] != null ? (DateTime)json["countdown"][i]["Value"] : new DateTime(DateTime.Today.Year, 1, 1);
+					// add to seating list
+					MyGame.countdown.Add(new KeyValuePair<string, DateTime>(jKey, new DateTime(DateTime.Today.Year, jValue.Month, jValue.Day)));
+				}
+			}
 		}
 		public void ReadJSON()
 		{
@@ -333,6 +350,7 @@ namespace TrainingApp
 					// get variables for Team
 					int jTeamScore = json["GameTeams"][GameTeamIndex]["Score"] != null ? (int)json["GameTeams"][GameTeamIndex]["Score"] : 0;
 					int jTeamGoalScore = json["GameTeams"][GameTeamIndex]["GoalScore"] != null ? (int)json["GameTeams"][GameTeamIndex]["GoalScore"] : 0;
+					int jTeamWin = json["GameTeams"][GameTeamIndex]["Win"] != null ? (int)json["GameTeams"][GameTeamIndex]["Win"] : 0;
 					int jTeamCurrency = json["GameTeams"][GameTeamIndex]["Currency"] != null ? (int)json["GameTeams"][GameTeamIndex]["Currency"] : 0;
 					int jTeamDiff = json["GameTeams"][GameTeamIndex]["Difficulty"] != null ? (int)json["GameTeams"][GameTeamIndex]["Difficulty"] : 0;
 					int jTeamMaxRobot = json["GameTeams"][GameTeamIndex]["MaxRobo"] != null ? (int)json["GameTeams"][GameTeamIndex]["MaxRobo"] : 0;
@@ -340,7 +358,7 @@ namespace TrainingApp
 					string jTeamName = json["GameTeams"][GameTeamIndex]["TeamName"] != null ? (string)json["GameTeams"][GameTeamIndex]["TeamName"] : "";
 					bool jTeamAutomated = json["GameTeams"][GameTeamIndex]["Automated"] != null ? (bool)json["GameTeams"][GameTeamIndex]["Automated"] : false;
 					// get variables for seating
-					MyGame.GameTeams.Add(new Team(jTeamScore, jTeamGoalScore, jTeamCurrency, jTeamDiff, jTeamMaxRobot, jTeamRobotCost, jTeamName, jTeamAutomated));
+					MyGame.GameTeams.Add(new Team(jTeamScore, jTeamGoalScore, jTeamWin, jTeamCurrency, jTeamDiff, jTeamMaxRobot, jTeamRobotCost, jTeamName, jTeamAutomated));
 					// Loop through robots
 					for (int RobotIndex = 0; RobotIndex < json["GameTeams"][GameTeamIndex]["MyTeam"].Count(); RobotIndex++)
 					{
@@ -629,6 +647,11 @@ namespace TrainingApp
 		private void mnuBossFight_Click(object sender, EventArgs e)
 		{
 			MyGame.bossFight = true;
+		}
+
+		private void countdownToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ReadCountdownJSON();
 		}
 	}
 	public static class BinarySerialization
