@@ -2693,7 +2693,7 @@ namespace TrainingProject
 				crit = false;
 			}
 			if (getKO <= 3)
-				strStats = string.Format("\n{0}{1}{2} L:{3}(4) A:{5} MP:{6} HP:{7}{8}",cRebuild, cSkill, 
+				strStats = string.Format("\n{0}{1}{2} L:{3}({4}) A:{5} MP:{6} HP:{7}{8}",cRebuild, cSkill, 
 					getName.PadRight(PadRight[0]),
 					String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
 					String.Format("{0:n0}", LevelLog).PadLeft(PadRight[2]),
