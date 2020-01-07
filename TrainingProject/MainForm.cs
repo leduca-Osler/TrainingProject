@@ -159,7 +159,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if (shownCount++ >= (getNumRobos()) / 2 || !MyGame.isAuto())
+				if (shownCount++ >= (getNumRobos()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated)
 				{
 					foreach (Control eControl in MainPannel.Controls)
 					{
@@ -168,6 +168,7 @@ namespace TrainingApp
 					MainPannel.Controls.Clear();
 					MainPannel.Controls.Add(MyGame.continueFight(true));
 					shownCount = 0;
+					MyGame.resetShowDefeated();
 				}
 				else
 				{
@@ -214,9 +215,10 @@ namespace TrainingApp
 		}
 		private int getNumRobos()
 		{
+			// only check the first teams in the list
 			int total = 0;
-			total += MyGame.GameTeam1[0].getNumRobos();
-			total += MyGame.GameTeam2[0].getNumRobos();
+			total += MyGame.GameTeam1[0].getNumRobos(false);
+			total += MyGame.GameTeam2[0].getNumRobos(false);
 			return total;
 		}
 		private void btnArenaLvl_Click(object sender, EventArgs e)
@@ -639,7 +641,7 @@ namespace TrainingApp
 			}
 			if (tmp.Next(100) > 98)
 			{
-				update();
+				MyGame.continueFight(false);
 				BreakTimer.Interval++;
 			}
 		}
