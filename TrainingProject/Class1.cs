@@ -2258,11 +2258,10 @@ namespace TrainingProject
 				}
 				if (getCurrency >= robo.rebuildCost() && robo.rebuildCost() > 100 && isMonster)
 				{
+					int lvl = robo.getLevel;
 					Rebuild(robo, true);
-					if (robo.getLevel == 1)
-						getTeamLog = Environment.NewLine + "+++ " + getName + " : " + robo.getName + " has been rebuilt!";
-					else
-						getTeamLog = Environment.NewLine + "--- " + getName + " : " + robo.getName + " failed the rebuild!";
+					for (int i = 0; i < lvl; i++)
+						robo.levelUp(RndVal);
 				}
 			}
 			MyTeam.Sort();
