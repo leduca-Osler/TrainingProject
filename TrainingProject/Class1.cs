@@ -98,13 +98,18 @@ namespace TrainingProject
 		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp", "Element", "HandEye" };
 		[JsonIgnore]
 		public string[] BossName = { "Great", "Estemed", "Grand", "Large", "Strong", "Fast"};
-		public int roundValues(int value)
+		public int SkipFour(int value)
 		{
 			if (value.ToString().Substring(0, 1) == "4")
 			{
 				value += (int)Math.Pow(10, value.ToString().Length - 1);
 			}
 			return value;
+		}
+		public int roundValue(int value)
+		{
+			int power = (int)Math.Pow(10, value.ToString().Length - 1);
+			return (int)Math.Round((double)(value) / power) * power;
 		}
 		public int upgradeValue(int value, bool half)
 		{
@@ -180,8 +185,8 @@ namespace TrainingProject
 		}
 		public static string RandomString(int length)
 		{
-			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrtuvwxyz0123456789";
-			String tmp = new string(Enumerable.Repeat(chars, 1).Select(s => s[RndVal.Next(s.Length/2)]).ToArray());
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrtuvwxyz0123456789-_|";
+			String tmp = new string(Enumerable.Repeat(chars, 1).Select(s => s[RndVal.Next(36)]).ToArray());
 			tmp += new string(Enumerable.Repeat(chars, length-1).Select(s => s[RndVal.Next(s.Length)]).ToArray());
 			return tmp;
 		}
@@ -629,7 +634,7 @@ namespace TrainingProject
 			ArenaLvlMaint = ArenaLvlCost;
 			ArenaLvl++;
 			ArenaLvlCost *= 2;
-			ArenaLvlCost = roundValues(ArenaLvlCost);
+			ArenaLvlCost = SkipFour(ArenaLvlCost);
 			foreach (ArenaSeating eSeating in Seating)
 			{
 				eSeating.Amount = upgradeValue(eSeating.Amount, false);
@@ -656,7 +661,7 @@ namespace TrainingProject
 			MonsterDenLvlMaint = MonsterDenLvlCost;
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
-			MonsterDenLvlCost = roundValues(MonsterDenLvlCost);
+			MonsterDenLvlCost = SkipFour(MonsterDenLvlCost);
 			MonsterDenBonus = upgradeValue(MonsterDenBonus, true);
 		}
 		public void ShopLevelUp()
@@ -665,7 +670,7 @@ namespace TrainingProject
 			ShopLvlMaint = ShopLvlCost;
 			ShopLvl++;
 			ShopLvlCost *= 2;
-			ShopLvlCost = roundValues(ShopLvlCost);
+			ShopLvlCost = SkipFour(ShopLvlCost);
 			ShopStock ++;
 			ShopMaxDurability = upgradeValue(ShopMaxDurability, true);
 			ShopMaxStat = upgradeValue(ShopMaxStat, true);
@@ -704,7 +709,7 @@ namespace TrainingProject
 			ResearchDevMaint = ResearchDevLvlCost;
 			ResearchDevLvl++;
 			ResearchDevLvlCost *= 2;
-			ResearchDevLvlCost = roundValues(ResearchDevLvlCost);
+			ResearchDevLvlCost = SkipFour(ResearchDevLvlCost);
 			ResearchDevHealCost++;
 			ResearchDevHealValue = upgradeValue(ResearchDevHealValue, false);
 			// 5% chance to add a new healing bay #update
@@ -724,7 +729,7 @@ namespace TrainingProject
 					getGameCurrency -= ManagerCost;
 					ManagerHrs++;
 					ManagerCost *= 2;
-					ManagerCost = roundValues(ManagerCost);
+					ManagerCost = SkipFour(ManagerCost);
 				}
 			}
 		}
@@ -736,8 +741,8 @@ namespace TrainingProject
 				// calculate cost
 				getGameCurrency -= TeamCost;
 				TeamCost *= 2;
-				TeamCost = roundValues(TeamCost);
-				Team tmp = new Team(GameTeams.Count*3);
+				TeamCost = SkipFour(TeamCost);
+				Team tmp = new Team(RndVal.Next(GameTeams.Count * 2, GameTeams.Count * 3));
 				TeamName = tmp.getName;
 				GameTeams.Add(tmp);
 			}
@@ -787,7 +792,7 @@ namespace TrainingProject
 		{
 			Team.getCurrency -= Team.getRoboCost;
 			Team.getRoboCost *= 2;
-			Team.getRoboCost = roundValues(Team.getRoboCost);
+			Team.getRoboCost = SkipFour(Team.getRoboCost);
 			Robot tmp = new Robot(1,Team.setName("robot"), RndVal.Next(8), false);
             Team.MyTeam.Add(tmp);
         }
@@ -799,7 +804,7 @@ namespace TrainingProject
 			{
 				MaxTeams++;
 				GoalGameScore *= 2;
-				GoalGameScore = roundValues(GoalGameScore);
+				GoalGameScore = SkipFour(GoalGameScore);
 			}
 			return iTmpScore;
 		}
@@ -958,7 +963,8 @@ namespace TrainingProject
 					GameTeam2.Add(GameTeams[Team2Index]);
 					PotScore += GameTeam2[GameTeam2.Count - 1].getScore;
 				}
-				PotScore += getMonsterDenBonus;
+				if (GameTeam1.Count == 1)
+					PotScore += getMonsterDenBonus;
 				string msg = Environment.NewLine + "     Attendance: ";
 				int tmpMonsterDenBonus = getMonsterDenBonus;
 				int tmpTotalScore = PotScore;
@@ -969,9 +975,11 @@ namespace TrainingProject
 					int max = (tmpTotalScore > eSeating.Amount ? eSeating.Amount : tmpTotalScore);
 					if (GameTeam1.Count > 1)
 					{
-						min = 1;
+						min = 0;
 						max = (tmpTotalScore > eSeating.Amount ? eSeating.Amount / 2 : tmpTotalScore / 2);
 					}
+					if (max < min)
+						max = min;
 					int NumSeats = RndVal.Next(min, max);
 					tmpMonsterDenBonus -= NumSeats;
 					tmpTotalScore -= NumSeats;
@@ -1948,7 +1956,7 @@ namespace TrainingProject
 				if (Score >= GoalScore)
 				{
 					GoalScore *= 2;
-					GoalScore = roundValues(GoalScore);
+					GoalScore = SkipFour(GoalScore);
 					MaxRobo++;
 				}
 			}
@@ -2070,19 +2078,18 @@ namespace TrainingProject
 			if (Difficulty < 1)
 				Difficulty = 1;
 			MyTeam = new List<Robot> { };
-			int minLvl = Difficulty;
-			int maxLvl = Difficulty;
+			int minLvl = Difficulty - numMonsters > 0 ? Difficulty - numMonsters : 1;
+			int maxLvl = Difficulty + numMonsters;
 			for (int i = 0; i < numMonsters; i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
 				Robot tmpMon = new Robot((Difficulty / 5), setName("monster", Monster), Monster, true);
-				minLvl = maxLvl - i > 0 ? maxLvl - i : 1;
 				int index = -1;
 				if (MonsterOutbreak != null)
 				{
 					for (int ii = 0; ii < MonsterOutbreak.MyTeam.Count; ii++)
 					{
-						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl)
+						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl && (index == -1 || RndVal.Next(100) > 50))
 						{
 							tmpMon = MonsterOutbreak.MyTeam[ii];
 							index = ii;
@@ -2170,6 +2177,18 @@ namespace TrainingProject
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
 		}
+		public void Rebuild(Robot robo, bool pay)
+		{
+			int robotIndex = 0;
+			for (int i = 0; i < MyTeam.Count; i++)
+			{
+				if (MyTeam[i].getName.Equals(robo.getName))
+				{
+					robotIndex = i;
+				}
+			}
+			Rebuild(robotIndex, pay);
+		}
 		public void Rebuild(int robo, bool pay)
 		{
 			if (!pay || MyTeam[robo].rebuildCost() <= getCurrency)
@@ -2236,6 +2255,14 @@ namespace TrainingProject
 						getTeamLog = robo.RobotLog;
 						robo.RobotLog = "";
 					}
+				}
+				if (getCurrency >= robo.rebuildCost() && robo.rebuildCost() > 100 && isMonster)
+				{
+					Rebuild(robo, true);
+					if (robo.getLevel == 1)
+						getTeamLog = Environment.NewLine + "+++ " + getName + " : " + robo.getName + " has been rebuilt!";
+					else
+						getTeamLog = Environment.NewLine + "--- " + getName + " : " + robo.getName + " failed the rebuild!";
 				}
 			}
 			MyTeam.Sort();
@@ -2749,7 +2776,7 @@ namespace TrainingProject
 			{
 				cost = 100 * (int)Math.Pow(2,(Level / 5));
 			}
-			return cost;
+			return roundValue(cost);
 		}
 		
         public void setStrike(Skill usedSkill)

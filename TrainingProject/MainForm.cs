@@ -603,7 +603,7 @@ namespace TrainingApp
 				{
 					MyGame.ManagerHrs++;
 					MyGame.ManagerCost *= 2;
-					MyGame.ManagerCost = MyGame.roundValues(MyGame.ManagerCost);
+					MyGame.ManagerCost = MyGame.SkipFour(MyGame.ManagerCost);
 					hrs--;
 				}
 			}
