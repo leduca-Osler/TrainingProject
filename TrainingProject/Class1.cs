@@ -631,7 +631,7 @@ namespace TrainingProject
 		public void arenaLevelUp()
 		{
 			getGameCurrency -= ArenaLvlCost;
-			ArenaLvlMaint = ArenaLvlCost;
+			ArenaLvlMaint = ArenaLvlCost / RndVal.Next(2,5);
 			ArenaLvl++;
 			ArenaLvlCost *= 2;
 			ArenaLvlCost = SkipFour(ArenaLvlCost);
@@ -658,7 +658,7 @@ namespace TrainingProject
 		public void MonsterDenLevelUp()
 		{
 			getGameCurrency -= MonsterDenLvlCost;
-			MonsterDenLvlMaint = MonsterDenLvlCost;
+			MonsterDenLvlMaint = MonsterDenLvlCost / RndVal.Next(2, 5);
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
 			MonsterDenLvlCost = SkipFour(MonsterDenLvlCost);
@@ -667,7 +667,7 @@ namespace TrainingProject
 		public void ShopLevelUp()
 		{
 			getGameCurrency -= ShopLvlCost;
-			ShopLvlMaint = ShopLvlCost;
+			ShopLvlMaint = ShopLvlCost / RndVal.Next(2, 5);
 			ShopLvl++;
 			ShopLvlCost *= 2;
 			ShopLvlCost = SkipFour(ShopLvlCost);
@@ -706,7 +706,7 @@ namespace TrainingProject
 		public void ResearchDevLevelUp()
 		{
 			getGameCurrency -= ResearchDevLvlCost;
-			ResearchDevMaint = ResearchDevLvlCost;
+			ResearchDevMaint = ResearchDevLvlCost / RndVal.Next(2, 5);
 			ResearchDevLvl++;
 			ResearchDevLvlCost *= 2;
 			ResearchDevLvlCost = SkipFour(ResearchDevLvlCost);
@@ -1103,7 +1103,7 @@ namespace TrainingProject
 				MainPanel.Controls.Add(lblTeams);
 				Label lblCurrency = new Label { AutoSize = true, Text =   "Currency:    " + String.Format("{0:n0} ({1:n0})", getGameCurrency, getGameCurrencyLog) };
 				MainPanel.Controls.Add(lblCurrency);
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   "Arena Level: " + getArenaLvl + " (" + String.Format("{0:n0}", getArenaLvlCost) + ")" };
+				Label lblArenaLvl = new Label { AutoSize = true, Text = String.Format("Arena:       {0} ({1:n0}) - {2:n0}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint) };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				int index = 0;
@@ -1119,7 +1119,7 @@ namespace TrainingProject
 					}
 				}
 				MainPanel.Controls.Add(pnlSeating);
-				Label lblShopLvl = new Label { AutoSize = true, Text = "Shop:        " + getShopLvl + " (" + String.Format("{0:n0}", getShopLvlCost) + ") Upgrade: " + getShopUpgradeValue };
+				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0} ({1:n0}) - {2:n0}", getShopLvl, getShopLvlCost, getShopLvlMaint) };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				Label lblShopStock = new Label { AutoSize = true, Text = String.Format(" Max Stock:{4}/{0} Dur:{1:n0} sta+{2:n0} Cost:{3:n0}", getShopStock, getShopMaxDurability, getShopMaxStat, getShopStockCost, storeEquipment.Count) };
@@ -1137,16 +1137,15 @@ namespace TrainingProject
 					}
 				}
 				MainPanel.Controls.Add(pnlEquipment);
-				Label lblResearchLvl = new Label { AutoSize = true, Text = "Research Lvl:" + getResearchDevLvl + " (" + String.Format("{0:n0}", getResearchDevLvlCost) + ") Heal:" + getResearchDevHealValue + " Cost: " + String.Format("{0:n0}", getResearchDevHealCost) + " Bays: " + String.Format("{0:n0}", getResearchDevHealBays) };
+				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0} ({1:n0}) - {2:n0}\n    Heal:{3:n0} Cost:{4:n0} Bays{5:n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, getResearchDevHealValue, getResearchDevHealCost, getResearchDevHealBays) };
 				MainPanel.Controls.Add(lblResearchLvl);
-				Label lblMonsterDen = new Label { AutoSize = true, Text =   "Monster Den: " + getMonsterDenLvl + " (" + String.Format("{0:n0}", getMonsterDenLvlCost) + ") #" + String.Format("{0:n0}", MonsterOutbreak.MyTeam.Count) + " +" + String.Format("{0:n0}", MonsterDenBonus) };
+				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0} ({1:n0}) - {2:n0}\n    In Den:{3:n0} bonus:{4:n0}", getMonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, MonsterOutbreak.MyTeam.Count, MonsterDenBonus) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
 				MainPanel.Controls.Add(lblMonsterDen);
 				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0:n0} ({1:n0})", BossCount, BossReward) };
 				lblBossMonsters.Click += new EventHandler((sender, e) => displayMonsters("Boss Monsters"));
 				MainPanel.Controls.Add(lblBossMonsters);
 				Label lblManager = new Label { AutoSize = true, Text =     "Manager:     " + ManagerHrs + " Hours (" + String.Format("{0:n0}", ManagerCost) + ")" };
-				MainPanel.Controls.Add(lblMonsterDen);
 				lblManager.Click += new EventHandler((sender, e) => AddManagerHours());
 				MainPanel.Controls.Add(lblManager);
 				Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
@@ -1654,11 +1653,15 @@ namespace TrainingProject
 
 			switch (RndVal.Next(100))
 			{
+				case 1:
 				case 2:
+				case 3:
+				case 4:
+				case 5:
 					if (ArenaLvlMaint > 0)
 					{
 						// Arena Maintenance
-						MaintCost = RndVal.Next(ArenaLvlMaint);
+						MaintCost = roundValue(RndVal.Next(ArenaLvlMaint));
 						ArenaLvlMaint -= (int)((double)ArenaLvlMaint * 0.01);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
@@ -1666,49 +1669,64 @@ namespace TrainingProject
 					}
 					break;
 				case 6:
+				case 7:
+				case 8:
+				case 9:
+				case 10:
 					if (MonsterDenLvlMaint > 0)
 					{
 						// Monster Den Maintenance
-						MaintCost = RndVal.Next(MonsterDenLvlMaint);
+						MaintCost = roundValue(RndVal.Next(MonsterDenLvlMaint));
 						MonsterDenLvlMaint -= (int)((double)MonsterDenLvlMaint * 0.01);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
 						getFightLog = Environment.NewLine + "*** Monster den maintenance cost " + String.Format("{0:n0}", MaintCost);
 					}
 					break;
-				case 9:
+				case 11:
+				case 12:
+				case 13:
+				case 14:
+				case 15:
 					if (ShopLvlMaint > 0)
 					{
 						// Shop Maintenance
-						MaintCost = RndVal.Next(ShopLvlMaint);
+						MaintCost = roundValue(RndVal.Next(ShopLvlMaint));
 						ShopLvlMaint -= (int)((double)ShopLvlMaint * 0.01);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
 						getFightLog = Environment.NewLine + "*** Shop maintenance cost " + String.Format("{0:n0}", MaintCost) ;
 					}
 					break;
-
-				case 12:
+				case 16:
+				case 17:
+				case 18:
+				case 19:
+				case 20:
 					if (ResearchDevMaint > 0)
 					{
 						// Research and Development Maintenance
-						MaintCost = RndVal.Next(ResearchDevMaint);
+						MaintCost = roundValue(RndVal.Next(ResearchDevMaint));
 						ResearchDevMaint -= (int)((double)ResearchDevMaint * 0.01);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
 						getFightLog = Environment.NewLine + "*** Research and Development maintenance cost " + String.Format("{0:n0}", MaintCost);
 					}
 					break;
-				case 20:
+				case 21:
+				case 22:
+				case 23:
+				case 24:
+				case 25:
 					// Tax
-					MaintCost = (int)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1));
+					MaintCost = roundValue((int)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1)));
 					getGameCurrency -= MaintCost;
 					GameCurrencyLog -= MaintCost;
 					getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("{0:n0}", MaintCost );
 					break;
 				case 50:
 					// Monster outbreak
-					MaintCost = (int)(RndVal.Next(ArenaLvlMaint--) + RndVal.Next(MonsterDenLvlMaint--) + RndVal.Next(ShopLvlMaint--) + RndVal.Next(ResearchDevMaint--));
+					MaintCost = roundValue((int)((ArenaLvlMaint--) + (MonsterDenLvlMaint--) + (ShopLvlMaint--) + (ResearchDevMaint--)));
 					startMonsterOutbreak(MaintCost);
 					break;
 				case 95:
@@ -3009,7 +3027,7 @@ namespace TrainingProject
 			int aMentalDef = 0;
 			if (EquipWeapon != null)
 			{
-				tmp += (EquipWeapon.eName + String.Format(" (Dur:{0:n0}/{1:n0})", EquipWeapon.eDurability, EquipWeapon.eMaxDurability) + Environment.NewLine);
+				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade);
 				wHealth = EquipWeapon.eHealth;
 				wEnergy = EquipWeapon.eEnergy;
 				wArmour = EquipWeapon.eArmour;
@@ -3023,7 +3041,7 @@ namespace TrainingProject
 				tmp += "<Unequiped>" + Environment.NewLine;
 			if (EquipArmour != null)
 			{
-				tmp += (EquipArmour.eName + String.Format(" (Dur:{0:n0}/{1:n0})", EquipArmour.eDurability, EquipArmour.eMaxDurability) + Environment.NewLine);
+				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade);
 				aHealth = EquipArmour.eHealth;
 				aEnergy = EquipArmour.eEnergy;
 				aArmour = EquipArmour.eArmour;
@@ -3162,6 +3180,8 @@ namespace TrainingProject
 		[JsonProperty]
 		public string eName = "";
 		[JsonProperty]
+		public int eUpgrade = 0;
+		[JsonProperty]
 		public int eHealth = 0;
 		[JsonProperty]
 		public int eEnergy = 0;
@@ -3238,7 +3258,7 @@ namespace TrainingProject
 			eMaxDurability = eDurability = durability;
 			eUpgradeCost = ePrice = (value * 10) + durability;
 		}
-		public Equipment(string pType, string pName, int pHealth, int pEnergy, int pArmour, int pDamage, int pHit, int pMentalStrength, int pMentalDefense, int pSpeed, int pPrice, int pDurability, int pMaxDurability, int pUpgradeCost)
+		public Equipment(string pType, string pName, int pHealth, int pEnergy, int pArmour, int pDamage, int pHit, int pMentalStrength, int pMentalDefense, int pSpeed, int pPrice, int pDurability, int pMaxDurability, int pUpgradeCost, int pUpgrade)
 		{
 			eType = pType;
 			eName = pName;
@@ -3254,6 +3274,7 @@ namespace TrainingProject
 			eDurability = pDurability;
 			eMaxDurability = pMaxDurability;
 			eUpgradeCost = pUpgradeCost;
+			eUpgrade = pUpgrade;
 		}
 		public void upgrade(int value, Random RndVal)
 		{
@@ -3286,11 +3307,12 @@ namespace TrainingProject
 					eMentalDefense += value;
 					break;
 			}
+			eUpgrade++;
 			eUpgradeCost = upgradeValue(eUpgradeCost, false);
 		}
 		public string ToString(int originalDur = 0)
 		{
-			string retval = eName.PadRight(12);
+			string retval = (eName + "+" + eUpgrade).PadRight(12);
 			if (originalDur > 0)
 				retval += String.Format(" Dur:{0:n0}->{1:n0}", originalDur, eDurability);
 			else
