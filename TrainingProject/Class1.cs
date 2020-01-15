@@ -742,7 +742,7 @@ namespace TrainingProject
 				getGameCurrency -= TeamCost;
 				TeamCost *= 2;
 				TeamCost = SkipFour(TeamCost);
-				Team tmp = new Team(RndVal.Next(GameTeams.Count * 2, GameTeams.Count * 3));
+				Team tmp = new Team(RndVal.Next(GameTeams.Count, GameTeams.Count * 3));
 				TeamName = tmp.getName;
 				GameTeams.Add(tmp);
 			}
@@ -1296,8 +1296,11 @@ namespace TrainingProject
 							if (i % 2 == 1)
 								background = Color.LightGray;
 							Label lblTeam1stats = new Label { AutoSize = true,BackColor = background , Text = GameTeam1[i].getTeamStats(maxNameLength(true)) };
+							int tmpI = i;
+							lblTeam1stats.Click += new EventHandler((sender, e) => GameTeam1[tmpI].Rebuild(true));
 							MainPanel.Controls.Add(lblTeam1stats);
 							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true)) };
+							lblTeam2stats.Click += new EventHandler((sender, e) => GameTeam2[tmpI].Rebuild(true));
 							MainPanel.Controls.Add(lblTeam2stats);
 						}
 						else
@@ -1483,6 +1486,7 @@ namespace TrainingProject
 						if (!isFighting(eTeam.getName))
 						{
 							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false)) };
+							lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true));
 							MainPanel.Controls.Add(lblTeamstats);
 						}
 					}
@@ -2194,6 +2198,14 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
+		}
+		public void Rebuild(bool pay)
+		{
+			for (int i = 0; i < MyTeam.Count; i++)
+			{
+				if (MyTeam[i].rebuildCost() > 100)
+					Rebuild(MyTeam[i], pay);
+			}
 		}
 		public void Rebuild(Robot robo, bool pay)
 		{
