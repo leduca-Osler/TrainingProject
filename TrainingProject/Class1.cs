@@ -1752,7 +1752,7 @@ namespace TrainingProject
 					// sponsored a team
 					else
 					{
-						MaintCost += getArenaLvl * 1000 + (GameTeams[team].Win * 1000);
+						MaintCost += getArenaLvl * 1000 * (GameTeams[team].Win + 1);
 						GameTeams[team].getCurrency += MaintCost;
 						getFightLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost) ;
 					}
@@ -2100,8 +2100,8 @@ namespace TrainingProject
 			if (Difficulty < 1)
 				Difficulty = 1;
 			MyTeam = new List<Robot> { };
-			int minLvl = Difficulty - numMonsters > 0 ? Difficulty - numMonsters : 1;
-			int maxLvl = Difficulty + numMonsters;
+			int minLvl = Difficulty - numMonsters > 0 ? Difficulty - RndVal.Next(1,numMonsters) : 1;
+			int maxLvl = Difficulty + RndVal.Next(1, numMonsters);
 			for (int i = 0; i < numMonsters; i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
@@ -2111,7 +2111,7 @@ namespace TrainingProject
 				{
 					for (int ii = 0; ii < MonsterOutbreak.MyTeam.Count; ii++)
 					{
-						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl && (index == -1 || RndVal.Next(100) > 50))
+						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl && (index == -1 || RndVal.Next(100) > 75))
 						{
 							tmpMon = MonsterOutbreak.MyTeam[ii];
 							index = ii;
