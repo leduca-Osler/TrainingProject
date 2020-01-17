@@ -631,7 +631,7 @@ namespace TrainingProject
 		public void arenaLevelUp()
 		{
 			getGameCurrency -= ArenaLvlCost;
-			ArenaLvlMaint = ArenaLvlCost / RndVal.Next(2,5);
+			ArenaLvlMaint = ArenaLvlCost / 5;
 			ArenaLvl++;
 			ArenaLvlCost *= 2;
 			ArenaLvlCost = SkipFour(ArenaLvlCost);
@@ -658,7 +658,7 @@ namespace TrainingProject
 		public void MonsterDenLevelUp()
 		{
 			getGameCurrency -= MonsterDenLvlCost;
-			MonsterDenLvlMaint = MonsterDenLvlCost / RndVal.Next(2, 5);
+			MonsterDenLvlMaint = MonsterDenLvlCost / 5;
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
 			MonsterDenLvlCost = SkipFour(MonsterDenLvlCost);
@@ -667,7 +667,7 @@ namespace TrainingProject
 		public void ShopLevelUp()
 		{
 			getGameCurrency -= ShopLvlCost;
-			ShopLvlMaint = ShopLvlCost / RndVal.Next(2, 5);
+			ShopLvlMaint = ShopLvlCost / 5;
 			ShopLvl++;
 			ShopLvlCost *= 2;
 			ShopLvlCost = SkipFour(ShopLvlCost);
@@ -706,7 +706,7 @@ namespace TrainingProject
 		public void ResearchDevLevelUp()
 		{
 			getGameCurrency -= ResearchDevLvlCost;
-			ResearchDevMaint = ResearchDevLvlCost / RndVal.Next(2, 5);
+			ResearchDevMaint = ResearchDevLvlCost / 5;
 			ResearchDevLvl++;
 			ResearchDevLvlCost *= 2;
 			ResearchDevLvlCost = SkipFour(ResearchDevLvlCost);
@@ -1137,7 +1137,7 @@ namespace TrainingProject
 					}
 				}
 				MainPanel.Controls.Add(pnlEquipment);
-				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0} ({1:n0}) - {2:n0}\n    Heal:{3:n0} Cost:{4:n0} Bays{5:n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, getResearchDevHealValue, getResearchDevHealCost, getResearchDevHealBays) };
+				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0} ({1:n0}) - {2:n0}\n    Heal:{3:n0} Cost:{4:n0} Bays:{5:n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, getResearchDevHealValue, getResearchDevHealCost, getResearchDevHealBays) };
 				MainPanel.Controls.Add(lblResearchLvl);
 				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0} ({1:n0}) - {2:n0}\n    In Den:{3:n0} bonus:{4:n0}", getMonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, MonsterOutbreak.MyTeam.Count, MonsterDenBonus) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
@@ -2238,6 +2238,10 @@ namespace TrainingProject
 					MyTeam[robo] = new Robot(baseStats, setName("robot"), RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
 				}
+				else
+				{
+					MyTeam[robo].getCurrentAnalysis += RndVal.Next((int)MyTeam[robo].getAnalysisLeft());
+				}
 			}
 		}
 		public int getNumRobos(bool pShowDefeated)
@@ -2285,13 +2289,6 @@ namespace TrainingProject
 						getTeamLog = robo.RobotLog;
 						robo.RobotLog = "";
 					}
-				}
-				if (getCurrency >= robo.rebuildCost() && robo.rebuildCost() > 100 && isMonster)
-				{
-					int lvl = robo.getLevel;
-					Rebuild(robo, true);
-					for (int i = 0; i < lvl; i++)
-						robo.levelUp(RndVal);
 				}
 			}
 			MyTeam.Sort();
@@ -2775,7 +2772,7 @@ namespace TrainingProject
 			{
 				getKO++;
 			}
-			if (rebuildCost() > 100)
+			if (rebuildCost() > 100 && !bIsMonster)
 				cRebuild = '|';
 			if (dmg > 0)
 			{
