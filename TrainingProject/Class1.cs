@@ -2191,7 +2191,7 @@ namespace TrainingProject
 			string strBuild = "";
 			if (getAvailableRobo > 0) strBuild = "!";
 			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(10).Substring(0,10), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
-			foreach (Robot eRobo in MyTeam) { strStats += eRobo.getRoboStats(PadRight); }
+			foreach (Robot eRobo in MyTeam) { strStats += eRobo.getRoboStats(PadRight, getCurrency); }
 			return strStats;
 		}
 				
@@ -2240,7 +2240,7 @@ namespace TrainingProject
 				}
 				else
 				{
-					MyTeam[robo].getCurrentAnalysis += RndVal.Next((int)MyTeam[robo].getAnalysisLeft());
+					MyTeam[robo].getCurrentAnalysis += RndVal.Next((int)MyTeam[robo].RebuildPercent*10);
 				}
 			}
 		}
@@ -2763,7 +2763,7 @@ namespace TrainingProject
 			AnalysisLog = 0;
 		}
 
-		public string getRoboStats(int[] PadRight)
+		public string getRoboStats(int[] PadRight, int teamCurrency)
 		{
 			char cRebuild = ' ';
 			string strStats = "";
@@ -2773,7 +2773,10 @@ namespace TrainingProject
 				getKO++;
 			}
 			if (rebuildCost() > 100 && !bIsMonster)
-				cRebuild = '|';
+				if (rebuildCost() > teamCurrency)
+					cRebuild = '|';
+				else
+					cRebuild = '+';
 			if (dmg > 0)
 			{
 				strMsg = " " + dmg.ToString() + " dmg";
