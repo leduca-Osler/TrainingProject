@@ -637,11 +637,11 @@ namespace TrainingProject
 			ArenaLvlCost = SkipFour(ArenaLvlCost);
 			foreach (ArenaSeating eSeating in Seating)
 			{
-				eSeating.Amount = upgradeValue(eSeating.Amount, false);
+				eSeating.Amount = upgradeValue(eSeating.Amount, true);
 				eSeating.Price++;
 			}
 			// 20% chance to add a new level of seating
-			if (RndVal.Next(1000) > 800) { Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price * 2, 5)); }
+			if (RndVal.Next(1000) < ((ArenaLvl * 50) - (Seating.Count * 125))) { Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price * 2, 5)); }
 		}
 		public string bossLevelUp()
 		{
@@ -875,7 +875,7 @@ namespace TrainingProject
 				}
 			}
 			Jackpot += cost;
-			getFightLog = Environment.NewLine + " Monster Outbreak! @ " + DateTime.Now.ToString();
+			getFightLog = Environment.NewLine + "--- Monster Outbreak! @ " + DateTime.Now.ToString();
 		}
 		public void startBossFight()
 		{
@@ -1343,7 +1343,7 @@ namespace TrainingProject
 							{
 								// more new monsters
 								findMonster += 5;
-								lblWinner.Text = getFightLog = Environment.NewLine + "Arena suppressed the Monster outbreak" + String.Format("({0})", findMonster) + " @ " + DateTime.Now.ToString();
+								lblWinner.Text = getFightLog = Environment.NewLine + "+++ Arena suppressed the Monster outbreak" + String.Format("({0})", findMonster) + " @ " + DateTime.Now.ToString();
 							}
 							// Boss Fight
 							else
@@ -1359,7 +1359,7 @@ namespace TrainingProject
 								findMonster -= 5;
 								getGameCurrency -= Jackpot;
 								GameCurrencyLog -= Jackpot;
-								lblWinner.Text = getFightLog = Environment.NewLine + "Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1}%)", Jackpot, findMonster) + " @ " + DateTime.Now.ToString();
+								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1}%)", Jackpot, findMonster) + " @ " + DateTime.Now.ToString();
 							}
 							else
 							{
@@ -2189,9 +2189,23 @@ namespace TrainingProject
 			string strStats = "";
 			// If this team is not in Team1 or Team1 list
 			string strBuild = "";
+			int counter = 0;
+			int maxRobos = 50;
+			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak")) maxRobos = 10;
 			if (getAvailableRobo > 0) strBuild = "!";
-			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(10).Substring(0,10), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
-			foreach (Robot eRobo in MyTeam) { strStats += eRobo.getRoboStats(PadRight, getCurrency); }
+			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(15).Substring(0,15), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
+			foreach (Robot eRobo in MyTeam)
+			{
+				if (counter <= maxRobos)
+				{
+					strStats += eRobo.getRoboStats(PadRight, getCurrency);
+					if (eRobo.HP > 0) counter++;
+				}
+				else
+				{
+					if (eRobo.HP > 0) strStats += ".";
+				}
+			}
 			return strStats;
 		}
 				
@@ -2785,7 +2799,7 @@ namespace TrainingProject
 				crit = false;
 			}
 			if (getKO <= 3)
-				strStats = string.Format("\n{0}{1}{2} L:{3}({4}) A:{5} MP:{6} HP:{7}{8}",cRebuild, cSkill, 
+				strStats = string.Format("\n{0}{1}{2} L:{3}({4}) A:{5} MP:{6} HP:{7}{8} ",cRebuild, cSkill, 
 					getName.PadRight(PadRight[0]),
 					String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
 					String.Format("{0:n0}", LevelLog).PadLeft(PadRight[2]),
