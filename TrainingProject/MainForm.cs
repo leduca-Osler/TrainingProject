@@ -159,7 +159,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if (shownCount++ >= (getNumRobos()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated)
+				if ((shownCount++ >= (getNumRobos()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && DateTime.Now < MyGame.BreakTime)
 				{
 					foreach (Control eControl in MainPannel.Controls)
 					{
@@ -611,6 +611,7 @@ namespace TrainingApp
 				}
 			}
 			MyGame.SafeTime = DateTime.Now.AddMinutes(20);
+			MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 		}
 
 		private void btnPurchaseManager_Click(object sender, EventArgs e)

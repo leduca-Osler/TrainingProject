@@ -18,6 +18,8 @@ namespace TrainingProject
 		public static readonly Random RndVal = new Random();
 		[JsonIgnore]
 		public static string Globalmessage;
+		[JsonIgnore]
+		private string WarningLog;
 		//public Random RndVal = new Random();
 		[JsonIgnore]
 		public string[] RoboImages = {
@@ -98,6 +100,22 @@ namespace TrainingProject
 		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp", "Element", "HandEye" };
 		[JsonIgnore]
 		public string[] BossName = { "Great", "Estemed", "Grand", "Large", "Strong", "Fast"};
+		public string getWarningLog
+		{
+			set
+			{
+				if (WarningLog == null) WarningLog = "";
+				if (WarningLog.Length > 1000)
+					WarningLog = value + WarningLog.Substring(0, 500);
+				else
+					WarningLog = value + WarningLog;
+			}
+			get { return WarningLog; }
+		}
+		public void clearWarnings()
+		{
+			WarningLog = "";
+		}
 		public int SkipFour(int value)
 		{
 			if (value.ToString().Substring(0, 1) == "4")
@@ -128,6 +146,10 @@ namespace TrainingProject
 		public static string ToRoman(int number)
 		{
 			if (number < 1) return string.Empty;
+			if (number >= 10000) return "A" + ToRoman(number - 10000);
+			if (number >= 9000) return "MA" + ToRoman(number - 9000);
+			if (number >= 5000) return "W" + ToRoman(number - 5000);
+			if (number >= 4000) return "MW" + ToRoman(number - 4000);
 			if (number >= 1000) return "M" + ToRoman(number - 1000);
 			if (number >= 900) return "CM" + ToRoman(number - 900);
 			if (number >= 500) return "D" + ToRoman(number - 500);
@@ -434,8 +456,8 @@ namespace TrainingProject
 		{
 			set
 			{
-				if (FightLog.Length > 5000)
-					FightLog = value + FightLog.Substring(0, 1500);
+				if (FightLog.Length > 10000)
+					FightLog = value + FightLog.Substring(0, 2500);
 				else
 					FightLog = value + FightLog;
 			}
@@ -454,7 +476,7 @@ namespace TrainingProject
 				if (Numeral > maxNumeral)
 				{
 					Numeral = 1;
-					maxNumeral++;
+					maxNumeral += (int)(maxNumeral * .1);
 				}
 				else
 					Numeral = value;
@@ -1113,7 +1135,7 @@ namespace TrainingProject
 					{
 						string ending = "";
 						if (index == 2 && !showAll && Seating.Count > 3) ending = "...";
-						Label lblArenaSeating = new Label { AutoSize = true, Text = "  Level: " + eSeating.Level + " Price " + String.Format(" Price {0:n0} Seats {1:n0}{2}\n", eSeating.Price, eSeating.Amount, ending) };
+						Label lblArenaSeating = new Label { AutoSize = true, Text = String.Format("  Level:{3} Price:{0:n0} Seats:{1:n0}{2}\n", eSeating.Price, eSeating.Amount, ending, eSeating.Level) };
 						pnlSeating.Controls.Add(lblArenaSeating);
 						index++;
 					}
@@ -1148,7 +1170,13 @@ namespace TrainingProject
 				Label lblManager = new Label { AutoSize = true, Text =     "Manager:     " + ManagerHrs + " Hours (" + String.Format("{0:n0}", ManagerCost) + ")" };
 				lblManager.Click += new EventHandler((sender, e) => AddManagerHours());
 				MainPanel.Controls.Add(lblManager);
-				Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
+				if (getWarningLog.Length > 0)
+				{
+					Label lblWarningLog = new Label { AutoSize = true, Font = new Font(new FontFamily("Courier New"), 12, FontStyle.Bold, GraphicsUnit.Pixel), Text = Environment.NewLine + "Warnings:" + getWarningLog };
+					lblWarningLog.Click += new EventHandler((sender, e) => clearWarnings());
+					MainPanel.Controls.Add(lblWarningLog);
+				}
+				Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + getFightLog };
 				MainPanel.Controls.Add(lblFightLog);
 			}
 			//isShown = true;
@@ -1490,6 +1518,12 @@ namespace TrainingProject
 							MainPanel.Controls.Add(lblTeamstats);
 						}
 					}
+					if (getWarningLog.Length > 0)
+					{
+						Label lblWarningLog = new Label { AutoSize = true, Font = new Font(new FontFamily("Courier New"), 12, FontStyle.Bold, GraphicsUnit.Pixel), Text = Environment.NewLine + "Warnings:" + getWarningLog };
+						lblWarningLog.Click += new EventHandler((sender, e) => clearWarnings());
+						MainPanel.Controls.Add(lblWarningLog);
+					}
 					Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
 					MainPanel.Controls.Add(lblFightLog);
 				}
@@ -1552,9 +1586,9 @@ namespace TrainingProject
 						{
 							eTeam.Rebuild(i, true);
 							if (eTeam.MyTeam[i].getLevel == 1)
-								eTeam.getTeamLog = getFightLog = Environment.NewLine + "+++ " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " has been rebuilt!";
+								eTeam.getTeamLog = getFightLog = getWarningLog = Environment.NewLine + "+++ " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " has been rebuilt! @ " + DateTime.Now.ToString();
 							else 
-								eTeam.getTeamLog = getFightLog = Environment.NewLine + "--- " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " failed the rebuild!";
+								eTeam.getTeamLog = getFightLog = getWarningLog = Environment.NewLine + "--- " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " failed the rebuild! @ " + DateTime.Now.ToString();
 						}
 					}
 				}
@@ -2100,8 +2134,8 @@ namespace TrainingProject
 			if (Difficulty < 1)
 				Difficulty = 1;
 			MyTeam = new List<Robot> { };
-			int minLvl = Difficulty - numMonsters > 0 ? Difficulty - RndVal.Next(1,numMonsters) : 1;
-			int maxLvl = Difficulty + RndVal.Next(1, numMonsters);
+			int minLvl = Difficulty - (numMonsters / 2) > 0 ? Difficulty - (numMonsters/2) : 1;
+			int maxLvl = Difficulty + (numMonsters / 2);
 			for (int i = 0; i < numMonsters; i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
@@ -2124,8 +2158,8 @@ namespace TrainingProject
 				else
 				{
 					// Add equipment
-					MyTeam[i].getEquipWeapon = new Equipment(true, RndVal.Next(1, Difficulty), 100, RndVal);
-					MyTeam[i].getEquipArmour = new Equipment(false, RndVal.Next(1, Difficulty), 100, RndVal);
+					MyTeam[i].getEquipWeapon = new Equipment(true, RndVal.Next(1, Difficulty), RndVal.Next(100, numMonsters * 100), RndVal);
+					MyTeam[i].getEquipArmour = new Equipment(false, RndVal.Next(1, Difficulty), RndVal.Next(100, numMonsters * 100), RndVal);
 					int tmp = RndVal.Next(minLvl, maxLvl);
 					for (int ii = 1; ii < tmp; ii++)
 					{
@@ -2196,14 +2230,23 @@ namespace TrainingProject
 			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(15).Substring(0,15), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
 			foreach (Robot eRobo in MyTeam)
 			{
-				if (counter <= maxRobos)
+				if (counter < maxRobos)
 				{
 					strStats += eRobo.getRoboStats(PadRight, getCurrency);
-					if (eRobo.HP > 0) counter++;
+					if (eRobo.getKO <= 3) counter++;
 				}
 				else
 				{
-					if (eRobo.HP > 0) strStats += ".";
+					eRobo.getRoboStats(PadRight, getCurrency);
+					if (counter % 5 == 0)
+						if (eRobo.getKO <= 3)
+							strStats += " ";
+					if (eRobo.getKO <= 3)
+					{
+						strStats += ".";
+						counter++;
+					}
+
 				}
 			}
 			return strStats;
@@ -2285,9 +2328,10 @@ namespace TrainingProject
                     {
                         cost--;
                         value--;
-                    }
-                    getCurrency -= cost;
-                    robo.HP += value;
+					}
+					getCurrency -= cost;
+					CurrencyLog -= cost;
+					robo.HP += value;
                     robo.MP += value;
                     robo.getKO = 0;
                 }
@@ -2998,7 +3042,11 @@ namespace TrainingProject
 							message += Environment.NewLine + EquipArmour.eName + " broke!";
 							RobotLog = Environment.NewLine + getName + " " + EquipArmour.eName + " broke!";
 							if (!bIsMonster)
-								Globalmessage = Environment.NewLine + string.Format("--- {0} {1} broke! ({2:n0})", getName, EquipArmour.eName, EquipArmour.eMaxDurability);
+							{
+								Globalmessage = string.Format("\n--- {0} {1} broke! ({2:n0})", getName, EquipArmour.eName, EquipArmour.eMaxDurability);
+								if (EquipArmour.eMaxDurability > 100)
+									getWarningLog = string.Format("\n--- {0} {1} broke! ({2:n0}) @ {3}", getName, EquipArmour.eName, EquipArmour.eMaxDurability, DateTime.Now.ToString());
+							}
 							EquipArmour = null;
 							if (HP > getTHealth()) HP = getTHealth();
 							if (MP > getTEnergy()) MP = getTEnergy();
@@ -3012,7 +3060,11 @@ namespace TrainingProject
 							attacker.message += attacker.EquipWeapon.eName + " broke!";
 							attacker.RobotLog = Environment.NewLine + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
 							if (!attacker.bIsMonster)
-								Globalmessage = Environment.NewLine + "--- " + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
+							{
+								Globalmessage = string.Format("\n--- {0} {1} broke! ({2:n0})", attacker.getName, EquipWeapon.eName, EquipWeapon.eMaxDurability);
+								if (EquipWeapon.eMaxDurability > 100)
+									getWarningLog = (string.Format("\n--- {0} {1} broke! ({2:n0}) @ {3}", attacker.getName, EquipWeapon.eName, EquipWeapon.eMaxDurability, DateTime.Now.ToString()));
+							}
 							attacker.EquipWeapon = null;
 							if (attacker.HP > attacker.getTHealth()) attacker.HP = attacker.getTHealth();
 							if (attacker.MP > attacker.getTEnergy()) attacker.MP = attacker.getTEnergy();

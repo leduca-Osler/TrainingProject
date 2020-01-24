@@ -34,6 +34,7 @@
 			this.btnExport = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuExport = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuImport = new System.Windows.Forms.ToolStripMenuItem();
+			this.countdownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
 			this.btnAddRobo = new System.Windows.Forms.ToolStripButton();
@@ -59,7 +60,6 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-			this.countdownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -100,16 +100,23 @@
 			// mnuExport
 			// 
 			this.mnuExport.Name = "mnuExport";
-			this.mnuExport.Size = new System.Drawing.Size(152, 22);
+			this.mnuExport.Size = new System.Drawing.Size(137, 22);
 			this.mnuExport.Text = "Export";
 			this.mnuExport.Click += new System.EventHandler(this.mnuExport_Click);
 			// 
 			// mnuImport
 			// 
 			this.mnuImport.Name = "mnuImport";
-			this.mnuImport.Size = new System.Drawing.Size(152, 22);
+			this.mnuImport.Size = new System.Drawing.Size(137, 22);
 			this.mnuImport.Text = "Import";
 			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
+			// 
+			// countdownToolStripMenuItem
+			// 
+			this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
+			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+			this.countdownToolStripMenuItem.Text = "Countdown";
+			this.countdownToolStripMenuItem.Click += new System.EventHandler(this.countdownToolStripMenuItem_Click);
 			// 
 			// cbTeamSelect
 			// 
@@ -347,13 +354,6 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
-			// 
-			// countdownToolStripMenuItem
-			// 
-			this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
-			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.countdownToolStripMenuItem.Text = "Countdown";
-			this.countdownToolStripMenuItem.Click += new System.EventHandler(this.countdownToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
