@@ -115,6 +115,8 @@ namespace TrainingApp
 		public void update()
 		{
 			Boolean addTeam = false;
+			// background image
+			Image addTeamImage = new Bitmap(@"AddTeam.png");
 			Boolean addRobo = false;
 			Boolean arenaLvl = false;
 			Boolean monsterLvl = false;
@@ -123,7 +125,11 @@ namespace TrainingApp
 			Color shopColour = Color.White;
 			Boolean researchLvl = false;
 			if (MyGame.getAvailableTeams > 0)
+			{
 				addTeam = true;
+				if (MyGame.getTeamCost >= MyGame.getGameCurrency)
+					addTeamImage = new Bitmap(@"Dollar.png");
+			}
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
 					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost)
 				addRobo = true;
@@ -146,6 +152,7 @@ namespace TrainingApp
 				researchLvl = true;
 
 			btnAddTeam.Enabled = addTeam;
+			btnAddTeam.Image = addTeamImage;
 			btnAddRobo.Enabled = addRobo;
 			btnArenaLvl.Enabled = arenaLvl;
 			btnMonsterDen.Enabled = monsterLvl;

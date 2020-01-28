@@ -545,6 +545,7 @@ namespace TrainingProject
 			FightBreak = 80;
 			roundCount = 0;
 			bossFight = false;
+			getWarningLog = "";
 		}
 		public Game(bool isNew)
         {
@@ -607,6 +608,7 @@ namespace TrainingProject
 			BossDifficulty = 10;
 			BossReward = 1000;
 			bossFight = false;
+			getWarningLog = "";
 		}
 		public bool ShouldSerializeMainFormPanel()
 		{
@@ -1584,11 +1586,11 @@ namespace TrainingProject
 					{
 						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost() && eTeam.MyTeam[i].rebuildCost() > 100)
 						{
-							eTeam.Rebuild(i, true);
+							int tmp = eTeam.Rebuild(i, true);
 							if (eTeam.MyTeam[i].getLevel == 1)
 								eTeam.getTeamLog = getFightLog = getWarningLog = Environment.NewLine + "+++ " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " has been rebuilt! @ " + DateTime.Now.ToString();
 							else 
-								eTeam.getTeamLog = getFightLog = getWarningLog = Environment.NewLine + "--- " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " failed the rebuild! @ " + DateTime.Now.ToString();
+								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2} Analysis) @ {3}", eTeam.getName, eTeam.MyTeam[i].getName, tmp, DateTime.Now.ToString());
 						}
 					}
 				}
@@ -1615,7 +1617,7 @@ namespace TrainingProject
 						// Arena makes 10%
 						getGameCurrency += (tmpUpgrade) / 10;
 						shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
-						getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString();
+						getFightLog = Environment.NewLine + "+++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipWeapon.ToString();
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipWeapon.eName;
 					}
 				}
@@ -1631,7 +1633,7 @@ namespace TrainingProject
 							getGameCurrency += eEquip.ePrice;
 							shopper.getEquipWeapon = eEquip;
 							storeEquipment.RemoveAt(index);
-							getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
+							getFightLog = Environment.NewLine + "$$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
 							eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " purchased " + String.Format("({0:n0}) ", eEquip.ePrice) + eEquip.eName;
 							break;
 						}
@@ -1660,7 +1662,7 @@ namespace TrainingProject
 						// Arena makes 10%
 						getGameCurrency += (tmpUpgrade) / 10;
 						shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
-						getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString();
+						getFightLog = Environment.NewLine + "+++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "  " + shopper.getEquipArmour.ToString();
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipArmour.eName;
 					}
 				}
@@ -1676,7 +1678,7 @@ namespace TrainingProject
 							getGameCurrency += eEquip.ePrice;
 							shopper.getEquipArmour = eEquip;
 							storeEquipment.RemoveAt(index);
-							getFightLog = Environment.NewLine + "### " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
+							getFightLog = Environment.NewLine + "$$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "  " + eEquip.ToString();
 							eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " purchased " + String.Format("({0:n0}) ", eEquip.ePrice) + eEquip.eName;
 							break;
 						}
@@ -2276,8 +2278,9 @@ namespace TrainingProject
 			}
 			Rebuild(robotIndex, pay);
 		}
-		public void Rebuild(int robo, bool pay)
+		public int Rebuild(int robo, bool pay)
 		{
+			int bonusAnalysis = 0;
 			if (!pay || MyTeam[robo].rebuildCost() <= getCurrency)
 			{
 				if (pay)
@@ -2297,9 +2300,11 @@ namespace TrainingProject
 				}
 				else
 				{
-					MyTeam[robo].getCurrentAnalysis += RndVal.Next((int)MyTeam[robo].RebuildPercent*10);
+					bonusAnalysis = RndVal.Next((int)MyTeam[robo].RebuildPercent * 10);
+					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
 				}
 			}
+			return bonusAnalysis;
 		}
 		public int getNumRobos(bool pShowDefeated)
 		{
