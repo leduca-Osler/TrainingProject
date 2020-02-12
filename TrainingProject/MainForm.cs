@@ -85,6 +85,8 @@ namespace TrainingApp
 			if (!MyGame.isFighting())
 			{
 				shownCount = maxCount;
+				if (Game.RndVal.Next(MyGame.ManagerHrs) < 2)
+					MyGame.ManagerHrs++;
 				MyGame.startFight();
 				update();
 			}
@@ -517,7 +519,7 @@ namespace TrainingApp
 					MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 			}
 			Random rnd = new Random();
-			if (MyGame.getGameCurrency < 0 && rnd.Next(1000) > 900)
+			if (MyGame.getGameCurrency < 0 && rnd.Next(1000) > 990)
 				MyGame.ManagerHrs++;
 		}
 

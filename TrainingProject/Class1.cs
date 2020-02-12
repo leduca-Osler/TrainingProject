@@ -1146,7 +1146,7 @@ namespace TrainingProject
 				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0} ({1:n0}) - {2:n0}", getShopLvl, getShopLvlCost, getShopLvlMaint) };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				Label lblShopStock = new Label { AutoSize = true, Text = String.Format(" Max Stock:{4}/{0} Dur:{1:n0} sta+{2:n0} Cost:{3:n0}", getShopStock, getShopMaxDurability, getShopMaxStat, getShopStockCost, storeEquipment.Count) };
+				Label lblShopStock = new Label { AutoSize = true, Text = String.Format(" Max Stock:{4}/{0} Dur:{1:n0} sta+{2:n0} Cost:{3:n0} up:{5:n0} ", getShopStock, getShopMaxDurability, getShopMaxStat, getShopStockCost, storeEquipment.Count, getShopUpgradeValue) };
 				pnlEquipment.Controls.Add(lblShopStock);
 				index = 0;
 				foreach (Equipment eEquipment in storeEquipment)
@@ -3362,6 +3362,7 @@ namespace TrainingProject
 		public void upgrade(int value, Random RndVal)
 		{
 			int Type = RndVal.Next(1, 9);
+			eMaxDurability += value;
 			value = RndVal.Next(1, value);
 			switch (Type)
 			{
