@@ -233,6 +233,8 @@ namespace TrainingProject
 		private int findMonster;
 		private int Numeral;
 		private int maxNumeral;
+		public int fightPercent;
+		private int fightCount;
 		public int ArenaOpponent1;
 		public int ArenaOpponent2;
 		public int ManagerHrs;
@@ -546,6 +548,8 @@ namespace TrainingProject
 			roundCount = 0;
 			bossFight = false;
 			getWarningLog = "";
+			fightPercent = 95;
+			fightCount = 0;
 		}
 		public Game(bool isNew)
         {
@@ -609,6 +613,8 @@ namespace TrainingProject
 			BossReward = 1000;
 			bossFight = false;
 			getWarningLog = "";
+			fightPercent = 95;
+			fightCount = 0;
 		}
 		public bool ShouldSerializeMainFormPanel()
 		{
@@ -619,6 +625,9 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+
+			fightPercent = 95;
+			fightCount = 0;
 		}
 
 		public void resetShowDefeated()
@@ -945,9 +954,15 @@ namespace TrainingProject
 					Team1Index = ArenaOpponent1;
 					Team2Index = ArenaOpponent2;
 					ArenaOpponent2++;
+					if (fightCount >= MaxTeams / 2)
+						fightPercent++;
+					else
+						fightPercent--;
+					fightCount = 0;
 				}
 				else
 				{
+					fightCount++;
 					// monster fight
 					int Team1Score = 99999999;
 					Team1Index = Team2Index = -1;
@@ -1014,7 +1029,7 @@ namespace TrainingProject
 				string spacer = "";
 				if (GameTeam1.Count > 1)
 					spacer = "  ";
-				msg = Environment.NewLine + spacer + GameTeam1[GameTeam1.Count - 1].getName + " VS " + GameTeam2[GameTeam2.Count - 1].getName + " @ " + DateTime.Now.ToString() + msg;
+				msg = string.Format("\n{0}{1} VS {2} ({5}) @ {3}{4}" , spacer , GameTeam1[GameTeam1.Count - 1].getName, GameTeam2[GameTeam2.Count - 1].getName, DateTime.Now.ToString(), msg, fightPercent);
 				if (GameTeam1.Count == 1)
 					msg += Environment.NewLine + Environment.NewLine;
 				getFightLog = msg;
@@ -2240,11 +2255,12 @@ namespace TrainingProject
 				else
 				{
 					eRobo.getRoboStats(PadRight, getCurrency);
-					if (counter % 5 == 0)
-						if (eRobo.getKO <= 3)
-							strStats += " ";
 					if (eRobo.getKO <= 3)
 					{
+						if (counter == maxRobos)
+							strStats += Environment.NewLine + "->";
+						if (counter % 5 == 0)
+							strStats += " ";
 						strStats += ".";
 						counter++;
 					}

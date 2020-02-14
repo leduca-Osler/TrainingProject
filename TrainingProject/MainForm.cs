@@ -85,8 +85,12 @@ namespace TrainingApp
 			if (!MyGame.isFighting())
 			{
 				shownCount = maxCount;
-				if (Game.RndVal.Next(MyGame.ManagerHrs) < 2)
+				if (Game.RndVal.Next(MyGame.ManagerHrs) < 1)
+				{
 					MyGame.ManagerHrs++;
+					MyGame.ManagerCost *= 2;
+					MyGame.ManagerCost = MyGame.SkipFour(MyGame.ManagerCost);
+				}
 				MyGame.startFight();
 				update();
 			}
@@ -228,6 +232,7 @@ namespace TrainingApp
 			int total = 0;
 			total += MyGame.GameTeam1[0].getNumRobos(false);
 			total += MyGame.GameTeam2[0].getNumRobos(false);
+			if (total > 20) total = 20;
 			return total;
 		}
 		private void btnArenaLvl_Click(object sender, EventArgs e)
@@ -520,15 +525,17 @@ namespace TrainingApp
 			}
 			Random rnd = new Random();
 			if (MyGame.getGameCurrency < 0 && rnd.Next(1000) > 990)
+			{
 				MyGame.ManagerHrs++;
+				MyGame.ManagerCost *= 2;
+				MyGame.ManagerCost = MyGame.SkipFour(MyGame.ManagerCost);
+			}
 		}
-
 		private void levelUpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			MyGame.ShopLevelUp();
 			update();
 		}
-
 		private void btnShop_ButtonClick(object sender, EventArgs e)
 		{
 			if (MyGame.getGameCurrency > MyGame.getShopLvlCost)
@@ -647,12 +654,12 @@ namespace TrainingApp
 				if (MyGame.Repair())
 					tmpColour = Color.White;
 				MyGame.equip();
-				if (MyGame.isFighting() && tmp.Next(100) > 98)
+				if (MyGame.isFighting() && tmp.Next(100) > MyGame.fightPercent)
 					MyGame.startFight();
 				if (!MyGame.isFighting())
 					btnFight.BackColor = tmpColour;
 			}
-			if (tmp.Next(100) > 98)
+			if (tmp.Next(100) > 95)
 			{
 				MyGame.continueFight(false);
 				BreakTimer.Interval++;
