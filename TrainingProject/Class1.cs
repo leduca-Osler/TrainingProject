@@ -933,6 +933,29 @@ namespace TrainingProject
 				foreach (Robot eRobot in eTeam.MyTeam)
 					eRobot.sortSkills();
 		}
+		public int monsterFight()
+		{
+			int Team1Score = 99999999;
+			int TeamIndex = -1;
+			int tmpScore = 0;
+			for (int i = 0; i < GameTeams.Count; i++)
+			{
+				tmpScore = GameTeams[i].getScore * (GameTeams[i].Win + 1);
+				// if new score is lower than previous
+				if ((Team1Score > tmpScore || (Team1Score == tmpScore && RndVal.Next(100) > 50))
+					&& !isFighting(GameTeams[i].getName))
+				{
+					TeamIndex = i;
+					Team1Score = tmpScore;
+				}
+			}
+			return TeamIndex;
+		}
+		public void incrementArenaOpponent()
+		{
+			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; }
+			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
+		}
 		public void startFight()
         {
 			if (bossFight && !fighting)
@@ -948,11 +971,22 @@ namespace TrainingProject
 				// usually fight other teams. 
 				if (GameTeam1.Count == 0)
 				{
-					if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; }
-					if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
-					// robot fight
-					Team1Index = ArenaOpponent1;
-					Team2Index = ArenaOpponent2;
+					incrementArenaOpponent();
+					if (ArenaOpponent1 == ArenaOpponent2)
+					{
+						if (ArenaOpponent1 != 0)
+						{
+							ArenaOpponent2++;
+							incrementArenaOpponent();
+						}
+					}
+					if (ArenaOpponent1 == 0 && ArenaOpponent1 == ArenaOpponent2)
+						Team1Index = Team2Index = monsterFight();
+					else
+					{
+						Team1Index = ArenaOpponent1;
+						Team2Index = ArenaOpponent2;
+					}
 					ArenaOpponent2++;
 					if (fightCount >= MaxTeams / 2)
 						fightPercent++;
@@ -964,21 +998,7 @@ namespace TrainingProject
 				{
 					fightCount++;
 					// monster fight
-					int Team1Score = 99999999;
-					Team1Index = Team2Index = -1;
-					int tmpScore = 0;
-					for (int i = 0; i < GameTeams.Count; i++)
-					{
-						tmpScore = GameTeams[i].getScore * (GameTeams[i].Win+1);
-						// if new score is lower than previous
-						if ((Team1Score > tmpScore || (Team1Score == tmpScore && RndVal.Next(100) > 50))
-							&& !isFighting(GameTeams[i].getName))
-						{
-							Team1Index = i;
-							Team2Index = i;
-							Team1Score = tmpScore;
-						}
-					}
+					Team1Index = Team2Index = monsterFight();
 					// if index is still -1 no available teams exit function
 					if (Team1Index == -1) return;
 				}
@@ -987,12 +1007,9 @@ namespace TrainingProject
 
 				if (Team1Index == Team2Index)
 				{
-					// Reset difficulty
-					if (RndVal.Next(100) > 95 && GameTeam1.Count == 1)
-					{
-						GameTeam1[GameTeam1.Count - 1].getDifficulty = RndVal.Next(GameTeam1[GameTeam1.Count - 1].MyTeam[GameTeam1[GameTeam1.Count - 1].MyTeam.Count-1].getLevel);
-						getFightLog = string.Format("\n--Difficulty reset to {0}", GameTeam1[GameTeam1.Count - 1].getDifficulty);
-					}
+					// Lower difficulty
+					if (GameTeam1.Count == 1)
+						GameTeam1[GameTeam1.Count - 1].getDifficulty--;
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getMaxRobos, GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak));
 				}
@@ -1029,7 +1046,7 @@ namespace TrainingProject
 				string spacer = "";
 				if (GameTeam1.Count > 1)
 					spacer = "  ";
-				msg = string.Format("\n{0}{1} VS {2} ({5}) @ {3}{4}" , spacer , GameTeam1[GameTeam1.Count - 1].getName, GameTeam2[GameTeam2.Count - 1].getName, DateTime.Now.ToString(), msg, fightPercent);
+				msg = string.Format("\n{0}{1} VS {2} @ {3}{4}" , spacer , GameTeam1[GameTeam1.Count - 1].getName, GameTeam2[GameTeam2.Count - 1].getName, DateTime.Now.ToString(), msg, fightPercent);
 				if (GameTeam1.Count == 1)
 					msg += Environment.NewLine + Environment.NewLine;
 				getFightLog = msg;
