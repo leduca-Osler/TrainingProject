@@ -223,6 +223,7 @@ namespace TrainingProject
 		public IList<Team> GameTeams;
 		[JsonProperty]
 		public IList<ArenaSeating> Seating;
+		public IList<ArenaSeating> CurrentSeating;
 		[JsonProperty]
 		public IList<Equipment> storeEquipment;
 		public IList<Team> GameTeam1;
@@ -312,6 +313,7 @@ namespace TrainingProject
 		private int ResearchDevHealCost;
 		public int roundCount;
 		public bool bossFight;
+		public int WinCount;
 		public int getMonsterDenBonus
 		{
 			get { return MonsterDenBonus; }
@@ -492,6 +494,7 @@ namespace TrainingProject
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
 			Seating = new List<ArenaSeating> { };
+			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
 			MonsterOutbreak = new Team(1,1,1,findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
@@ -557,6 +560,7 @@ namespace TrainingProject
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
 			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50) };
+			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
 			MonsterOutbreak = new Team(1, 1, 1, findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
@@ -625,9 +629,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-
-			fightPercent = 95;
-			fightCount = 0;
 		}
 
 		public void resetShowDefeated()
@@ -971,6 +972,7 @@ namespace TrainingProject
 				// usually fight other teams. 
 				if (GameTeam1.Count == 0)
 				{
+					WinCount = 0;
 					incrementArenaOpponent();
 					if (ArenaOpponent1 == ArenaOpponent2)
 					{
@@ -1009,7 +1011,10 @@ namespace TrainingProject
 				{
 					// Lower difficulty
 					if (GameTeam1.Count == 1)
-						GameTeam1[GameTeam1.Count - 1].getDifficulty--;
+					{
+						GameTeam1[0].getDifficulty--;
+						GameTeam1[0].healRobos(0, 999999);
+					}
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getMaxRobos, GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak));
 				}
@@ -1024,8 +1029,17 @@ namespace TrainingProject
 				string msg = Environment.NewLine + "     Attendance: ";
 				int tmpMonsterDenBonus = getMonsterDenBonus;
 				int tmpTotalScore = PotScore;
+				if (GameTeam1.Count == 1)
+				{
+					CurrentSeating = new List<ArenaSeating> {  };
+					// reset seating
+					foreach (ArenaSeating eSeating in Seating)
+					{
+						CurrentSeating.Add(new ArenaSeating(eSeating.Level, eSeating.Price, eSeating.Amount));
+					}
+				}
 				// Get money for the pot
-				foreach (ArenaSeating eSeating in Seating)
+				foreach (ArenaSeating eSeating in CurrentSeating)
 				{
 					int min = (tmpMonsterDenBonus <= eSeating.Amount / 2 ? tmpMonsterDenBonus : eSeating.Amount / 2);
 					int max = (tmpTotalScore > eSeating.Amount ? eSeating.Amount : tmpTotalScore);
@@ -1042,6 +1056,7 @@ namespace TrainingProject
 					if (tmpMonsterDenBonus < 0) tmpMonsterDenBonus = 0;
 					msg += string.Format(" {0}({1:n0})", eSeating.Level , NumSeats);
 					Jackpot += eSeating.Price * NumSeats;
+					eSeating.Amount -= NumSeats;
 				}
 				string spacer = "";
 				if (GameTeam1.Count > 1)
@@ -1452,6 +1467,7 @@ namespace TrainingProject
 								// increase difficulty if monster
 								if (GameTeam2[i].isMonster)
 								{
+									WinCount++;
 									GameTeam1[i].getDifficulty++;
 									getFightLog = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
 									// fight next difficulty
@@ -1487,7 +1503,10 @@ namespace TrainingProject
 									int tmp = (int)(Jackpot * .25);
 									GameTeam1[i].getCurrency += tmp;
 									Jackpot -= tmp;
-									msg += " (" + String.Format("{0:n0}", tmp) + ")";
+									msg += String.Format(" ({0:n0}) Win:{1}", tmp, WinCount);
+									// if GameTeam1 has a lower difficulty it's lowest character level send a warning
+									if (WinCount == 0 && GameTeam1[i].getDifficulty < GameTeam1[i].MyTeam[GameTeam1[i].MyTeam.Count - 1].getLevel)
+										getWarningLog = String.Format("--- {0} as failed to advance past min level!", GameTeam1[i].getName);
 								}
 								else
 								{

@@ -86,7 +86,7 @@ namespace TrainingApp
 			{
 				shownCount = maxCount;
 				int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
-				if (Game.RndVal.Next(MyGame.ManagerHrs) < 1 && hrs > 0)
+				if (Game.RndVal.Next(MyGame.ManagerHrs) < 1 && hrs < 1)
 				{
 					MyGame.ManagerHrs++;
 					MyGame.ManagerCost *= 2;
