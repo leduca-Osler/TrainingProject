@@ -811,10 +811,23 @@ namespace TrainingProject
 			}
 			rebuild.getDifficulty = 0;
 			rebuild.Win++;
+			int winGoal = rebuild.Win;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 				rebuild.Rebuild(i, false);
 			foreach (Team eTeam in GameTeams)
+			{
 				eTeam.getScore = 0;
+				if (eTeam.Win < winGoal)
+				{
+					int iWinnings = getArenaLvl * 1000 * (winGoal + 1);
+					foreach (Robot eRobo in eTeam.MyTeam)
+						if (eRobo.rebuildCost() > 100)
+							iWinnings += eRobo.rebuildCost();
+					getFightLog = eTeam.getTeamLog = string.Format("\n*!* {0} won {1:n0} credits during reset!", eTeam.getName, iWinnings);
+					eTeam.getCurrency += iWinnings;
+				}
+			}
+			PurchaseUgrade = false;
 			return TeamName;
 		}
 		public void addRobo(int Team)
@@ -1505,8 +1518,8 @@ namespace TrainingProject
 									Jackpot -= tmp;
 									msg += String.Format(" ({0:n0}) Win:{1}", tmp, WinCount);
 									// if GameTeam1 has a lower difficulty it's lowest character level send a warning
-									if (WinCount == 0 && GameTeam1[i].getDifficulty < GameTeam1[i].MyTeam[GameTeam1[i].MyTeam.Count - 1].getLevel)
-										getWarningLog = String.Format("--- {0} as failed to advance past min level!", GameTeam1[i].getName);
+									if (WinCount == 0 && GameTeam1[i].getDifficulty < GameTeam1[i].MyTeam[GameTeam1[i].MyTeam.Count - 1].getLevel && GameTeam1[i].getDifficulty > 0)
+										getWarningLog = String.Format("\n--- {0} as failed to advance past min level!", GameTeam1[i].getName);
 								}
 								else
 								{
@@ -2978,7 +2991,7 @@ namespace TrainingProject
 			MentalStrength += Tech;
 			MentalDefense += Tech;
 			RobotLog = Environment.NewLine + getName + " reached level " + getLevel;
-			if (Level % 3 == 0) // new skills every 3 levels
+			if (Level % 3 != 0 && ListSkills.Count >= 1) // new skills every 3 levels
 			{
 				Skill upSkill = ListSkills[tmp.Next(ListSkills.Count)];
 				if (upSkill.cost == 0)
@@ -3118,9 +3131,9 @@ namespace TrainingProject
 							attacker.RobotLog = Environment.NewLine + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
 							if (!attacker.bIsMonster)
 							{
-								Globalmessage = string.Format("\n--- {0} {1} broke! ({2:n0})", attacker.getName, EquipWeapon.eName, EquipWeapon.eMaxDurability);
-								if (EquipWeapon.eMaxDurability > 100)
-									getWarningLog = (string.Format("\n--- {0} {1} broke! ({2:n0}) @ {3}", attacker.getName, EquipWeapon.eName, EquipWeapon.eMaxDurability, DateTime.Now.ToString()));
+								Globalmessage = string.Format("\n--- {0} {1} broke! ({2:n0})", attacker.getName, attacker.EquipWeapon.eName, attacker.EquipWeapon.eMaxDurability);
+								if (attacker.EquipWeapon.eMaxDurability > 100)
+									getWarningLog = (string.Format("\n--- {0} {1} broke! ({2:n0}) @ {3}", attacker.getName, attacker.EquipWeapon.eName, attacker.EquipWeapon.eMaxDurability, DateTime.Now.ToString()));
 							}
 							attacker.EquipWeapon = null;
 							if (attacker.HP > attacker.getTHealth()) attacker.HP = attacker.getTHealth();

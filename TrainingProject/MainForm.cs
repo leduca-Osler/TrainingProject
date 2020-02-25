@@ -112,6 +112,7 @@ namespace TrainingApp
 			{
 				update();
 				MyGame.interval(timer1);
+				//timer1.Interval = 50; //speed up for testing
 			}
 			else
 			{
