@@ -20,21 +20,22 @@ namespace TrainingApp
 		private Game MyGame;
 		private int shownCount;
 		private int maxCount = 1000;
+		private int counter;
+		private DateTime saveTime;
 		public MainForm()
 		{
 			try
 			{
 				MyGame = BinarySerialization.ReadFromBinaryFile<Game>("data\\TrainingProject.bin");
 				//MyGame.fixTech();
-				// temp
-				if (MyGame.getResearchDevHealBays < 1)
-					MyGame.getResearchDevHealBays = 1;
 			}
 			catch
 			{
 				// if no file, start a new game
 				MyGame = new Game(true);
 			}
+			counter = 1;
+			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
 			InitializeComponent();
 			MyGame.MainFormPanel = MainPannel;
@@ -214,18 +215,6 @@ namespace TrainingApp
 					}
 				}
 			}
-			try
-			{
-				if (Game.RndVal.Next(100) > 3)
-				{
-					BinarySerialization.WriteToBinaryFile<Game>("data\\TrainingProject.bin", MyGame);
-				}
-				else
-				{
-					WriteJSON();
-				}
-			}
-			catch { }
 			MainPannel.AutoScrollPosition = new Point(0, 0);
 		}
 		private int getNumRobos()
@@ -266,7 +255,8 @@ namespace TrainingApp
 		public void WriteJSON()
 		{
 			var JSON = JsonConvert.SerializeObject(MyGame, Formatting.Indented);
-			System.IO.File.WriteAllText("data\\" + DateTime.Now.ToString("yyyyMMdd") + "_" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "_TrainingProject.JSON", JSON);
+			System.IO.File.WriteAllText("data\\" + counter.ToString() + "_TrainingProject.JSON", JSON);
+			counter++;
 		}
 		public void ReadCountdownJSON()
 		{
@@ -555,6 +545,7 @@ namespace TrainingApp
 		{
 			BreakTimer.Interval = 1000;
 			pause();
+			saveGame(true);
 		}
 
 		private void mnuShowStats_Click(object sender, EventArgs e)
@@ -666,6 +657,7 @@ namespace TrainingApp
 				MyGame.continueFight(false);
 				BreakTimer.Interval++;
 			}
+			saveGame();
 		}
 
 		private void mnuBossFight_Click(object sender, EventArgs e)
@@ -676,6 +668,29 @@ namespace TrainingApp
 		private void countdownToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ReadCountdownJSON();
+		}
+		public void saveGame(bool saveNow)
+		{
+			saveTime = DateTime.Now.AddHours(-1);
+		}
+		public void saveGame()
+		{
+			if (saveTime < DateTime.Now)
+			{
+				saveTime = DateTime.Now.AddHours(1);
+				try
+				{
+					if (Game.RndVal.Next(100) > 3)
+					{
+						BinarySerialization.WriteToBinaryFile<Game>("data\\TrainingProject.bin", MyGame);
+					}
+					else
+					{
+						WriteJSON();
+					}
+				}
+				catch { MyGame.getWarningLog = "\nSave Failed!!!!"; }
+			}
 		}
 	}
 	public static class BinarySerialization

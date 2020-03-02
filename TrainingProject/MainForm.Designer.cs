@@ -71,9 +71,9 @@
             this.btnAddTeam,
             this.btnAddRobo,
             this.btnArenaLvl,
-            this.btnMonsterDen,
-            this.btnResearchDev,
             this.btnShop,
+            this.btnResearchDev,
+            this.btnMonsterDen,
             this.toolStripSeparator1,
             this.btnFight,
             this.btnAutomatic});
@@ -194,14 +194,14 @@
 			// mnuShopLevelUp
 			// 
 			this.mnuShopLevelUp.Name = "mnuShopLevelUp";
-			this.mnuShopLevelUp.Size = new System.Drawing.Size(119, 22);
+			this.mnuShopLevelUp.Size = new System.Drawing.Size(152, 22);
 			this.mnuShopLevelUp.Text = "Level Up";
 			this.mnuShopLevelUp.Click += new System.EventHandler(this.levelUpToolStripMenuItem_Click);
 			// 
 			// mnuRestockShop
 			// 
 			this.mnuRestockShop.Name = "mnuRestockShop";
-			this.mnuRestockShop.Size = new System.Drawing.Size(119, 22);
+			this.mnuRestockShop.Size = new System.Drawing.Size(152, 22);
 			this.mnuRestockShop.Text = "Restock";
 			this.mnuRestockShop.Click += new System.EventHandler(this.mnuRestockShop_Click);
 			// 
