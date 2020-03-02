@@ -678,11 +678,21 @@ namespace TrainingProject
 		{
 			string retVal = "";
 			getGameCurrency += BossReward;
-			BossLvl = upgradeValue(BossLvl, 1);
+			BossLvl = upgradeValue(BossLvl, .75);
 			BossCount++;
-			BossDifficulty = upgradeValue(BossDifficulty, 1);
+			BossDifficulty = upgradeValue(BossDifficulty, .5);
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) @ {0}", DateTime.Now.ToString(), BossReward);
 			BossReward = BossLvl * BossDifficulty * BossCount * 10;
+			Bosses = new Team(BossCount, BossDifficulty, BossLvl);
+			return retVal;
+		}
+		public string bossLevelReset()
+		{
+			string retVal = "";
+			BossLvl = upgradeValue(BossLvl/2, .75);
+			BossDifficulty = upgradeValue(BossDifficulty/2, .5);
+			BossReward = BossLvl * BossDifficulty * BossCount * 10;
+			retVal = getFightLog = String.Format("\nboss monsters difficulty down! ({0:n0})", BossReward);
 			Bosses = new Team(BossCount, BossDifficulty, BossLvl);
 			return retVal;
 		}
@@ -1074,10 +1084,10 @@ namespace TrainingProject
 					if (tmpMonsterDenBonus < 0) tmpMonsterDenBonus = 0;
 					msg += string.Format(" {0}({1:n0}/{2:n0}) ", eSeating.Level , NumSeats, max);
 					tmp += eSeating.Price * NumSeats;
-					Jackpot += tmp;
 					eSeating.Amount -= NumSeats;
 				}
 				msg += string.Format(" ${0:n0}", tmp);
+				Jackpot += tmp;
 				string spacer = "";
 				if (GameTeam1.Count > 1)
 					spacer = "  ";
@@ -1459,9 +1469,12 @@ namespace TrainingProject
 							}
 							else
 							{
-								lblWinner.Text = getFightLog = Environment.NewLine + "Arena suffered a loss against the boss monsters! @ " + DateTime.Now.ToString();
+								string tmp = getFightLog = Environment.NewLine + "Arena suffered a loss against the boss monsters! @ " + DateTime.Now.ToString();
 								if (GameTeam2[i].getNumRobos(false) < GameTeam2[i].MyTeam.Count)
 									bossBonusUp();
+								else if (RndVal.Next(100) > 95)
+									tmp += bossLevelReset();
+								lblWinner.Text = tmp;
 							}
 						}
 						GameTeam1.Clear();
