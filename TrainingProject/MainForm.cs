@@ -113,7 +113,9 @@ namespace TrainingApp
 			{
 				update();
 				MyGame.interval(timer1);
-				//timer1.Interval = 50; //speed up for testing
+				#if DEBUG
+					timer1.Interval = 50; //speed up for testing
+				#endif
 			}
 			else
 			{
@@ -296,6 +298,7 @@ namespace TrainingApp
 				int jMonsterDenLvlCost = json["MonsterDenLvlCost"] != null ? (int)json["MonsterDenLvlCost"] : 100;
 				int jMonsterDenMaint = json["MonsterDenLvlMaint"] != null ? (int)json["MonsterDenLvlMaint"] : 1;
 				int jMonsterDenBonus = json["MonsterDenBonus"] != null ? (int)json["MonsterDenBonus"] : 10;
+				int jMonsterDenRepair = json["MonsterDenRepair"] != null ? (int)json["MonsterDenRepair"] : 100;
 				int jShopLvl = json["ShopLvl"] != null ? (int)json["ShopLvl"] : 1;
 				int jShopLvlCost = json["ShopLvlCost"] != null ? (int)json["ShopLvlCost"] : 100;
 				int jShopMaint = json["ShopLvlMaint"] != null ? (int)json["ShopLvlMaint"] : 1;
@@ -310,14 +313,15 @@ namespace TrainingApp
 				int jResearchDevHealValue = json["ResearchDevHealValue"] != null ? (int)json["ResearchDevHealValue"] : 2;
 				int jResearchDevHealBays = json["ResearchDevHealBays"] != null ? (int)json["ResearchDevHealBays"] : 1;
 				int jResearchDevHealCost = json["ResearchDevHealCost"] != null ? (int)json["ResearchDevHealCost"] : 1;
+				int jResearchDevRebuild = json["ResearchDevRebuild"] != null ? (int)json["ResearchDevRebuild"] : 1000;
 				int jBossLvl = json["BossLvl"] != null ? (int)json["BossLvl"] : 10;
 				int jBossCount = json["BossCount"] != null ? (int)json["BossCount"] : 1;
 				int jBossDifficulty = json["BossDifficulty"] != null ? (int)json["BossDifficulty"] : 10;
 				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jMaxTeams, jTeamCost, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaMaint, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenMaint, jMonsterDenBonus,
-					jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, jResearchDevLvl, jResearchDevLvlCost, jResearchDevMaint, jResearchDevHealValue,
-					jResearchDevHealBays, jResearchDevHealCost, jBossLvl, jBossCount, jBossDifficulty, jBossReward);
+					jMonsterDenRepair, jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, jResearchDevLvl, jResearchDevLvlCost, jResearchDevMaint, jResearchDevHealValue,
+					jResearchDevHealBays, jResearchDevHealCost, jResearchDevRebuild, jBossLvl, jBossCount, jBossDifficulty, jBossReward);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating
@@ -647,7 +651,7 @@ namespace TrainingApp
 				if (MyGame.Repair())
 					tmpColour = Color.White;
 				MyGame.equip();
-				if (MyGame.isFighting() && tmp.Next(100) > MyGame.fightPercent)
+				if (MyGame.isFighting() && tmp.Next(MyGame.fightPercentMax) > MyGame.fightPercent)
 					MyGame.startFight();
 				if (!MyGame.isFighting())
 					btnFight.BackColor = tmpColour;

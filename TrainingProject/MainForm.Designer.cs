@@ -39,11 +39,11 @@
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
 			this.btnAddRobo = new System.Windows.Forms.ToolStripButton();
 			this.btnArenaLvl = new System.Windows.Forms.ToolStripButton();
-			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
-			this.btnResearchDev = new System.Windows.Forms.ToolStripButton();
 			this.btnShop = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuShopLevelUp = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuRestockShop = new System.Windows.Forms.ToolStripMenuItem();
+			this.btnResearchDev = new System.Windows.Forms.ToolStripButton();
+			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnFight = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuBossFight = new System.Windows.Forms.ToolStripMenuItem();
@@ -154,26 +154,6 @@
 			this.btnArenaLvl.Text = "Arena Level";
 			this.btnArenaLvl.Click += new System.EventHandler(this.btnArenaLvl_Click);
 			// 
-			// btnMonsterDen
-			// 
-			this.btnMonsterDen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnMonsterDen.Image = ((System.Drawing.Image)(resources.GetObject("btnMonsterDen.Image")));
-			this.btnMonsterDen.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnMonsterDen.Name = "btnMonsterDen";
-			this.btnMonsterDen.Size = new System.Drawing.Size(23, 22);
-			this.btnMonsterDen.Text = "Monster Den";
-			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
-			// 
-			// btnResearchDev
-			// 
-			this.btnResearchDev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnResearchDev.Image = global::TrainingProject.Properties.Resources.Repair;
-			this.btnResearchDev.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnResearchDev.Name = "btnResearchDev";
-			this.btnResearchDev.Size = new System.Drawing.Size(23, 22);
-			this.btnResearchDev.Text = "Research and Development";
-			this.btnResearchDev.Click += new System.EventHandler(this.btnResearchDev_Click);
-			// 
 			// btnShop
 			// 
 			this.btnShop.BackColor = System.Drawing.SystemColors.Control;
@@ -194,16 +174,36 @@
 			// mnuShopLevelUp
 			// 
 			this.mnuShopLevelUp.Name = "mnuShopLevelUp";
-			this.mnuShopLevelUp.Size = new System.Drawing.Size(152, 22);
+			this.mnuShopLevelUp.Size = new System.Drawing.Size(119, 22);
 			this.mnuShopLevelUp.Text = "Level Up";
 			this.mnuShopLevelUp.Click += new System.EventHandler(this.levelUpToolStripMenuItem_Click);
 			// 
 			// mnuRestockShop
 			// 
 			this.mnuRestockShop.Name = "mnuRestockShop";
-			this.mnuRestockShop.Size = new System.Drawing.Size(152, 22);
+			this.mnuRestockShop.Size = new System.Drawing.Size(119, 22);
 			this.mnuRestockShop.Text = "Restock";
 			this.mnuRestockShop.Click += new System.EventHandler(this.mnuRestockShop_Click);
+			// 
+			// btnResearchDev
+			// 
+			this.btnResearchDev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnResearchDev.Image = global::TrainingProject.Properties.Resources.Repair;
+			this.btnResearchDev.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnResearchDev.Name = "btnResearchDev";
+			this.btnResearchDev.Size = new System.Drawing.Size(23, 22);
+			this.btnResearchDev.Text = "Research and Development";
+			this.btnResearchDev.Click += new System.EventHandler(this.btnResearchDev_Click);
+			// 
+			// btnMonsterDen
+			// 
+			this.btnMonsterDen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnMonsterDen.Image = ((System.Drawing.Image)(resources.GetObject("btnMonsterDen.Image")));
+			this.btnMonsterDen.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnMonsterDen.Name = "btnMonsterDen";
+			this.btnMonsterDen.Size = new System.Drawing.Size(23, 22);
+			this.btnMonsterDen.Text = "Monster Den";
+			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
 			// 
 			// toolStripSeparator1
 			// 
