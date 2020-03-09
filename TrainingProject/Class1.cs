@@ -19,7 +19,7 @@ namespace TrainingProject
 		[JsonIgnore]
 		public static string Globalmessage;
 		[JsonProperty]
-		public static int ResearchDevRebuild;
+		public int ResearchDevRebuild;
 		[JsonIgnore]
 		private string WarningLog;
 		//public Random RndVal = new Random();
@@ -2996,7 +2996,6 @@ namespace TrainingProject
 			if (Level / 5 > (Dexterity + Strength + Agility + Tech + Accuracy) )
 			{
 				cost = 100 * (int)Math.Pow(2,(Level / 5) / (rebuildBonus + 1)) - ResearchDevRebuild;
-				if (cost <= 100) cost = 101;
 			}
 			return roundValue(cost);
 		}
