@@ -257,7 +257,9 @@ namespace TrainingApp
 		public void WriteJSON()
 		{
 			var JSON = JsonConvert.SerializeObject(MyGame, Formatting.Indented);
-			System.IO.File.WriteAllText("data\\" + counter.ToString() + "_TrainingProject.JSON", JSON);
+			string name = counter.ToString() + "_TrainingProject.json";
+			System.IO.File.WriteAllText("data\\" + name , JSON);
+			this.Text = "Training Program - " + name;
 			counter++;
 		}
 		public void ReadCountdownJSON()

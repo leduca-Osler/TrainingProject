@@ -365,7 +365,7 @@
 			this.Controls.Add(this.MainPannel);
 			this.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Name = "MainForm";
-			this.Text = "Main Form";
+			this.Text = "Training Form";
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
 			this.ResumeLayout(false);

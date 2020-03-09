@@ -18,8 +18,6 @@ namespace TrainingProject
 		public static readonly Random RndVal = new Random();
 		[JsonIgnore]
 		public static string Globalmessage;
-		[JsonProperty]
-		public int ResearchDevRebuild;
 		[JsonIgnore]
 		private string WarningLog;
 		//public Random RndVal = new Random();
@@ -313,6 +311,8 @@ namespace TrainingProject
 		private int ResearchDevHealBays;
 		[JsonProperty]
 		private int ResearchDevHealCost;
+		[JsonProperty]
+		public int ResearchDevRebuild;
 		public int roundCount;
 		public bool bossFight;
 		public int WinCount;
@@ -838,7 +838,7 @@ namespace TrainingProject
 			rebuild.Win++;
 			int winGoal = rebuild.Win;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
-				rebuild.Rebuild(i, false);
+				rebuild.Rebuild(i, false, ResearchDevRebuild);
 			foreach (Team eTeam in GameTeams)
 			{
 				eTeam.getScore = 0;
@@ -1220,9 +1220,9 @@ namespace TrainingProject
 					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
-					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + String.Format("{0:n0}", eRobo.rebuildCost()) + ")" };
+					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + String.Format("{0:n0}", eRobo.rebuildCost(ResearchDevRebuild)) + ")" };
 					int innerIndex = index++;
-					btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true));
+					btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, ResearchDevRebuild));
 					MyPanel.Controls.Add(RoboName);
 					MyPanel.Controls.Add(Everything);
 					MyPanel.Controls.Add(btnRebuild);
@@ -1441,12 +1441,12 @@ namespace TrainingProject
 							Color background = Color.Transparent;
 							if (i % 2 == 1)
 								background = Color.LightGray;
-							Label lblTeam1stats = new Label { AutoSize = true,BackColor = background , Text = GameTeam1[i].getTeamStats(maxNameLength(true)) };
+							Label lblTeam1stats = new Label { AutoSize = true,BackColor = background , Text = GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild) };
 							int tmpI = i;
-							lblTeam1stats.Click += new EventHandler((sender, e) => GameTeam1[tmpI].Rebuild(true));
+							lblTeam1stats.Click += new EventHandler((sender, e) => GameTeam1[tmpI].Rebuild(true, ResearchDevRebuild));
 							MainPanel.Controls.Add(lblTeam1stats);
-							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true)) };
-							lblTeam2stats.Click += new EventHandler((sender, e) => GameTeam2[tmpI].Rebuild(true));
+							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild) };
+							lblTeam2stats.Click += new EventHandler((sender, e) => GameTeam2[tmpI].Rebuild(true, ResearchDevRebuild));
 							MainPanel.Controls.Add(lblTeam2stats);
 						}
 						else
@@ -1640,8 +1640,8 @@ namespace TrainingProject
 					{
 						if (!isFighting(eTeam.getName))
 						{
-							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false)) };
-							lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true));
+							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), ResearchDevRebuild) };
+							lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true, ResearchDevRebuild));
 							MainPanel.Controls.Add(lblTeamstats);
 						}
 					}
@@ -1709,9 +1709,9 @@ namespace TrainingProject
 					// Rebuild Robot
 					for (int i = 0; i < eTeam.MyTeam.Count; i++)
 					{
-						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost() && eTeam.MyTeam[i].rebuildCost() > 100)
+						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) && eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) > 100)
 						{
-							int tmp = eTeam.Rebuild(i, true);
+							int tmp = eTeam.Rebuild(i, true, ResearchDevRebuild);
 							if (eTeam.MyTeam[i].getLevel == 1)
 								eTeam.getTeamLog = getFightLog = getWarningLog = Environment.NewLine + "+++ " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " has been rebuilt! @ " + DateTime.Now.ToString();
 							else 
@@ -2345,7 +2345,7 @@ namespace TrainingProject
 			foreach (Robot eRobo in MyTeam) { eRobo.resetLog(); }
 		}
 
-		public string getTeamStats(int[] PadRight)
+		public string getTeamStats(int[] PadRight, int rebuildSavings)
 		{
 			string strStats = "";
 			// If this team is not in Team1 or Team1 list
@@ -2359,12 +2359,12 @@ namespace TrainingProject
 			{
 				if (counter < maxRobos)
 				{
-					strStats += eRobo.getRoboStats(PadRight, getCurrency);
+					strStats += eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings);
 					if (eRobo.getKO <= 3) counter++;
 				}
 				else
 				{
-					eRobo.getRoboStats(PadRight, getCurrency);
+					eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings);
 					if (eRobo.getKO <= 3)
 					{
 						if (counter == maxRobos)
@@ -2384,15 +2384,15 @@ namespace TrainingProject
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
 		}
-		public void Rebuild(bool pay)
+		public void Rebuild(bool pay, int rebuildSavings)
 		{
 			for (int i = 0; i < MyTeam.Count; i++)
 			{
-				if (MyTeam[i].rebuildCost() > 100)
-					Rebuild(MyTeam[i], pay);
+				if (MyTeam[i].rebuildCost(rebuildSavings) > 100)
+					Rebuild(MyTeam[i], pay, rebuildSavings);
 			}
 		}
-		public void Rebuild(Robot robo, bool pay)
+		public void Rebuild(Robot robo, bool pay, int rebuildSavings)
 		{
 			int robotIndex = 0;
 			for (int i = 0; i < MyTeam.Count; i++)
@@ -2402,16 +2402,16 @@ namespace TrainingProject
 					robotIndex = i;
 				}
 			}
-			Rebuild(robotIndex, pay);
+			Rebuild(robotIndex, pay, rebuildSavings);
 		}
-		public int Rebuild(int robo, bool pay)
+		public int Rebuild(int robo, bool pay, int rebuildSavings)
 		{
 			int bonusAnalysis = 0;
-			if (!pay || MyTeam[robo].rebuildCost() <= getCurrency)
+			if (!pay || MyTeam[robo].rebuildCost(rebuildSavings) <= getCurrency)
 			{
 				if (pay)
 				{
-					getCurrency -= MyTeam[robo].rebuildCost();
+					getCurrency -= MyTeam[robo].rebuildCost(rebuildSavings);
 					MyTeam[robo].RebuildPercent++;
 					MyTeam[robo].rebuildBonus = 0;
 				}
@@ -2955,7 +2955,7 @@ namespace TrainingProject
 			AnalysisLog = 0;
 		}
 
-		public string getRoboStats(int[] PadRight, int teamCurrency)
+		public string getRoboStats(int[] PadRight, int teamCurrency, int rebuildSavings)
 		{
 			char cRebuild = ' ';
 			string strStats = "";
@@ -2964,8 +2964,8 @@ namespace TrainingProject
 			{
 				getKO++;
 			}
-			if (rebuildCost() > 100 && !bIsMonster)
-				if (rebuildCost() > teamCurrency)
+			if (rebuildCost(rebuildSavings) > 100 && !bIsMonster)
+				if (rebuildCost(rebuildSavings) > teamCurrency)
 					cRebuild = '|';
 				else
 					cRebuild = '+';
@@ -2989,13 +2989,13 @@ namespace TrainingProject
 			cSkill = ' ';
 			return strStats;
 		}
-		public int rebuildCost()
+		public int rebuildCost(int RebuildSavings)
 		{
 			int cost = 100;
 			// if base stats will go up add cost
 			if (Level / 5 > (Dexterity + Strength + Agility + Tech + Accuracy) )
 			{
-				cost = 100 * (int)Math.Pow(2,(Level / 5) / (rebuildBonus + 1)) - ResearchDevRebuild;
+				cost = 100 * (int)Math.Pow(2,(Level / 5) / (rebuildBonus + 1)) - RebuildSavings;
 			}
 			return roundValue(cost);
 		}
