@@ -633,7 +633,14 @@ namespace TrainingProject
 			// don't serialize the MainFormPanel
 			return false;
 		}
-
+		public int maxWins()
+		{
+			int retVal = 0;
+			foreach (Team eTeam in GameTeams)
+				if (retVal < eTeam.Win)
+					retVal = eTeam.Win;
+			return retVal;
+		}
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
@@ -679,7 +686,7 @@ namespace TrainingProject
 			ArenaLvlCost = SkipFour(ArenaLvlCost);
 			foreach (ArenaSeating eSeating in Seating)
 			{
-				eSeating.Amount = upgradeValue(eSeating.Amount, .5);
+				eSeating.Amount = upgradeValue(eSeating.Amount, .75);
 				eSeating.Price++;
 			}
 			// 20% chance to add a new level of seating
@@ -1709,7 +1716,9 @@ namespace TrainingProject
 					// Rebuild Robot
 					for (int i = 0; i < eTeam.MyTeam.Count; i++)
 					{
-						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) && eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) > 100)
+						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) 
+							&& (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) > 100 || (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) != 100 && eTeam.MyTeam[i].rebuildBonus > 0))
+							)
 						{
 							int tmp = eTeam.Rebuild(i, true, ResearchDevRebuild);
 							if (eTeam.MyTeam[i].getLevel == 1)
@@ -2026,13 +2035,13 @@ namespace TrainingProject
 				{
 					if (eDefender.HP > 0 && RndVal.Next(attacker.getLevel) <= RndVal.Next(eDefender.getLevel))
 					{
-						eDefender.damage(attacker, currSkill);
+						eDefender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
 					}
 				}
 			}
 			// attacking a single enemy
 			else
-				defender.damage(attacker, currSkill);
+				defender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
 			if (defender.RobotLog.Length > 0)
 			{
 				defenders.getTeamLog = defender.RobotLog;
@@ -2388,7 +2397,7 @@ namespace TrainingProject
 		{
 			for (int i = 0; i < MyTeam.Count; i++)
 			{
-				if (MyTeam[i].rebuildCost(rebuildSavings) > 100)
+				if (MyTeam[i].rebuildCost(rebuildSavings) > 100 || (MyTeam[i].rebuildCost(rebuildSavings) != 100 && MyTeam[i].rebuildBonus > 0))
 					Rebuild(MyTeam[i], pay, rebuildSavings);
 			}
 		}
@@ -2964,9 +2973,12 @@ namespace TrainingProject
 			{
 				getKO++;
 			}
-			if (rebuildCost(rebuildSavings) > 100 && !bIsMonster)
+			if ((rebuildCost(rebuildSavings) > 100 || (rebuildCost(rebuildSavings) != 100 && rebuildBonus > 0)) && !bIsMonster)
 				if (rebuildCost(rebuildSavings) > teamCurrency)
-					cRebuild = '|';
+					if (rebuildBonus == 0)
+						cRebuild = '|';
+					else
+						cRebuild = '/';
 				else
 					cRebuild = '+';
 			if (dmg > 0)
@@ -3105,7 +3117,7 @@ namespace TrainingProject
 			}
 		}
 
-		public void damage(Robot attacker, Skill currSkill)
+		public void damage(Robot attacker, Skill currSkill, Boolean grantAnalysis)
 		{
 			bool critical = RndVal.Next(100) > 95;
 			// If agility greater than hit attacker missed
@@ -3205,7 +3217,7 @@ namespace TrainingProject
 						}
 					}
 					// get experience if attackers level is not higher
-					if (attacker.getLevel <= getLevel )
+					if (attacker.getLevel <= getLevel && grantAnalysis)
 					{
 						attacker.getCurrentAnalysis += getLevel - attacker.getLevel + 1;
 						if (HP == 0) { attacker.getCurrentAnalysis += 10; }
