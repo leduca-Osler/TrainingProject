@@ -140,6 +140,14 @@ namespace TrainingProject
 				retval = (amt + value);
 			return retval;
 		}
+		public int getMaxLength(string[] strValues)
+		{
+			int maxLen = 0;
+			foreach (string eValue in strValues)
+				if (maxLen < eValue.Length)
+					maxLen = eValue.Length;
+			return maxLen;
+		}
 		public static string ToRoman(int number)
 		{
 			if (number < 1) return string.Empty;
@@ -639,7 +647,7 @@ namespace TrainingProject
 			foreach (Team eTeam in GameTeams)
 				if (retVal < eTeam.Win)
 					retVal = eTeam.Win;
-			return retVal;
+			return retVal+1;
 		}
 		public void fixTech()
 		{
@@ -680,7 +688,7 @@ namespace TrainingProject
 		public void arenaLevelUp()
 		{
 			getGameCurrency -= ArenaLvlCost;
-			ArenaLvlMaint = ArenaLvlCost / 5;
+			ArenaLvlMaint = roundValue(RndVal.Next((int)(ArenaLvlCost / 2.5)));
 			ArenaLvl++;
 			ArenaLvlCost *= 2;
 			ArenaLvlCost = SkipFour(ArenaLvlCost);
@@ -722,7 +730,7 @@ namespace TrainingProject
 		public void MonsterDenLevelUp()
 		{
 			getGameCurrency -= MonsterDenLvlCost;
-			MonsterDenLvlMaint = MonsterDenLvlCost / 5;
+			MonsterDenLvlMaint = roundValue(RndVal.Next((int)(MonsterDenLvlCost / 2.5)));
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
 			MonsterDenLvlCost = SkipFour(MonsterDenLvlCost);
@@ -732,7 +740,7 @@ namespace TrainingProject
 		public void ShopLevelUp()
 		{
 			getGameCurrency -= ShopLvlCost;
-			ShopLvlMaint = ShopLvlCost / 5;
+			ShopLvlMaint = roundValue(RndVal.Next((int)(ShopLvlCost / 2.5)));
 			ShopLvl++;
 			ShopLvlCost *= 2;
 			ShopLvlCost = SkipFour(ShopLvlCost);
@@ -771,7 +779,7 @@ namespace TrainingProject
 		public void ResearchDevLevelUp()
 		{
 			getGameCurrency -= ResearchDevLvlCost;
-			ResearchDevMaint = ResearchDevLvlCost / 5;
+			ResearchDevMaint = roundValue(RndVal.Next((int)(ResearchDevLvlCost / 2.5)));
 			ResearchDevLvl++;
 			ResearchDevLvlCost *= 2;
 			ResearchDevLvlCost = SkipFour(ResearchDevLvlCost);
@@ -1188,14 +1196,6 @@ namespace TrainingProject
 			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} ({1}) [{2}] -> {3:n0} ({4:n1}) - {5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
-		}
-		public int getMaxLength(string[] strValues)
-		{
-			int maxLen = 0;
-			foreach (string eValue in strValues)
-				if (maxLen < eValue.Length)
-					maxLen = eValue.Length;
-			return maxLen;
 		}
 		public FlowLayoutPanel showSelectedTeam(int TeamSelect, bool showAll)
 		{
@@ -2973,14 +2973,21 @@ namespace TrainingProject
 			{
 				getKO++;
 			}
-			if ((rebuildCost(rebuildSavings) > 100 || (rebuildCost(rebuildSavings) != 100 && rebuildBonus > 0)) && !bIsMonster)
+			if (rebuildCost(rebuildSavings) != 100 && !bIsMonster)
 				if (rebuildCost(rebuildSavings) > teamCurrency)
 					if (rebuildBonus == 0)
-						cRebuild = '|';
+						if (rebuildCost(rebuildSavings) > 100)
+							cRebuild = '|';
+						else
+							cRebuild = '`';
 					else
 						cRebuild = '/';
 				else
-					cRebuild = '+';
+					if (rebuildCost(rebuildSavings) > 100)
+						cRebuild = '+';
+					else
+						cRebuild = '`';
+
 			if (dmg > 0)
 			{
 				strMsg = " " + dmg.ToString() + " dmg";
@@ -3008,6 +3015,7 @@ namespace TrainingProject
 			if (Level / 5 > (Dexterity + Strength + Agility + Tech + Accuracy) )
 			{
 				cost = 100 * (int)Math.Pow(2,(Level / 5) / (rebuildBonus + 1)) - RebuildSavings;
+				if (cost <= 0) cost = 1;
 			}
 			return roundValue(cost);
 		}
@@ -3249,6 +3257,7 @@ namespace TrainingProject
 			int aSpeed = 0;
 			int aMentalStr = 0;
 			int aMentalDef = 0;
+			// Display Character info
 			if (EquipWeapon != null)
 			{
 				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade);
@@ -3262,7 +3271,7 @@ namespace TrainingProject
 				wMentalDef = EquipWeapon.eMentalDefense;
 			}
 			else
-				tmp += "<Unequiped>" + Environment.NewLine;
+				tmp += "<Unequiped>\n";
 			if (EquipArmour != null)
 			{
 				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade);
@@ -3276,28 +3285,43 @@ namespace TrainingProject
 				aMentalDef = EquipArmour.eMentalDefense;
 			}
 			else
-				tmp += "<Unequiped>" + Environment.NewLine;
-			tmp += ("*Base Stats*"						+ Environment.NewLine);
-			tmp += ("Level:     " +	Level				+ Environment.NewLine);
-			tmp += ("Dexterity: " + Dexterity			+ Environment.NewLine);
-			tmp += ("Strength:  " + Strength            + Environment.NewLine);
-            tmp += ("Agility:   " + Agility             + Environment.NewLine);
-            tmp += ("Tech:      " + Tech				+ Environment.NewLine);
-			tmp += ("Accuracy:  " + Accuracy			+ Environment.NewLine);
-			tmp += ("*Elevated Stats*"					+ Environment.NewLine);
-			tmp += ("Health:    " + String.Format("{0:n0}", HP) + "/" + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", Health, wHealth, aHealth, getTHealth())   + Environment.NewLine);
-            tmp += ("Energy:    " + String.Format("{0:n0}", MP) + "/" + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", Energy, wEnergy, aEnergy, getTEnergy())   + Environment.NewLine);
-            tmp += ("Armour:    " + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", Armour, wArmour, aArmour, getTArmour())						+ Environment.NewLine);
-            tmp += ("Damage:    " + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", Damage, wDamage, aDamage, getTDamage() )						+ Environment.NewLine);
-			tmp += ("Hit:       " + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", Hit, wHit, aHit, getTHit())									+ Environment.NewLine);
-			tmp += ("Speed:     " + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", Speed, wSpeed, aSpeed, getTSpeed())							+ Environment.NewLine);
-			tmp += ("MentalStr: " + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", MentalStrength, wMentalStr, aMentalStr, getTMentalStrength())  + Environment.NewLine);
-			tmp += ("MentalDef: " + String.Format("{3:n0} {0:n0}+{1:n0}+{2:n0}", MentalDefense, wMentalDef, aMentalDef, getTMentalDefense())	+ Environment.NewLine);
-			tmp += ("Analysis:  " + String.Format("{0:n0}", getAnalysisLeft()) + Environment.NewLine);
-			tmp += ("Rebuild %: " + String.Format("{0:n0}", RebuildPercent) + Environment.NewLine);
+				tmp += "<Unequiped>\n";
+
+			// get Padding Required
+			int sPadding = 1;
 			foreach (Strategy eStrategy in RoboStrategy)
 			{
-				tmp += (String.Format("{0} ({2:n0}-{1:n0}%) {3}", eStrategy.StrategicSkill.name, eStrategy.StrategicSkill.strength, eStrategy.StrategicSkill.cost, eStrategy.StrategicSkill.sChar) + Environment.NewLine);
+				if (sPadding < string.Format("{0:n0}", eStrategy.StrategicSkill.cost).Length)
+					sPadding = string.Format("{0:n0}", eStrategy.StrategicSkill.cost).Length;
+			}
+			int[] cPadding = { getMaxLength( new string[] { String.Format("{0:n0}", HP), String.Format("{0:n0}", MP), String.Format("{0:n0}", getTArmour()), String.Format("{0:n0}", getTDamage()), String.Format("{0:n0}", getTHit()), String.Format("{0:n0}", getTSpeed()), String.Format("{0:n0}", getTMentalStrength()), String.Format("{0:n0}", getTMentalDefense()) })
+					, getMaxLength( new string[] { String.Format("{0:n0}", getTHealth()), String.Format("{0:n0}", getTEnergy()) } )
+					, getMaxLength( new string[] { String.Format("{0:n0}", Health), String.Format("{0:n0}", Energy), String.Format("{0:n0}", Armour), String.Format("{0:n0}", Damage), String.Format("{0:n0}", Hit), String.Format("{0:n0}", Speed), String.Format("{0:n0}", MentalStrength), String.Format("{0:n0}", MentalDefense) } )
+					, getMaxLength( new string[] { String.Format("{0:n0}", wHealth), String.Format("{0:n0}", wEnergy), String.Format("{0:n0}", wArmour), String.Format("{0:n0}", wDamage), String.Format("{0:n0}", wHit), String.Format("{0:n0}", wSpeed), String.Format("{0:n0}", wMentalStr), String.Format("{0:n0}", wMentalDef) } )
+					, getMaxLength( new string[] { String.Format("{0:n0}", aHealth), String.Format("{0:n0}", aEnergy), String.Format("{0:n0}", aArmour), String.Format("{0:n0}", aDamage), String.Format("{0:n0}", aHit), String.Format("{0:n0}", aSpeed), String.Format("{0:n0}", aMentalStr), String.Format("{0:n0}", aMentalDef) } )
+				};
+			tmp += ("*Base Stats*\n");
+			tmp += string.Format("{0,-10}{1}\n", "Level", Level);
+			tmp += string.Format("{0,-10}{1}\n", "Dexterity", Dexterity);
+			tmp += string.Format("{0,-10}{1}\n", "Strength", Strength);
+			tmp += string.Format("{0,-10}{1}\n", "Agility", Agility);
+			tmp += string.Format("{0,-10}{1}\n", "Tech", Tech);
+			tmp += string.Format("{0,-10}{1}\n", "Accuracy", Accuracy);
+			tmp += ("*Elevated Stats*\n");
+			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + "}/{2," + (cPadding[1]) + "} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Health", HP, getTHealth(), Health, wHealth, aHealth);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + "}/{2," + (cPadding[1]) + "} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Energy", MP, getTEnergy(), Energy, wEnergy, aEnergy);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Armour", getTArmour(), Armour, wArmour, aArmour);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Damage", getTDamage(), Damage, wDamage, aDamage);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Hit", getTHit(), Hit, wHit, aHit);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Speed", getTSpeed(), Speed, wSpeed, aSpeed);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalStr", getTMentalStrength(), MentalStrength, wMentalStr, aMentalStr);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalDef", getTMentalDefense(), MentalDefense, wMentalDef, aMentalDef);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "}\n", "Analysis", getAnalysisLeft());
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "}\n", "Rebuild %", RebuildPercent);
+			
+			foreach (Strategy eStrategy in RoboStrategy)
+			{
+				tmp += (String.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2,-" + (sPadding+1) + ":n0}{3:n0}%\n", eStrategy.StrategicSkill.name, eStrategy.StrategicSkill.sChar, eStrategy.StrategicSkill.cost, eStrategy.StrategicSkill.strength));
 			}
 			return tmp;
         }

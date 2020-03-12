@@ -550,6 +550,9 @@ namespace TrainingApp
 		private void btnAutomatic_ButtonClick(object sender, EventArgs e)
 		{
 			BreakTimer.Interval = 1000;
+			#if DEBUG
+				BreakTimer.Interval = 50; ; //speed up for testing
+			#endif
 			pause();
 			saveGame(true);
 		}
