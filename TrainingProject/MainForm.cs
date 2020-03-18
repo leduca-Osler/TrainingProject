@@ -462,7 +462,7 @@ namespace TrainingApp
 								string jSkillType = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["type"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["type"] : "";
 								int jSKillCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cost"] : 0;
 								string jSkillImg = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["img"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["img"] : "";
-								char jSkillSChar = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cSkill"] != null ? (char)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["cSkill"] : '*';
+								char jSkillSChar = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["sChar"] != null ? (char)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RoboStrategy"][StrategyIndex]["StrategicSkill"]["sChar"] : '*';
 								// add skill
 								MyGame.GameTeams[GameTeamIndex].MyTeam[RobotIndex].ListSkills.Add(new Skill(jSkillName, jSkillTarget, jSkillStr, jSkillType, jSKillCost, jSkillImg, jSkillSChar));
 								// Get Strategy values
