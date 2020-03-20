@@ -647,7 +647,7 @@ namespace TrainingProject
 			foreach (Team eTeam in GameTeams)
 				if (retVal < eTeam.Win)
 					retVal = eTeam.Win;
-			return retVal+1;
+			return retVal;
 		}
 		public void fixTech()
 		{
@@ -987,20 +987,27 @@ namespace TrainingProject
 				foreach (Robot eRobot in eTeam.MyTeam)
 					eRobot.sortSkills();
 		}
-		public int monsterFight()
+		public int monsterFight(Boolean allowRandom)
 		{
 			int Team1Score = 99999999;
 			int TeamIndex = -1;
 			int tmpScore = 0;
-			for (int i = 0; i < GameTeams.Count; i++)
+			if (RndVal.Next(100) > 90 && allowRandom)
 			{
-				tmpScore = GameTeams[i].getScore * (GameTeams[i].Win + 1);
-				// if new score is lower than previous
-				if ((Team1Score > tmpScore || (Team1Score == tmpScore && RndVal.Next(100) > 50))
-					&& !isFighting(GameTeams[i].getName))
+				TeamIndex = RndVal.Next(GameTeams.Count);
+			}
+			else
+			{
+				for (int i = 0; i < GameTeams.Count; i++)
 				{
-					TeamIndex = i;
-					Team1Score = tmpScore;
+					tmpScore = GameTeams[i].getScore * (GameTeams[i].Win + 1);
+					// if new score is lower than previous
+					if ((Team1Score > tmpScore || (Team1Score == tmpScore && RndVal.Next(100) > 50))
+						&& !isFighting(GameTeams[i].getName))
+					{
+						TeamIndex = i;
+						Team1Score = tmpScore;
+					}
 				}
 			}
 			return TeamIndex;
@@ -1036,7 +1043,7 @@ namespace TrainingProject
 						}
 					}
 					if (ArenaOpponent1 == 0 && ArenaOpponent1 == ArenaOpponent2)
-						Team1Index = Team2Index = monsterFight();
+						Team1Index = Team2Index = monsterFight(true);
 					else
 					{
 						Team1Index = ArenaOpponent1;
@@ -1055,7 +1062,7 @@ namespace TrainingProject
 				{
 					fightCount++;
 					// monster fight
-					Team1Index = Team2Index = monsterFight();
+					Team1Index = Team2Index = monsterFight(false);
 					// if index is still -1 no available teams exit function
 					if (Team1Index == -1) return;
 				}
@@ -1206,7 +1213,7 @@ namespace TrainingProject
 				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + GameTeams[TeamSelect - 1].getName };
 				lblTeamName.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].rename(InputBox("Enter Name ", "Enter Name")));
-				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getCurrency) };
+				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + String.Format("{0:c}", GameTeams[TeamSelect - 1].getCurrency) };
 				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getScore) + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getGoalScore) + ")" };
 				Label lblWin = new Label { AutoSize = true, Text = String.Format("Winns:      {0:n0}", GameTeams[TeamSelect - 1].Win) };
 				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getRoboCost) + ")" };
@@ -1242,9 +1249,9 @@ namespace TrainingProject
 			else
 			{
 				int[] RowOneLength =
-					{ getMaxLength(new string[] { string.Format("{0:n0}", getScore()), string.Format("{0:n0}/{1:n0}",GameTeams.Count, getMaxTeams), string.Format("{0:n0}", getGameCurrency), string.Format("{0:n0}", getArenaLvl),string.Format("{0:n0}", getShopLvl), string.Format("{0:n0}", getResearchDevLvl), string.Format("{0:n0}", getMonsterDenLvl), string.Format("{0:n0}", BossCount), string.Format("{0:n0}", ManagerHrs) })
-					, getMaxLength(new string[] { string.Format("{0:n0}", getArenaLvlCost), string.Format("{0:n0}", getShopLvlCost), string.Format("{0:n0}", getResearchDevLvlCost), string.Format("{0:n0}", getMonsterDenLvlCost) })
-					, getMaxLength(new string[] { string.Format("{0:n0}", getArenaLvlMaint), string.Format("{0:n0}", getShopLvlMaint), string.Format("{0:n0}", getResearchDevMaint), string.Format("{0:n0}", getMonsterDenLvlMaint) })
+					{ getMaxLength(new string[] { string.Format("{0:n0}", getScore()), string.Format("{0:n0}/{1:n0}",GameTeams.Count, getMaxTeams), string.Format("{0:c0}", getGameCurrency), string.Format("{0:n0}", getArenaLvl),string.Format("{0:n0}", getShopLvl), string.Format("{0:n0}", getResearchDevLvl), string.Format("{0:n0}", getMonsterDenLvl), string.Format("{0:n0}", BossCount), string.Format("{0:n0}", ManagerHrs) })
+					, getMaxLength(new string[] { string.Format("{0:\\-#,###}", getArenaLvlCost), string.Format("{0:\\-#,###}", getShopLvlCost), string.Format("{0:\\-#,###}", getResearchDevLvlCost), string.Format("{0:\\-#,###}", getMonsterDenLvlCost) })
+					, getMaxLength(new string[] { string.Format("{0:\\-#,###}", getArenaLvlMaint), string.Format("{0:\\-#,###}", getShopLvlMaint), string.Format("{0:\\-#,###}", getResearchDevMaint), string.Format("{0:\\-#,###}", getMonsterDenLvlMaint) })
 				};
 				int[] RowTwoLength =
 					{ getMaxLength(new string[] { string.Format("{0}/{1}", storeEquipment.Count, getShopStock), string.Format("{0:n0}", getResearchDevHealValue), string.Format("{0:n0}", MonsterOutbreak.MyTeam.Count) })
@@ -1253,13 +1260,13 @@ namespace TrainingProject
 					, getMaxLength(new string[] { string.Format("{0:n0}", getShopStockCost) })
 					, getMaxLength(new string[] { string.Format("{0:n0}", getShopUpgradeValue) })
 				};
-				Label lblTotalScore = new Label { AutoSize = true, Text = String.Format("Total Score: {0," + RowOneLength[0] + ":n0} *{1," + RowOneLength[1] + ":n0}", getScore(), getGoalGameScore) };
+				Label lblTotalScore = new Label { AutoSize = true, Text = String.Format("Total Score: {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\*#,###}", getScore(), getGoalGameScore) };
 				MainPanel.Controls.Add(lblTotalScore);
-				Label lblTeams = new Label { AutoSize = true, Text =	  String.Format("Teams:       {0," + RowOneLength[0] + ":n0} +{1," + RowOneLength[1] + ":n0}", string.Format("{0:n0}/{1:n0}",GameTeams.Count, getMaxTeams), getTeamCost)};
+				Label lblTeams = new Label { AutoSize = true, Text =	  String.Format("Teams:       {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\+#,###}", string.Format("{0:n0}/{1:n0}",GameTeams.Count, getMaxTeams), getTeamCost)};
 				MainPanel.Controls.Add(lblTeams);
-				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("Currency:    {0," + RowOneLength[0] + ":n0} ({1," + RowOneLength[1] + ":n0})", getGameCurrency, getGameCurrencyLog) };
+				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("Currency:    {0," + RowOneLength[0] + ":c0} {1," + RowOneLength[1] + ":\\(+#,###\\);\\(-#,###\\)}", getGameCurrency, getGameCurrencyLog) };
 				MainPanel.Controls.Add(lblCurrency);
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} +{1," + RowOneLength[1] + ":n0} -{2," + RowOneLength[2] + ":n0}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint) };
+				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint) };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				// get highest width for columns in seating.
@@ -1283,7 +1290,7 @@ namespace TrainingProject
 					}
 				}
 				MainPanel.Controls.Add(pnlSeating);
-				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} +{1," + RowOneLength[1] + ":n0} -{2," + RowOneLength[2] + ":n0}", getShopLvl, getShopLvlCost, getShopLvlMaint) };
+				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###}", getShopLvl, getShopLvlCost, getShopLvlMaint) };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				Label lblShopStock = new Label { AutoSize = true, Text = String.Format("  {0,-10}{1," + RowTwoLength[0] + "} {2,-6}{3," + RowTwoLength[1] + ":n0} {4,-7}{5," + RowTwoLength[2] + ":n0} {6,-5}{7," + RowTwoLength[3] + ":n0} {8,-4}{9," + RowTwoLength[4] + ":n0}", "Max Stock",string.Format("{0}/{1}", storeEquipment.Count, getShopStock), "Dur", getShopMaxDurability, "Stat", getShopMaxStat, "Cost", getShopStockCost, "Up", getShopUpgradeValue) };
@@ -1293,14 +1300,14 @@ namespace TrainingProject
 				{
 					if (eEquipment.eName.Length > RowThreeLength[0]) RowThreeLength[0] = eEquipment.eName.Length;
 					if (string.Format("{0:n0}", eEquipment.eMaxDurability).Length > RowThreeLength[1]) RowThreeLength[1] = string.Format("{0:n0}", eEquipment.eMaxDurability).Length;
-					if (string.Format("{0:n0}", eEquipment.eHealth).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eHealth).Length;
-					if (string.Format("{0:n0}", eEquipment.eEnergy).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eEnergy).Length;
-					if (string.Format("{0:n0}", eEquipment.eDamage).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eDamage).Length;
-					if (string.Format("{0:n0}", eEquipment.eHit).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eHit).Length;
-					if (string.Format("{0:n0}", eEquipment.eArmour).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eArmour).Length;
-					if (string.Format("{0:n0}", eEquipment.eMentalStrength).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eMentalStrength).Length;
-					if (string.Format("{0:n0}", eEquipment.eMentalDefense).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eMentalDefense).Length;
-					if (string.Format("{0:n0}", eEquipment.eSpeed).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eEquipment.eSpeed).Length;
+					if (string.Format("{0:n0}", eEquipment.eHealth).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eHealth).Length;
+					if (string.Format("{0:n0}", eEquipment.eEnergy).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eEnergy).Length;
+					if (string.Format("{0:n0}", eEquipment.eDamage).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eDamage).Length;
+					if (string.Format("{0:n0}", eEquipment.eHit).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eHit).Length;
+					if (string.Format("{0:n0}", eEquipment.eArmour).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eArmour).Length;
+					if (string.Format("{0:n0}", eEquipment.eMentalStrength).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eMentalStrength).Length;
+					if (string.Format("{0:n0}", eEquipment.eMentalDefense).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eMentalDefense).Length;
+					if (string.Format("{0:n0}", eEquipment.eSpeed).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eSpeed).Length;
 					if (string.Format("{0:n0}", eEquipment.ePrice).Length > RowThreeLength[3]) RowThreeLength[3] = string.Format("{0:n0}", eEquipment.ePrice).Length;
 				}
 				index = 0;
@@ -1311,31 +1318,31 @@ namespace TrainingProject
 						string ending = "";
 						if (index == 2 && !showAll && storeEquipment.Count > 3) ending = "...";
 						string tmp = string.Format("{0,-" + RowThreeLength[0] + "}", eEquipment.eName);
-						tmp += String.Format(" Dur:{0," + RowThreeLength[1] + ":n0}", eEquipment.eDurability);
-						if (eEquipment.eHealth > 0) { tmp += String.Format(" Hea+{0," + RowThreeLength[2] + ":n0}", eEquipment.eHealth); }
-						if (eEquipment.eEnergy > 0) { tmp += String.Format(" Enr+{0," + RowThreeLength[2] + ":n0}", eEquipment.eEnergy); }
-						if (eEquipment.eDamage > 0) { tmp += String.Format(" Dam+{0," + RowThreeLength[2] + ":n0}", eEquipment.eDamage); }
-						if (eEquipment.eHit > 0) { tmp += String.Format(" Hit+{0," + RowThreeLength[2] + ":n0}", eEquipment.eHit); }
-						if (eEquipment.eArmour > 0) { tmp += String.Format(" Acl+{0," + RowThreeLength[2] + ":n0}", eEquipment.eArmour); }
-						if (eEquipment.eMentalStrength > 0) { tmp += String.Format(" Mst+{0," + RowThreeLength[2] + ":n0}", eEquipment.eMentalStrength); }
-						if (eEquipment.eMentalDefense > 0) { tmp += String.Format(" Mdf+{0," + RowThreeLength[2] + ":n0}", eEquipment.eMentalDefense); }
-						if (eEquipment.eSpeed > 0) { tmp += String.Format(" Spd+{0," + RowThreeLength[2] + ":n0}", eEquipment.eSpeed); }
-						tmp += String.Format(" Price:{0," + RowThreeLength[3] + ":n0}", eEquipment.ePrice);
+						tmp += String.Format(" Dur {0," + RowThreeLength[1] + ":n0}", eEquipment.eDurability);
+						if (eEquipment.eHealth > 0) { tmp += String.Format(" Hea{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eHealth); }
+						if (eEquipment.eEnergy > 0) { tmp += String.Format(" Enr{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eEnergy); }
+						if (eEquipment.eDamage > 0) { tmp += String.Format(" Dam{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eDamage); }
+						if (eEquipment.eHit > 0) { tmp += String.Format(" Hit{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eHit); }
+						if (eEquipment.eArmour > 0) { tmp += String.Format(" Acl{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eArmour); }
+						if (eEquipment.eMentalStrength > 0) { tmp += String.Format(" Mst{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eMentalStrength); }
+						if (eEquipment.eMentalDefense > 0) { tmp += String.Format(" Mdf{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eMentalDefense); }
+						if (eEquipment.eSpeed > 0) { tmp += String.Format(" Spd{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eSpeed); }
+						tmp += String.Format(" Price {0," + RowThreeLength[3] + ":n0}", eEquipment.ePrice);
 						Label lblEquipment = new Label { AutoSize = true, Text = string.Format("    {0}{1}\n", tmp, ending) };
 						pnlEquipment.Controls.Add(lblEquipment);
 						index++;
 					}
 				}
 				MainPanel.Controls.Add(pnlEquipment);
-				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} +{1," + RowOneLength[1] + ":n0} -{2," + RowOneLength[2] + ":n0}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0} {9,-5}{10," + RowTwoLength[3] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Cost", getResearchDevHealCost, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild) };
+				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0} {9,-5}{10," + RowTwoLength[3] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Cost", getResearchDevHealCost, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild) };
 				MainPanel.Controls.Add(lblResearchLvl);
-				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} +{1," + RowOneLength[1] + ":n0} -{2," + RowOneLength[2] + ":n0}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs) };
+				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
 				MainPanel.Controls.Add(lblMonsterDen);
-				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0," + RowOneLength[0] + ":n0} ${1," + RowOneLength[1] + ":n0}", BossCount, BossReward) };
+				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":c0}", BossCount, BossReward) };
 				lblBossMonsters.Click += new EventHandler((sender, e) => displayMonsters("Boss Monsters"));
 				MainPanel.Controls.Add(lblBossMonsters);
-				Label lblManager = new Label { AutoSize = true, Text = String.Format("Manager:     {0," + RowOneLength[0] + ":n0} +{1," + RowOneLength[1] + ":n0}", ManagerHrs, ManagerCost) };
+				Label lblManager = new Label { AutoSize = true, Text = String.Format("Manager:     {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\+#,###}", ManagerHrs, ManagerCost) };
 				lblManager.Click += new EventHandler((sender, e) => AddManagerHours());
 				MainPanel.Controls.Add(lblManager);
 				if (getWarningLog.Length > 0)
@@ -1728,7 +1735,13 @@ namespace TrainingProject
 					{
 						if (!eMonster.bMonster)
 						{
-							eMonster.getName += " " + ToRoman(getNumeral++);
+							int type = RndVal.Next(100);
+							if (type < 60)
+								eMonster.getName += " " + ToRoman(getNumeral++);
+							else if (type < 90)
+								eMonster.getName += string.Format(" #{0:X}", getNumeral++);
+							else
+								eMonster.getName += string.Format(" {0:N0}", getNumeral++);
 							eMonster.bMonster = true;
 						}
 						for (int i = 100; i < RndVal.Next(findMonster); i += 100)
@@ -2077,15 +2090,9 @@ namespace TrainingProject
 			attacker.MP -= currSkill.cost;
 			// if defender has not been set we are attacking multiple
 			if (defender.getName.Equals("test"))
-			{
 				foreach (Robot eDefender in defenders.MyTeam)
-				{
 					if (eDefender.HP > 0 && RndVal.Next(attacker.getLevel) <= RndVal.Next(eDefender.getLevel))
-					{
 						eDefender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
-					}
-				}
-			}
 			// attacking a single enemy
 			else
 				defender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
@@ -2416,12 +2423,12 @@ namespace TrainingProject
 				if (counter < maxRobos)
 				{
 					strStats += eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings);
-					if (eRobo.getKO <= 3) counter++;
+					if (eRobo.getKO <= 6) counter++;
 				}
 				else
 				{
 					eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings);
-					if (eRobo.getKO <= 3)
+					if (eRobo.getKO <= 6)
 					{
 						if (counter == maxRobos)
 							strStats += Environment.NewLine + "->";
@@ -2494,7 +2501,7 @@ namespace TrainingProject
 			int num = 0;
 			foreach (Robot robo in MyTeam)
 			{
-				if (robo.HP > 0 || (pShowDefeated && robo.getKO < 3))
+				if (robo.HP > 0 || (pShowDefeated && robo.getKO < 6))
 					num++;
 			}
 			return num;
@@ -2911,7 +2918,12 @@ namespace TrainingProject
 
 		public Robot DupeMonster()
 		{
-			return new Robot(MonsterName[RndVal.Next(MonsterName.Length)], Dexterity, Strength, Agility, Tech, Accuracy, Health, Energy, Armour, Damage, Hit, MentalStrength, MentalDefense, Image, Speed, Level, Analysis, 0);
+			Robot tmp = new Robot("." + MonsterName[RndVal.Next(MonsterName.Length)], Dexterity, Strength, Agility, Tech, Accuracy, Health, Energy, Armour, Damage, Hit, MentalStrength, MentalDefense, Image, Speed, Level, Analysis, 0);
+			foreach (Skill eSkill in ListSkills)
+				tmp.ListSkills.Add(eSkill);
+			foreach (Strategy eStrategy in RoboStrategy)
+				tmp.RoboStrategy.Add(eStrategy);
+			return tmp;
 		}
 		public void clean()
 		{
@@ -3037,7 +3049,7 @@ namespace TrainingProject
 				dmg = 0;
 				crit = false;
 			}
-			if (getKO <= 3)
+			if (getKO <= 6)
 				strStats = string.Format("\n{0}{1}{2} L:{3}({4}) A:{5} MP:{6} HP:{7}{8} ",cRebuild, cSkill, 
 					getName.PadRight(PadRight[0]),
 					String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
@@ -3172,21 +3184,15 @@ namespace TrainingProject
 			bool critical = RndVal.Next(100) > 95;
 			// If agility greater than hit attacker missed
 			if (RndVal.Next(getTSpeed()) > RndVal.Next(attacker.getTHit()) && !critical)
-			{
 				setMiss();
-			}
 			// if armour greater than hit attack is blocked
 			else if (RndVal.Next(getTArmour()) > RndVal.Next(attacker.getTHit()) && !critical
 				&& (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Multiple attack")))
-			{
 				setBlock();
-			}
 			// if tech defense greater than tech attack attack is blocked
 			else if (RndVal.Next(getTMentalDefense()) > RndVal.Next(attacker.getTHit()) && !critical
 				&& (currSkill.type.Equals("Single tech") || currSkill.type.Equals("Multiple tech")))
-			{
 				setField();
-			}
 			// damaged
 			else
 			{
