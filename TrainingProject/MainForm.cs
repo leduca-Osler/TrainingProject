@@ -661,7 +661,7 @@ namespace TrainingApp
 				if (!MyGame.isFighting())
 					btnFight.BackColor = tmpColour;
 			}
-			if (tmp.Next(100) > 95)
+			if (tmp.Next(100) > 95 && DateTime.Now > MyGame.SafeTime)
 			{
 				MyGame.continueFight(false);
 				BreakTimer.Interval++;
