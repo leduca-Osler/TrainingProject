@@ -151,10 +151,10 @@ namespace TrainingProject
 		public static string ToRoman(int number)
 		{
 			if (number < 1) return string.Empty;
-			if (number >= 10000) return "A" + ToRoman(number - 10000);
-			if (number >= 9000) return "MA" + ToRoman(number - 9000);
-			if (number >= 5000) return "W" + ToRoman(number - 5000);
-			if (number >= 4000) return "MW" + ToRoman(number - 4000);
+			if (number >= 10000) return "_X" + ToRoman(number - 10000);
+			if (number >= 9000) return "M_X" + ToRoman(number - 9000);
+			if (number >= 5000) return "_V" + ToRoman(number - 5000);
+			if (number >= 4000) return "M_V" + ToRoman(number - 4000);
 			if (number >= 1000) return "M" + ToRoman(number - 1000);
 			if (number >= 900) return "CM" + ToRoman(number - 900);
 			if (number >= 500) return "D" + ToRoman(number - 500);
@@ -2090,9 +2090,13 @@ namespace TrainingProject
 			attacker.MP -= currSkill.cost;
 			// if defender has not been set we are attacking multiple
 			if (defender.getName.Equals("test"))
+			{
 				foreach (Robot eDefender in defenders.MyTeam)
+				{
 					if (eDefender.HP > 0 && RndVal.Next(attacker.getLevel) <= RndVal.Next(eDefender.getLevel))
 						eDefender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
+				}
+			}
 			// attacking a single enemy
 			else
 				defender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
@@ -2476,7 +2480,8 @@ namespace TrainingProject
 				{
 					getCurrency -= MyTeam[robo].rebuildCost(rebuildSavings);
 					MyTeam[robo].RebuildPercent++;
-					MyTeam[robo].rebuildBonus = 0;
+					if (MyTeam[robo].rebuildBonus > 0)
+						MyTeam[robo].rebuildBonus--;
 				}
 				if (!pay || MyTeam[robo].RebuildPercent > RndVal.Next(100))
 				{
@@ -3068,7 +3073,10 @@ namespace TrainingProject
 			// if base stats will go up add cost
 			if (Level / 5 > (Dexterity + Strength + Agility + Tech + Accuracy) )
 			{
-				cost = 100 * (int)Math.Pow(2,(Level / 5) / (rebuildBonus + 1)) - RebuildSavings;
+				if (rebuildBonus > 0)
+					cost = 200;
+				else
+					cost = 100 * (int)Math.Pow(2, (Level / 5)) - RebuildSavings;
 				if (cost <= 0) cost = 1;
 			}
 			return roundValue(cost);
