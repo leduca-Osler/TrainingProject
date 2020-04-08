@@ -319,11 +319,12 @@ namespace TrainingApp
 				int jBossLvl = json["BossLvl"] != null ? (int)json["BossLvl"] : 10;
 				int jBossCount = json["BossCount"] != null ? (int)json["BossCount"] : 1;
 				int jBossDifficulty = json["BossDifficulty"] != null ? (int)json["BossDifficulty"] : 10;
+				int jGameDifficulty = json["gameDifficulty"] != null ? (int)json["gameDifficulty"] : 1;
 				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jMaxTeams, jTeamCost, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaMaint, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenMaint, jMonsterDenBonus,
 					jMonsterDenRepair, jShopLvl, jShopLvlCost, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, jResearchDevLvl, jResearchDevLvlCost, jResearchDevMaint, jResearchDevHealValue,
-					jResearchDevHealBays, jResearchDevHealCost, jResearchDevRebuild, jBossLvl, jBossCount, jBossDifficulty, jBossReward);
+					jResearchDevHealBays, jResearchDevHealCost, jResearchDevRebuild, jBossLvl, jBossCount, jBossDifficulty, jBossReward, jGameDifficulty);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating
@@ -661,7 +662,7 @@ namespace TrainingApp
 				if (!MyGame.isFighting())
 					btnFight.BackColor = tmpColour;
 			}
-			if (tmp.Next(100) > 95 && DateTime.Now > MyGame.SafeTime)
+			if (tmp.Next(100) > 90 && DateTime.Now > MyGame.SafeTime)
 			{
 				MyGame.continueFight(false);
 				BreakTimer.Interval++;
@@ -700,6 +701,11 @@ namespace TrainingApp
 				}
 				catch { MyGame.getWarningLog = "\nSave Failed!!!!"; }
 			}
+		}
+
+		private void difficultyFightToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MyGame.GameDifficultyFight = true;
 		}
 	}
 	public static class BinarySerialization

@@ -225,7 +225,7 @@ namespace TrainingProject
 		[NonSerialized][JsonIgnore]
 		public System.Windows.Forms.FlowLayoutPanel MainFormPanel;
 		[JsonProperty]
-		public IList<Team> GameTeams;
+		public List<Team> GameTeams;
 		[JsonProperty]
 		public IList<ArenaSeating> Seating;
 		public IList<ArenaSeating> CurrentSeating;
@@ -255,6 +255,8 @@ namespace TrainingProject
 		public bool PurchaseUgrade;
 		[JsonProperty]
 		private int GoalGameScore;
+		[JsonProperty]
+		public int gameDifficulty;
 		[JsonProperty]
 		private int MaxTeams;
 		[JsonProperty]
@@ -323,6 +325,7 @@ namespace TrainingProject
 		public int ResearchDevRebuild;
 		public int roundCount;
 		public bool bossFight;
+		public bool GameDifficultyFight;
 		public int WinCount;
 		public int getMonsterDenBonus
 		{
@@ -498,7 +501,8 @@ namespace TrainingProject
 		}
 		public Game(int pGoalGameScore, int pMaxTeams, int pTeamCost, int pGameCurrency, int pArenaLvl, int pArenaLvlCost, int pArenaLvlMaint, int pMonsterDenLvl, int pMonsterDenLvlCost, int pMonsterDenLvlMaint, 
 			int pMonsterDenBonus, int pMonsterDenRepair, int pShopLvl, int pShopLvlCost, int pShopLvlMaint, int pShopStock, int pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl, 
-			int pResearchDevLvlCost , int pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealBays, int pResearchDevHealCost, int pResearchDevRebuild, int pBossLvl, int pBossCount, int pBossDifficulty,  int pBossReward)
+			int pResearchDevLvlCost , int pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealBays, int pResearchDevHealCost, int pResearchDevRebuild, int pBossLvl, int pBossCount, int pBossDifficulty,  int pBossReward,
+			int pGameDifficult)
 		{
 			GameTeams = new List<Team> { };
 			GameTeam1 = new List<Team> { };
@@ -506,7 +510,7 @@ namespace TrainingProject
 			Seating = new List<ArenaSeating> { };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
-			MonsterOutbreak = new Team(1,1,1,findMonster, ref MonsterOutbreak);
+			MonsterOutbreak = new Team(1,1,findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
 			countdown = new List<KeyValuePair<String, DateTime>>();
 			Bosses = new Team(1, 10, 10);
@@ -543,6 +547,7 @@ namespace TrainingProject
 			ResearchDevHealBays = pResearchDevHealBays;
 			ResearchDevHealCost = pResearchDevHealCost;
 			ResearchDevRebuild = pResearchDevRebuild;
+			gameDifficulty = pGameDifficult;
 			BossLvl = pBossLvl;
 			BossCount = pBossCount;
 			BossDifficulty = pBossDifficulty;
@@ -562,6 +567,7 @@ namespace TrainingProject
 			FightBreak = 80;
 			roundCount = 0;
 			bossFight = false;
+			GameDifficultyFight = false;
 			getWarningLog = "";
 			fightPercent = 95;
 			fightPercentMax = 100;
@@ -575,7 +581,7 @@ namespace TrainingProject
 			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50) };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
-			MonsterOutbreak = new Team(1, 1, 1, findMonster, ref MonsterOutbreak);
+			MonsterOutbreak = new Team(1, 1, findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
 			countdown = new List<KeyValuePair<String, DateTime>>();
 			Bosses = new Team(1, 10, 10);
@@ -612,6 +618,7 @@ namespace TrainingProject
 			ResearchDevHealBays = 1;
 			ResearchDevHealCost = 1;
 			ResearchDevRebuild = 1000;
+			gameDifficulty = 1;
 			ManagerHrs = 0;
 			ManagerCost = 100;
 			BreakTime = DateTime.Now.AddMinutes(55);
@@ -631,6 +638,7 @@ namespace TrainingProject
 			BossDifficulty = 10;
 			BossReward = 1000;
 			bossFight = false;
+			GameDifficultyFight = false;
 			getWarningLog = "";
 			fightPercent = 95;
 			fightPercentMax = 100;
@@ -681,6 +689,7 @@ namespace TrainingProject
 			{
 				CurrentInterval = 1000;
 				MaxInterval++;
+				GameTeams.Sort();
 			}
 			Timer1.Interval = CurrentInterval;
 		}
@@ -705,9 +714,9 @@ namespace TrainingProject
 			string retVal = "";
 			getGameCurrency += BossReward;
 			Jackpot = 0;
-			BossLvl = upgradeValue(BossLvl, .75);
+			BossLvl += 10;
 			BossCount++;
-			BossDifficulty = upgradeValue(BossDifficulty, .5);
+			BossDifficulty += 7;
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) @ {0}", DateTime.Now.ToString(), BossReward);
 			BossReward = BossLvl * BossDifficulty * BossCount * 10;
 			Bosses = new Team(BossCount, BossDifficulty, BossLvl);
@@ -716,8 +725,9 @@ namespace TrainingProject
 		public string bossLevelReset()
 		{
 			string retVal = "";
-			BossLvl = upgradeValue(BossLvl/2, .75);
-			BossDifficulty = upgradeValue(BossDifficulty/2, .5);
+			BossLvl -= 10;
+			BossDifficulty -= 7;
+			BossCount--;
 			BossReward = BossLvl * BossDifficulty * BossCount * 10;
 			retVal = getFightLog = String.Format("\nboss monsters difficulty down! ({0:n0})", BossReward);
 			Bosses = new Team(BossCount, BossDifficulty, BossLvl);
@@ -966,17 +976,30 @@ namespace TrainingProject
 		public void startBossFight()
 		{
 			fighting = true;
-			bossFight = false;
-			GameTeam1.Add(new Team(0,0,0,0,0,0,0,"Arena",false));
+			GameTeam1.Add(new Team(0, 0, 0, 0, 0, 0, 0, "Arena", false));
 			foreach (Team eTeam in GameTeams)
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
 					GameTeam1[GameTeam1.Count - 1].MyTeam.Add(eRobo);
 			}
 			GameTeam1[GameTeam1.Count - 1].MyTeam.Sort();
-			GameTeam2.Add(Bosses);
-			Jackpot = BossReward;
-			getFightLog = Environment.NewLine + " Boss Fight! @ " + DateTime.Now.ToString();
+			if (bossFight)
+			{
+				bossFight = false;
+				GameTeam2.Add(Bosses);
+				Jackpot = BossReward;
+				getFightLog = Environment.NewLine + " Boss Fight! @ " + DateTime.Now.ToString();
+			}
+			// Game difficulty fight
+			else
+			{
+				GameDifficultyFight = false;
+				Team Monsters = new Team(gameDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak);
+				Monsters.getName = "Game Difficulty " + gameDifficulty.ToString();
+				GameTeam2.Add(Monsters);
+				Jackpot = gameDifficulty * 1000;
+				getFightLog = Environment.NewLine + " Game Difficulty Fight! @ " + DateTime.Now.ToString();
+			}
 		}
 		public void sortSkills()
 		{
@@ -1019,7 +1042,7 @@ namespace TrainingProject
 		}
 		public void startFight()
         {
-			if (bossFight && !fighting)
+			if ((bossFight || GameDifficultyFight) && !fighting)
 			{
 				startBossFight();
 			}
@@ -1075,14 +1098,14 @@ namespace TrainingProject
 					if (GameTeam1.Count == 1)
 					{
 						// 10% chance to Lower difficulty
-						if (RndVal.Next(100) > 90 && GameTeam1[0].getDifficulty > GameTeam1[0].MyTeam[GameTeam1[0].MyTeam.Count - 1].getLevel)
+						if (RndVal.Next(100) > 90 && GameTeam1[0].getDifficulty * 5 > GameTeam1[0].MyTeam[GameTeam1[0].MyTeam.Count - 1].getLevel)
 						{
-							GameTeam1[0].getDifficulty = RndVal.Next(GameTeam1[0].MyTeam[GameTeam1[0].MyTeam.Count-1].getLevel , GameTeam1[0].MyTeam[0].getLevel);
+							GameTeam1[0].getDifficulty = RndVal.Next(GameTeam1[0].MyTeam[GameTeam1[0].MyTeam.Count-1].getLevel/5 , GameTeam1[0].MyTeam[0].getLevel/5);
 						}
 						GameTeam1[0].healRobos(0, 999999);
 					}
 					// Monster team... 
-					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getMaxRobos, GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak));
+					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak));
 				}
 				else
 				{
@@ -1491,7 +1514,7 @@ namespace TrainingProject
 						{
 							if (i == 0)
 							{
-								Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0}({1:n0}) TS:{2:n0}({3:n0}) J:{4:n0}", getGameCurrency, GameCurrencyLog, getScore(), getScoreLog(), Jackpot) };
+								Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0}({1:n0}) TS:{2:n0}({3:n0}) D:{4:n0} J:{5:n0}", getGameCurrency, GameCurrencyLog, getScore(), getScoreLog(), gameDifficulty,Jackpot) };
 								MainPanel.Controls.Add(lblGameStats);
 							}
 							Color background = Color.Transparent;
@@ -1516,7 +1539,7 @@ namespace TrainingProject
 									Team2.Controls.Add(getCharacterInfo(eRobo));
 								}
 							}
-							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0}({1:n0}) TS:{2:n0}({3:n0}) J:{4:n0}", getGameCurrency, GameCurrencyLog, getScore(), getScoreLog(), Jackpot) };
+							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0}({1:n0}) TS:{2:n0}({3:n0}) D:{4:n0} J:{5:n0}", getGameCurrency, GameCurrencyLog, getScore(), getScoreLog(), gameDifficulty,Jackpot) };
 							MainPanel.Controls.Add(lblGameStats);
 							Label lblVS2 = new Label { AutoSize = true, Text = GameTeam2[i].getName + " C:" + String.Format("{0:n0}", GameTeam2[i].getCurrency) + " S:" + String.Format("{0:n0}", GameTeam2[i].getScore) + " D:" + String.Format("{0:n0}", GameTeam2[i].getDifficulty) };
 							MainPanel.Controls.Add(lblVS2);
@@ -1552,6 +1575,14 @@ namespace TrainingProject
 								findMonster += 5;
 								lblWinner.Text = getFightLog = Environment.NewLine + "+++ Arena suppressed the Monster outbreak" + String.Format("({0})", findMonster) + " @ " + DateTime.Now.ToString();
 							}
+							else if (GameTeam2[i].getName.Equals("Game Difficulty " + gameDifficulty.ToString()))
+							{
+								gameDifficulty++;
+								GameCurrency += Jackpot;
+								GameCurrencyLog += Jackpot;
+								Jackpot = 0;
+								lblWinner.Text = getFightLog = Environment.NewLine + "+++ Arena defeated monsters difficulty increased @ " + DateTime.Now.ToString();
+							}
 							// Boss Fight
 							else
 							{
@@ -1567,6 +1598,11 @@ namespace TrainingProject
 								getGameCurrency -= Jackpot;
 								GameCurrencyLog -= Jackpot;
 								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1}%)", Jackpot, findMonster) + " @ " + DateTime.Now.ToString();
+							}
+							else if (GameTeam2[i].getName.Equals("Game Difficulty " + gameDifficulty.ToString()))
+							{
+								Jackpot = 0;
+								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters @ " + DateTime.Now.ToString();
 							}
 							else
 							{
@@ -1606,7 +1642,7 @@ namespace TrainingProject
 									GameTeam1[i].getDifficulty++;
 									getFightLog = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
 									// fight next difficulty
-									Team tmpTeam = new Team(GameTeam1[i].getMaxRobos, GameTeam1[i].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak);
+									Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak);
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
 									getFightLog = Environment.NewLine + GameTeam1[i].getName + " VS " + GameTeam2[i].getName + " @ " + DateTime.Now.ToString();
@@ -1640,7 +1676,7 @@ namespace TrainingProject
 									Jackpot -= tmp;
 									msg += String.Format(" ({0:n0}) Win:{1}", tmp, WinCount);
 									// if GameTeam1 has a lower difficulty it's lowest character level send a warning
-									if (WinCount == 0 && GameTeam1[i].getDifficulty < GameTeam1[i].MyTeam[GameTeam1[i].MyTeam.Count - 1].getLevel && GameTeam1[i].getDifficulty > 0)
+									if (WinCount == 0 && GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[GameTeam1[i].MyTeam.Count - 1].getLevel && GameTeam1[i].getDifficulty > 0)
 										getWarningLog = String.Format("\n--- {0} has failed to advance past min level!", GameTeam1[i].getName);
 								}
 								else
@@ -1975,14 +2011,14 @@ namespace TrainingProject
 					// sponsored the arena
 					if (team == GameTeams.Count)
 					{
-						MaintCost += MaxTeams * getArenaLvl * 1000;
+						MaintCost += gameDifficulty * BossCount * getArenaLvl * 1000;
 						getGameCurrency += MaintCost;
 						getFightLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
 					}
 					// sponsored a team
 					else
 					{
-						MaintCost += getArenaLvl * 1000 * (GameTeams[team].Win + 1);
+						MaintCost += gameDifficulty * BossCount * getArenaLvl * 1000 * (GameTeams[team].Win + 1);
 						GameTeams[team].getCurrency += MaintCost;
 						getFightLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost) ;
 					}
@@ -2161,8 +2197,8 @@ namespace TrainingProject
 	}
 	[Serializable]
 	[JsonObject(MemberSerialization.OptIn)]
-	class Team : Common
-    {
+	class Team : Common, IComparable<Team>
+	{
 		[JsonProperty]
 		public List<Robot> MyTeam;
 		[JsonProperty]
@@ -2323,17 +2359,24 @@ namespace TrainingProject
 			Automated = false;
 			shownDefeated = false;
 		}
-		public Team(int numMonsters, int Difficulty, int MonsterLvl, int findMonster, ref Team MonsterOutbreak)
+		public Team(int Difficulty, int MonsterLvl, int findMonster, ref Team MonsterOutbreak)
 		{
+			Double numMonsters = 1;
+			int minLvl = 1;
+			int maxLvl = 5;
 			if (Difficulty < 1)
 				Difficulty = 1;
+			for (int i = 1; i < Difficulty; i++)
+			{
+				numMonsters += 0.5;
+				minLvl += 4;
+				maxLvl += 5;
+			}
 			MyTeam = new List<Robot> { };
-			int minLvl = Difficulty - (numMonsters / 2) > 0 ? Difficulty - (numMonsters/2) : 1;
-			int maxLvl = Difficulty + (numMonsters / 2);
-			for (int i = 0; i < numMonsters; i++)
+			for (int i = 0; i < (int)(numMonsters); i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
-				Robot tmpMon = new Robot((Difficulty / 5), setName("monster", Monster), Monster, true);
+				Robot tmpMon = new Robot(Difficulty, setName("monster", Monster), Monster, true);
 				int index = -1;
 				if (MonsterOutbreak != null)
 				{
@@ -2352,8 +2395,8 @@ namespace TrainingProject
 				else
 				{
 					// Add equipment
-					MyTeam[i].getEquipWeapon = new Equipment(true, RndVal.Next(1, Difficulty), RndVal.Next(100, numMonsters * 100), RndVal);
-					MyTeam[i].getEquipArmour = new Equipment(false, RndVal.Next(1, Difficulty), RndVal.Next(100, numMonsters * 100), RndVal);
+					MyTeam[i].getEquipWeapon = new Equipment(true, RndVal.Next(1, maxLvl), RndVal.Next(100, (int)(numMonsters) * 100), RndVal);
+					MyTeam[i].getEquipArmour = new Equipment(false, RndVal.Next(1, maxLvl), RndVal.Next(100, (int)(numMonsters) * 100), RndVal);
 					int tmp = RndVal.Next(minLvl, maxLvl);
 					for (int ii = 1; ii < tmp; ii++)
 					{
@@ -2374,6 +2417,10 @@ namespace TrainingProject
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name2[RndVal.Next(name2.Length)];
 			Automated = false;
 			shownDefeated = false;
+		}
+		public int CompareTo(Team team)
+		{
+			return this.getScore.CompareTo(team.getScore) * -1;
 		}
 		[JsonIgnore]
 		public string getTeamLog
