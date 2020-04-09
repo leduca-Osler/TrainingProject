@@ -1558,8 +1558,11 @@ namespace TrainingProject
 					}
 					else
 					{
-						GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild);
-						GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild);
+						if (DateTime.Now > BreakTime)
+						{
+							GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild);
+							GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild);
+						}
 					}
 				}
 				else
@@ -2376,22 +2379,25 @@ namespace TrainingProject
 			for (int i = 0; i < (int)(numMonsters); i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
-				Robot tmpMon = new Robot(Difficulty, setName("monster", Monster), Monster, true);
-				int index = -1;
+				List<Robot> tmpMon = new List<Robot> { };
+				List<int> tmpindex = new List<int> { };
+				tmpMon.Add( new Robot(Difficulty, setName("monster", Monster), Monster, true) );
+				tmpindex.Add( -1);
 				if (MonsterOutbreak != null)
 				{
 					for (int ii = 0; ii < MonsterOutbreak.MyTeam.Count; ii++)
 					{
-						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl && (index == -1 || RndVal.Next(100) > 75))
+						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl )
 						{
-							tmpMon = MonsterOutbreak.MyTeam[ii];
-							index = ii;
+							tmpMon.Add(MonsterOutbreak.MyTeam[ii]);
+							tmpindex.Add( ii);
 						}
 					}
 				}
-				MyTeam.Add(tmpMon);
-				if (index >= 0)
-					MonsterOutbreak.MyTeam.RemoveAt(index);
+				int monster = RndVal.Next(tmpMon.Count);
+				MyTeam.Add(tmpMon[monster]);
+				if (tmpindex[monster] >= 0)
+					MonsterOutbreak.MyTeam.RemoveAt(tmpindex[monster]);
 				else
 				{
 					// Add equipment
@@ -2478,6 +2484,8 @@ namespace TrainingProject
 				}
 				else
 				{
+					char tmpSkill = '.';
+					if (eRobo.cSkill != ' ') tmpSkill = eRobo.cSkill;
 					eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings);
 					if (eRobo.getKO <= 6)
 					{
@@ -2485,7 +2493,7 @@ namespace TrainingProject
 							strStats += Environment.NewLine + "->";
 						if (counter % 5 == 0)
 							strStats += " ";
-						strStats += ".";
+						strStats += tmpSkill;
 						counter++;
 					}
 
