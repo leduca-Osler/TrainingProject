@@ -556,6 +556,13 @@ namespace TrainingApp
 			#endif
 			pause();
 			saveGame(true);
+			cbTeamSelect.Items.Clear();
+			cbTeamSelect.Items.Add("Stats");
+			foreach (Team eTeam in MyGame.GameTeams)
+			{
+				cbTeamSelect.Items.Add(eTeam.getName);
+			}
+			cbTeamSelect.SelectedIndex = 0;
 		}
 
 		private void mnuShowStats_Click(object sender, EventArgs e)

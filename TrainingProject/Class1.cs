@@ -1240,6 +1240,7 @@ namespace TrainingProject
 				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getScore) + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getGoalScore) + ")" };
 				Label lblWin = new Label { AutoSize = true, Text = String.Format("Winns:      {0:n0}", GameTeams[TeamSelect - 1].Win) };
 				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getRoboCost) + ")" };
+				Label lblRunes = new Label { AutoSize = true, Text = "Runes:     " + GameTeams[TeamSelect - 1].getRunes() };
 				Label lblDifficulty = new Label { AutoSize = true, Text =     "Difficulty: " + GameTeams[TeamSelect - 1].getDifficulty };
 				Label lblAutomatic = new Label { AutoSize = true, Text = "Automated:  " + GameTeams[TeamSelect - 1].Automated };
 				lblAutomatic.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].changeAutomated());
@@ -1248,6 +1249,7 @@ namespace TrainingProject
 				MainPanel.Controls.Add(lblScore);
 				MainPanel.Controls.Add(lblWin);
 				MainPanel.Controls.Add(lblRobots);
+				MainPanel.Controls.Add(lblRunes);
 				MainPanel.Controls.Add(lblDifficulty);
 				MainPanel.Controls.Add(lblAutomatic);
 				int index = 0;
@@ -1257,7 +1259,7 @@ namespace TrainingProject
 					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
-					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + String.Format("{0:n0}", eRobo.rebuildCost(ResearchDevRebuild)) + ")" };
+					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + String.Format("{0:n0}", eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes)) + ")" };
 					int innerIndex = index++;
 					btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, ResearchDevRebuild));
 					MyPanel.Controls.Add(RoboName);
@@ -1815,8 +1817,8 @@ namespace TrainingProject
 					// Rebuild Robot
 					for (int i = 0; i < eTeam.MyTeam.Count; i++)
 					{
-						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) 
-							&& (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) > 100 || (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild) != 100 && eTeam.MyTeam[i].rebuildBonus > 0))
+						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) 
+							&& (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) > 100 || (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) != 100 && eTeam.MyTeam[i].rebuildBonus > 0))
 							)
 						{
 							int tmp = eTeam.Rebuild(i, true, ResearchDevRebuild);
@@ -2016,14 +2018,14 @@ namespace TrainingProject
 					{
 						MaintCost += gameDifficulty * BossCount * getArenaLvl * 1000;
 						getGameCurrency += MaintCost;
-						getFightLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
 					}
 					// sponsored a team
 					else
 					{
 						MaintCost += gameDifficulty * BossCount * getArenaLvl * 1000 * (GameTeams[team].Win + 1);
 						GameTeams[team].getCurrency += MaintCost;
-						getFightLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost) ;
+						getWarningLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost) ;
 					}
 					break;
 			}
@@ -2133,12 +2135,18 @@ namespace TrainingProject
 				foreach (Robot eDefender in defenders.MyTeam)
 				{
 					if (eDefender.HP > 0 && RndVal.Next(attacker.getLevel) <= RndVal.Next(eDefender.getLevel))
+					{
 						eDefender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
+						if (eDefender.HP <= 0) attackers.addRune(eDefender.getLevel);
+					}
 				}
 			}
 			// attacking a single enemy
 			else
+			{
 				defender.damage(attacker, currSkill, attackers.Win <= RndVal.Next(maxWins()));
+				if (defender.HP <= 0) attackers.addRune(defender.getLevel);
+			}
 			if (defender.RobotLog.Length > 0)
 			{
 				defenders.getTeamLog = defender.RobotLog;
@@ -2204,6 +2212,8 @@ namespace TrainingProject
 	{
 		[JsonProperty]
 		public List<Robot> MyTeam;
+		[JsonProperty]
+		public List<int> Runes;
 		[JsonProperty]
 		private int Score;
 		private int ScoreLog;
@@ -2303,6 +2313,7 @@ namespace TrainingProject
 		public Team(int pScore, int pGoalScore, int pWin, int pCurrency, int pDifficulty, int pMaxRobo, int pRoboCost, string pTeamName, bool pAutomated)
 		{
 			MyTeam = new List<Robot> { };
+			Runes = new List<int> { 0 };
 			Score = pScore;
 			Currency = pCurrency;
 			Difficulty = pDifficulty;
@@ -2321,7 +2332,8 @@ namespace TrainingProject
 		public Team(int baseStats)
         {
             MyTeam = new List<Robot> { new Robot(baseStats,setName("robot"), RndVal.Next(8), false) };
-            Score = 0;
+			Runes = new List<int> { 0 };
+			Score = 0;
 			Difficulty = 1;
             GoalScore = 20;
             MaxRobo = 1;
@@ -2333,9 +2345,11 @@ namespace TrainingProject
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
 			shownDefeated = false;
 		}
+		// Boss Monsters
 		public Team(int numMonsters, int Difficulty, int MonsterLvl)
 		{
 			MyTeam = new List<Robot> { };
+			Runes = new List<int> { 0 };
 			for (int i = 0; i < numMonsters; i++)
 			{
 				int Monster = RndVal.Next(numMonsters);
@@ -2362,6 +2376,7 @@ namespace TrainingProject
 			Automated = false;
 			shownDefeated = false;
 		}
+		// Monster team
 		public Team(int Difficulty, int MonsterLvl, int findMonster, ref Team MonsterOutbreak)
 		{
 			Double numMonsters = 1;
@@ -2376,6 +2391,7 @@ namespace TrainingProject
 				maxLvl += 5;
 			}
 			MyTeam = new List<Robot> { };
+			Runes = new List<int> { 0 };
 			for (int i = 0; i < (int)(numMonsters); i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
@@ -2423,6 +2439,50 @@ namespace TrainingProject
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name2[RndVal.Next(name2.Length)];
 			Automated = false;
 			shownDefeated = false;
+		}
+		public string getRunes()
+		{
+			string retVal = "";
+			if (Runes == null) Runes = new List<int> { 0 };
+			for (int i = 0; i < Runes.Count; i++)
+				retVal += string.Format(" {0}>{1}", i, Runes[i]);
+			return retVal;
+		}
+		public int getRunes(int level, bool reset)
+		{
+			if (Runes == null) Runes = new List<int> { 0 };
+			int index = level / 10;
+			int runesCount = 0;
+			if (Runes.Count > index)
+			{
+				runesCount = Runes[index];
+				if (reset)
+					Runes[index] = 0;
+			}
+			return runesCount;
+		}
+		public void addRune(int level, bool guaranteed = false)
+		{
+			if (Runes == null) Runes = new List<int> { 0 };
+			int index = level / 10;
+			while (Runes.Count <= index)
+				Runes.Add(0);
+			while (index >= 0)
+			{
+				if (RndVal.Next(100) == 1 || guaranteed)
+				{
+					Runes[index]++;
+					// if we have 100 runes add to the next level
+					if (Runes[index] >= 100)
+					{
+						Runes[index] -= 100;
+						addRune(level + 10, true);
+					}
+					index = -1;
+				}
+				else
+					index--;
+			}
 		}
 		public int CompareTo(Team team)
 		{
@@ -2479,14 +2539,14 @@ namespace TrainingProject
 			{
 				if (counter < maxRobos)
 				{
-					strStats += eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings);
+					strStats += eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings, Runes);
 					if (eRobo.getKO <= 6) counter++;
 				}
 				else
 				{
 					char tmpSkill = '.';
 					if (eRobo.cSkill != ' ') tmpSkill = eRobo.cSkill;
-					eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings);
+					eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings, Runes);
 					if (eRobo.getKO <= 6)
 					{
 						if (counter == maxRobos)
@@ -2510,7 +2570,7 @@ namespace TrainingProject
 		{
 			for (int i = 0; i < MyTeam.Count; i++)
 			{
-				if (MyTeam[i].rebuildCost(rebuildSavings) > 100 || (MyTeam[i].rebuildCost(rebuildSavings) != 100 && MyTeam[i].rebuildBonus > 0))
+				if (MyTeam[i].rebuildCost(rebuildSavings, Runes) >= 100)
 					Rebuild(MyTeam[i], pay, rebuildSavings);
 			}
 		}
@@ -2529,22 +2589,22 @@ namespace TrainingProject
 		public int Rebuild(int robo, bool pay, int rebuildSavings)
 		{
 			int bonusAnalysis = 0;
-			if (!pay || MyTeam[robo].rebuildCost(rebuildSavings) <= getCurrency)
+			if (!pay || MyTeam[robo].rebuildCost(rebuildSavings, Runes) <= getCurrency)
 			{
 				if (pay)
 				{
-					getCurrency -= MyTeam[robo].rebuildCost(rebuildSavings);
+					getCurrency -= MyTeam[robo].rebuildCost(rebuildSavings, Runes);
 					MyTeam[robo].RebuildPercent++;
 					if (MyTeam[robo].rebuildBonus > 0)
 						MyTeam[robo].rebuildBonus--;
 				}
-				if (!pay || MyTeam[robo].RebuildPercent > RndVal.Next(100))
+				// current base stats
+				int baseStats = (MyTeam[robo].getDexterity + MyTeam[robo].getStrength + MyTeam[robo].getAgility + MyTeam[robo].getTech + MyTeam[robo].getAccuracy);
+				// only increase base stats if level is high enough
+				if (baseStats < MyTeam[robo].getLevel / 5) baseStats++;
+				string strName = MyTeam[robo].getName;
+				if (!pay || MyTeam[robo].RebuildPercent + getRunes(baseStats/2,true) > RndVal.Next(100))
 				{
-					// current base stats or level / 5 which ever is higher
-					int baseStats = (MyTeam[robo].getLevel / 5 <= 0 ? 1 : MyTeam[robo].getLevel / 5);
-					string strName = MyTeam[robo].getName;
-					if (MyTeam[robo].getDexterity + MyTeam[robo].getStrength + MyTeam[robo].getAgility + MyTeam[robo].getTech + MyTeam[robo].getAccuracy > baseStats)
-						baseStats = MyTeam[robo].getDexterity + MyTeam[robo].getStrength + MyTeam[robo].getAgility + MyTeam[robo].getTech + MyTeam[robo].getAccuracy;
 					MyTeam[robo] = new Robot(baseStats, setName("robot"), RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
 				}
@@ -2561,7 +2621,7 @@ namespace TrainingProject
 			int num = 0;
 			foreach (Robot robo in MyTeam)
 			{
-				if (robo.HP > 0 || (pShowDefeated && robo.getKO < 6))
+				if (robo.HP > 0 || (pShowDefeated && robo.getKO < 3))
 					num++;
 			}
 			return num;
@@ -2900,7 +2960,7 @@ namespace TrainingProject
 			CurrentEnergy = getTEnergy();
 			crit = false;
 			dmg = 0;
-			RebuildPercent = 10;
+			RebuildPercent = 0;
 		}
 		public Robot(bool isNew) : this(1, "test", 1, true) { }
 		public Robot(string strName, int RoboImage, Boolean isMonster) : this(10, strName, RoboImage, isMonster) { }
@@ -2973,7 +3033,7 @@ namespace TrainingProject
 			CurrentEnergy = getTEnergy();
 			crit = false;
 			dmg = 0;
-			RebuildPercent = 10;
+			RebuildPercent = 0;
 		}
 
 		public Robot DupeMonster()
@@ -3078,30 +3138,20 @@ namespace TrainingProject
 			AnalysisLog = 0;
 		}
 
-		public string getRoboStats(int[] PadRight, int teamCurrency, int rebuildSavings)
+		public string getRoboStats(int[] PadRight, int teamCurrency, int rebuildSavings, List<int> Runes)
 		{
 			char cRebuild = ' ';
 			string strStats = "";
 			string strMsg = "";
 			if (HP == 0)
-			{
 				getKO++;
-			}
-			if (rebuildCost(rebuildSavings) != 100 && !bIsMonster)
-				if (rebuildCost(rebuildSavings) > teamCurrency)
-					if (rebuildBonus == 0)
-						if (rebuildCost(rebuildSavings) > 100)
-							cRebuild = '|';
-						else
-							cRebuild = '`';
-					else
-						cRebuild = '/';
+			if (rebuildCost(rebuildSavings, Runes) != 100 && !bIsMonster)
+			{
+				if (rebuildCost(rebuildSavings, Runes) > teamCurrency)
+					cRebuild = '|';
 				else
-					if (rebuildCost(rebuildSavings) > 100)
-						cRebuild = '+';
-					else
-						cRebuild = '`';
-
+					cRebuild = '+';
+			}
 			if (dmg > 0)
 			{
 				strMsg = " " + dmg.ToString() + " dmg";
@@ -3122,17 +3172,20 @@ namespace TrainingProject
 			cSkill = ' ';
 			return strStats;
 		}
-		public int rebuildCost(int RebuildSavings)
+		public int rebuildCost(int RebuildSavings, List<int> runes)
 		{
 			int cost = 100;
+			int stats = (Dexterity + Strength + Agility + Tech + Accuracy);
+			int percent = 100;
+			if (runes.Count > stats) percent -= runes[stats] / 10;
 			// if base stats will go up add cost
-			if (Level / 5 > (Dexterity + Strength + Agility + Tech + Accuracy) )
+			if (Level / 5 > stats )
 			{
 				if (rebuildBonus > 0)
 					cost = 200;
 				else
-					cost = 100 * (int)Math.Pow(2, (Level / 5)) - RebuildSavings;
-				if (cost <= 0) cost = 1;
+					cost = percent * (int)Math.Pow(2, (stats + 1)) - RebuildSavings;
+				if (cost <= 100) cost = 200;
 			}
 			return roundValue(cost);
 		}
@@ -3339,13 +3392,11 @@ namespace TrainingProject
 					if (attacker.getLevel <= getLevel && grantAnalysis)
 					{
 						attacker.getCurrentAnalysis += getLevel - attacker.getLevel + 1;
-						if (HP == 0) { attacker.getCurrentAnalysis += 10; }
+						if (HP == 0) { attacker.getCurrentAnalysis += 10;}
 					}
 					// if attacker is higher level, get less exp
 					else if (RndVal.Next(100) > 80)
-					{
 						attacker.getCurrentAnalysis++;
-					}
 				}
 			}
 		}

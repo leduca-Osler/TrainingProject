@@ -47,6 +47,7 @@
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnFight = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuBossFight = new System.Windows.Forms.ToolStripMenuItem();
+			this.difficultyFightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.btnAutomatic = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuAutobattle = new System.Windows.Forms.ToolStripMenuItem();
 			this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,7 +61,6 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-			this.difficultyFightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -235,6 +235,13 @@
 			this.mnuBossFight.Text = "Boss";
 			this.mnuBossFight.Click += new System.EventHandler(this.mnuBossFight_Click);
 			// 
+			// difficultyFightToolStripMenuItem
+			// 
+			this.difficultyFightToolStripMenuItem.Name = "difficultyFightToolStripMenuItem";
+			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+			this.difficultyFightToolStripMenuItem.Text = "Difficulty Fight";
+			this.difficultyFightToolStripMenuItem.Click += new System.EventHandler(this.difficultyFightToolStripMenuItem_Click);
+			// 
 			// btnAutomatic
 			// 
 			this.btnAutomatic.BackgroundImage = global::TrainingProject.Properties.Resources.Auto;
@@ -357,13 +364,6 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
-			// 
-			// difficultyFightToolStripMenuItem
-			// 
-			this.difficultyFightToolStripMenuItem.Name = "difficultyFightToolStripMenuItem";
-			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
-			this.difficultyFightToolStripMenuItem.Text = "Difficulty Fight";
-			this.difficultyFightToolStripMenuItem.Click += new System.EventHandler(this.difficultyFightToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
