@@ -995,7 +995,7 @@ namespace TrainingProject
 			{
 				GameDifficultyFight = false;
 				Team Monsters = new Team(gameDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak);
-				Monsters.getName = "Game Difficulty " + gameDifficulty.ToString();
+				Monsters.getName = "Game Diff " + gameDifficulty.ToString();
 				GameTeam2.Add(Monsters);
 				Jackpot = gameDifficulty * 1000;
 				getFightLog = Environment.NewLine + " Game Difficulty Fight! @ " + DateTime.Now.ToString();
@@ -1428,16 +1428,19 @@ namespace TrainingProject
 			{
 				foreach (Team eTeam in GameTeam1)
 					foreach (Robot eRobo in eTeam.MyTeam)
-						maxLength = checkLength(maxLength, eRobo);
+						if (eRobo.getKO <= 3)
+							maxLength = checkLength(maxLength, eRobo);
 				foreach (Team eTeam in GameTeam2)
 					foreach (Robot eRobo in eTeam.MyTeam)
-						maxLength = checkLength(maxLength, eRobo);
+						if (eRobo.getKO <= 3)
+							maxLength = checkLength(maxLength, eRobo);
 			}
 			else
 			{
 				foreach (Team eTeam in GameTeams)
 					foreach (Robot eRobo in eTeam.MyTeam)
-						maxLength = checkLength(maxLength, eRobo);
+						if (eRobo.getKO <= 3)
+							maxLength = checkLength(maxLength, eRobo);
 			}
 			return maxLength;
 		}
@@ -1580,7 +1583,7 @@ namespace TrainingProject
 								findMonster += 5;
 								lblWinner.Text = getFightLog = Environment.NewLine + "+++ Arena suppressed the Monster outbreak" + String.Format("({0})", findMonster) + " @ " + DateTime.Now.ToString();
 							}
-							else if (GameTeam2[i].getName.Equals("Game Difficulty " + gameDifficulty.ToString()))
+							else if (GameTeam2[i].getName.Equals("Game Diff " + gameDifficulty.ToString()))
 							{
 								gameDifficulty++;
 								GameCurrency += Jackpot;
@@ -1604,7 +1607,7 @@ namespace TrainingProject
 								GameCurrencyLog -= Jackpot;
 								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1}%)", Jackpot, findMonster) + " @ " + DateTime.Now.ToString();
 							}
-							else if (GameTeam2[i].getName.Equals("Game Difficulty " + gameDifficulty.ToString()))
+							else if (GameTeam2[i].getName.Equals("Game Diff " + gameDifficulty.ToString()))
 							{
 								Jackpot = 0;
 								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters @ " + DateTime.Now.ToString();
@@ -2532,22 +2535,24 @@ namespace TrainingProject
 			string strBuild = "";
 			int counter = 0;
 			int maxRobos = 50;
-			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak")) maxRobos = 10;
-			if (getAvailableRobo > 0) strBuild = "!";
+			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
+				maxRobos = 10;
+			if (getAvailableRobo > 0)
+				strBuild = "!";
 			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(15).Substring(0,15), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
 			foreach (Robot eRobo in MyTeam)
 			{
 				if (counter < maxRobos)
 				{
 					strStats += eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings, Runes);
-					if (eRobo.getKO <= 6) counter++;
+					if (eRobo.getKO <= 3) counter++;
 				}
 				else
 				{
 					char tmpSkill = '.';
 					if (eRobo.cSkill != ' ') tmpSkill = eRobo.cSkill;
 					eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings, Runes);
-					if (eRobo.getKO <= 6)
+					if (eRobo.getKO <= 3)
 					{
 						if (counter == maxRobos)
 							strStats += Environment.NewLine + "->";
@@ -2621,7 +2626,7 @@ namespace TrainingProject
 			int num = 0;
 			foreach (Robot robo in MyTeam)
 			{
-				if (robo.HP > 0 || (pShowDefeated && robo.getKO < 3))
+				if (robo.HP > 0 || (pShowDefeated && robo.getKO <= 3))
 					num++;
 			}
 			return num;
@@ -3159,7 +3164,7 @@ namespace TrainingProject
 				dmg = 0;
 				crit = false;
 			}
-			if (getKO <= 6)
+			if (getKO <= 3)
 				strStats = string.Format("\n{0}{1}{2} L:{3}({4}) A:{5} MP:{6} HP:{7}{8} ",cRebuild, cSkill, 
 					getName.PadRight(PadRight[0]),
 					String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
@@ -3177,7 +3182,7 @@ namespace TrainingProject
 			int cost = 100;
 			int stats = (Dexterity + Strength + Agility + Tech + Accuracy);
 			int percent = 100;
-			if (runes.Count > stats) percent -= runes[stats] / 10;
+			if (runes.Count > stats) percent -= runes[stats] / 2;
 			// if base stats will go up add cost
 			if (Level / 5 > stats )
 			{
@@ -3185,7 +3190,7 @@ namespace TrainingProject
 					cost = 200;
 				else
 					cost = percent * (int)Math.Pow(2, (stats + 1)) - RebuildSavings;
-				if (cost <= 100) cost = 200;
+				if (cost <= 200) cost = 200;
 			}
 			return roundValue(cost);
 		}
