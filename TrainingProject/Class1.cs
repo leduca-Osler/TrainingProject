@@ -19,7 +19,9 @@ namespace TrainingProject
 		[JsonIgnore]
 		public static string Globalmessage;
 		[JsonIgnore]
-		private string WarningLog;
+		private static string WarningLog;
+		[JsonIgnore]
+		private static string FightLog;
 		//public Random RndVal = new Random();
 		[JsonIgnore]
 		public string[] RoboImages = {
@@ -110,7 +112,27 @@ namespace TrainingProject
 				else
 					WarningLog = value + WarningLog;
 			}
-			get { return WarningLog; }
+			get
+			{
+				if (WarningLog == null) WarningLog = "";
+				return WarningLog;
+			}
+		}
+		public string getFightLog
+		{
+			set
+			{
+				if (FightLog == null) FightLog = "";
+				if (FightLog.Length > 10000)
+					FightLog = value + FightLog.Substring(0, 2500);
+				else
+					FightLog = value + FightLog;
+			}
+			get
+			{
+				if (FightLog == null) FightLog = "";
+				return FightLog;
+			}
 		}
 		public void clearWarnings()
 		{
@@ -267,8 +289,6 @@ namespace TrainingProject
 		private int GameCurrencyLog;
         private Boolean fighting;
 		private Boolean auto;
-		[JsonIgnore]
-		private string FightLog;
 		[JsonProperty]
 		private int ShopLvl;
 		[JsonProperty]
@@ -469,17 +489,6 @@ namespace TrainingProject
 			get { return ResearchDevHealCost; }
 			set { ResearchDevHealCost = value; }
 		}
-		public string getFightLog
-		{
-			set
-			{
-				if (FightLog.Length > 10000)
-					FightLog = value + FightLog.Substring(0, 2500);
-				else
-					FightLog = value + FightLog;
-			}
-			get { return FightLog; }
-		}
 		public int getAvailableTeams
 		{
 			get { return MaxTeams - GameTeams.Count; }
@@ -521,7 +530,6 @@ namespace TrainingProject
 			GameCurrency = pGameCurrency;
 			fighting = false;
 			auto = false;
-			FightLog = "";
 			ShopLvl = pShopLvl;
 			ShopLvlCost = pShopLvlCost;
 			ShopLvlMaint = pShopLvlMaint;
@@ -569,6 +577,7 @@ namespace TrainingProject
 			bossFight = false;
 			GameDifficultyFight = false;
 			getWarningLog = "";
+			getFightLog = "";
 			fightPercent = 95;
 			fightPercentMax = 100;
 			fightCount = 0;
@@ -592,7 +601,7 @@ namespace TrainingProject
 			TeamCost = 500;
 			fighting = false;
 			auto = false;
-			FightLog = "";
+			getFightLog = "";
 			ShopLvl = 1;
 			ShopLvlCost = 100;
 			ShopLvlMaint = 1;
@@ -958,6 +967,7 @@ namespace TrainingProject
 			}
 			GameTeam1[GameTeam1.Count - 1].MyTeam.Sort();
 			GameTeam2.Add(new Team(0,0,0,0,0,0,0,"Monster Outbreak",false));
+			GameTeam2[GameTeam2.Count - 1].isMonster = true;
 			for (int i = 0; i < MonsterOutbreak.MyTeam.Count;)
 			{
 				if (RndVal.Next(100) < findMonster) 
@@ -977,6 +987,7 @@ namespace TrainingProject
 		{
 			fighting = true;
 			GameTeam1.Add(new Team(0, 0, 0, 0, 0, 0, 0, "Arena", false));
+			GameTeam1[GameTeam1.Count - 1].isMonster = true;
 			foreach (Team eTeam in GameTeams)
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
@@ -1824,11 +1835,12 @@ namespace TrainingProject
 							&& (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) > 100 || (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) != 100 && eTeam.MyTeam[i].rebuildBonus > 0))
 							)
 						{
+							int runesUsed = eTeam.getRunes(eTeam.MyTeam[i].getLevel, false);
 							int tmp = eTeam.Rebuild(i, true, ResearchDevRebuild);
 							if (eTeam.MyTeam[i].getLevel == 1)
-								eTeam.getTeamLog = getFightLog = getWarningLog = Environment.NewLine + "+++ " + eTeam.getName + " : " + eTeam.MyTeam[i].getName + " has been rebuilt! @ " + DateTime.Now.ToString();
-							else 
-								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2} Analysis) @ {3}", eTeam.getName, eTeam.MyTeam[i].getName, tmp, DateTime.Now.ToString());
+								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! ({2}) @ {3} ", eTeam.getName, eTeam.MyTeam[i].getName, runesUsed, DateTime.Now.ToString());
+							else
+								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2} Analysis / {3} Runes used) @ {4}", eTeam.getName, eTeam.MyTeam[i].getName, tmp, runesUsed, DateTime.Now.ToString());
 						}
 					}
 				}
@@ -2470,9 +2482,9 @@ namespace TrainingProject
 			int index = level / 10;
 			while (Runes.Count <= index)
 				Runes.Add(0);
-			while (index >= 0)
+			while (index >= 0 && !isMonster)
 			{
-				if (RndVal.Next(100) == 1 || guaranteed)
+				if (RndVal.Next(100) <= 1 || guaranteed)
 				{
 					Runes[index]++;
 					// if we have 100 runes add to the next level
@@ -2480,6 +2492,10 @@ namespace TrainingProject
 					{
 						Runes[index] -= 100;
 						addRune(level + 10, true);
+					}
+					else
+					{
+						getFightLog = String.Format("\n^^^{0} received a rank {1} rune! ({2:n0}) @ {3}", getName, index, Runes[index], DateTime.Now.ToString());
 					}
 					index = -1;
 				}
@@ -3469,6 +3485,7 @@ namespace TrainingProject
 				};
 			tmp += ("*Base Stats*\n");
 			tmp += string.Format("{0,-10}{1}\n", "Level", Level);
+			tmp += string.Format("{0,-10}{1}\n", "Rank", (Dexterity + Strength + Agility + Tech + Accuracy) / 2);
 			tmp += string.Format("{0,-10}{1}\n", "Dexterity", Dexterity);
 			tmp += string.Format("{0,-10}{1}\n", "Strength", Strength);
 			tmp += string.Format("{0,-10}{1}\n", "Agility", Agility);
