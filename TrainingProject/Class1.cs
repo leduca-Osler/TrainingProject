@@ -960,6 +960,7 @@ namespace TrainingProject
 		{
 			fighting = true;
 			GameTeam1.Add(new Team(0,0,0,0,0,0,0,"Arena",false));
+			GameTeam1[GameTeam1.Count - 1].isMonster = true;
 			foreach (Team eTeam in GameTeams)
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
@@ -1838,7 +1839,7 @@ namespace TrainingProject
 							int runesUsed = eTeam.getRunes(eTeam.MyTeam[i].getLevel, false);
 							int tmp = eTeam.Rebuild(i, true, ResearchDevRebuild);
 							if (eTeam.MyTeam[i].getLevel == 1)
-								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! ({2}) @ {3} ", eTeam.getName, eTeam.MyTeam[i].getName, runesUsed, DateTime.Now.ToString());
+								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! ({2} Runes used) @ {3} ", eTeam.getName, eTeam.MyTeam[i].getName, runesUsed, DateTime.Now.ToString());
 							else
 								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2} Analysis / {3} Runes used) @ {4}", eTeam.getName, eTeam.MyTeam[i].getName, tmp, runesUsed, DateTime.Now.ToString());
 						}
@@ -3198,7 +3199,8 @@ namespace TrainingProject
 			int cost = 100;
 			int stats = (Dexterity + Strength + Agility + Tech + Accuracy);
 			int percent = 100;
-			if (runes.Count > stats) percent -= runes[stats] / 2;
+			//getFightLog = string.Format("runes.Count {0} > stats {1}", runes.Count, stats);
+			if (runes.Count > stats / 2) percent -= runes[stats / 2];
 			// if base stats will go up add cost
 			if (Level / 5 > stats )
 			{
@@ -3207,6 +3209,7 @@ namespace TrainingProject
 				else
 					cost = percent * (int)Math.Pow(2, (stats + 1)) - RebuildSavings;
 				if (cost <= 200) cost = 200;
+				//getFightLog = string.Format("{4} -> [{0}] * (int)Math.Pow(2, (stats [{1}] + 1)) [{2}] - [{3}];", percent, stats, (int)Math.Pow(2, (stats + 1)), RebuildSavings, getName);
 			}
 			return roundValue(cost);
 		}
