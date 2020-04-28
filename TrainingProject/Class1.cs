@@ -529,7 +529,7 @@ namespace TrainingProject
 			TeamCost = pTeamCost;
 			GameCurrency = pGameCurrency;
 			fighting = false;
-			auto = false;
+			auto = true;
 			ShopLvl = pShopLvl;
 			ShopLvlCost = pShopLvlCost;
 			ShopLvlMaint = pShopLvlMaint;
@@ -600,7 +600,7 @@ namespace TrainingProject
             MaxTeams = 2;
 			TeamCost = 500;
 			fighting = false;
-			auto = false;
+			auto = true;
 			getFightLog = "";
 			ShopLvl = 1;
 			ShopLvlCost = 100;
@@ -1836,7 +1836,7 @@ namespace TrainingProject
 							&& (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) > 100 || (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) != 100 && eTeam.MyTeam[i].rebuildBonus > 0))
 							)
 						{
-							int runesUsed = eTeam.getRunes(eTeam.MyTeam[i].getLevel, false);
+							int runesUsed = eTeam.getRunes(eTeam.MyTeam[i].getBaseStats(), false);
 							int tmp = eTeam.Rebuild(i, true, ResearchDevRebuild);
 							if (eTeam.MyTeam[i].getLevel == 1)
 								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! ({2} Runes used) @ {3} ", eTeam.getName, eTeam.MyTeam[i].getName, runesUsed, DateTime.Now.ToString());
@@ -1953,7 +1953,7 @@ namespace TrainingProject
 					{
 						// Arena Maintenance
 						MaintCost = roundValue(RndVal.Next(ArenaLvlMaint));
-						ArenaLvlMaint -= (int)((double)ArenaLvlMaint * 0.01);
+						ArenaLvlMaint -= (int)((double)MaintCost * 0.1);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
 						getFightLog = Environment.NewLine + "*** Arena maintenance cost " + String.Format("{0:n0}", MaintCost);
@@ -1968,7 +1968,7 @@ namespace TrainingProject
 					{
 						// Monster Den Maintenance
 						MaintCost = roundValue(RndVal.Next(MonsterDenLvlMaint));
-						MonsterDenLvlMaint -= (int)((double)MonsterDenLvlMaint * 0.01);
+						MonsterDenLvlMaint -= (int)((double)MaintCost * 0.1);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
 						getFightLog = Environment.NewLine + "*** Monster den maintenance cost " + String.Format("{0:n0}", MaintCost);
@@ -1983,7 +1983,7 @@ namespace TrainingProject
 					{
 						// Shop Maintenance
 						MaintCost = roundValue(RndVal.Next(ShopLvlMaint));
-						ShopLvlMaint -= (int)((double)ShopLvlMaint * 0.01);
+						ShopLvlMaint -= (int)((double)MaintCost * 0.1);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
 						getFightLog = Environment.NewLine + "*** Shop maintenance cost " + String.Format("{0:n0}", MaintCost) ;
@@ -1998,7 +1998,7 @@ namespace TrainingProject
 					{
 						// Research and Development Maintenance
 						MaintCost = roundValue(RndVal.Next(ResearchDevMaint));
-						ResearchDevMaint -= (int)((double)ResearchDevMaint * 0.01);
+						ResearchDevMaint -= (int)((double)MaintCost * 0.1);
 						getGameCurrency -= MaintCost;
 						GameCurrencyLog -= MaintCost;
 						getFightLog = Environment.NewLine + "*** Research and Development maintenance cost " + String.Format("{0:n0}", MaintCost);
@@ -2467,8 +2467,8 @@ namespace TrainingProject
 		public int getRunes(int level, bool reset)
 		{
 			if (Runes == null) Runes = new List<int> { 0 };
-			int index = level / 10;
 			int runesCount = 0;
+			int index = level / 2;
 			if (Runes.Count > index)
 			{
 				runesCount = Runes[index];
@@ -2621,11 +2621,11 @@ namespace TrainingProject
 						MyTeam[robo].rebuildBonus--;
 				}
 				// current base stats
-				int baseStats = (MyTeam[robo].getDexterity + MyTeam[robo].getStrength + MyTeam[robo].getAgility + MyTeam[robo].getTech + MyTeam[robo].getAccuracy);
+				int baseStats = MyTeam[robo].getBaseStats(); 
 				// only increase base stats if level is high enough
 				if (baseStats < MyTeam[robo].getLevel / 5) baseStats++;
 				string strName = MyTeam[robo].getName;
-				if (!pay || MyTeam[robo].RebuildPercent + getRunes(baseStats/2,true) > RndVal.Next(100))
+				if (!pay || MyTeam[robo].RebuildPercent + getRunes(MyTeam[robo].getBaseStats(),true) > RndVal.Next(100))
 				{
 					MyTeam[robo] = new Robot(baseStats, setName("robot"), RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
@@ -2802,6 +2802,10 @@ namespace TrainingProject
 		{
 			set { Tech = value; }
 			get { return Tech; }
+		}
+		public int getBaseStats()
+		{
+			return (getDexterity + getStrength + getAgility + getTech + getAccuracy);
 		}
 		public int getAccuracy
 		{

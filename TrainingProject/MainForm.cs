@@ -35,8 +35,11 @@ namespace TrainingApp
 				MyGame = new Game(true);
 			}
 			counter = 1;
-			MyGame.BreakTime = DateTime.Now.AddMinutes(55);
-			MyGame.SafeTime = DateTime.Now.AddMinutes(20);
+			if (MyGame.SafeTime < DateTime.Now)
+			{
+				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
+				MyGame.SafeTime = DateTime.Now.AddMinutes(20);
+			}
 			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
 			InitializeComponent();
