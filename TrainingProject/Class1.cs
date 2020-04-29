@@ -706,7 +706,7 @@ namespace TrainingProject
 		public void arenaLevelUp()
 		{
 			getGameCurrency -= ArenaLvlCost;
-			ArenaLvlMaint = roundValue(RndVal.Next((int)(ArenaLvlCost / 2.5)));
+			ArenaLvlMaint = ArenaLvlCost;
 			ArenaLvl++;
 			ArenaLvlCost *= 2;
 			ArenaLvlCost = SkipFour(ArenaLvlCost);
@@ -749,7 +749,7 @@ namespace TrainingProject
 		public void MonsterDenLevelUp()
 		{
 			getGameCurrency -= MonsterDenLvlCost;
-			MonsterDenLvlMaint = roundValue(RndVal.Next((int)(MonsterDenLvlCost / 2.5)));
+			MonsterDenLvlMaint = MonsterDenLvlCost;
 			MonsterDenLvl++;
 			MonsterDenLvlCost *= 2;
 			MonsterDenLvlCost = SkipFour(MonsterDenLvlCost);
@@ -759,7 +759,7 @@ namespace TrainingProject
 		public void ShopLevelUp()
 		{
 			getGameCurrency -= ShopLvlCost;
-			ShopLvlMaint = roundValue(RndVal.Next((int)(ShopLvlCost / 2.5)));
+			ShopLvlMaint = ShopLvlCost;
 			ShopLvl++;
 			ShopLvlCost *= 2;
 			ShopLvlCost = SkipFour(ShopLvlCost);
@@ -798,7 +798,7 @@ namespace TrainingProject
 		public void ResearchDevLevelUp()
 		{
 			getGameCurrency -= ResearchDevLvlCost;
-			ResearchDevMaint = roundValue(RndVal.Next((int)(ResearchDevLvlCost / 2.5)));
+			ResearchDevMaint = ResearchDevLvlCost;
 			ResearchDevLvl++;
 			ResearchDevLvlCost *= 2;
 			ResearchDevLvlCost = SkipFour(ResearchDevLvlCost);
@@ -1838,10 +1838,6 @@ namespace TrainingProject
 						{
 							int runesUsed = eTeam.getRunes(eTeam.MyTeam[i].getBaseStats(), false);
 							int tmp = eTeam.Rebuild(i, true, ResearchDevRebuild);
-							if (eTeam.MyTeam[i].getLevel == 1)
-								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! ({2} Runes used) @ {3} ", eTeam.getName, eTeam.MyTeam[i].getName, runesUsed, DateTime.Now.ToString());
-							else
-								eTeam.getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2} Analysis / {3} Runes used) @ {4}", eTeam.getName, eTeam.MyTeam[i].getName, tmp, runesUsed, DateTime.Now.ToString());
 						}
 					}
 				}
@@ -2625,15 +2621,18 @@ namespace TrainingProject
 				// only increase base stats if level is high enough
 				if (baseStats < MyTeam[robo].getLevel / 5) baseStats++;
 				string strName = MyTeam[robo].getName;
-				if (!pay || MyTeam[robo].RebuildPercent + getRunes(MyTeam[robo].getBaseStats(),true) > RndVal.Next(100))
+				int runesUsed = getRunes(MyTeam[robo].getBaseStats(), true);
+				if (!pay || MyTeam[robo].RebuildPercent + runesUsed > RndVal.Next(100))
 				{
 					MyTeam[robo] = new Robot(baseStats, setName("robot"), RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
+					getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! ({2} Runes used) @ {3} ", getName, MyTeam[robo].getName, runesUsed, DateTime.Now.ToString());
 				}
 				else
 				{
 					bonusAnalysis = RndVal.Next((int)MyTeam[robo].RebuildPercent * 10);
 					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
+					getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2} Analysis / {3} Runes used) @ {4}", getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString());
 				}
 			}
 			return bonusAnalysis;
