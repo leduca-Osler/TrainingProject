@@ -705,18 +705,31 @@ namespace TrainingProject
 
 		public void arenaLevelUp()
 		{
-			getGameCurrency -= ArenaLvlCost;
-			ArenaLvlMaint = ArenaLvlCost;
-			ArenaLvl++;
-			ArenaLvlCost *= 2;
-			ArenaLvlCost = SkipFour(ArenaLvlCost);
-			foreach (ArenaSeating eSeating in Seating)
+			if (RndVal.Next(ArenaLvl) > getMaxTeams)
 			{
-				eSeating.Amount = upgradeValue(eSeating.Amount, .75);
-				eSeating.Price++;
+				double percent = ((double)getMaxTeams / (double)ArenaLvl);
+				int cost = (int)(ArenaLvlCost * (1 - percent));
+				getGameCurrency -= cost;
+				getFightLog = getWarningLog = string.Format("\nArena upgrade denied ({0:P0}) lost {1:n0} ({2:P0})", percent, cost, 1 - percent);
 			}
-			// 20% chance to add a new level of seating
-			if (RndVal.Next(1000) < ((ArenaLvl * 50) - (Seating.Count * 125))) { Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price * 2, 5)); }
+			else
+			{
+
+				getFightLog = getWarningLog = "\nArena upgraded!";
+				getGameCurrency -= ArenaLvlCost;
+				ArenaLvlMaint = ArenaLvlCost;
+				ArenaLvl++;
+				ArenaLvlCost *= 2;
+				ArenaLvlCost = SkipFour(ArenaLvlCost);
+				foreach (ArenaSeating eSeating in Seating)
+				{
+					eSeating.Amount = upgradeValue(eSeating.Amount, .75);
+					eSeating.Price++;
+				}
+				// 20% chance to add a new level of seating
+				if (RndVal.Next(1000) < ((ArenaLvl * 50) - (Seating.Count * 125)))
+					Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price * 2, 5));
+			}
 		}
 		public string bossLevelUp()
 		{
@@ -748,26 +761,48 @@ namespace TrainingProject
 		}
 		public void MonsterDenLevelUp()
 		{
-			getGameCurrency -= MonsterDenLvlCost;
-			MonsterDenLvlMaint = MonsterDenLvlCost;
-			MonsterDenLvl++;
-			MonsterDenLvlCost *= 2;
-			MonsterDenLvlCost = SkipFour(MonsterDenLvlCost);
-			MonsterDenBonus = upgradeValue(MonsterDenBonus, .5);
-			MonsterDenRepairs = upgradeValue(MonsterDenRepairs, 1);
+			if (RndVal.Next(MonsterDenLvl) > getMaxTeams)
+			{
+				double percent = ((double)getMaxTeams / (double)MonsterDenLvl);
+				int cost = (int)(MonsterDenLvlCost * (1-percent));
+				getGameCurrency -= cost;
+				getFightLog = getWarningLog = string.Format("\nMonster Den upgrade denied ({0:P0}) lost {1:n0} ({2:P0})", percent, cost, 1-percent);
+			}
+			else
+			{
+				getFightLog = getWarningLog = "\nMonster Den upgraded!";
+				getGameCurrency -= MonsterDenLvlCost;
+				MonsterDenLvlMaint = MonsterDenLvlCost;
+				MonsterDenLvl++;
+				MonsterDenLvlCost *= 2;
+				MonsterDenLvlCost = SkipFour(MonsterDenLvlCost);
+				MonsterDenBonus = upgradeValue(MonsterDenBonus, .5);
+				MonsterDenRepairs = upgradeValue(MonsterDenRepairs, 1);
+			}
 		}
 		public void ShopLevelUp()
 		{
-			getGameCurrency -= ShopLvlCost;
-			ShopLvlMaint = ShopLvlCost;
-			ShopLvl++;
-			ShopLvlCost *= 2;
-			ShopLvlCost = SkipFour(ShopLvlCost);
-			ShopStock ++;
-			ShopMaxDurability = upgradeValue(ShopMaxDurability, .5);
-			ShopMaxStat = upgradeValue(ShopMaxStat, .5);
-			ShopUpgradeValue++;
-			ShopStockCost = ((ShopMaxStat * 10) + ShopMaxDurability) / 3;
+			if (RndVal.Next(ShopLvl) > getMaxTeams)
+			{
+				double percent = ((double)getMaxTeams / (double)ShopLvl);
+				int cost = (int)(ShopLvlCost * (1 - percent));
+				getGameCurrency -= cost;
+				getFightLog = getWarningLog = string.Format("\nShop upgrade denied ({0:P0}) lost {1:n0} ({2:P0})", percent, cost, 1 - percent);
+			}
+			else
+			{
+				getFightLog = getWarningLog = "\nShop upgraded!";
+				getGameCurrency -= ShopLvlCost;
+				ShopLvlMaint = ShopLvlCost;
+				ShopLvl++;
+				ShopLvlCost *= 2;
+				ShopLvlCost = SkipFour(ShopLvlCost);
+				ShopStock++;
+				ShopMaxDurability = upgradeValue(ShopMaxDurability, .5);
+				ShopMaxStat = upgradeValue(ShopMaxStat, .5);
+				ShopUpgradeValue++;
+				ShopStockCost = ((ShopMaxStat * 10) + ShopMaxDurability) / 3;
+			}
 		}
 		public void AddStock()
 		{
@@ -797,20 +832,32 @@ namespace TrainingProject
 
 		public void ResearchDevLevelUp()
 		{
-			getGameCurrency -= ResearchDevLvlCost;
-			ResearchDevMaint = ResearchDevLvlCost;
-			ResearchDevLvl++;
-			ResearchDevLvlCost *= 2;
-			ResearchDevLvlCost = SkipFour(ResearchDevLvlCost);
-			ResearchDevHealCost++;
-			ResearchDevHealValue = upgradeValue(ResearchDevHealValue, 1);
-			ResearchDevRebuild = upgradeValue(ResearchDevRebuild, 1);
-			// 5% chance to add a new healing bay #update
-			int chance = 950;
-			// 20% if there is not one room for every four teams
-			if (getMaxTeams / 4 > ResearchDevHealBays)
-				chance = 800;
-			if (RndVal.Next(1000) > chance) { ResearchDevHealBays++; }
+			if (RndVal.Next(ResearchDevLvl) > getMaxTeams)
+			{
+				double percent = ((double)getMaxTeams / (double)ResearchDevLvl);
+				int cost = (int)(ResearchDevLvlCost * (1 - percent));
+				getGameCurrency -= cost;
+				getFightLog = getWarningLog = string.Format("\nResearch and Development upgrade denied ({0:P0}) lost {1:n0} ({2:P0})", percent, cost, 1 - percent);
+			}
+			else
+			{
+				getFightLog = getWarningLog = "\nResearch and Development upgraded!";
+				getGameCurrency -= ResearchDevLvlCost;
+				ResearchDevMaint = ResearchDevLvlCost;
+				ResearchDevLvl++;
+				ResearchDevLvlCost *= 2;
+				ResearchDevLvlCost = SkipFour(ResearchDevLvlCost);
+				ResearchDevHealCost++;
+				ResearchDevHealValue = upgradeValue(ResearchDevHealValue, 1);
+				ResearchDevRebuild = upgradeValue(ResearchDevRebuild, 1);
+				// 5% chance to add a new healing bay #update
+				int chance = 950;
+				// 20% if there is not one room for every four teams
+				if (getMaxTeams / 4 > ResearchDevHealBays)
+					chance = 800;
+				if (RndVal.Next(1000) > chance)
+					ResearchDevHealBays++;
+			}
 		}
 		public void AddManagerHours()
 		{
@@ -2014,6 +2061,7 @@ namespace TrainingProject
 				case 50:
 					// Monster outbreak
 					MaintCost = roundValue((int)((ArenaLvlMaint--) + (MonsterDenLvlMaint--) + (ShopLvlMaint--) + (ResearchDevMaint--) - MonsterDenRepairs));
+					if (MaintCost < 0) MaintCost = 0;
 					startMonsterOutbreak(MaintCost);
 					break;
 				case 95:
@@ -2588,7 +2636,7 @@ namespace TrainingProject
 		{
 			for (int i = 0; i < MyTeam.Count; i++)
 			{
-				if (MyTeam[i].rebuildCost(rebuildSavings, Runes) >= 100)
+				if (MyTeam[i].rebuildCost(rebuildSavings, Runes) >= 200)
 					Rebuild(MyTeam[i], pay, rebuildSavings);
 			}
 		}
@@ -3491,7 +3539,7 @@ namespace TrainingProject
 				};
 			tmp += ("*Base Stats*\n");
 			tmp += string.Format("{0,-10}{1}\n", "Level", Level);
-			tmp += string.Format("{0,-10}{1}\n", "Rank", (Dexterity + Strength + Agility + Tech + Accuracy) / 2);
+			tmp += string.Format("{0,-10}{1}\n", "Rank", (Dexterity + Strength + Agility + Tech + Accuracy) / 2.0);
 			tmp += string.Format("{0,-10}{1}\n", "Dexterity", Dexterity);
 			tmp += string.Format("{0,-10}{1}\n", "Strength", Strength);
 			tmp += string.Format("{0,-10}{1}\n", "Agility", Agility);
