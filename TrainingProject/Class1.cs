@@ -17,8 +17,6 @@ namespace TrainingProject
 		[JsonIgnore]
 		public static readonly Random RndVal = new Random();
 		[JsonIgnore]
-		public static string Globalmessage;
-		[JsonIgnore]
 		private static string WarningLog;
 		[JsonIgnore]
 		private static string FightLog;
@@ -590,7 +588,6 @@ namespace TrainingProject
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
 			maxNumeral = 1000;
-			Globalmessage = "";
 			FightBreak = 80;
 			roundCount = 0;
 			bossFight = false;
@@ -658,7 +655,6 @@ namespace TrainingProject
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
 			maxNumeral = 1000;
-			Globalmessage = "";
 			FightBreak = 80;
 			roundCount = 0;
 			BossLvl = 10;
@@ -712,14 +708,19 @@ namespace TrainingProject
 
 		public void interval(Timer Timer1)
 		{
-			CurrentInterval++;
-			if (CurrentInterval > MaxInterval)
+			if (GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated)
+				Timer1.Interval = 1000 / getMaxTeams;
+			else
 			{
-				CurrentInterval = 1000;
-				MaxInterval++;
-				GameTeams.Sort();
+				CurrentInterval++;
+				if (CurrentInterval > MaxInterval)
+				{
+					CurrentInterval = 1000;
+					MaxInterval++;
+					GameTeams.Sort();
+				}
+				Timer1.Interval = CurrentInterval;
 			}
-			Timer1.Interval = CurrentInterval;
 		}
 
 		public void arenaLevelUp()
@@ -1554,23 +1555,25 @@ namespace TrainingProject
 			MainPanel.Controls.Add(lblCountdown);
 			return MainPanel;
 		}
+		public int getMaxTeamsAutomated()
+		{
+			int myMax = 1;
+			if (GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated)
+				myMax = MaxTeams;
+			return myMax;
+		}
 		public FlowLayoutPanel continueFight(bool display)
         {
 			roundCount++;
-			if (Globalmessage == null)
-				Globalmessage = "";
-			if (Globalmessage.Length > 0)
-			{
-				getFightLog = Globalmessage;
-				Globalmessage = "";
-			}
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" };
 			MainPanel.Controls.Add(lblTeamName);
+			int KOCount = 3;
+			if (GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated) KOCount = 0;
 			for (int i = 0; i < GameTeam1.Count; i++)
 			{
-				if (GameTeam1[i].getNumRobos(true) > 0 && GameTeam2[i].getNumRobos(true) > 0)
+				if (GameTeam1[i].getNumRobos(true, KOCount) > 0 && GameTeam2[i].getNumRobos(true, KOCount) > 0)
 				{
 					getNext(i);
 					if (display)
@@ -1585,12 +1588,12 @@ namespace TrainingProject
 							Color background = Color.Transparent;
 							if (i % 2 == 1)
 								background = Color.LightGray;
-							Label lblTeam1stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild) };
+							Label lblTeam1stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount) };
 							int tmpI = i;
 							if (getGameCurrency > 0)
 								lblTeam1stats.Click += new EventHandler((sender, e) => GameTeam1[tmpI].Rebuild(true, ResearchDevRebuild));
 							MainPanel.Controls.Add(lblTeam1stats);
-							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild) };
+							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount) };
 							if (getGameCurrency > 0)
 								lblTeam2stats.Click += new EventHandler((sender, e) => GameTeam2[tmpI].Rebuild(true, ResearchDevRebuild));
 							MainPanel.Controls.Add(lblTeam2stats);
@@ -1627,8 +1630,8 @@ namespace TrainingProject
 					{
 						if (DateTime.Now > BreakTime)
 						{
-							GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild);
-							GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild);
+							GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount);
+							GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount);
 						}
 					}
 				}
@@ -1807,7 +1810,7 @@ namespace TrainingProject
 					{
 						if (!isFighting(eTeam.getName))
 						{
-							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), ResearchDevRebuild) };
+							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), ResearchDevRebuild, KOCount) };
 							if (getGameCurrency > 0)
 								lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true, ResearchDevRebuild));
 							MainPanel.Controls.Add(lblTeamstats);
@@ -1911,7 +1914,7 @@ namespace TrainingProject
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
 					}
 					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipWeapon.eMaxDurability > 50)
+					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipWeapon.eMaxDurability > 50 && getGameCurrency > 0)
 					{
 						int tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
 						eTeam.getCurrency -= tmpUpgrade;
@@ -1928,7 +1931,7 @@ namespace TrainingProject
 					int index = 0;
 					foreach (Equipment eEquip in storeEquipment)
 					{
-						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Weapon" && (PurchaseUgrade || bAutomated))
+						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Weapon" && (PurchaseUgrade || bAutomated) && getGameCurrency > 0)
 						{
 							eTeam.getCurrency -= eEquip.ePrice;
 							getGameCurrency += eEquip.ePrice;
@@ -1956,7 +1959,7 @@ namespace TrainingProject
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName;
 					}
 					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipArmour.eMaxDurability > 50)
+					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipArmour.eMaxDurability > 50 && getGameCurrency > 0)
 					{
 						int tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
 						eTeam.getCurrency -= tmpUpgrade;
@@ -1973,7 +1976,7 @@ namespace TrainingProject
 					int index = 0;
 					foreach (Equipment eEquip in storeEquipment)
 					{
-						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Armour" && (PurchaseUgrade || bAutomated))
+						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Armour" && (PurchaseUgrade || bAutomated) && getGameCurrency > 0)
 						{
 							eTeam.getCurrency -= eEquip.ePrice;
 							getGameCurrency += eEquip.ePrice;
@@ -1991,9 +1994,11 @@ namespace TrainingProject
 		public void buildingMaintenance()
 		{
 			int MaintCost = 0;
-			if (getGameCurrency > 0)
-			{
-				switch (RndVal.Next(100))
+			int maintValue = RndVal.Next(100);
+			// if arena is in debt, none of the benefits are available (Monster den bonus, Equipment upgrades, Repair bay, etc) so no maintenance required.
+			if (getGameCurrency <= 0)
+				maintValue = RndVal.Next(50, 150);
+			switch (maintValue)
 				{
 					case 1:
 					case 2:
@@ -2055,42 +2060,45 @@ namespace TrainingProject
 							getFightLog = Environment.NewLine + "*** Research and Development maintenance cost " + String.Format("{0:n0}", MaintCost);
 						}
 						break;
-					case 21:
-					case 22:
-					case 23:
-					case 24:
 					case 25:
-						// Tax
-						MaintCost = roundValue((int)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1)));
-						getGameCurrency -= MaintCost;
-						GameCurrencyLog -= MaintCost;
-						getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("{0:n0}", MaintCost);
-						break;
-					case 50:
 						// Monster outbreak
 						MaintCost = roundValue((int)((ArenaLvlMaint--) + (MonsterDenLvlMaint--) + (ShopLvlMaint--) + (ResearchDevMaint--) - MonsterDenRepairs));
 						if (MaintCost < 0) MaintCost = 0;
 						startMonsterOutbreak(MaintCost);
 						break;
-					case 99:
-						int team = RndVal.Next(GameTeams.Count + 1);
-						// sponsored the arena
-						if (team == GameTeams.Count)
+					case 30:
+						MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000));
+						getGameCurrency += MaintCost;
+						getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						break;
+					case 51:
+					case 52:
+					case 53:
+					case 54:
+					case 55:
+					// Tax
+						MaintCost = roundValue((int)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1)));
+						if (getGameCurrency > 0)
 						{
-							MaintCost += gameDifficulty * BossCount * getArenaLvl * 1000;
-							getGameCurrency += MaintCost;
-							getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+							getGameCurrency -= MaintCost;
+							GameCurrencyLog -= MaintCost;
+							getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("-{0:n0}", MaintCost);
 						}
-						// sponsored a team
 						else
 						{
-							MaintCost += gameDifficulty * BossCount * getArenaLvl * 1000 * (GameTeams[team].Win + 1);
-							GameTeams[team].getCurrency += MaintCost;
-							getWarningLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+							getGameCurrency += MaintCost;
+							GameCurrencyLog += MaintCost;
+							getFightLog = Environment.NewLine + "*** Tax rebate " + String.Format("+{0:n0}", MaintCost);
 						}
 						break;
+					case 99:
+						int team = RndVal.Next(GameTeams.Count);
+						// sponsored a team
+						MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000 * (GameTeams[team].Win + 1)));
+						GameTeams[team].getCurrency += MaintCost;
+						getWarningLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						break;
 				}
-			}
 		}
 
         public void getNext(int index)
@@ -2435,7 +2443,7 @@ namespace TrainingProject
 			TeamLog = "";
 			Win = 0;
 			TeamName = BossName[RndVal.Next(BossName.Length)] + " " + name2[RndVal.Next(name2.Length)];
-			Automated = false;
+			Automated = true;
 			shownDefeated = false;
 		}
 		// Monster team
@@ -2499,7 +2507,7 @@ namespace TrainingProject
 			isMonster = true;
 			TeamLog = "";
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name2[RndVal.Next(name2.Length)];
-			Automated = false;
+			Automated = true;
 			shownDefeated = false;
 		}
 		public string getRunes()
@@ -2591,7 +2599,7 @@ namespace TrainingProject
 			foreach (Robot eRobo in MyTeam) { eRobo.resetLog(); }
 		}
 
-		public string getTeamStats(int[] PadRight, int rebuildSavings)
+		public string getTeamStats(int[] PadRight, int rebuildSavings, int KOCount)
 		{
 			string strStats = "";
 			// If this team is not in Team1 or Team1 list
@@ -2608,14 +2616,14 @@ namespace TrainingProject
 				if (counter < maxRobos)
 				{
 					strStats += eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings, Runes);
-					if (eRobo.getKO <= 3) counter++;
+					if (eRobo.getKO <= KOCount) counter++;
 				}
 				else
 				{
 					char tmpSkill = '.';
 					if (eRobo.cSkill != ' ') tmpSkill = eRobo.cSkill;
 					eRobo.getRoboStats(PadRight, getCurrency, rebuildSavings, Runes);
-					if (eRobo.getKO <= 3)
+					if (eRobo.getKO <= KOCount)
 					{
 						if (counter == maxRobos)
 							strStats += Environment.NewLine + "->";
@@ -2688,12 +2696,12 @@ namespace TrainingProject
 			}
 			return bonusAnalysis;
 		}
-		public int getNumRobos(bool pShowDefeated)
+		public int getNumRobos(bool pShowDefeated, int KOCount = 3)
 		{
 			int num = 0;
 			foreach (Robot robo in MyTeam)
 			{
-				if (robo.HP > 0 || (pShowDefeated && robo.getKO <= 3))
+				if (robo.HP > 0 || (pShowDefeated && robo.getKO <= KOCount))
 					num++;
 			}
 			return num;
@@ -3438,7 +3446,7 @@ namespace TrainingProject
 							RobotLog = Environment.NewLine + getName + " " + EquipArmour.eName + " broke!";
 							if (!bIsMonster)
 							{
-								Globalmessage = string.Format("\n--- {0} {1} broke! ({2:n0})", getName, EquipArmour.eName, EquipArmour.eMaxDurability);
+								getFightLog = string.Format("\n--- {0} {1} broke! ({2:n0})", getName, EquipArmour.eName, EquipArmour.eMaxDurability);
 								if (EquipArmour.eMaxDurability > 100)
 									getWarningLog = string.Format("\n--- {0} {1} broke! ({2:n0}) @ {3}", getName, EquipArmour.eName, EquipArmour.eMaxDurability, DateTime.Now.ToString());
 							}
@@ -3456,7 +3464,7 @@ namespace TrainingProject
 							attacker.RobotLog = Environment.NewLine + attacker.getName + " " + attacker.EquipWeapon.eName + " broke!";
 							if (!attacker.bIsMonster)
 							{
-								Globalmessage = string.Format("\n--- {0} {1} broke! ({2:n0})", attacker.getName, attacker.EquipWeapon.eName, attacker.EquipWeapon.eMaxDurability);
+								getFightLog = string.Format("\n--- {0} {1} broke! ({2:n0})", attacker.getName, attacker.EquipWeapon.eName, attacker.EquipWeapon.eMaxDurability);
 								if (attacker.EquipWeapon.eMaxDurability > 100)
 									getWarningLog = (string.Format("\n--- {0} {1} broke! ({2:n0}) @ {3}", attacker.getName, attacker.EquipWeapon.eName, attacker.EquipWeapon.eMaxDurability, DateTime.Now.ToString()));
 							}

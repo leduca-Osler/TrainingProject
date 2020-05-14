@@ -182,12 +182,10 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if ((shownCount++ >= (getNumRobos()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && DateTime.Now < MyGame.BreakTime)
+				if ((shownCount++ >= (getNumRobos() * MyGame.getMaxTeamsAutomated()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && DateTime.Now < MyGame.BreakTime)
 				{
 					foreach (Control eControl in MainPannel.Controls)
-					{
 						eControl.Dispose();
-					}
 					MainPannel.Controls.Clear();
 					MainPannel.Controls.Add(MyGame.continueFight(true));
 					shownCount = 0;
