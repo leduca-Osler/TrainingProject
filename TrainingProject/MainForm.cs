@@ -162,7 +162,6 @@ namespace TrainingApp
 			if (MyGame.getGameCurrency >= MyGame.getShopLvlCost)
 			{
 				shopLvl = true;
-				shopColour = Color.Blue;
 			}
 			if (MyGame.getGameCurrency >= MyGame.getResearchDevLvlCost)
 				researchLvl = true;
@@ -540,13 +539,13 @@ namespace TrainingApp
 		}
 		private void btnShop_ButtonClick(object sender, EventArgs e)
 		{
-			if (MyGame.getGameCurrency > MyGame.getShopLvlCost)
-			{
-				MyGame.ShopLevelUp();
-			}
-			else if (MyGame.getGameCurrency > MyGame.getShopStockCost)
+			if (MyGame.getGameCurrency > MyGame.getShopStockCost && MyGame.getShopStock < MyGame.getShopMaxStat)
 			{
 				MyGame.AddStock();
+			}
+			else if (MyGame.getGameCurrency > MyGame.getShopLvlCost)
+			{
+				MyGame.ShopLevelUp();
 			}
 			update();
 		}

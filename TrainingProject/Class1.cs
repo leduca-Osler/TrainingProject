@@ -91,7 +91,7 @@ namespace TrainingProject
 		[JsonIgnore]
 		public string[] name1 = { "Green", "Blue", "Yellow", "Orange", "Black", "Pink", "Great", "Strong", "Cunning" };
 		[JsonIgnore]
-		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", };
+		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos" };
 		[JsonIgnore]
 		public string[] name3 = { "Blades", "Arrows", "Staffs", "Sparks", "Factory", "Snipers", "Calvary" };
 		[JsonIgnore]
@@ -105,8 +105,8 @@ namespace TrainingProject
 			set
 			{
 				if (WarningLog == null) WarningLog = "";
-				if (WarningLog.Length > 1000)
-					WarningLog = value + WarningLog.Substring(0, 500);
+				if (WarningLog.Length > 2500)
+					WarningLog = value + WarningLog.Substring(0, 1000);
 				else
 					WarningLog = value + WarningLog;
 			}
@@ -275,6 +275,7 @@ namespace TrainingProject
 		public bool PurchaseUgrade;
 		[JsonProperty]
 		private int GoalGameScore;
+		public int AutoGoalGameScore;
 		[JsonProperty]
 		public int gameDifficulty;
 		[JsonProperty]
@@ -508,7 +509,12 @@ namespace TrainingProject
 		}
 		public int getAvailableTeams
 		{
-			get { return MaxTeams - GameTeams.Count; }
+			get
+			{
+				if (AutoGoalGameScore > 0 && getScore() > AutoGoalGameScore)
+					addTeam();
+				return MaxTeams - GameTeams.Count;
+			}
 			set { MaxTeams = value; }
 		}
 		public int getNumeral
@@ -542,6 +548,7 @@ namespace TrainingProject
 			Bosses = new Team(1, 10, 10);
 			findMonster = 50;
 			GoalGameScore = pGoalGameScore;
+			AutoGoalGameScore = 0;
 			MaxTeams = pMaxTeams;
 			TeamCost = pTeamCost;
 			GameCurrency = pGameCurrency;
@@ -613,7 +620,8 @@ namespace TrainingProject
 			findMonster = 50;
 			GameCurrency = 0;
             GoalGameScore = 100;
-            MaxTeams = 2;
+			AutoGoalGameScore = 0;
+			MaxTeams = 2;
 			TeamCost = 500;
 			fighting = false;
 			auto = true;
@@ -892,6 +900,7 @@ namespace TrainingProject
 		public string addTeam()
         {
 			string TeamName = "";
+			AutoGoalGameScore = 0;
 			if (getGameCurrency > TeamCost)
 			{
 				// calculate cost
@@ -901,6 +910,7 @@ namespace TrainingProject
 				Team tmp = new Team(RndVal.Next(GameTeams.Count, GameTeams.Count * 3));
 				TeamName = tmp.getName;
 				GameTeams.Add(tmp);
+				getWarningLog = getFightLog = tmp.getTeamLog = string.Format("\n!*!*! new team {0} was added!", tmp.getName);
 			}
 			else
 			{
@@ -917,6 +927,7 @@ namespace TrainingProject
 			}
 			rebuild.getDifficulty = 0;
 			rebuild.Win++;
+			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
 			int winGoal = rebuild.Win;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 				rebuild.Rebuild(i, false, ResearchDevRebuild);
@@ -955,6 +966,7 @@ namespace TrainingProject
 			if (iTmpScore >= GoalGameScore)
 			{
 				MaxTeams++;
+				AutoGoalGameScore = GoalGameScore + 25;
 				GoalGameScore *= 2;
 				GoalGameScore = SkipFour(GoalGameScore);
 			}
@@ -1652,7 +1664,7 @@ namespace TrainingProject
 							{
 								gameDifficulty++;
 								GameCurrency += Jackpot;
-								GameCurrencyLog += Jackpot;
+								// GameCurrencyLog += Jackpot; duplicate
 								Jackpot = 0;
 								lblWinner.Text = getFightLog = Environment.NewLine + "+++ Arena defeated monsters difficulty increased @ " + DateTime.Now.ToString();
 							}
@@ -1725,8 +1737,10 @@ namespace TrainingProject
 								}
 								else
 								{
-									// increase score if another team and score's are within 20%
+									// increase score 
 									GameTeam1[i].getScore++;
+									if (getGameCurrency < 0 && RndVal.Next(100) > 95)
+										GameTeam2[i].getScore--;
 									// pay team 2 25%;
 									tmp = (int)(Jackpot * .25);
 									GameTeam2[i].getCurrency += tmp;
@@ -1740,6 +1754,8 @@ namespace TrainingProject
 								FightBreak = 95;
 								lblWinner.Text = GameTeam2[i].getName + " winns!";
 								GameTeam2[i].getScore++;
+								if (getGameCurrency < 0 && RndVal.Next(100) > 95)
+									GameTeam1[i].getScore--;
 								// decrease difficulty if monster won
 								if (GameTeam2[i].isMonster)
 								{
@@ -2087,7 +2103,7 @@ namespace TrainingProject
 						else
 						{
 							getGameCurrency += MaintCost;
-							GameCurrencyLog += MaintCost;
+							// GameCurrencyLog += MaintCost; double adding to the log
 							getFightLog = Environment.NewLine + "*** Tax rebate " + String.Format("+{0:n0}", MaintCost);
 						}
 						break;
@@ -2098,7 +2114,16 @@ namespace TrainingProject
 						GameTeams[team].getCurrency += MaintCost;
 						getWarningLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
 						break;
-				}
+				case 149:
+					int leavingTeam = RndVal.Next(GameTeams.Count);
+					// team could leave if arena not doing well
+					if (GameTeams.Count > 2 && GameTeams[leavingTeam].Automated)
+					{
+						getWarningLog = Environment.NewLine + "??? " + GameTeams[leavingTeam].getName + " has left the arena!";
+						GameTeams.RemoveAt(leavingTeam);
+					}
+					break;
+			}
 		}
 
         public void getNext(int index)
@@ -2319,14 +2344,17 @@ namespace TrainingProject
 		{
 			get { return Score; }
 			set
-			{
-				ScoreLog += value - Score;
-				Score = value;
-				if (Score >= GoalScore)
-				{
-					GoalScore *= 2;
-					GoalScore = SkipFour(GoalScore);
-					MaxRobo++;
+			{ 
+				if (value >= 0)
+				{ 
+					ScoreLog += value - Score;
+					Score = value;
+					if (Score >= GoalScore)
+					{
+						GoalScore *= 2;
+						GoalScore = SkipFour(GoalScore);
+						MaxRobo++;
+					}
 				}
 			}
 		}
@@ -2685,7 +2713,7 @@ namespace TrainingProject
 					if (!pay) baseStats = baseStats / 2;
 					MyTeam[robo] = new Robot(baseStats, setName("robot"), RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
-					getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! ({2} Runes used) @ {3} ", getName, MyTeam[robo].getName, runesUsed, DateTime.Now.ToString());
+					getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! Rank {2:n1} ({3} Runes used) @ {4} ", getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), runesUsed, DateTime.Now.ToString());
 				}
 				else
 				{
@@ -3485,7 +3513,12 @@ namespace TrainingProject
 				}
 			}
 		}
-        public override string ToString()
+		public int getMaxLevel()
+		{
+			return (Dexterity + Strength + Agility + Tech + Accuracy + 1) * 5;
+		}
+
+		public override string ToString()
         {
             string tmp = "";
 			int wHealth = 0;
@@ -3548,7 +3581,7 @@ namespace TrainingProject
 					, getMaxLength( new string[] { String.Format("{0:n0}", aHealth), String.Format("{0:n0}", aEnergy), String.Format("{0:n0}", aArmour), String.Format("{0:n0}", aDamage), String.Format("{0:n0}", aHit), String.Format("{0:n0}", aSpeed), String.Format("{0:n0}", aMentalStr), String.Format("{0:n0}", aMentalDef) } )
 				};
 			tmp += ("*Base Stats*\n");
-			tmp += string.Format("{0,-10}{1}\n", "Level", Level);
+			tmp += string.Format("{0,-10}{1}/{2}\n", "Level", Level, getMaxLevel());
 			tmp += string.Format("{0,-10}{1}\n", "Rank", (Dexterity + Strength + Agility + Tech + Accuracy) / 2.0);
 			tmp += string.Format("{0,-10}{1}\n", "Dexterity", Dexterity);
 			tmp += string.Format("{0,-10}{1}\n", "Strength", Strength);
