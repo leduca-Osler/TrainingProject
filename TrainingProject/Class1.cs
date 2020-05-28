@@ -2008,14 +2008,17 @@ namespace TrainingProject
 					case 5:
 					// Arena Maintenance
 					if (ArenaLvlMaint > 0)
-						MaintCost = roundValue(RndVal.Next(ArenaLvlMaint));
+						MaintCost = roundValue(RndVal.Next(getArenaLvlMaint));
 					else
 					{
-						MaintCost = Math.Abs(ArenaLvlMaint);
-						if (MaintCost > ArenaLvlCost / 2)
-							ArenaLvlMaint = ArenaLvlCost / 10;
+						MaintCost = Math.Abs(getArenaLvlMaint);
+						if (MaintCost > getArenaLvlCost / 2)
+						{
+							getArenaLvlCost = roundValue((int)(getArenaLvlCost * 0.75));
+							getArenaLvlMaint = getArenaLvlCost / 10;
+						}
 					}
-					ArenaLvlMaint -= (int)((double)MaintCost * 0.1);
+					getArenaLvlMaint -= (int)((double)MaintCost * 0.1);
 					getGameCurrency -= MaintCost;
 					GameCurrencyLog -= MaintCost;
 					getFightLog = Environment.NewLine + "*** Arena maintenance cost " + String.Format("{0:n0}", MaintCost);
@@ -2027,12 +2030,15 @@ namespace TrainingProject
 					case 10:
 					// Monster Den Maintenance
 					if (MonsterDenLvlMaint > 0)
-						MaintCost = roundValue(RndVal.Next(MonsterDenLvlMaint));
+						MaintCost = roundValue(RndVal.Next(getMonsterDenLvlMaint));
 					else
 					{
 						MaintCost = Math.Abs(MonsterDenLvlMaint);
 						if (MaintCost > MonsterDenLvlCost / 2)
-							MonsterDenLvlMaint = MonsterDenLvlCost / 10;
+						{
+							getMonsterDenLvlCost = roundValue((int)(getMonsterDenLvlCost * 0.75));
+							MonsterDenLvlMaint = getMonsterDenLvlCost / 10;
+						}
 					}
 					MonsterDenLvlMaint -= (int)((double)MaintCost * 0.1);
 					getGameCurrency -= MaintCost;
@@ -2046,14 +2052,17 @@ namespace TrainingProject
 					case 15:
 					// Shop Maintenance
 					if (ShopLvlMaint > 0)
-						MaintCost = roundValue(RndVal.Next(ShopLvlMaint));
+						MaintCost = roundValue(RndVal.Next(getShopLvlMaint));
 					else
 					{
-						MaintCost = Math.Abs(ShopLvlMaint);
+						MaintCost = Math.Abs(getShopLvlMaint);
 						if (MaintCost > getShopLvlCost / 2)
-							ShopLvlMaint = getShopLvlCost / 10;
+						{
+							getShopLvlCost = roundValue((int)(getShopLvlCost * 0.75));
+							getShopLvlMaint = getShopLvlCost / 10;
+						}
 					}
-					ShopLvlMaint -= (int)((double)MaintCost * 0.1);
+					getShopLvlMaint -= (int)((double)MaintCost * 0.1);
 					getGameCurrency -= MaintCost;
 					GameCurrencyLog -= MaintCost;
 					getFightLog = Environment.NewLine + "*** Shop maintenance cost " + String.Format("{0:n0}", MaintCost);
@@ -2064,15 +2073,18 @@ namespace TrainingProject
 					case 19:
 					case 20:
 					if (ResearchDevMaint > 0)
-						MaintCost = roundValue(RndVal.Next(ResearchDevMaint));
+						MaintCost = roundValue(RndVal.Next(getResearchDevMaint));
 					else
 					{
-						MaintCost = Math.Abs(ResearchDevMaint);
+						MaintCost = Math.Abs(getResearchDevMaint);
 						if (MaintCost > getResearchDevLvlCost / 2)
+						{
+							getResearchDevLvlCost = roundValue((int)(getResearchDevLvlCost * 0.75));
 							ResearchDevMaint = getResearchDevLvlCost / 10;
+						}
 					}
 					// Research and Development Maintenance
-					ResearchDevMaint -= (int)((double)MaintCost * 0.1);
+					getResearchDevMaint -= (int)((double)MaintCost * 0.1);
 					getGameCurrency -= MaintCost;
 					GameCurrencyLog -= MaintCost;
 					getFightLog = Environment.NewLine + "*** Research and Development maintenance cost " + String.Format("{0:n0}", MaintCost);
