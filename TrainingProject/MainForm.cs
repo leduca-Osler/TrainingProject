@@ -176,7 +176,7 @@ namespace TrainingApp
 			mnuShopLevelUp.Enabled = shopLvl;
 			mnuRestockShop.Enabled = shopRestock;
 			btnResearchDev.Enabled = researchLvl;
-			mnuLongBattle.Text = "Long Battle (" + MyGame.ManagerHrs + ")";
+			mnuLongBattle.Text = String.Format("Long Battle {0}hrs \n{1:c0}", MyGame.ManagerHrs, MyGame.ManagerCost);
 			// if fight is active
 			if (MyGame.isFighting())
 			{
@@ -539,7 +539,7 @@ namespace TrainingApp
 		}
 		private void btnShop_ButtonClick(object sender, EventArgs e)
 		{
-			if (MyGame.getGameCurrency > MyGame.getShopStockCost && MyGame.getShopStock < MyGame.getShopMaxStat)
+			if (MyGame.getGameCurrency > MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
 			{
 				MyGame.AddStock();
 			}
