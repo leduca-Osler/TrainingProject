@@ -20,6 +20,7 @@ namespace TrainingApp
 		private Game MyGame;
 		private int shownCount;
 		private int maxCount = 1000;
+		private int tickRate = 1000;
 		private int counter;
 		private DateTime saveTime;
 		public MainForm()
@@ -110,7 +111,7 @@ namespace TrainingApp
 		{
 			if (DateTime.Now > MyGame.BreakTime)
 				btnAutomatic.BackColor = Color.Purple;
-			else if (MyGame.getGameCurrency >= MyGame.ManagerCost)
+			else if (MyGame.getGameCurrency >= MyGame.ManagerCost && MyGame.maxManagerHours > MyGame.ManagerHrs)
 				btnAutomatic.BackColor = Color.Gold;
 			else
 				btnAutomatic.BackColor = Color.White;
@@ -553,6 +554,7 @@ namespace TrainingApp
 		private void btnAutomatic_ButtonClick(object sender, EventArgs e)
 		{
 			BreakTimer.Interval = 1000;
+			tickRate = 1000;
 			#if DEBUG
 				BreakTimer.Interval = 50; ; //speed up for testing
 			#endif
@@ -648,6 +650,10 @@ namespace TrainingApp
 		}
 		private void BreakTimer_Tick(object sender, EventArgs e)
 		{
+			if (MyGame.GameTeam1 != null && MyGame.GameTeam2 != null && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].Automated && MyGame.GameTeam2[0].Automated)
+				BreakTimer.Interval = tickRate / MyGame.GameTeams.Count;
+			else
+				BreakTimer.Interval = tickRate;
 			Random tmp = new Random();
 			if (DateTime.Now > MyGame.BreakTime)
 			{
@@ -675,6 +681,7 @@ namespace TrainingApp
 			{
 				MyGame.continueFight(false);
 				BreakTimer.Interval++;
+				tickRate++;
 			}
 			saveGame();
 		}
@@ -715,6 +722,16 @@ namespace TrainingApp
 		private void difficultyFightToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			MyGame.GameDifficultyFight = true;
+		}
+
+		private void txtMaxManagerHrs_TextChanged(object sender, EventArgs e)
+		{
+			int hrs = 10;
+			if (int.TryParse(txtMaxManagerHrs.Text, out hrs))
+				MyGame.maxManagerHours = int.Parse(txtMaxManagerHrs.Text);
+			else
+				txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
+
 		}
 	}
 	public static class BinarySerialization

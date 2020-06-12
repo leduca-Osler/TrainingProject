@@ -16,9 +16,7 @@ namespace TrainingProject
 	{
 		[JsonIgnore]
 		public static readonly Random RndVal = new Random();
-		[JsonIgnore]
 		private static string WarningLog;
-		[JsonIgnore]
 		private static string FightLog;
 		//public Random RndVal = new Random();
 		[JsonIgnore]
@@ -105,8 +103,8 @@ namespace TrainingProject
 			set
 			{
 				if (WarningLog == null) WarningLog = "";
-				if (WarningLog.Length > 2500)
-					WarningLog = value + WarningLog.Substring(0, 1000);
+				if (WarningLog.Length > 5000)
+					WarningLog = value + WarningLog.Substring(0, 4000);
 				else
 					WarningLog = value + WarningLog;
 			}
@@ -135,6 +133,32 @@ namespace TrainingProject
 		public void clearWarnings()
 		{
 			WarningLog = "";
+		}
+
+		public string setName(string Robo)
+		{
+			return setName(Robo, 0);
+		}
+
+		public string setName(String type, int MonsterLevel)
+		{
+			string name = "";
+			if (type.Equals("robot"))
+			{
+				if (RndVal.Next(100) > 10)
+					name = (RoboName[RndVal.Next(RoboName.Length)] + RandomString(4));
+				else
+					name = RandomString(10);
+			}
+			else if (type.Equals("monster"))
+			{
+				name = (MonsterName[MonsterLevel]);
+			}
+			else if (type.Equals("boss"))
+			{
+				name = (BossName[RndVal.Next(BossName.Length)]) + " " + (MonsterName[MonsterLevel]);
+			}
+			return name;
 		}
 		public int SkipFour(int value)
 		{
@@ -272,6 +296,7 @@ namespace TrainingProject
 		public DateTime SafeTime;
 		public DateTime BreakTime;
 		public double repairPercent;
+		public int maxManagerHours;
 		public bool PurchaseUgrade;
 		[JsonProperty]
 		private int GoalGameScore;
@@ -544,6 +569,7 @@ namespace TrainingProject
 			ShopMaxDurability = pShopMaxDurability;
 			ShopUpgradeValue = pShopUpgradeValue;
 			repairPercent = .5;
+			maxManagerHours = 10;
 			PurchaseUgrade = false;
 			ArenaLvl = pArenaLvl;
 			ArenaLvlCost = pArenaLvlCost;
@@ -616,6 +642,7 @@ namespace TrainingProject
 			ShopMaxDurability = 100;
 			ShopUpgradeValue = 1;
 			repairPercent = .5;
+			maxManagerHours = 10;
 			PurchaseUgrade = false;
 			ArenaLvl = 1;
 			ArenaLvlCost = 100;
@@ -749,8 +776,22 @@ namespace TrainingProject
 			BossCount++;
 			BossDifficulty += 7;
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) @ {0}", DateTime.Now.ToString(), BossReward);
-			BossReward = BossLvl * BossDifficulty * BossCount * 10;
-			Bosses = new Team(BossCount, BossDifficulty, BossLvl);
+			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
+			int Monster = RndVal.Next(BossCount);
+			Bosses.MyTeam.Add(new Robot(BossDifficulty, setName("boss", Monster), Monster, true));
+			// Add equipment
+			for (int i = 0; i < BossCount; i++)
+			{
+				Bosses.MyTeam[i].getEquipWeapon = new Equipment(true, BossLvl, 10000, RndVal);
+				Bosses.MyTeam[i].getEquipArmour = new Equipment(false, BossLvl, 10000, RndVal);
+			}
+			for (int ii = 1; ii < BossLvl; ii++)
+			{
+				Bosses.MyTeam[BossCount - 1].levelUp(RndVal);
+				Bosses.MyTeam[BossCount - 1].HP = Bosses.MyTeam[BossCount - 1].getTHealth();
+				Bosses.MyTeam[BossCount - 1].MP = Bosses.MyTeam[BossCount - 1].getTEnergy();
+			}
+			Bosses.resetLogs();
 			return retVal;
 		}
 		public string bossLevelReset()
@@ -866,11 +907,10 @@ namespace TrainingProject
 		}
 		public void AddManagerHours()
 		{
-			int iHalfCurr = getGameCurrency / 2;
 			// only add Manager hours if there is less than one hour to safe time
 			if ((SafeTime - DateTime.Now).TotalHours < 1)
 			{
-				while (getGameCurrency > ManagerCost && getGameCurrency > iHalfCurr)
+				while (getGameCurrency > ManagerCost && ManagerHrs < maxManagerHours)
 				{
 					getGameCurrency -= ManagerCost;
 					ManagerHrs++;
@@ -1053,7 +1093,7 @@ namespace TrainingProject
 				Team Monsters = new Team(gameDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak);
 				Monsters.getName = "Game Diff " + gameDifficulty.ToString();
 				GameTeam2.Add(Monsters);
-				Jackpot = gameDifficulty * 1000;
+				Jackpot = gameDifficulty * getArenaLvl * 1000;
 				getFightLog = Environment.NewLine + " Game Difficulty Fight! @ " + DateTime.Now.ToString();
 			}
 		}
@@ -2728,13 +2768,13 @@ namespace TrainingProject
 					if (!pay) baseStats = baseStats / 2;
 					MyTeam[robo] = new Robot(baseStats, setName("robot"), RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
-					getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! Rank {2:n1} ({3} Runes used) @ {4} ", getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), runesUsed, DateTime.Now.ToString());
+					getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! Rank {2:n1} ({3}R) @ {4} ", getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), runesUsed, DateTime.Now.ToString());
 				}
 				else
 				{
 					bonusAnalysis = RndVal.Next((int)MyTeam[robo].RebuildPercent * 10);
 					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
-					getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2} Analysis / {3} Runes used) @ {4}", getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString());
+					getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2}A/{3}R) @ {4}", getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString());
 				}
 			}
 			return bonusAnalysis;
@@ -2784,31 +2824,6 @@ namespace TrainingProject
 			MyTeam.Sort();
 			return fullHP;
 		}
-		public string setName(string Robo)
-		{
-			return setName(Robo, 0);
-		}
-		
-		public string setName(String type, int MonsterLevel)
-        {
-            string name = "";
-            if (type.Equals("robot"))
-            {
-				if (RndVal.Next(100) > 10)
-					name = (RoboName[RndVal.Next(RoboName.Length)] + RandomString(4));
-				else
-					name = RandomString(10);
-			}
-			else if (type.Equals("monster"))
-			{
-				name = (MonsterName[MonsterLevel]);
-			}
-			else if (type.Equals("boss"))
-			{
-				name = (BossName[RndVal.Next(BossName.Length)]) + " " + (MonsterName[MonsterLevel]);
-			}
-			return name;
-        }
 	}
 	[Serializable]
 	[JsonObject(MemberSerialization.OptIn)]
