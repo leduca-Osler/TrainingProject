@@ -1791,7 +1791,11 @@ namespace TrainingProject
 									msg += String.Format(" ({0:n0}) Win:{1}", tmp, WinCount);
 									// if GameTeam1 has a lower difficulty it's lowest character level send a warning
 									if (WinCount == 0 && GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[GameTeam1[i].MyTeam.Count - 1].getLevel && GameTeam1[i].getDifficulty > 0)
+									{
 										getWarningLog = String.Format("\n--- {0} has failed to advance past min level!", GameTeam1[i].getName);
+										if (RndVal.Next(100) > 90)
+											addTeam();
+									}
 								}
 								else
 								{
@@ -2156,20 +2160,24 @@ namespace TrainingProject
 					case 54:
 					case 55:
 					// Tax
-						MaintCost = roundValue((long)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1)));
-						if (getGameCurrency > 0)
-						{
-							getGameCurrency -= MaintCost;
-							GameCurrencyLog -= MaintCost;
-							getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("-{0:n0}", MaintCost);
-						}
-						else
-						{
-							getGameCurrency += MaintCost;
-							// GameCurrencyLog += MaintCost; double adding to the log
-							getFightLog = Environment.NewLine + "*** Tax rebate " + String.Format("+{0:n0}", MaintCost);
-						}
-						break;
+					long tmpMaint = (long)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1));
+					if (tmpMaint > 0)
+						MaintCost = roundValue(tmpMaint);
+					else
+						MaintCost = roundValue(tmpMaint * -1);
+					if (getGameCurrency > 0 && tmpMaint > 0)
+					{
+						getGameCurrency -= MaintCost;
+						GameCurrencyLog -= MaintCost;
+						getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("-{0:n0}", MaintCost);
+					}
+					else
+					{
+						getGameCurrency += MaintCost;
+						// GameCurrencyLog += MaintCost; double adding to the log
+						getFightLog = Environment.NewLine + "*** Tax rebate " + String.Format("+{0:n0}", MaintCost);
+					}
+					break;
 					case 99:
 						int team = RndVal.Next(GameTeams.Count);
 						// sponsored a team
