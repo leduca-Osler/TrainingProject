@@ -780,7 +780,7 @@ namespace TrainingProject
 			BossCount++;
 			BossDifficulty += 7;
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) @ {0}", DateTime.Now.ToString(), BossReward);
-			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
+			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl * 10;
 			int Monster = RndVal.Next(BossCount);
 			Bosses.MyTeam.Add(new Robot(BossDifficulty, setName("boss", Monster), Monster, true));
 			// Add equipment
@@ -804,7 +804,7 @@ namespace TrainingProject
 			BossLvl -= 10;
 			BossDifficulty -= 7;
 			BossCount--;
-			BossReward = BossLvl * BossDifficulty * BossCount * 10;
+			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl * 10;
 			retVal = getFightLog = String.Format("\nboss monsters difficulty down! ({0:n0})", BossReward);
 			Bosses = new Team(BossCount, BossDifficulty, BossLvl);
 			return retVal;
