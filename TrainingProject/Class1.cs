@@ -763,6 +763,7 @@ namespace TrainingProject
 				foreach (ArenaSeating eSeating in Seating)
 				{
 					eSeating.Amount = upgradeValue(eSeating.Amount, .75);
+					if (eSeating.Amount > 99999) eSeating.Amount = 99999;
 					eSeating.Price++;
 				}
 				// chance to add a new level of seating
@@ -946,7 +947,7 @@ namespace TrainingProject
 				MaxTeams--;
 				GoalGameScore /= 2;
 			}
-			// Rebuild team with top score
+			// team with top score has 50% chance to loose robots
 			Team rebuild = new Team(1);
 			foreach (Team eTeam in GameTeams)
 			{
@@ -957,8 +958,16 @@ namespace TrainingProject
 			rebuild.Win++;
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
 			int winGoal = rebuild.Win;
+			int scouted = 50;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
-				rebuild.Rebuild(i, false, this);
+			{
+				if (RndVal.Next(100) < scouted && rebuild.MyTeam.Count > 1)
+				{
+					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by another team!\n", rebuild.MyTeam[i].getName);
+					rebuild.MyTeam.RemoveAt(i);
+					scouted /= 2;
+				}
+			}
 			foreach (Team eTeam in GameTeams)
 			{
 				eTeam.getScore = 0;
@@ -1356,7 +1365,7 @@ namespace TrainingProject
 					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
-					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + String.Format("{0:n0}", eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes)) + ")" };
+					Button btnRebuild = new Button { AutoSize = true, Text = "Rebuild (" + String.Format("{0:n0}", eRobo.rebuildCost(GameTeams[TeamSelect - 1].Runes)) + ")" };
 					int innerIndex = index++;
 					if (getGameCurrency > 0)
 						btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, this));
@@ -1789,13 +1798,6 @@ namespace TrainingProject
 									GameTeam1[i].getCurrency += tmp;
 									Jackpot -= tmp;
 									msg += String.Format(" ({0:n0}) Win:{1}", tmp, WinCount);
-									// if GameTeam1 has a lower difficulty it's lowest character level send a warning
-									if (WinCount == 0 && GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[GameTeam1[i].MyTeam.Count - 1].getLevel && GameTeam1[i].getDifficulty > 0)
-									{
-										getWarningLog = String.Format("\n--- {0} has failed to advance past min level!", GameTeam1[i].getName);
-										if (RndVal.Next(100) > 90)
-											addTeam();
-									}
 								}
 								else
 								{
@@ -1931,8 +1933,8 @@ namespace TrainingProject
 					// Rebuild Robot
 					for (int i = 0; i < eTeam.MyTeam.Count; i++)
 					{
-						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) 
-							&& (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) > 100 || (eTeam.MyTeam[i].rebuildCost(ResearchDevRebuild, eTeam.Runes) != 100 && eTeam.MyTeam[i].rebuildBonus > 0))
+						if (eTeam.getCurrency >= eTeam.MyTeam[i].rebuildCost(eTeam.Runes) 
+							&& (eTeam.MyTeam[i].rebuildCost(eTeam.Runes) > 100 || (eTeam.MyTeam[i].rebuildCost(eTeam.Runes) != 100 && eTeam.MyTeam[i].rebuildBonus > 0))
 							)
 						{
 							if (getGameCurrency > 0)
@@ -2150,40 +2152,47 @@ namespace TrainingProject
 						startMonsterOutbreak(MaintCost);
 						break;
 					case 30:
-						MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000));
-						getGameCurrency += MaintCost;
-						getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						// Arena Sponsorif (team < GameTeams.Count)
+						if (RndVal.Next(100) < GameTeams.Count)
+						{
+							MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000));
+							getGameCurrency += MaintCost;
+							getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						}
 						break;
 					case 51:
 					case 52:
 					case 53:
 					case 54:
 					case 55:
-					// Tax
-					long tmpMaint = (long)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1));
-					if (tmpMaint > 0)
-						MaintCost = roundValue(tmpMaint);
-					else
-						MaintCost = roundValue(tmpMaint * -1);
-					if (getGameCurrency > 0 && tmpMaint > 0)
-					{
-						getGameCurrency -= MaintCost;
-						GameCurrencyLog -= MaintCost;
-						getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("-{0:n0}", MaintCost);
-					}
-					else
-					{
-						getGameCurrency += MaintCost;
-						// GameCurrencyLog += MaintCost; double adding to the log
-						getFightLog = Environment.NewLine + "*** Tax rebate " + String.Format("+{0:n0}", MaintCost);
-					}
-					break;
+						// Tax
+						long tmpMaint = (long)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1));
+						if (tmpMaint > 0)
+							MaintCost = roundValue(tmpMaint);
+						else
+							MaintCost = roundValue(tmpMaint * -1);
+						if (getGameCurrency > 0 && tmpMaint > 0)
+						{
+							getGameCurrency -= MaintCost;
+							GameCurrencyLog -= MaintCost;
+							getFightLog = Environment.NewLine + "*** Taxes cost " + String.Format("-{0:n0}", MaintCost);
+						}
+						else
+						{
+							getGameCurrency += MaintCost;
+							// GameCurrencyLog += MaintCost; double adding to the log
+							getFightLog = Environment.NewLine + "*** Tax rebate " + String.Format("+{0:n0}", MaintCost);
+						}
+						break;
 					case 99:
-						int team = RndVal.Next(GameTeams.Count);
-						// sponsored a team
-						MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000 * (GameTeams[team].Win + 1)));
-						GameTeams[team].getCurrency += MaintCost;
-						getWarningLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						int team = RndVal.Next(100);
+						if (team < GameTeams.Count)
+						{
+							// sponsored a team
+							MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000 * (GameTeams[team].Win + 1)));
+							GameTeams[team].getCurrency += MaintCost;
+							getWarningLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						}
 						break;
 				case 249:
 					int leavingTeam = RndVal.Next(2,100);
@@ -2746,7 +2755,7 @@ namespace TrainingProject
 		{
 			for (int i = 0; i < MyTeam.Count; i++)
 			{
-				if (MyTeam[i].rebuildCost(myGame.ResearchDevRebuild, Runes) >= 200)
+				if (MyTeam[i].rebuildCost(Runes) >= 200)
 					Rebuild(MyTeam[i], pay, myGame);
 			}
 		}
@@ -2765,12 +2774,14 @@ namespace TrainingProject
 		public int Rebuild(int robo, bool pay, Game myGame)
 		{
 			int bonusAnalysis = 0;
-			if (!pay || MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild, Runes) <= getCurrency)
+			if (!pay || MyTeam[robo].rebuildCost(Runes) <= getCurrency)
 			{
 				if (pay)
 				{
-					getCurrency -= MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild, Runes);
-					myGame.getGameCurrency += MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild, Runes) / 5;
+					getCurrency -= MyTeam[robo].rebuildCost(Runes);
+					long Income = myGame.ResearchDevRebuild;
+					if (Income > MyTeam[robo].rebuildCost(Runes)) Income = MyTeam[robo].rebuildCost(Runes);
+					myGame.getGameCurrency += Income;
 					MyTeam[robo].RebuildPercent++;
 					if (MyTeam[robo].rebuildBonus > 0)
 						MyTeam[robo].rebuildBonus--;
@@ -3309,9 +3320,9 @@ namespace TrainingProject
 			string strMsg = "";
 			if (HP == 0)
 				getKO++;
-			if (rebuildCost(rebuildSavings, Runes) != 100 && !bIsMonster)
+			if (rebuildCost(Runes) != 100 && !bIsMonster)
 			{
-				if (rebuildCost(rebuildSavings, Runes) > teamCurrency)
+				if (rebuildCost(Runes) > teamCurrency)
 					cRebuild = '|';
 				else
 					cRebuild = '+';
@@ -3336,7 +3347,7 @@ namespace TrainingProject
 			cSkill = ' ';
 			return strStats;
 		}
-		public long rebuildCost(long RebuildSavings, List<int> runes)
+		public long rebuildCost(List<int> runes)
 		{
 			long cost = 100;
 			int stats = (Dexterity + Strength + Agility + Tech + Accuracy);
@@ -3349,7 +3360,7 @@ namespace TrainingProject
 				if (rebuildBonus > 0)
 					cost = 200;
 				else
-					cost = percent * (long)Math.Pow(2, (stats + 1)) - RebuildSavings;
+					cost = percent * (long)Math.Pow(2, (stats + 1));
 				if (cost <= 200) cost = 200;
 			}
 			return roundValue(cost);
