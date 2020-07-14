@@ -2072,6 +2072,7 @@ namespace TrainingProject
 						{
 							getArenaLvlCost = roundValue((int)(getArenaLvlCost * 0.75));
 							getArenaLvlMaint = getArenaLvlCost / 10;
+							getWarningLog = getFightLog = String.Format("*** Arena Rebuilt +{0:c0} Maint:{1:c0}", getArenaLvlCost, MaintCost);
 						}
 					}
 					getArenaLvlMaint -= (int)((double)MaintCost * 0.1);
@@ -2094,6 +2095,7 @@ namespace TrainingProject
 						{
 							getMonsterDenLvlCost = roundValue((int)(getMonsterDenLvlCost * 0.75));
 							MonsterDenLvlMaint = getMonsterDenLvlCost / 10;
+							getWarningLog = getFightLog = String.Format("*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}", getMonsterDenLvlCost, MaintCost);
 						}
 					}
 					MonsterDenLvlMaint -= (int)((double)MaintCost * 0.1);
@@ -2116,6 +2118,7 @@ namespace TrainingProject
 						{
 							getShopLvlCost = roundValue((int)(getShopLvlCost * 0.75));
 							getShopLvlMaint = getShopLvlCost / 10;
+							getWarningLog = getFightLog = String.Format("*** Shop Rebuilt +{0:c0} Maint:{1:c0}", getShopLvlCost, MaintCost);
 						}
 					}
 					getShopLvlMaint -= (int)((double)MaintCost * 0.1);
@@ -2137,6 +2140,7 @@ namespace TrainingProject
 						{
 							getResearchDevLvlCost = roundValue((int)(getResearchDevLvlCost * 0.75));
 							ResearchDevMaint = getResearchDevLvlCost / 10;
+							getWarningLog = getFightLog = String.Format("*** Research and Development Rebuilt +{0:c0} Maint:{1:c0}", getResearchDevLvlCost, MaintCost);
 						}
 					}
 					// Research and Development Maintenance
@@ -2776,10 +2780,11 @@ namespace TrainingProject
 			int bonusAnalysis = 0;
 			if (!pay || MyTeam[robo].rebuildCost(Runes) <= getCurrency)
 			{
+				long Income = 0;
 				if (pay)
 				{
 					getCurrency -= MyTeam[robo].rebuildCost(Runes);
-					long Income = myGame.ResearchDevRebuild;
+					Income = myGame.ResearchDevRebuild;
 					if (Income > MyTeam[robo].rebuildCost(Runes)) Income = MyTeam[robo].rebuildCost(Runes);
 					myGame.getGameCurrency += Income;
 					MyTeam[robo].RebuildPercent++;
@@ -2804,13 +2809,19 @@ namespace TrainingProject
 					if (!pay) baseStats = baseStats / 2;
 					MyTeam[robo] = new Robot(baseStats, setName("robot"), RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
-					getTeamLog = getFightLog = getWarningLog = string.Format("\n+++ {0} : {1} has been rebuilt! Rank {2:n1} (+{3}B/{4}R) @ {5} ", getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), baseIncreased, runesUsed, DateTime.Now.ToString());
+					string strFormat = "\n+++ {0} : {1} has been rebuilt! Rank {2:n1} (+{3}B/{4}R)";
+					if (Income > 0) strFormat += " ic:{6:c0}";
+					strFormat += " @ {5} ";
+					getTeamLog = getFightLog = getWarningLog = string.Format(strFormat, getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), baseIncreased, runesUsed, DateTime.Now.ToString(), Income);
 				}
 				else
 				{
 					bonusAnalysis = RndVal.Next((int)MyTeam[robo].RebuildPercent * 10);
 					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
-					getTeamLog = getFightLog = getWarningLog = string.Format("\n--- {0} : {1} failed the rebuild (+{2}A/{3}R) @ {4}", getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString());
+					string strFormat = "\n--- {0} : {1} failed the rebuild (+{2}A/{3}R)";
+					if (Income > 0) strFormat += " ic:{5:c0}";
+					strFormat += " @ {4} ";
+					getTeamLog = getFightLog = getWarningLog = string.Format( strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Income);
 					MyTeam[robo].RebuildPercent += runesUsed;
 				}
 			}
