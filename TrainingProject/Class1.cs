@@ -965,7 +965,7 @@ namespace TrainingProject
 				{
 					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by another team!\n", rebuild.MyTeam[i].getName);
 					rebuild.MyTeam.RemoveAt(i);
-					scouted /= 2;
+					scouted--;
 				}
 			}
 			foreach (Team eTeam in GameTeams)
@@ -2640,7 +2640,7 @@ namespace TrainingProject
 			{
 				runesCount = Runes[index];
 				if (reset)
-					Runes[index] = 0;
+					Runes[index] = RndVal.Next(Runes[index]);
 			}
 			return runesCount;
 		}
@@ -2658,7 +2658,7 @@ namespace TrainingProject
 					// if we have 100 runes add to the next level
 					if (Runes[index] >= 100)
 					{
-						Runes[index] -= 100;
+						Runes[index] = RndVal.Next(Runes[index]);
 						addRune(level + 10, true);
 					}
 					else
