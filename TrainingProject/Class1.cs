@@ -169,6 +169,16 @@ namespace TrainingProject
 			}
 			return value;
 		}
+		public long roundValue(double OriginalValue, double factor, String direction)
+		{
+			long retVal = (long)(OriginalValue * factor);
+			if (direction == "down")
+			{
+				if (roundValue(retVal) < OriginalValue)
+					retVal = roundValue(retVal);
+			}
+			return retVal;
+		}
 		public long roundValue(double value)
 		{
 			long power = (long)Math.Pow(10, value.ToString().Length - 1);
@@ -763,7 +773,7 @@ namespace TrainingProject
 				foreach (ArenaSeating eSeating in Seating)
 				{
 					eSeating.Amount = upgradeValue(eSeating.Amount, .75);
-					if (eSeating.Amount > 99999) eSeating.Amount = 99999;
+					if (eSeating.Amount > 5000) eSeating.Amount = 5000;
 					eSeating.Price++;
 				}
 				// chance to add a new level of seating
@@ -2070,7 +2080,7 @@ namespace TrainingProject
 						MaintCost = Math.Abs(getArenaLvlMaint);
 						if (MaintCost > getArenaLvlCost / 2)
 						{
-							getArenaLvlCost = roundValue((int)(getArenaLvlCost * 0.75));
+							getArenaLvlCost = roundValue(getArenaLvlCost, 0.75, "down");
 							getArenaLvlMaint = getArenaLvlCost / 10;
 							getWarningLog = getFightLog = String.Format("*** Arena Rebuilt +{0:c0} Maint:{1:c0}", getArenaLvlCost, MaintCost);
 						}
@@ -2093,7 +2103,7 @@ namespace TrainingProject
 						MaintCost = Math.Abs(MonsterDenLvlMaint);
 						if (MaintCost > MonsterDenLvlCost / 2)
 						{
-							getMonsterDenLvlCost = roundValue((int)(getMonsterDenLvlCost * 0.75));
+							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, 0.75, "down");
 							MonsterDenLvlMaint = getMonsterDenLvlCost / 10;
 							getWarningLog = getFightLog = String.Format("*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}", getMonsterDenLvlCost, MaintCost);
 						}
@@ -2116,7 +2126,7 @@ namespace TrainingProject
 						MaintCost = Math.Abs(getShopLvlMaint);
 						if (MaintCost > getShopLvlCost / 2)
 						{
-							getShopLvlCost = roundValue((int)(getShopLvlCost * 0.75));
+							getShopLvlCost = roundValue(getShopLvlCost, 0.75, "down");
 							getShopLvlMaint = getShopLvlCost / 10;
 							getWarningLog = getFightLog = String.Format("*** Shop Rebuilt +{0:c0} Maint:{1:c0}", getShopLvlCost, MaintCost);
 						}
@@ -2138,7 +2148,7 @@ namespace TrainingProject
 						MaintCost = Math.Abs(getResearchDevMaint);
 						if (MaintCost > getResearchDevLvlCost / 2)
 						{
-							getResearchDevLvlCost = roundValue((int)(getResearchDevLvlCost * 0.75));
+							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, 0.75, "down");
 							ResearchDevMaint = getResearchDevLvlCost / 10;
 							getWarningLog = getFightLog = String.Format("*** Research and Development Rebuilt +{0:c0} Maint:{1:c0}", getResearchDevLvlCost, MaintCost);
 						}
