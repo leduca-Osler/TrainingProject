@@ -74,6 +74,9 @@ namespace TrainingApp
 			MainPannel.Controls.Clear();
 			MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex, true));
 			shownCount = maxCount;
+			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
+					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost)
+				btnAddRobo.Enabled = true;
 		}
 		private void btnAddTeam_Click(object sender, EventArgs e)
 		{

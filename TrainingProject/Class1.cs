@@ -561,6 +561,10 @@ namespace TrainingProject
 			get
 			{
 				if (getScore() > GoalGameScore) resetScore();
+				try
+				{
+					if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
+				} catch (Exception e) {  /* do nothing */ }
 				return MaxTeams - GameTeams.Count;
 			}
 			set { MaxTeams = value; }
@@ -874,7 +878,7 @@ namespace TrainingProject
 			ShopLvl++;
 			ShopLvlCost = roundValue(ShopLvlCost, ShopLvlCostBase, "up");
 			ShopLvlCostBase += ShopLvlCostBaseIncrement;
-			ShopStock++;
+			if (RndVal.Next(100) > 90) ShopStock++;
 			ShopMaxDurability = roundValue(ShopMaxDurability, ShopMaxDurabilityBase, "up");
 			ShopMaxDurabilityBase += ShopMaxDurabilityBaseIncrement;
 			ShopMaxStat = roundValue(ShopMaxStat, ShopMaxStatBase, "up");
@@ -1697,12 +1701,12 @@ namespace TrainingProject
 								GoalGameScoreBase += GoalGameScoreBaseIncrement;
 								// GameCurrencyLog += Jackpot; duplicate
 								Jackpot = 0;
-								lblWinner.Text = getFightLog = Environment.NewLine + "+++ Arena defeated monsters difficulty increased @ " + DateTime.Now.ToString();
+								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "+++ Arena defeated monsters difficulty increased @ " + DateTime.Now.ToString();
 							}
 							// Boss Fight
 							else
 							{
-								lblWinner.Text = bossLevelUp();
+								lblWinner.Text = getWarningLog = bossLevelUp();
 								MaxTeams++;
 							}
 						}
@@ -1719,11 +1723,12 @@ namespace TrainingProject
 							else if (GameTeam2[i].getName.Equals("Game Diff " + gameDifficulty.ToString()))
 							{
 								Jackpot = 0;
-								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters @ " + DateTime.Now.ToString();
+								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters @ " + DateTime.Now.ToString();
+								resetScore();
 							}
 							else
 							{
-								string tmp = getFightLog = Environment.NewLine + "Arena suffered a loss against the boss monsters! @ " + DateTime.Now.ToString();
+								string tmp = getWarningLog = getFightLog = Environment.NewLine + "Arena suffered a loss against the boss monsters! @ " + DateTime.Now.ToString();
 								lblWinner.Text = tmp;
 							}
 						}
@@ -2397,6 +2402,7 @@ namespace TrainingProject
 		private int GoalScore;
 		[JsonProperty]
 		private int GoalScoreBase;
+		public int GoalScoreBaseIncrement;
 		[JsonProperty]
 		private long Currency;
 		private long CurrencyLog;
@@ -2437,8 +2443,9 @@ namespace TrainingProject
 					{
 						roundValue(GoalScore, GoalScoreBase, "up");
 						GoalScore += GoalScoreBase;
-						GoalScoreBase += 10;
-						if (RndVal.Next(100) > 70 || MaxRobo < 2) MaxRobo++;
+						GoalScoreBase += GoalScoreBaseIncrement;
+						if (RndVal.Next(100) > 90 || MaxRobo < 2) MaxRobo++;
+						else getCurrency += GoalScore;
 					}
 				}
 			}
