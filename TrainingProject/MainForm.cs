@@ -28,7 +28,7 @@ namespace TrainingApp
 			try
 			{
 				MyGame = BinarySerialization.ReadFromBinaryFile<Game>("data\\TrainingProject.bin");
-				//MyGame.fixTech();
+				MyGame.fixTech();
 			}
 			catch
 			{
@@ -639,6 +639,7 @@ namespace TrainingApp
 				MyGame.SafeTime = DateTime.Now.AddHours(MyGame.ManagerHrs);
 				MyGame.ManagerHrs = 0;
 				MyGame.ManagerCost = MyGame.ManagerCostBaseIncrement;
+				MyGame.ManagerCostBase = MyGame.ManagerCostBaseIncrement;
 			}
 			update();
 		}
@@ -664,6 +665,7 @@ namespace TrainingApp
 				{
 					MyGame.ManagerHrs++;
 					MyGame.ManagerCost = MyGame.roundValue(MyGame.ManagerCost, MyGame.ManagerCostBase, "up");
+					MyGame.ManagerCostBase = MyGame.ManagerCostBase + MyGame.ManagerCostBaseIncrement;
 					hrs--;
 				}
 			}

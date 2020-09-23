@@ -394,7 +394,7 @@ namespace TrainingProject
 		public long ResearchDevRebuild;
 		[JsonProperty]
 		public long ResearchDevRebuildBase;
-		public long ResearchDevRebuildBaseIncrement = 500;
+		public long ResearchDevRebuildBaseIncrement = 25;
 		[JsonProperty]
 		private int BossLvl;
 		[JsonProperty]
@@ -736,7 +736,7 @@ namespace TrainingProject
 			ResearchDevHealValueBase = ResearchDevHealValueBaseIncrement;
 			ResearchDevHealBays = 1;
 			ResearchDevHealCost = 1;
-			ResearchDevRebuild = 1000;
+			ResearchDevRebuild = 50;
 			ResearchDevRebuildBase = ResearchDevRebuildBaseIncrement;
 			gameDifficulty = 1;
 			ManagerHrs = 0;
@@ -774,7 +774,7 @@ namespace TrainingProject
 			string name = "";
 			int RoboType = RndVal.Next(100);
 			if (RoboType < 40)
-				name = string.Format("{0} #{1}", RoboName[RndVal.Next(RoboName.Length)], ToRoman(getRoboNumeral++));
+				name = string.Format("{0} {1}", RoboName[RndVal.Next(RoboName.Length)], ToRoman(getRoboNumeral++));
 			else if (RoboType < 70)
 				name = string.Format("{0} #{1:X}", RoboName[RndVal.Next(RoboName.Length)], getRoboNumeral++);
 			else
@@ -983,7 +983,7 @@ namespace TrainingProject
 		{
 			getGameCurrency += MaxTeams * getArenaLvl * 1000;
 			// team with top score has 50% chance to loose robots
-			Team rebuild = new Team(1,this);
+			Team rebuild = new Team(1,1,1);
 			foreach (Team eTeam in GameTeams)
 			{
 				if (eTeam.getScore > rebuild.getScore)
@@ -1813,7 +1813,7 @@ namespace TrainingProject
 								if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
 								if (getGameCurrency < 0 && RndVal.Next(100) > 95)
 									GameTeam1[i].getScore--;
-								// decrease difficulty if monster won
+								// monster won
 								if (GameTeam2[i].isMonster)
 								{
 									// pay loosing team
@@ -1821,6 +1821,10 @@ namespace TrainingProject
 									GameTeam1[i].getCurrency += tmp;
 									Jackpot -= tmp;
 									msg += String.Format(" ({0:n0}) Win:{1}", tmp, WinCount);
+									int lastRobo = GameTeam1[i].MyTeam.Count - 1;
+									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
+									if (GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[lastRobo].getLevel && GameTeam1[i].getAvailableRobo == 0 && RndVal.Next(100) > 98)
+										GameTeam1[i].getMaxRobos++;
 								}
 								else
 								{
@@ -2468,7 +2472,7 @@ namespace TrainingProject
 						roundValue(GoalScore, GoalScoreBase, "up");
 						GoalScore += GoalScoreBase;
 						GoalScoreBase += GoalScoreBaseIncrement;
-						if (RndVal.Next(100) > 80) MaxRobo++;
+						if (RndVal.Next(100) > 75) MaxRobo++;
 						else getCurrency += GoalScore;
 					}
 				}
@@ -2827,11 +2831,12 @@ namespace TrainingProject
 			int bonusAnalysis = 0;
 			if (!pay || MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild) <= getCurrency)
 			{
-				long Income = 0;
+				long Cost = 0;
 				if (pay)
 				{
-					getCurrency -= MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild);
-					myGame.getGameCurrency += (int)(MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild) * 0.2);
+					Cost = MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild);
+					getCurrency -= Cost;
+					myGame.getGameCurrency += (int)(Cost * 0.2);
 					MyTeam[robo].RebuildPercent++;
 					if (MyTeam[robo].rebuildBonus > 0)
 						MyTeam[robo].rebuildBonus--;
@@ -2852,21 +2857,21 @@ namespace TrainingProject
 				if (!pay || MyTeam[robo].RebuildPercent + runesUsed > RndVal.Next(100))
 				{
 					if (!pay) baseStats = baseStats / 2;
-					MyTeam[robo] = new Robot(baseStats, myGame.setRoboName(), RndVal.Next(8), false);
+					MyTeam[robo] = new Robot(baseStats, "temp", RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
 					string strFormat = "\n+++ {0} : {1} has been rebuilt! Rank {2:n1} (+{3}B/{4}R)";
-					if (Income > 0) strFormat += " ic:{6:c0}";
+					if (Cost > 0) strFormat += " ic:{6:c0}";
 					strFormat += " @ {5} ";
-					getTeamLog = getFightLog = getWarningLog = string.Format(strFormat, getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), baseIncreased, runesUsed, DateTime.Now.ToString(), Income);
+					getTeamLog = getFightLog = getWarningLog = string.Format(strFormat, getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), baseIncreased, runesUsed, DateTime.Now.ToString(), Cost);
 				}
 				else
 				{
 					bonusAnalysis = RndVal.Next((int)MyTeam[robo].RebuildPercent * 10);
 					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
 					string strFormat = "\n--- {0} : {1} failed the rebuild (+{2}A/{3}R)";
-					if (Income > 0) strFormat += " ic:{5:c0}";
+					if (Cost > 0) strFormat += " ic:{5:c0}";
 					strFormat += " @ {4} ";
-					getTeamLog = getFightLog = getWarningLog = string.Format( strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Income);
+					getTeamLog = getFightLog = getWarningLog = string.Format( strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Cost);
 					MyTeam[robo].RebuildPercent += runesUsed;
 				}
 			}
