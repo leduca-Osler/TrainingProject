@@ -44,6 +44,7 @@ namespace TrainingApp
 			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
 			InitializeComponent();
+			mnuDisplayJackpot.Text = MyGame.CurrentJackpot.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
@@ -222,6 +223,7 @@ namespace TrainingApp
 				}
 			}
 			MainPannel.AutoScrollPosition = new Point(0, 0);
+			mnuDisplayJackpot.Text = String.Format("Jackpot L:{0:n0}-{1:c0}",MyGame.CurrentJackpotLvl, MyGame.CurrentJackpot);
 		}
 		private int getNumRobos()
 		{
@@ -319,8 +321,6 @@ namespace TrainingApp
 				int jShopStockCost = json["ShopStockCost"] != null ? (int)json["ShopStockCost"] : 12;
 				int jShopMaxStat = json["ShopMaxStat"] != null ? (int)json["ShopMaxStat"] : 5;
 				int jShopMaxDur = json["ShopMaxDurability"] != null ? (int)json["ShopMaxDurability"] : 100;
-				int jShopMaxStatBase = json["ShopMaxStatBase"] != null ? (int)json["ShopMaxStatBase"] : 1;
-				int jShopMaxDurBase = json["ShopMaxDurabilityBase"] != null ? (int)json["ShopMaxDurabilityBase"] : 50;
 				int jShopUpValue = json["ShopUpgradeValue"] != null ? (int)json["ShopUpgradeValue"] : 1;
 				int jResearchDevLvl = json["ResearchDevLvl"] != null ? (int)json["ResearchDevLvl"] : 1;
 				long jResearchDevLvlCost = json["ResearchDevLvlCost"] != null ? (long)json["ResearchDevLvlCost"] : 2000;
@@ -340,7 +340,7 @@ namespace TrainingApp
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jGoalGameScoreBase, jMaxTeams, jTeamCost, jTeamCostBase, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaLvlCostBase, jArenaMaint, 
 					jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenBonusBase, jMonsterDenRepair, jMonsterDenRepairBase, 
-					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopMaxStatBase, jShopMaxDurBase, jShopUpValue, 
+					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 
 					jResearchDevHealCost, jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossCount, jBossDifficulty, jBossReward, jGameDifficulty);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
@@ -760,10 +760,26 @@ namespace TrainingApp
 				MyGame.maxManagerHours = int.Parse(txtMaxManagerHrs.Text);
 			else
 				txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
-
 		}
-	}
-	public static class BinarySerialization
+
+		private void increaseJackpotToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			//mnuDisplayJackpot.Text = MyGame.IncreaseJackpot().ToString();
+			MyGame.JackpotUp = true;
+		}
+
+        private void decreaseJackpotToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			//mnuDisplayJackpot.Text = MyGame.DecreaseJackpot().ToString();
+			MyGame.JackpotDown = true;
+		}
+
+        private void increaseJackpot10ToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MyGame.JackpotUpTen = true;
+		}
+    }
+    public static class BinarySerialization
 	{
 		/// <summary>
 		/// Writes the given object instance to a binary file.
