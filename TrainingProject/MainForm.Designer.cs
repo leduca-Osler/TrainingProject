@@ -62,11 +62,11 @@
             this.txtMaxManagerHrs = new System.Windows.Forms.ToolStripTextBox();
             this.mnuDisplayJackpot = new System.Windows.Forms.ToolStripMenuItem();
             this.increaseJackpotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.increaseJackpot10ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.decreaseJackpotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
             this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-            this.increaseJackpot10ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -368,8 +368,8 @@
             // 
             this.mnuDisplayJackpot.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.increaseJackpotToolStripMenuItem,
-            this.decreaseJackpotToolStripMenuItem,
-            this.increaseJackpot10ToolStripMenuItem});
+            this.increaseJackpot10ToolStripMenuItem,
+            this.decreaseJackpotToolStripMenuItem});
             this.mnuDisplayJackpot.Name = "mnuDisplayJackpot";
             this.mnuDisplayJackpot.Size = new System.Drawing.Size(181, 22);
             this.mnuDisplayJackpot.Text = "3";
@@ -380,6 +380,13 @@
             this.increaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.increaseJackpotToolStripMenuItem.Text = "Increase Jackpot";
             this.increaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpotToolStripMenuItem_Click);
+            // 
+            // increaseJackpot10ToolStripMenuItem
+            // 
+            this.increaseJackpot10ToolStripMenuItem.Name = "increaseJackpot10ToolStripMenuItem";
+            this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.increaseJackpot10ToolStripMenuItem.Text = "Increase Jackpot 10";
+            this.increaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpot10ToolStripMenuItem_Click);
             // 
             // decreaseJackpotToolStripMenuItem
             // 
@@ -410,13 +417,6 @@
             this.BreakTimer.Enabled = true;
             this.BreakTimer.Interval = 1000;
             this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
-            // 
-            // increaseJackpot10ToolStripMenuItem
-            // 
-            this.increaseJackpot10ToolStripMenuItem.Name = "increaseJackpot10ToolStripMenuItem";
-            this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.increaseJackpot10ToolStripMenuItem.Text = "Increase Jackpot 10";
-            this.increaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpot10ToolStripMenuItem_Click);
             // 
             // MainForm
             // 
