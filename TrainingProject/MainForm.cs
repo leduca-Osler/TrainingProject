@@ -679,8 +679,12 @@ namespace TrainingApp
 		}
 		private void BreakTimer_Tick(object sender, EventArgs e)
 		{
+			int fightPercentOffset = 0;
 			if (MyGame.GameTeam1 != null && MyGame.GameTeam2 != null && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].Automated && MyGame.GameTeam2[0].Automated)
+			{
 				BreakTimer.Interval = tickRate / MyGame.GameTeams.Count;
+				fightPercentOffset = MyGame.GameTeams.Count;
+			}
 			else
 				BreakTimer.Interval = tickRate;
 			Random tmp = new Random();
@@ -701,7 +705,7 @@ namespace TrainingApp
 				if (MyGame.Repair())
 					tmpColour = Color.White;
 				MyGame.equip();
-				if (MyGame.isFighting() && tmp.Next(MyGame.fightPercentMax) > MyGame.fightPercent)
+				if (MyGame.isFighting() && tmp.Next(MyGame.fightPercentMax + fightPercentOffset) > MyGame.fightPercent) 
 					MyGame.startFight();
 				if (!MyGame.isFighting())
 					btnFight.BackColor = tmpColour;
