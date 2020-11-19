@@ -224,6 +224,9 @@ namespace TrainingApp
 			}
 			MainPannel.AutoScrollPosition = new Point(0, 0);
 			mnuDisplayJackpot.Text = String.Format("Jackpot L:{0:n0}-{1:c0}",MyGame.CurrentJackpotLvl, MyGame.CurrentJackpot);
+			cboRepairPercent.SelectedItem = MyGame.repairPercent;
+			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
+			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
 		}
 		private int getNumRobos()
 		{

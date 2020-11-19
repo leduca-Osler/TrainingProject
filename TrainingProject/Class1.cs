@@ -598,7 +598,7 @@ namespace TrainingProject
 			Seating = new List<ArenaSeating> { };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
-			MonsterOutbreak = new Team(1,1,findMonster, ref MonsterOutbreak);
+			MonsterOutbreak = new Team(0,1,findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
 			countdown = new List<KeyValuePair<String, DateTime>>();
 			Bosses = new Team(1, 10, 10);
@@ -686,7 +686,7 @@ namespace TrainingProject
 			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 5) };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
-			MonsterOutbreak = new Team(1, 1, findMonster, ref MonsterOutbreak);
+			MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
 			countdown = new List<KeyValuePair<String, DateTime>>();
 			Bosses = new Team(1, 10, 10);
@@ -1787,6 +1787,11 @@ namespace TrainingProject
 							{
 								// fewer new monsters
 								findMonster -= 5;
+								if (findMonster < 5)
+								{
+									MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
+									MonsterOutbreak.getName = "Monster Outbreak";
+								}
 								getGameCurrency -= Jackpot;
 								GameCurrencyLogMaint -= Jackpot;
 								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1}%)", Jackpot, findMonster) ;
@@ -2038,7 +2043,7 @@ namespace TrainingProject
 				if (bAutomated)
 				{
 					// Add Robot
-					if (eTeam.getCurrency >= eTeam.getRoboCost && eTeam.getAvailableRobo > 0)
+					if (eTeam.getCurrency >= eTeam.getRoboCost && eTeam.getAvailableRobo > 0 && getGameCurrency > 0)
 					{
 						addRobo(eTeam, this);
 						eTeam.getTeamLog = getFightLog = Environment.NewLine + " +++ " + eTeam.getName + " built a new robot ";
@@ -3005,8 +3010,8 @@ namespace TrainingProject
 			Double numMonsters = 1;
 			int minLvl = 1;
 			int maxLvl = 5;
-			if (Difficulty < 1)
-				Difficulty = 1;
+			if (Difficulty < 0)
+				Difficulty = 0;
 			for (int i = 1; i < Difficulty; i++)
 			{
 				numMonsters += 0.5;
@@ -4061,7 +4066,7 @@ namespace TrainingProject
 					}
 				}
 				if (minDmg > maxDmg) maxDmg = minDmg;
-				int tmpDmg = (RndVal.Next(minDmg, maxDmg) + (currSkill.strength));
+				int tmpDmg = (RndVal.Next(minDmg, maxDmg + currSkill.strength));
 				if (tmpDmg < 1) tmpDmg = 1;
 				HP -= tmpDmg;
 				dmg += tmpDmg;
@@ -4139,21 +4144,6 @@ namespace TrainingProject
 			int aMentalStr = 0;
 			int aMentalDef = 0;
 			// Display Character info
-			// get Padding Required
-			int sPadding = 1;
-			foreach (Strategy eStrategy in RoboStrategy)
-			{
-				if (sPadding < string.Format("{0:n0}", eStrategy.StrategicSkill.cost).Length)
-					sPadding = string.Format("{0:n0}", eStrategy.StrategicSkill.cost).Length;
-			}
-			int[] cPadding = { getMaxLength( new string[] { String.Format("{0:n0}", HP), String.Format("{0:n0}", MP), String.Format("{0:n0}", getTArmour()), String.Format("{0:n0}", getTDamage()), String.Format("{0:n0}", getTHit()), String.Format("{0:n0}", getTSpeed()), String.Format("{0:n0}", getTMentalStrength()), String.Format("{0:n0}", getTMentalDefense()) })
-					, getMaxLength( new string[] { String.Format("{0:n0}", getTHealth()), String.Format("{0:n0}", getTEnergy()) } )
-					, getMaxLength( new string[] { String.Format("{0:n0}", Health), String.Format("{0:n0}", Energy), String.Format("{0:n0}", Armour), String.Format("{0:n0}", Damage), String.Format("{0:n0}", Hit), String.Format("{0:n0}", Speed), String.Format("{0:n0}", MentalStrength), String.Format("{0:n0}", MentalDefense) } )
-					, getMaxLength( new string[] { String.Format("{0:n0}", wHealth), String.Format("{0:n0}", wEnergy), String.Format("{0:n0}", wArmour), String.Format("{0:n0}", wDamage), String.Format("{0:n0}", wHit), String.Format("{0:n0}", wSpeed), String.Format("{0:n0}", wMentalStr), String.Format("{0:n0}", wMentalDef) } )
-					, getMaxLength( new string[] { String.Format("{0:n0}", aHealth), String.Format("{0:n0}", aEnergy), String.Format("{0:n0}", aArmour), String.Format("{0:n0}", aDamage), String.Format("{0:n0}", aHit), String.Format("{0:n0}", aSpeed), String.Format("{0:n0}", aMentalStr), String.Format("{0:n0}", aMentalDef) } )
-				};
-			tmp += ("*Base Stats*\n");
-
 			if (EquipWeapon != null)
 			{
 				wHealth = EquipWeapon.eHealth;
@@ -4176,6 +4166,20 @@ namespace TrainingProject
 				aMentalStr = EquipArmour.eMentalStrength;
 				aMentalDef = EquipArmour.eMentalDefense;
 			}
+			// get Padding Required
+			int sPadding = 1;
+			foreach (Strategy eStrategy in RoboStrategy)
+			{
+				if (sPadding < string.Format("{0:n0}", eStrategy.StrategicSkill.cost).Length)
+					sPadding = string.Format("{0:n0}", eStrategy.StrategicSkill.cost).Length;
+			}
+			int[] cPadding = { getMaxLength( new string[] { String.Format("{0:n0}", HP), String.Format("{0:n0}", MP), String.Format("{0:n0}", getTArmour()), String.Format("{0:n0}", getTDamage()), String.Format("{0:n0}", getTHit()), String.Format("{0:n0}", getTSpeed()), String.Format("{0:n0}", getTMentalStrength()), String.Format("{0:n0}", getTMentalDefense()) })
+					, getMaxLength( new string[] { String.Format("{0:n0}", getTHealth()), String.Format("{0:n0}", getTEnergy()) } )
+					, getMaxLength( new string[] { String.Format("{0:n0}", Health), String.Format("{0:n0}", Energy), String.Format("{0:n0}", Armour), String.Format("{0:n0}", Damage), String.Format("{0:n0}", Hit), String.Format("{0:n0}", Speed), String.Format("{0:n0}", MentalStrength), String.Format("{0:n0}", MentalDefense) } )
+					, getMaxLength( new string[] { String.Format("{0:n0}", wHealth), String.Format("{0:n0}", wEnergy), String.Format("{0:n0}", wArmour), String.Format("{0:n0}", wDamage), String.Format("{0:n0}", wHit), String.Format("{0:n0}", wSpeed), String.Format("{0:n0}", wMentalStr), String.Format("{0:n0}", wMentalDef) } )
+					, getMaxLength( new string[] { String.Format("{0:n0}", aHealth), String.Format("{0:n0}", aEnergy), String.Format("{0:n0}", aArmour), String.Format("{0:n0}", aDamage), String.Format("{0:n0}", aHit), String.Format("{0:n0}", aSpeed), String.Format("{0:n0}", aMentalStr), String.Format("{0:n0}", aMentalDef) } )
+				};
+			tmp += ("*Base Stats*\n");
 			tmp += string.Format("{0,-10}{1}/{2}\n", "Level", Level, getMaxLevel());
 			tmp += string.Format("{0,-10}{1}\n", "Rank", (Dexterity + Strength + Agility + Tech + Accuracy) / 2.0);
 			tmp += string.Format("{0,-10}{1}\n", "Dexterity", Dexterity);
