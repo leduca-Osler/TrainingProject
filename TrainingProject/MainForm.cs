@@ -76,7 +76,8 @@ namespace TrainingApp
 			MainPannel.Controls.Add(MyGame.showSelectedTeam(cbTeamSelect.SelectedIndex, true));
 			shownCount = maxCount;
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
-					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost)
+					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost
+					&& MyGame.getGameCurrency > 0)
 				btnAddRobo.Enabled = true;
 		}
 		private void btnAddTeam_Click(object sender, EventArgs e)
@@ -701,7 +702,11 @@ namespace TrainingApp
 				MainPannel.Controls.Clear();
 				MainPannel.Controls.Add(MyGame.showCountdown());
 			}
-            // don't heal if Arena fight is on
+
+			if (MyGame.SafeTime < DateTime.Now)
+				MyGame.equip();
+
+			// don't heal if Arena fight is on
 			if ((MyGame.GameTeam1.Count == 0 || !MyGame.GameTeam1[0].getName.Equals("Arena")))
 			{
 				Color tmpColour = Color.Yellow;
@@ -716,7 +721,6 @@ namespace TrainingApp
 			if (tmp.Next(100) > 90 && DateTime.Now > MyGame.SafeTime)
 			{
 				MyGame.continueFight(false);
-				BreakTimer.Interval++;
 				tickRate++;
 			}
 			saveGame();
@@ -785,8 +789,13 @@ namespace TrainingApp
 		{
 			MyGame.JackpotUpTen = true;
 		}
-    }
-    public static class BinarySerialization
+
+		private void decreaseJackpot10ToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MyGame.JackpotDownTen = true;
+		}
+	}
+	public static class BinarySerialization
 	{
 		/// <summary>
 		/// Writes the given object instance to a binary file.
