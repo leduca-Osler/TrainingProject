@@ -603,7 +603,7 @@ namespace TrainingProject
 			MonsterOutbreak = new Team(0,1,findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
 			countdown = new List<KeyValuePair<String, DateTime>>();
-			Bosses = new Team(1, 5, 5);
+			Bosses = new Team(1, 4, 5);
 			findMonster = 50;
 			GoalGameScore = pGoalGameScore;
 			GoalGameScoreBase = pGoalGameScoreBase;
@@ -692,7 +692,7 @@ namespace TrainingProject
 			MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
 			countdown = new List<KeyValuePair<String, DateTime>>();
-			Bosses = new Team(1, 10, 10);
+			Bosses = new Team(1, 4, 5);
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
 			CurrentJackpotLvl = 1;
@@ -759,7 +759,7 @@ namespace TrainingProject
 			roundCount = 0;
 			BossLvl = 5;
 			BossCount = 1;
-			BossDifficulty = 5;
+			BossDifficulty = 4;
 			BossReward = 1000;
 			bossFight = false;
 			GameDifficultyFight = false;
@@ -860,7 +860,7 @@ namespace TrainingProject
 			GameCurrencyLogMisc += BossReward;
 			BossLvl += 5;
 			BossCount++;
-			BossDifficulty += 5;
+			BossDifficulty += 4;
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) ", DateTime.Now.ToString(), BossReward);
 			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
 			int Monster = RndVal.Next(BossCount);
