@@ -1110,7 +1110,7 @@ namespace TrainingProject
 					i++;
 				}
 			}
-			getGameCurrency += cost;
+			Jackpot = cost;
 			getFightLog = Environment.NewLine + "--- Monster Outbreak! ";
 		}
 		public void startBossFight()
