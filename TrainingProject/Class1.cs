@@ -4031,35 +4031,33 @@ namespace TrainingProject
 			// If agility greater than hit attacker missed
 			if (RndVal.Next(getTSpeed()) > RndVal.Next(attacker.getTHit()) && !critical)
 				setMiss();
-			// if armour greater than hit attack is blocked
-			else if (RndVal.Next(getTArmour()) > RndVal.Next(attacker.getTHit()) && !critical
-				&& (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Multiple attack")))
-				setBlock();
-			// if tech defense greater than tech attack attack is blocked
-			else if (RndVal.Next(getTMentalDefense()) > RndVal.Next(attacker.getTHit()) && !critical
-				&& (currSkill.type.Equals("Single tech") || currSkill.type.Equals("Multiple tech")))
-				setField();
 			// damaged
 			else
 			{
-				setHurt();
 				int minDmg = 0;
 				int maxDmg = 0;
 				string strCrit = "";
-				if (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Multiple attack"))
+				// if armour greater than hit attack is blocked
+				if (RndVal.Next(getTArmour()) > RndVal.Next(attacker.getTHit()) && !critical
+					&& (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Multiple attack")))
 				{
-					if (critical)
-					{
-						minDmg = maxDmg = attacker.getTDamage();
-						crit = true;
-						strCrit = "!";
-					}
-					else
-					{
-						minDmg = 1;
-						maxDmg = attacker.getTDamage();
-					}
+					setBlock();
+					minDmg = 1;
+					maxDmg = attacker.getTDamage() / 10;
 					if (currSkill.type.Equals("Multiple attack"))
+					{
+						if (maxDmg > 10) maxDmg = maxDmg / 10;
+						if (minDmg > 10) minDmg = minDmg / 10;
+					}
+				}
+				// if tech defense greater than tech attack attack is blocked
+				else if (RndVal.Next(getTMentalDefense()) > RndVal.Next(attacker.getTHit()) && !critical
+					&& (currSkill.type.Equals("Single tech") || currSkill.type.Equals("Multiple tech")))
+				{
+					setField();
+					minDmg = 1;
+					maxDmg = attacker.getTMentalStrength() / 10;
+					if (currSkill.type.Equals("Multiple tech"))
 					{
 						if (maxDmg > 10) maxDmg = maxDmg / 10;
 						if (minDmg > 10) minDmg = minDmg / 10;
@@ -4067,21 +4065,45 @@ namespace TrainingProject
 				}
 				else
 				{
-					if (critical)
+					setHurt();
+
+					if (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Multiple attack"))
 					{
-						minDmg = maxDmg = attacker.getTMentalStrength();
-						crit = true;
-						strCrit = "!";
+						if (critical)
+						{
+							minDmg = maxDmg = attacker.getTDamage();
+							crit = true;
+							strCrit = "!";
+						}
+						else
+						{
+							minDmg = 1;
+							maxDmg = attacker.getTDamage();
+						}
+						if (currSkill.type.Equals("Multiple attack"))
+						{
+							if (maxDmg > 10) maxDmg = maxDmg / 10;
+							if (minDmg > 10) minDmg = minDmg / 10;
+						}
 					}
 					else
 					{
-						minDmg = 1;
-						maxDmg = attacker.getTMentalStrength();
-					}
-					if (currSkill.type.Equals("Multiple tech"))
-					{
-						if (maxDmg > 10) maxDmg = maxDmg / 10;
-						if (minDmg > 10) minDmg = minDmg / 10;
+						if (critical)
+						{
+							minDmg = maxDmg = attacker.getTMentalStrength();
+							crit = true;
+							strCrit = "!";
+						}
+						else
+						{
+							minDmg = 1;
+							maxDmg = attacker.getTMentalStrength();
+						}
+						if (currSkill.type.Equals("Multiple tech"))
+						{
+							if (maxDmg > 10) maxDmg = maxDmg / 10;
+							if (minDmg > 10) minDmg = minDmg / 10;
+						}
 					}
 				}
 				if (minDmg > maxDmg) maxDmg = minDmg;
