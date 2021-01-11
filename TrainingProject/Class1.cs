@@ -3284,7 +3284,7 @@ namespace TrainingProject
 					}
 					else
 					{
-						string strFormat = "\n [M] {0} : {1} has been rebuilt! Rank {2:n1} (+{3}B) ";
+						string strFormat = "\n [M] {0} : {1} has ranked up! Rank {2:n1} (+{3}B) ";
 						getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), baseIncreased, DateTime.Now.ToString());
 					}
 				}
@@ -3298,11 +3298,6 @@ namespace TrainingProject
 						if (Cost > 0) strFormat += " ic:{5:c0}";
 						getTeamLog = getFightLog = getWarningLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Cost);
 						MyTeam[robo].RebuildPercent += runesUsed;
-					}
-					else
-					{
-						string strFormat = "\n [M] {0} : {1} failed the rebuild (+{2}A)";
-						getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis);
 					}
 				}
 			}
