@@ -2230,6 +2230,7 @@ namespace TrainingProject
 		public long longRandom(long value)
 		{
 			long retVal = 0;
+			if (value < 0) value = 0;
 			while (value >= 2000000000)
 			{
 				retVal += RndVal.Next(2000000000);
@@ -4472,6 +4473,7 @@ namespace TrainingProject
 		{
 			int Type = RndVal.Next(1, 9);
 			eMaxDurability += value;
+			eDurability = eMaxDurability;
 			value = RndVal.Next(1, value);
 			switch (Type)
 			{
