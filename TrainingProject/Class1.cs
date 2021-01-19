@@ -402,6 +402,7 @@ namespace TrainingProject
 		[JsonProperty]
 		public int CurrentJackpot;
 		public int CurrentJackpotLvl;
+		public int MinJackpotLvl;
 		public int CurrentJackpotBase;
 		public int CurrentJackpotBaseIncrement;
 		public long MaxJackpot;
@@ -614,6 +615,7 @@ namespace TrainingProject
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
 			CurrentJackpotLvl = 1;
+			MinJackpotLvl = 1;
 			CurrentJackpotBase = 1;
 			CurrentJackpotBaseIncrement = 1;
 			fighting = false;
@@ -695,7 +697,8 @@ namespace TrainingProject
 			Bosses = new Team(1, 4, 5);
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
-			CurrentJackpotLvl = 1;
+			CurrentJackpotLvl = 1; 
+			MinJackpotLvl = 1;
 			CurrentJackpotBase = 1;
 			CurrentJackpotBaseIncrement = 1;
 			findMonster = 50;
@@ -1230,7 +1233,7 @@ namespace TrainingProject
 							DecreaseJackpot(10);
 							JackpotDownTen = false;
 						}
-						else if ((getGameCurrency < 0) && RndVal.Next(100) <= CurrentJackpotLvl)
+						else if ((getGameCurrency < 0))
                         {
 							DecreaseJackpot();
 							MaxJackpot = getGameCurrency;
@@ -1836,7 +1839,7 @@ namespace TrainingProject
 							{
 								FightBreak -= 5;
 								lblWinner.Text = GameTeam1[i].getName + " wins!";
-								long tmp = (long)(Jackpot * .8);
+								long tmp = (long)(Jackpot * .7);
 								GameTeam1[i].getCurrency += tmp;
 								Jackpot -= tmp;
 								msg += " " + String.Format("{0:n0}", tmp);
@@ -1883,7 +1886,7 @@ namespace TrainingProject
 								if (GameTeam2[i].isMonster)
 								{
 									// pay loosing team
-									long tmp = (long)(Jackpot * .8);
+									long tmp = (long)(Jackpot * .7);
 									MonsterOutbreak.getCurrency += tmp;
 									tmp = (int)(Jackpot - tmp);
 									GameTeam1[i].getCurrency += tmp;
@@ -1899,8 +1902,8 @@ namespace TrainingProject
 								}
 								else
 								{
-									// team won they get 80%
-									long tmp = (long)(Jackpot * .8);
+									// team won they get 70%
+									long tmp = (long)(Jackpot * .7);
 									GameTeam2[i].getCurrency += tmp;
 									Jackpot -= tmp;
 									msg += " " + String.Format("{0:n0}", tmp);
@@ -2032,7 +2035,7 @@ namespace TrainingProject
 		}
 		public int DecreaseJackpot()
 		{
-			if (CurrentJackpot > 3)
+			if (CurrentJackpot > 3 && CurrentJackpotLvl > MinJackpotLvl)
 			{
 				CurrentJackpotLvl--;
 				CurrentJackpot = roundValue(CurrentJackpot, CurrentJackpotBase, "down");

@@ -64,10 +64,12 @@
 			this.increaseJackpotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.increaseJackpot10ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.decreaseJackpotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.decreaseJackpot10ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.minLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.MinJackpotLevel = new System.Windows.Forms.ToolStripTextBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-			this.decreaseJackpot10ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -360,6 +362,7 @@
 			// 
 			// txtMaxManagerHrs
 			// 
+			this.txtMaxManagerHrs.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.txtMaxManagerHrs.Name = "txtMaxManagerHrs";
 			this.txtMaxManagerHrs.Size = new System.Drawing.Size(100, 23);
 			this.txtMaxManagerHrs.Text = "10";
@@ -371,7 +374,9 @@
             this.increaseJackpotToolStripMenuItem,
             this.increaseJackpot10ToolStripMenuItem,
             this.decreaseJackpotToolStripMenuItem,
-            this.decreaseJackpot10ToolStripMenuItem});
+            this.decreaseJackpot10ToolStripMenuItem,
+            this.minLevelToolStripMenuItem,
+            this.MinJackpotLevel});
 			this.mnuDisplayJackpot.Name = "mnuDisplayJackpot";
 			this.mnuDisplayJackpot.Size = new System.Drawing.Size(181, 22);
 			this.mnuDisplayJackpot.Text = "3";
@@ -397,6 +402,27 @@
 			this.decreaseJackpotToolStripMenuItem.Text = "Decrease Jackpot";
 			this.decreaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpotToolStripMenuItem_Click);
 			// 
+			// decreaseJackpot10ToolStripMenuItem
+			// 
+			this.decreaseJackpot10ToolStripMenuItem.Name = "decreaseJackpot10ToolStripMenuItem";
+			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.decreaseJackpot10ToolStripMenuItem.Text = "Decrease Jackpot 10";
+			this.decreaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpot10ToolStripMenuItem_Click);
+			// 
+			// minLevelToolStripMenuItem
+			// 
+			this.minLevelToolStripMenuItem.Name = "minLevelToolStripMenuItem";
+			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.minLevelToolStripMenuItem.Text = "Min Level";
+			// 
+			// MinJackpotLevel
+			// 
+			this.MinJackpotLevel.Font = new System.Drawing.Font("Segoe UI", 9F);
+			this.MinJackpotLevel.Name = "MinJackpotLevel";
+			this.MinJackpotLevel.Size = new System.Drawing.Size(100, 23);
+			this.MinJackpotLevel.Text = "1";
+			this.MinJackpotLevel.TextChanged += new System.EventHandler(this.MinJackpotLevel_TextChanged);
+			// 
 			// timer1
 			// 
 			this.timer1.Enabled = true;
@@ -419,13 +445,6 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
-			// 
-			// decreaseJackpot10ToolStripMenuItem
-			// 
-			this.decreaseJackpot10ToolStripMenuItem.Name = "decreaseJackpot10ToolStripMenuItem";
-			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.decreaseJackpot10ToolStripMenuItem.Text = "Decrease Jackpot 10";
-			this.decreaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpot10ToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -486,6 +505,8 @@
 		private System.Windows.Forms.ToolStripMenuItem decreaseJackpotToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem increaseJackpot10ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem decreaseJackpot10ToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem minLevelToolStripMenuItem;
+		private System.Windows.Forms.ToolStripTextBox MinJackpotLevel;
 	}
 }
 

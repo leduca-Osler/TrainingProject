@@ -45,6 +45,7 @@ namespace TrainingApp
 			Application.EnableVisualStyles();
 			InitializeComponent();
 			mnuDisplayJackpot.Text = MyGame.CurrentJackpot.ToString();
+			MinJackpotLevel.Text = MyGame.MinJackpotLvl.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
@@ -225,6 +226,7 @@ namespace TrainingApp
 			}
 			MainPannel.AutoScrollPosition = new Point(0, 0);
 			mnuDisplayJackpot.Text = String.Format("Jackpot L:{0:n0}-{1:c0}",MyGame.CurrentJackpotLvl, MyGame.CurrentJackpot);
+			MinJackpotLevel.Text = MyGame.MinJackpotLvl.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
@@ -768,7 +770,7 @@ namespace TrainingApp
 		{
 			int hrs = 10;
 			if (int.TryParse(txtMaxManagerHrs.Text, out hrs))
-				MyGame.maxManagerHours = int.Parse(txtMaxManagerHrs.Text);
+				MyGame.maxManagerHours = hrs;
 			else
 				txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
 		}
@@ -793,6 +795,15 @@ namespace TrainingApp
 		private void decreaseJackpot10ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			MyGame.JackpotDownTen = true;
+		}
+
+		private void MinJackpotLevel_TextChanged(object sender, EventArgs e)
+		{
+			int lvl = 1;
+			if (int.TryParse(MinJackpotLevel.Text, out lvl))
+				MyGame.MinJackpotLvl = lvl;
+			else
+				MinJackpotLevel.Text = MyGame.MinJackpotLvl.ToString();
 		}
 	}
 	public static class BinarySerialization
