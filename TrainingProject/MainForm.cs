@@ -22,6 +22,7 @@ namespace TrainingApp
 		private int maxCount = 1000;
 		private int tickRate = 1000;
 		private int counter;
+		private Boolean breakTimerOn = true;
 		private DateTime saveTime;
 		public MainForm()
 		{
@@ -117,7 +118,7 @@ namespace TrainingApp
          * *******************/
 		private void timer1_Tick(object sender, EventArgs e)
 		{
-			if (DateTime.Now > MyGame.BreakTime)
+			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
 				btnAutomatic.BackColor = Color.Purple;
 			else if (MyGame.getGameCurrency >= MyGame.ManagerCost && MyGame.maxManagerHours > MyGame.ManagerHrs)
 				btnAutomatic.BackColor = Color.Gold;
@@ -186,7 +187,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if ((shownCount++ >= (getNumRobos() * MyGame.getMaxTeamsAutomated()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && DateTime.Now < MyGame.BreakTime)
+				if ((shownCount++ >= (getNumRobos() * MyGame.getMaxTeamsAutomated()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
 				{
 					foreach (Control eControl in MainPannel.Controls)
 						eControl.Dispose();
@@ -804,6 +805,20 @@ namespace TrainingApp
 				MyGame.MinJackpotLvl = lvl;
 			else
 				MinJackpotLevel.Text = MyGame.MinJackpotLvl.ToString();
+		}
+
+		private void toolStripMenuItem1_Click(object sender, EventArgs e)
+		{
+			if (breakTimerOn)
+			{
+				BreakTimersOff.Text = "Break Timer Off";
+				breakTimerOn = false;
+			}
+			else
+			{
+				BreakTimersOff.Text = "Break Timer On";
+				breakTimerOn = true;
+			}
 		}
 	}
 	public static class BinarySerialization

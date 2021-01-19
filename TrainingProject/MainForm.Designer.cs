@@ -70,6 +70,7 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
+			this.BreakTimersOff = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -101,7 +102,8 @@
 			this.btnExport.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuExport,
             this.mnuImport,
-            this.countdownToolStripMenuItem});
+            this.countdownToolStripMenuItem,
+            this.BreakTimersOff});
 			this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
 			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnExport.Name = "btnExport";
@@ -112,21 +114,21 @@
 			// mnuExport
 			// 
 			this.mnuExport.Name = "mnuExport";
-			this.mnuExport.Size = new System.Drawing.Size(137, 22);
+			this.mnuExport.Size = new System.Drawing.Size(180, 22);
 			this.mnuExport.Text = "Export";
 			this.mnuExport.Click += new System.EventHandler(this.mnuExport_Click);
 			// 
 			// mnuImport
 			// 
 			this.mnuImport.Name = "mnuImport";
-			this.mnuImport.Size = new System.Drawing.Size(137, 22);
+			this.mnuImport.Size = new System.Drawing.Size(180, 22);
 			this.mnuImport.Text = "Import";
 			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
 			// 
 			// countdownToolStripMenuItem
 			// 
 			this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
-			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.countdownToolStripMenuItem.Text = "Countdown";
 			this.countdownToolStripMenuItem.Click += new System.EventHandler(this.countdownToolStripMenuItem_Click);
 			// 
@@ -362,7 +364,6 @@
 			// 
 			// txtMaxManagerHrs
 			// 
-			this.txtMaxManagerHrs.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.txtMaxManagerHrs.Name = "txtMaxManagerHrs";
 			this.txtMaxManagerHrs.Size = new System.Drawing.Size(100, 23);
 			this.txtMaxManagerHrs.Text = "10";
@@ -418,7 +419,6 @@
 			// 
 			// MinJackpotLevel
 			// 
-			this.MinJackpotLevel.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.MinJackpotLevel.Name = "MinJackpotLevel";
 			this.MinJackpotLevel.Size = new System.Drawing.Size(100, 23);
 			this.MinJackpotLevel.Text = "1";
@@ -446,6 +446,13 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
+			// 
+			// BreakTimersOff
+			// 
+			this.BreakTimersOff.Name = "BreakTimersOff";
+			this.BreakTimersOff.Size = new System.Drawing.Size(180, 22);
+			this.BreakTimersOff.Text = "Break Timer On";
+			this.BreakTimersOff.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
 			// 
 			// MainForm
 			// 
@@ -508,6 +515,7 @@
 		private System.Windows.Forms.ToolStripMenuItem decreaseJackpot10ToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem minLevelToolStripMenuItem;
 		private System.Windows.Forms.ToolStripTextBox MinJackpotLevel;
+		private System.Windows.Forms.ToolStripMenuItem BreakTimersOff;
 	}
 }
 
