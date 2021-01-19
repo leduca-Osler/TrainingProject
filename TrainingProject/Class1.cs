@@ -3329,8 +3329,11 @@ namespace TrainingProject
                         cost--;
                         value--;
 					}
-					getCurrency -= cost;
-					CurrencyLog -= cost;
+					if (getScore > 10)
+					{
+						getCurrency -= cost;
+						CurrencyLog -= cost;
+					}
 					robo.HP += value;
                     robo.MP += value;
                     robo.getKO = 0;
