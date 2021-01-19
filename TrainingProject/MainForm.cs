@@ -42,6 +42,7 @@ namespace TrainingApp
 				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 				MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 			}
+			MyGame.BreakTime = DateTime.Now.AddMinutes(5); // remove
 			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
 			InitializeComponent();
@@ -695,7 +696,7 @@ namespace TrainingApp
 			else
 				BreakTimer.Interval = tickRate;
 			Random tmp = new Random();
-			if (DateTime.Now > MyGame.BreakTime)
+			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
 			{
 				btnAutomatic.BackColor = Color.Purple;
 				foreach (Control eControl in MainPannel.Controls)
