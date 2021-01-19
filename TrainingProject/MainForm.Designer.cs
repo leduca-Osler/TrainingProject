@@ -411,6 +411,7 @@
 			// 
 			// minLevelToolStripMenuItem
 			// 
+			this.minLevelToolStripMenuItem.Enabled = false;
 			this.minLevelToolStripMenuItem.Name = "minLevelToolStripMenuItem";
 			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.minLevelToolStripMenuItem.Text = "Min Level";
