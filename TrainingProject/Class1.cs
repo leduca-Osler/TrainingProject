@@ -2041,13 +2041,14 @@ namespace TrainingProject
 				CurrentJackpot = roundValue(CurrentJackpot, CurrentJackpotBase, "down");
 				CurrentJackpotBase -= CurrentJackpotBaseIncrement;
 			}
-			// current Jackpot reset to level 1
+			// current Jackpot reset to min level
 			if (CurrentJackpot < 3)
             {
 				CurrentJackpot = 3;
 				CurrentJackpotLvl = 1;
 				CurrentJackpotBase = 1;
 				CurrentJackpotBaseIncrement = 1;
+				IncreaseJackpot(MinJackpotLvl);
 			}
 			return CurrentJackpot;
 		}
