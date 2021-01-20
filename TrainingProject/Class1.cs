@@ -1004,7 +1004,7 @@ namespace TrainingProject
 			rebuild.Win++;
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
 			int winGoal = rebuild.Win;
-			int scouted = 75;
+			int scouted = rebuild.Win * 10;
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 			{
 				if (RndVal.Next(100) < scouted && rebuild.MyTeam.Count > 1)
@@ -1023,7 +1023,7 @@ namespace TrainingProject
 					foreach (Robot eRobo in eTeam.MyTeam)
 						eRobo.rebuildBonus++;
                     const string Format = "\n*!* {0} won {1:n0} credits during reset!";
-                    getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName, iWinnings);
+					getWarningLog = getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName, iWinnings);
 					eTeam.getCurrency += iWinnings;
 				}
 			}
