@@ -1864,8 +1864,11 @@ namespace TrainingProject
 									GameTeam1[i].getScore++;
 									// Try difficulty fight 
 									if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
-									if (getGameCurrency < 0 && RndVal.Next(100) > 95)
+									if (RndVal.Next(100) > 90)
+									{
 										GameTeam2[i].getScore--;
+										GameTeam1[i].getScore++;
+									}
 									// pay team 2 remaining;
 									GameTeam2[i].getCurrency += Jackpot;
 									msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
@@ -1880,8 +1883,11 @@ namespace TrainingProject
 								GameTeam2[i].getScore++;
 								// Try difficulty fight 
 								if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
-								if (getGameCurrency < 0 && RndVal.Next(100) > 95)
+								if (RndVal.Next(100) > 90)
+								{
 									GameTeam1[i].getScore--;
+									GameTeam2[i].getScore++;
+								}
 								// monster won
 								if (GameTeam2[i].isMonster)
 								{
