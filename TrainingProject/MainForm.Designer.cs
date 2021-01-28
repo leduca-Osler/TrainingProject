@@ -35,6 +35,7 @@
 			this.mnuExport = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuImport = new System.Windows.Forms.ToolStripMenuItem();
 			this.countdownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.BreakTimersOff = new System.Windows.Forms.ToolStripMenuItem();
 			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
@@ -70,7 +71,9 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-			this.BreakTimersOff = new System.Windows.Forms.ToolStripMenuItem();
+			this.repairEquipAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.purchaseUpgradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.maxHoursToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -114,23 +117,30 @@
 			// mnuExport
 			// 
 			this.mnuExport.Name = "mnuExport";
-			this.mnuExport.Size = new System.Drawing.Size(180, 22);
+			this.mnuExport.Size = new System.Drawing.Size(155, 22);
 			this.mnuExport.Text = "Export";
 			this.mnuExport.Click += new System.EventHandler(this.mnuExport_Click);
 			// 
 			// mnuImport
 			// 
 			this.mnuImport.Name = "mnuImport";
-			this.mnuImport.Size = new System.Drawing.Size(180, 22);
+			this.mnuImport.Size = new System.Drawing.Size(155, 22);
 			this.mnuImport.Text = "Import";
 			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
 			// 
 			// countdownToolStripMenuItem
 			// 
 			this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
-			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
 			this.countdownToolStripMenuItem.Text = "Countdown";
 			this.countdownToolStripMenuItem.Click += new System.EventHandler(this.countdownToolStripMenuItem_Click);
+			// 
+			// BreakTimersOff
+			// 
+			this.BreakTimersOff.Name = "BreakTimersOff";
+			this.BreakTimersOff.Size = new System.Drawing.Size(155, 22);
+			this.BreakTimersOff.Text = "Break Timer On";
+			this.BreakTimersOff.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
 			// 
 			// cbTeamSelect
 			// 
@@ -271,8 +281,11 @@
             this.pauseResumeToolStripMenuItem,
             this.mnuWork,
             this.mnuLongBattle,
+            this.repairEquipAtToolStripMenuItem,
             this.cboRepairPercent,
+            this.purchaseUpgradeToolStripMenuItem,
             this.cboSaveCredits,
+            this.maxHoursToolStripMenuItem,
             this.txtMaxManagerHrs,
             this.mnuDisplayJackpot});
 			this.btnAutomatic.Image = global::TrainingProject.Properties.Resources.Auto;
@@ -385,28 +398,28 @@
 			// increaseJackpotToolStripMenuItem
 			// 
 			this.increaseJackpotToolStripMenuItem.Name = "increaseJackpotToolStripMenuItem";
-			this.increaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.increaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
 			this.increaseJackpotToolStripMenuItem.Text = "Increase Jackpot";
 			this.increaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpotToolStripMenuItem_Click);
 			// 
 			// increaseJackpot10ToolStripMenuItem
 			// 
 			this.increaseJackpot10ToolStripMenuItem.Name = "increaseJackpot10ToolStripMenuItem";
-			this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
 			this.increaseJackpot10ToolStripMenuItem.Text = "Increase Jackpot 10";
 			this.increaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpot10ToolStripMenuItem_Click);
 			// 
 			// decreaseJackpotToolStripMenuItem
 			// 
 			this.decreaseJackpotToolStripMenuItem.Name = "decreaseJackpotToolStripMenuItem";
-			this.decreaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.decreaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
 			this.decreaseJackpotToolStripMenuItem.Text = "Decrease Jackpot";
 			this.decreaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpotToolStripMenuItem_Click);
 			// 
 			// decreaseJackpot10ToolStripMenuItem
 			// 
 			this.decreaseJackpot10ToolStripMenuItem.Name = "decreaseJackpot10ToolStripMenuItem";
-			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
 			this.decreaseJackpot10ToolStripMenuItem.Text = "Decrease Jackpot 10";
 			this.decreaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpot10ToolStripMenuItem_Click);
 			// 
@@ -414,7 +427,7 @@
 			// 
 			this.minLevelToolStripMenuItem.Enabled = false;
 			this.minLevelToolStripMenuItem.Name = "minLevelToolStripMenuItem";
-			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
 			this.minLevelToolStripMenuItem.Text = "Min Level";
 			// 
 			// MinJackpotLevel
@@ -447,12 +460,26 @@
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
 			// 
-			// BreakTimersOff
+			// repairEquipAtToolStripMenuItem
 			// 
-			this.BreakTimersOff.Name = "BreakTimersOff";
-			this.BreakTimersOff.Size = new System.Drawing.Size(180, 22);
-			this.BreakTimersOff.Text = "Break Timer On";
-			this.BreakTimersOff.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+			this.repairEquipAtToolStripMenuItem.Enabled = false;
+			this.repairEquipAtToolStripMenuItem.Name = "repairEquipAtToolStripMenuItem";
+			this.repairEquipAtToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.repairEquipAtToolStripMenuItem.Text = "Repair equip at %";
+			// 
+			// purchaseUpgradeToolStripMenuItem
+			// 
+			this.purchaseUpgradeToolStripMenuItem.Enabled = false;
+			this.purchaseUpgradeToolStripMenuItem.Name = "purchaseUpgradeToolStripMenuItem";
+			this.purchaseUpgradeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.purchaseUpgradeToolStripMenuItem.Text = "Purchase / Upgrade";
+			// 
+			// maxHoursToolStripMenuItem
+			// 
+			this.maxHoursToolStripMenuItem.Enabled = false;
+			this.maxHoursToolStripMenuItem.Name = "maxHoursToolStripMenuItem";
+			this.maxHoursToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.maxHoursToolStripMenuItem.Text = "Max Hours";
 			// 
 			// MainForm
 			// 
@@ -516,6 +543,9 @@
 		private System.Windows.Forms.ToolStripMenuItem minLevelToolStripMenuItem;
 		private System.Windows.Forms.ToolStripTextBox MinJackpotLevel;
 		private System.Windows.Forms.ToolStripMenuItem BreakTimersOff;
+		private System.Windows.Forms.ToolStripMenuItem repairEquipAtToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem purchaseUpgradeToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem maxHoursToolStripMenuItem;
 	}
 }
 
