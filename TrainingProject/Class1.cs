@@ -861,7 +861,7 @@ namespace TrainingProject
 			string retVal = "";
 			GameCurrency += BossReward;
 			GameCurrencyLogMisc += BossReward;
-			BossLvl += 5;
+			BossLvl += 10;
 			BossCount++;
 			BossDifficulty += 4;
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) ", DateTime.Now.ToString(), BossReward);
@@ -1697,7 +1697,14 @@ namespace TrainingProject
 			roundCount++;
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
-			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" };
+			String strFlags = "";
+			if (bossFight) strFlags += " Boss Fight";
+			if (GameDifficultyFight) strFlags += " Difficulty Fight";
+			if (JackpotUp) strFlags += " Jackpot Up";
+			if (JackpotUpTen) strFlags += " Jackpot Up 10";
+			if (JackpotDown) strFlags += " Jackpot Down";
+			if (JackpotDownTen) strFlags += " Jackpot Down 10";
+			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
 			if (GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated) KOCount = 0;
