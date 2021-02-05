@@ -2904,13 +2904,36 @@ namespace TrainingProject
 				{ 
 					ScoreLog += value - Score;
 					Score = value;
-					if (Score >= GoalScore)
+					if (Score >= GoalScore && !isMonster)
 					{
+						if (GoalScoreBase % 75 == 0)
+						{
+							MaxRobo++;
+							getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - Robot added! ", getName, GoalScore);
+						}
+						else if (GoalScoreBase % 50 == 0)
+						{
+							string strMsg = "";
+							string strDelim = "";
+							for (int i = 0; i < MyTeam.Count; i++)
+							{
+								for (int j = 0; j < 5; j++)
+								{
+									addRune(MyTeam[i].getBaseStats() / 2, true);
+								}
+								strMsg += strDelim + (int)(MyTeam[i].getBaseStats() / 2);
+								strDelim = ",";
+							}
+							getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - Runes awarded to Rank(s): {2}! ", getName, GoalScore, strMsg);
+						}
+						else
+						{
+							getCurrency += GoalScore * getDifficulty;
+							getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - currency awarded {2:c0}! ", getName, GoalScore, GoalScore * getDifficulty);
+						}
 						roundValue(GoalScore, GoalScoreBase, "up");
 						GoalScore += GoalScoreBase;
 						GoalScoreBase += GoalScoreBaseIncrement;
-						if (RndVal.Next(100) > 75) MaxRobo++;
-						else getCurrency += GoalScore * getDifficulty;
 					}
 				}
 			}
