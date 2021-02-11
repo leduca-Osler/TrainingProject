@@ -340,9 +340,11 @@ namespace TrainingApp
 				int jResearchDevHealCost = json["ResearchDevHealCost"] != null ? (int)json["ResearchDevHealCost"] : 1;
 				long jResearchDevRebuild = json["ResearchDevRebuild"] != null ? (long)json["ResearchDevRebuild"] : 1000;
 				long jResearchDevRebuildBase = json["ResearchDevRebuildBase"] != null ? (long)json["ResearchDevRebuildBase"] : 500;
-				int jBossLvl = json["BossLvl"] != null ? (int)json["BossLvl"] : 10;
+				int jBossLvl = json["BossLvl"] != null ? (int)json["BossLvl"] : 5;
+				int jBossLvlBase = json["BossLvlBase"] != null ? (int)json["BossLvlBase"] : 5;
 				int jBossCount = json["BossCount"] != null ? (int)json["BossCount"] : 1;
-				int jBossDifficulty = json["BossDifficulty"] != null ? (int)json["BossDifficulty"] : 10;
+				int jBossDifficulty = json["BossDifficulty"] != null ? (int)json["BossDifficulty"] : 4;
+				int jBossDifficultyBase = json["BossDifficultyBase"] != null ? (int)json["BossDifficultyBase"] : 2;
 				int jGameDifficulty = json["gameDifficulty"] != null ? (int)json["gameDifficulty"] : 1;
 				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
 				// Parse json and assign to MyGame
@@ -350,7 +352,7 @@ namespace TrainingApp
 					jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenBonusBase, jMonsterDenRepair, jMonsterDenRepairBase, 
 					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 
-					jResearchDevHealCost, jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossCount, jBossDifficulty, jBossReward, jGameDifficulty);
+					jResearchDevHealCost, jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating

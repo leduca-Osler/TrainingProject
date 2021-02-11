@@ -396,9 +396,15 @@ namespace TrainingProject
 		[JsonProperty]
 		private int BossLvl;
 		[JsonProperty]
+		public long BossLvlBase;
+		public long BossLvlBaseIncrement = 5;
+		[JsonProperty]
 		private int BossCount;
 		[JsonProperty]
 		private int BossDifficulty;
+		[JsonProperty]
+		public int BossDifficultyBase;
+		public int BossDifficultyBaseIncrement = 2;
 		[JsonProperty]
 		public int CurrentJackpot;
 		public int CurrentJackpotLvl;
@@ -590,7 +596,7 @@ namespace TrainingProject
 			int pMonsterDenBonus, int pMonsterDenBonusBase, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint, 
 			int pShopStock, long pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl,
 			long pResearchDevLvlCost, long pResearchDevLvlCostBase, long pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealValueBase, int pResearchDevHealBays, 
-			int pResearchDevHealCost, long pResearchDevRebuild, long pResearchDevRebuildBase, int pBossLvl, int pBossCount, int pBossDifficulty, long pBossReward,
+			int pResearchDevHealCost, long pResearchDevRebuild, long pResearchDevRebuildBase, int pBossLvl, int pBossLvlBase, int pBossCount, int pBossDifficulty, int pBossDifficultyBase, long pBossReward,
 			int pGameDifficult)
 		{
 			getRoboNumeral = 1;
@@ -656,8 +662,10 @@ namespace TrainingProject
 			ResearchDevRebuildBase = pResearchDevRebuildBase;
 			gameDifficulty = pGameDifficult;
 			BossLvl = pBossLvl;
+			BossLvlBase = pBossLvlBase;
 			BossCount = pBossCount;
 			BossDifficulty = pBossDifficulty;
+			BossDifficultyBase = pBossDifficultyBase;
 			BossReward = pBossReward;
 			ManagerHrs = 0;
 			ManagerCost = 2000;
@@ -761,8 +769,10 @@ namespace TrainingProject
 			FightBreak = 80;
 			roundCount = 0;
 			BossLvl = 5;
+			BossLvlBase = BossLvlBaseIncrement;
 			BossCount = 1;
 			BossDifficulty = 4;
+			BossDifficultyBase = BossDifficultyBaseIncrement;
 			BossReward = 1000;
 			bossFight = false;
 			GameDifficultyFight = false;
@@ -799,6 +809,29 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+			MaxTeams = 2;
+			BossLvl = 5;
+			BossLvlBase = 5;
+			BossLvlBaseIncrement = 5;
+			BossCount = 1;
+			BossDifficulty = 4;
+			BossDifficultyBase = 2;
+			BossDifficultyBaseIncrement = 2;
+			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
+			Bosses = new Team(1, 4, 5);
+			// Add equipment
+			for (int i = 0; i < BossCount; i++)
+			{
+				Bosses.MyTeam[i].getEquipWeapon = new Equipment(true, BossLvl, 10000, RndVal);
+				Bosses.MyTeam[i].getEquipArmour = new Equipment(false, BossLvl, 10000, RndVal);
+			}
+			for (int ii = 1; ii < BossLvl; ii++)
+			{
+				Bosses.MyTeam[BossCount - 1].levelUp(RndVal);
+				Bosses.MyTeam[BossCount - 1].HP = Bosses.MyTeam[BossCount - 1].getTHealth();
+				Bosses.MyTeam[BossCount - 1].MP = Bosses.MyTeam[BossCount - 1].getTEnergy();
+			}
+			Bosses.resetLogs();
 		}
 
 		public void resetShowDefeated()
@@ -861,9 +894,11 @@ namespace TrainingProject
 			string retVal = "";
 			GameCurrency += BossReward;
 			GameCurrencyLogMisc += BossReward;
-			BossLvl += 10;
+			BossLvl = (int)roundValue(BossLvl, BossLvlBase, "up");
+			BossLvlBase += BossLvlBaseIncrement;
 			BossCount++;
-			BossDifficulty += 4;
+			BossDifficulty = (int)roundValue(BossDifficulty, BossDifficultyBase, "up");
+			BossDifficultyBase += BossDifficultyBaseIncrement;
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) ", DateTime.Now.ToString(), BossReward);
 			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
 			int Monster = RndVal.Next(BossCount);
