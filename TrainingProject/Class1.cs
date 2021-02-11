@@ -809,29 +809,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-			MaxTeams = 2;
-			BossLvl = 5;
-			BossLvlBase = 5;
-			BossLvlBaseIncrement = 5;
-			BossCount = 1;
-			BossDifficulty = 4;
-			BossDifficultyBase = 2;
-			BossDifficultyBaseIncrement = 2;
-			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
-			Bosses = new Team(1, 4, 5);
-			// Add equipment
-			for (int i = 0; i < BossCount; i++)
-			{
-				Bosses.MyTeam[i].getEquipWeapon = new Equipment(true, BossLvl, 10000, RndVal);
-				Bosses.MyTeam[i].getEquipArmour = new Equipment(false, BossLvl, 10000, RndVal);
-			}
-			for (int ii = 1; ii < BossLvl; ii++)
-			{
-				Bosses.MyTeam[BossCount - 1].levelUp(RndVal);
-				Bosses.MyTeam[BossCount - 1].HP = Bosses.MyTeam[BossCount - 1].getTHealth();
-				Bosses.MyTeam[BossCount - 1].MP = Bosses.MyTeam[BossCount - 1].getTEnergy();
-			}
-			Bosses.resetLogs();
 		}
 
 		public void resetShowDefeated()
