@@ -888,7 +888,7 @@ namespace TrainingProject
 			}
 			for (int ii = 1; ii < BossLvl; ii++)
 			{
-				Bosses.MyTeam[BossCount - 1].levelUp(RndVal);
+				Bosses.MyTeam[BossCount - 1].levelUp(RndVal, true);
 				Bosses.MyTeam[BossCount - 1].HP = Bosses.MyTeam[BossCount - 1].getTHealth();
 				Bosses.MyTeam[BossCount - 1].MP = Bosses.MyTeam[BossCount - 1].getTEnergy();
 			}
@@ -1083,7 +1083,7 @@ namespace TrainingProject
 				}
 			}
 			MonsterOutbreak.healRobos(0, 1);
-			Bosses.healRobos(0, 999);
+			Bosses.healRobos(0, 999, true);
 			return fullHP;
 		}
 		public bool isFighting(string teamName)
@@ -1499,9 +1499,8 @@ namespace TrainingProject
 				MainPanel.Controls.Add(lblTotalScore);
 				Label lblTeams = new Label { AutoSize = true, Text =	  String.Format("Teams:       {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\+#,###}", string.Format("{0:n0}/{1:n0}",GameTeams.Count, getMaxTeams), getTeamCost)};
 				MainPanel.Controls.Add(lblTeams);
-				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0} \n{2,-13}{3," + RowOneLength[0] +
-					":c0}\n{4,-13}{5," + RowOneLength[0] + ":c0}\n{6,-13}{7," + RowOneLength[0] + ":c0}\n{8,-13}{9," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency, "   Misc ", 
-					GameCurrencyLogMisc, "   Maint -", 0-GameCurrencyLogMaint, "   Upgr  -", 0-GameCurrencyLogUp, "   Total =", GameCurrencyLogMisc +GameCurrencyLogMaint+GameCurrencyLogUp) };
+				//Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0} \n{2,-13}{3," + RowOneLength[0] + ":c0}\n{4,-13}{5," + RowOneLength[0] + ":c0}\n{6,-13}{7," + RowOneLength[0] + ":c0}\n{8,-13}{9," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency, "   Misc ",  GameCurrencyLogMisc, "   Maint -", 0 - GameCurrencyLogMaint, "   Upgr  -", 0 - GameCurrencyLogUp, "   Total =", GameCurrencyLogMisc + GameCurrencyLogMaint + GameCurrencyLogUp) };
+				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency)};
 				MainPanel.Controls.Add(lblCurrency);
 				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint) };
 				MainPanel.Controls.Add(lblArenaLvl);
@@ -2063,7 +2062,7 @@ namespace TrainingProject
 		}
 		public int DecreaseJackpot()
 		{
-			if (CurrentJackpot > 3 && CurrentJackpotLvl > MinJackpotLvl)
+			if (CurrentJackpot > 3 && CurrentJackpotLvl >= MinJackpotLvl)
 			{
 				CurrentJackpotLvl--;
 				CurrentJackpot = roundValue(CurrentJackpot, CurrentJackpotBase, "down");
@@ -3060,7 +3059,7 @@ namespace TrainingProject
 				MyTeam[i].getEquipArmour = new Equipment(false, MonsterLvl, 10000, RndVal);
 				for (int ii = 1; ii < MonsterLvl; ii++)
 				{
-					MyTeam[i].levelUp(RndVal);
+					MyTeam[i].levelUp(RndVal, true);
 					MyTeam[i].HP = MyTeam[i].getTHealth();
 					MyTeam[i].MP = MyTeam[i].getTEnergy();
 				}
@@ -3378,7 +3377,7 @@ namespace TrainingProject
 			}
 			return num;
 		}
-		public Boolean healRobos(int cost, int value)
+		public Boolean healRobos(int cost, int value, bool isBoss = false)
 		{
 			Boolean fullHP = true;
 			foreach (Robot robo in MyTeam)
@@ -3405,7 +3404,7 @@ namespace TrainingProject
 				// level up
 				if (robo.getAnalysisLeft() <= 0)
 				{
-					robo.levelUp(RndVal);
+					robo.levelUp(RndVal, isBoss);
 					if (robo.RobotLog.Length > 0 && !robo.name1.Equals("test"))
 					{
 						getTeamLog = robo.RobotLog;
@@ -4011,15 +4010,17 @@ namespace TrainingProject
 					break;
 			}
 		}
-		public void levelUp(Random tmp)
+		public void levelUp(Random tmp, bool isBoss = false)
 		{
 			LevelLog++;
 			Level++;
 			Analysis += 5;
 			AnalysisLog = 0;
 			CurrentAnalysis = 0;
-			Health += Dexterity + Strength + Agility;
-			Energy += Tech;
+			if (isBoss) Health += ((Dexterity + Strength + Agility) * 10);
+			else Health += Dexterity + Strength + Agility;
+			if (isBoss) Energy += (Tech * 10);
+			else Energy += Tech;
 			Armour += Dexterity;
 			Damage += Strength;
 			Hit += Accuracy;
@@ -4457,13 +4458,19 @@ namespace TrainingProject
 		public long eUpgradeCostBase = 0;
 		[JsonProperty]
 		public long eUpgradeCostBaseIncrement = 0;
-		public Equipment(bool addWeapon, int value, int durability, Random RndVal)
+		public Equipment(bool addWeapon, int value, int durability, Random RndVal, Boolean isBoss = false)
 		{
 			int Type = 0;
 			if (addWeapon)
-				Type = RndVal.Next(1, 5);
+			{
+				if (isBoss) Type = RndVal.Next(1, 4);
+				else Type = RndVal.Next(1, 5);
+			}
 			else
-				Type = RndVal.Next(5, 9);
+			{
+				if (isBoss) Type = RndVal.Next(5, 8);
+				else Type = RndVal.Next(5, 9);
+			}
 			switch (Type)
 			{
 				case 1:
