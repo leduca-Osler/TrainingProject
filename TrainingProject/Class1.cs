@@ -883,8 +883,8 @@ namespace TrainingProject
 			// Add equipment
 			for (int i = 0; i < BossCount; i++)
 			{
-				Bosses.MyTeam[i].getEquipWeapon = new Equipment(true, BossLvl, 10000, RndVal);
-				Bosses.MyTeam[i].getEquipArmour = new Equipment(false, BossLvl, 10000, RndVal);
+				Bosses.MyTeam[i].getEquipWeapon = new Equipment(true, BossLvl, 10000, RndVal, true);
+				Bosses.MyTeam[i].getEquipArmour = new Equipment(false, BossLvl, 10000, RndVal, true);
 			}
 			for (int ii = 1; ii < BossLvl; ii++)
 			{
@@ -3055,8 +3055,8 @@ namespace TrainingProject
 				int Monster = RndVal.Next(numMonsters);
 				MyTeam.Add(new Robot(Difficulty, setName("boss", Monster), Monster, true));
 				// Add equipment
-				MyTeam[i].getEquipWeapon = new Equipment(true, MonsterLvl, 10000, RndVal);
-				MyTeam[i].getEquipArmour = new Equipment(false, MonsterLvl, 10000, RndVal);
+				MyTeam[i].getEquipWeapon = new Equipment(true, MonsterLvl, 10000, RndVal, true);
+				MyTeam[i].getEquipArmour = new Equipment(false, MonsterLvl, 10000, RndVal, true);
 				for (int ii = 1; ii < MonsterLvl; ii++)
 				{
 					MyTeam[i].levelUp(RndVal, true);
