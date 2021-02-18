@@ -2930,7 +2930,7 @@ namespace TrainingProject
 							{
 								for (int j = 0; j < 5; j++)
 								{
-									addRune(MyTeam[i].getBaseStats() / 2, true);
+									addRune(MyTeam[i].getLevel, true);
 								}
 								strMsg += strDelim + (int)(MyTeam[i].getBaseStats() / 2);
 								strDelim = ",";
