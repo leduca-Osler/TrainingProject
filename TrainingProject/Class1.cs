@@ -1483,8 +1483,7 @@ namespace TrainingProject
 				int[] RowOneLength =
 					{ getMaxLength(new string[] { string.Format("{0:n0}", getScore()), string.Format("{0:n0}/{1:n0}",GameTeams.Count, getMaxTeams), string.Format("{0:c0}", getGameCurrency),
 						string.Format("{0:n0}", getArenaLvl),string.Format("{0:n0}", getShopLvl), string.Format("{0:n0}", getResearchDevLvl), string.Format("{0:n0}", getMonsterDenLvl),
-						string.Format("{0:n0}", BossCount), string.Format("{0:n0}", ManagerHrs), string.Format("{0:c0}",GameCurrencyLogMisc), string.Format("{0:c0}",GameCurrencyLogMaint), 
-						string.Format("{0:c0)}",GameCurrencyLogUp), string.Format("{0:c0}",GameCurrencyLogMisc +GameCurrencyLogMaint+GameCurrencyLogUp)})
+						string.Format("{0:n0}", BossCount), string.Format("{0:n0}", ManagerHrs)})
 					, getMaxLength(new string[] { string.Format("{0:\\-#,###}", getArenaLvlCost), string.Format("{0:\\-#,###}", getShopLvlCost), string.Format("{0:\\-#,###}", getResearchDevLvlCost), string.Format("{0:\\-#,###}", getMonsterDenLvlCost) })
 					, getMaxLength(new string[] { string.Format("{0:\\-#,###}", getArenaLvlMaint), string.Format("{0:\\-#,###}", getShopLvlMaint), string.Format("{0:\\-#,###}", getResearchDevMaint), string.Format("{0:\\-#,###}", getMonsterDenLvlMaint) })
 				};
