@@ -1834,6 +1834,7 @@ namespace TrainingProject
 							{
 								Jackpot = 0;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters ";
+								GoalGameScore += RndVal.Next(GoalGameScoreBase);
 								resetScore();
 							}
 							else
@@ -2061,7 +2062,7 @@ namespace TrainingProject
 		}
 		public int DecreaseJackpot()
 		{
-			if (CurrentJackpot > 3 && CurrentJackpotLvl >= MinJackpotLvl)
+			if (CurrentJackpot > 3 && CurrentJackpotLvl > MinJackpotLvl)
 			{
 				CurrentJackpotLvl--;
 				CurrentJackpot = roundValue(CurrentJackpot, CurrentJackpotBase, "down");
