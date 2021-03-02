@@ -823,6 +823,12 @@ namespace TrainingApp
 				breakTimerOn = true;
 			}
 		}
+
+		private void MainForm_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Space) btnAutomatic.PerformButtonClick();
+			if (e.KeyCode == Keys.Enter) btnFight.PerformClick();
+		}
 	}
 	public static class BinarySerialization
 	{

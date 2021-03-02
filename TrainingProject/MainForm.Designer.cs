@@ -58,8 +58,11 @@
 			this.pauseResumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLongBattle = new System.Windows.Forms.ToolStripMenuItem();
+			this.repairEquipAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cboRepairPercent = new System.Windows.Forms.ToolStripComboBox();
+			this.purchaseUpgradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cboSaveCredits = new System.Windows.Forms.ToolStripComboBox();
+			this.maxHoursToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.txtMaxManagerHrs = new System.Windows.Forms.ToolStripTextBox();
 			this.mnuDisplayJackpot = new System.Windows.Forms.ToolStripMenuItem();
 			this.increaseJackpotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,9 +74,6 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-			this.repairEquipAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.purchaseUpgradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.maxHoursToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -347,6 +347,13 @@
 			this.mnuLongBattle.Text = "Long Battle";
 			this.mnuLongBattle.Click += new System.EventHandler(this.mnuLongBattle_Click);
 			// 
+			// repairEquipAtToolStripMenuItem
+			// 
+			this.repairEquipAtToolStripMenuItem.Enabled = false;
+			this.repairEquipAtToolStripMenuItem.Name = "repairEquipAtToolStripMenuItem";
+			this.repairEquipAtToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.repairEquipAtToolStripMenuItem.Text = "Repair equip at %";
+			// 
 			// cboRepairPercent
 			// 
 			this.cboRepairPercent.Items.AddRange(new object[] {
@@ -365,6 +372,13 @@
 			this.cboRepairPercent.ToolTipText = "Durability Percent to repair equipment";
 			this.cboRepairPercent.SelectedIndexChanged += new System.EventHandler(this.cboRepairPercent_SelectedIndexChanged);
 			// 
+			// purchaseUpgradeToolStripMenuItem
+			// 
+			this.purchaseUpgradeToolStripMenuItem.Enabled = false;
+			this.purchaseUpgradeToolStripMenuItem.Name = "purchaseUpgradeToolStripMenuItem";
+			this.purchaseUpgradeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.purchaseUpgradeToolStripMenuItem.Text = "Purchase / Upgrade";
+			// 
 			// cboSaveCredits
 			// 
 			this.cboSaveCredits.Items.AddRange(new object[] {
@@ -375,8 +389,16 @@
 			this.cboSaveCredits.ToolTipText = "Purchase / upgrade equipment";
 			this.cboSaveCredits.SelectedIndexChanged += new System.EventHandler(this.cboSaveCredits_SelectedIndexChanged);
 			// 
+			// maxHoursToolStripMenuItem
+			// 
+			this.maxHoursToolStripMenuItem.Enabled = false;
+			this.maxHoursToolStripMenuItem.Name = "maxHoursToolStripMenuItem";
+			this.maxHoursToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.maxHoursToolStripMenuItem.Text = "Max Hours";
+			// 
 			// txtMaxManagerHrs
 			// 
+			this.txtMaxManagerHrs.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.txtMaxManagerHrs.Name = "txtMaxManagerHrs";
 			this.txtMaxManagerHrs.Size = new System.Drawing.Size(100, 23);
 			this.txtMaxManagerHrs.Text = "10";
@@ -432,6 +454,7 @@
 			// 
 			// MinJackpotLevel
 			// 
+			this.MinJackpotLevel.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.MinJackpotLevel.Name = "MinJackpotLevel";
 			this.MinJackpotLevel.Size = new System.Drawing.Size(100, 23);
 			this.MinJackpotLevel.Text = "1";
@@ -460,27 +483,6 @@
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
 			// 
-			// repairEquipAtToolStripMenuItem
-			// 
-			this.repairEquipAtToolStripMenuItem.Enabled = false;
-			this.repairEquipAtToolStripMenuItem.Name = "repairEquipAtToolStripMenuItem";
-			this.repairEquipAtToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-			this.repairEquipAtToolStripMenuItem.Text = "Repair equip at %";
-			// 
-			// purchaseUpgradeToolStripMenuItem
-			// 
-			this.purchaseUpgradeToolStripMenuItem.Enabled = false;
-			this.purchaseUpgradeToolStripMenuItem.Name = "purchaseUpgradeToolStripMenuItem";
-			this.purchaseUpgradeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-			this.purchaseUpgradeToolStripMenuItem.Text = "Purchase / Upgrade";
-			// 
-			// maxHoursToolStripMenuItem
-			// 
-			this.maxHoursToolStripMenuItem.Enabled = false;
-			this.maxHoursToolStripMenuItem.Name = "maxHoursToolStripMenuItem";
-			this.maxHoursToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-			this.maxHoursToolStripMenuItem.Text = "Max Hours";
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -493,6 +495,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MainForm";
 			this.Text = "Training Form";
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
 			this.ResumeLayout(false);
