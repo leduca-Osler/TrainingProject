@@ -830,21 +830,41 @@ namespace TrainingApp
 			// Pause / resume
 			if (e.KeyCode == Keys.Space) btnAutomatic.PerformButtonClick();
 			// Fight
-			if (e.KeyCode == Keys.Enter) btnFight.PerformClick();
+			else if (e.KeyCode == Keys.Enter) btnFight.PerformClick();
 			// Select Team
-			if (e.KeyCode == Keys.Q) cbTeamSelect.Focus();
+			else if (e.KeyCode == Keys.Q) cbTeamSelect.Focus();
 			// Add Team
-			if (e.KeyCode == Keys.W) btnAddTeam.PerformClick();
+			else if (e.KeyCode == Keys.W) btnAddTeam.PerformClick();
 			// Add Robo
-			if (e.KeyCode == Keys.E) btnAddRobo.PerformClick();
+			else if (e.KeyCode == Keys.E) btnAddRobo.PerformClick();
 			// Arena
-			if (e.KeyCode == Keys.A) btnArenaLvl.PerformClick();
+			else if (e.KeyCode == Keys.A) btnArenaLvl.PerformClick();
 			// Shop
-			if (e.KeyCode == Keys.S) btnShop.PerformButtonClick();
+			else if (e.KeyCode == Keys.S) btnShop.PerformButtonClick();
 			// R&D
-			if (e.KeyCode == Keys.D) btnResearchDev.PerformClick();
+			else if (e.KeyCode == Keys.D) btnResearchDev.PerformClick();
 			// Den
-			if (e.KeyCode == Keys.F) btnMonsterDen.PerformClick();
+			else if (e.KeyCode == Keys.F) btnMonsterDen.PerformClick();
+			// Jackpot +
+			else if (e.KeyCode == Keys.J) increaseJackpotToolStripMenuItem.PerformClick();
+			// Jackpot +10
+			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
+			// Clear Messages
+			else if (e.KeyCode == Keys.C) MyGame.clearWarnings();
+			else if (e.KeyCode != Keys.Up && e.KeyCode != Keys.Down && e.KeyCode != Keys.Left && e.KeyCode != Keys.Right) 
+				MessageBox.Show("Shortcuts " +
+				"\nPause:               Space" +
+				"\nFight:                Enter" +
+				"\nTeam:                 Q" +
+				"\nAdd Team:         W" +
+				"\nAdd Robo:         E" +
+				"\nArena Lvl:           A" +
+				"\nShop Lvl:            S" +
+				"\nR&D Lvl:             D" +
+				"\nDen Lvl:              F" +
+				"\nJackpot+:           J" +
+				"\nJackpt+10:         K" +
+				"\nClear Warning: C");
 		}
 	}
 	public static class BinarySerialization
