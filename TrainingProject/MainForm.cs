@@ -82,6 +82,7 @@ namespace TrainingApp
 					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost
 					&& MyGame.getGameCurrency > 0)
 				btnAddRobo.Enabled = true;
+			SendKeys.Send("{ESC}");
 		}
 		private void btnAddTeam_Click(object sender, EventArgs e)
 		{
@@ -826,8 +827,24 @@ namespace TrainingApp
 
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
+			// Pause / resume
 			if (e.KeyCode == Keys.Space) btnAutomatic.PerformButtonClick();
+			// Fight
 			if (e.KeyCode == Keys.Enter) btnFight.PerformClick();
+			// Select Team
+			if (e.KeyCode == Keys.Q) cbTeamSelect.Focus();
+			// Add Team
+			if (e.KeyCode == Keys.W) btnAddTeam.PerformClick();
+			// Add Robo
+			if (e.KeyCode == Keys.E) btnAddRobo.PerformClick();
+			// Arena
+			if (e.KeyCode == Keys.A) btnArenaLvl.PerformClick();
+			// Shop
+			if (e.KeyCode == Keys.S) btnShop.PerformButtonClick();
+			// R&D
+			if (e.KeyCode == Keys.D) btnResearchDev.PerformClick();
+			// Den
+			if (e.KeyCode == Keys.F) btnMonsterDen.PerformClick();
 		}
 	}
 	public static class BinarySerialization

@@ -147,6 +147,8 @@
 			this.cbTeamSelect.Name = "cbTeamSelect";
 			this.cbTeamSelect.Size = new System.Drawing.Size(140, 27);
 			this.cbTeamSelect.DropDownClosed += new System.EventHandler(this.cbTeamSelect_Change);
+			this.cbTeamSelect.Leave += new System.EventHandler(this.cbTeamSelect_Change);
+			this.cbTeamSelect.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			// 
 			// toolStripLabel1
 			// 
