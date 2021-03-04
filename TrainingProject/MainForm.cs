@@ -830,7 +830,7 @@ namespace TrainingApp
 			// Pause / resume
 			if (e.KeyCode == Keys.Space) btnAutomatic.PerformButtonClick();
 			// Fight
-			else if (e.KeyCode == Keys.Enter) btnFight.PerformClick();
+			else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.V) btnFight.PerformClick();
 			// Select Team
 			else if (e.KeyCode == Keys.Q) cbTeamSelect.Focus();
 			// Add Team
@@ -851,10 +851,10 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
 			// Clear Messages
 			else if (e.KeyCode == Keys.C) MyGame.clearWarnings();
-			else if (e.KeyCode != Keys.Up && e.KeyCode != Keys.Down && e.KeyCode != Keys.Left && e.KeyCode != Keys.Right) 
+			else if (e.KeyCode != Keys.Up && e.KeyCode != Keys.Down && e.KeyCode != Keys.Left && e.KeyCode != Keys.Right && e.KeyCode != Keys.LWin && e.KeyCode != Keys.ControlKey) 
 				MessageBox.Show("Shortcuts " +
 				"\nPause:               Space" +
-				"\nFight:                Enter" +
+				"\nFight:                Enter / V" +
 				"\nTeam:                 Q" +
 				"\nAdd Team:         W" +
 				"\nAdd Robo:         E" +
