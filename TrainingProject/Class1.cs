@@ -1398,6 +1398,8 @@ namespace TrainingProject
 			Robo.Controls.Add(HP);
 			AlsProgressBar MP = new AlsProgressBar(Brushes.Blue) { Maximum = eRobo.getTEnergy(), Value = eRobo.MP, Width = 50, Height = 6 };
 			Robo.Controls.Add(MP);
+			AlsProgressBar XP = new AlsProgressBar(Brushes.Yellow) { Maximum = eRobo.getAnalysis, Value = (int)eRobo.getAnalysisLeft(), Width = 50, Height = 6 };
+			Robo.Controls.Add(XP);
 			Label spd = new Label { AutoSize = true, Text = eRobo.message };
 			Robo.Controls.Add(spd);
 			return Robo;
