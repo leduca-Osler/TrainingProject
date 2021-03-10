@@ -1388,7 +1388,7 @@ namespace TrainingProject
 		public FlowLayoutPanel getCharacterInfo(Robot eRobo)
 		{
 			FlowLayoutPanel Robo = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			Label level = new Label { AutoSize = true, Width = 50, Text = eRobo.getLevel.ToString() };
+			Label level = new Label { AutoSize = true, Width = 50, Text = eRobo.getLevel.ToString() + eRobo.getNameRank(false) };
 			Robo.Controls.Add(level);
 			Label Name = new Label { AutoSize = true, Width = 50, Text = eRobo.getName.PadRight(6).Substring(0,6)};
 			Robo.Controls.Add(Name);
@@ -1398,8 +1398,17 @@ namespace TrainingProject
 			Robo.Controls.Add(HP);
 			AlsProgressBar MP = new AlsProgressBar(Brushes.Blue) { Maximum = eRobo.getTEnergy(), Value = eRobo.MP, Width = 50, Height = 6 };
 			Robo.Controls.Add(MP);
-			AlsProgressBar XP = new AlsProgressBar(Brushes.Chocolate) { Maximum = eRobo.getAnalysis, Value = (int)eRobo.getAnalysisLeft(), Width = 50, Height = 6 };
-			if (eRobo.getAnalysisLeft() == 0) XP = new AlsProgressBar(Brushes.HotPink) { Maximum = eRobo.getAnalysis, Value = (int)eRobo.getAnalysis, Width = 50, Height = 6 };
+			Brush myColour = Brushes.Chocolate;
+			int tmpAnalysis = (int)eRobo.getAnalysisLeft();
+			if (eRobo.getAnalysisLeft() == 0)
+			{
+				tmpAnalysis = (int)eRobo.getAnalysis;
+				if (RndVal.Next(100) > 75) myColour = Brushes.Red;
+				else if (RndVal.Next(100) > 75) myColour = Brushes.Orange;
+				else if (RndVal.Next(100) > 75) myColour = Brushes.Pink;
+				else myColour = Brushes.Yellow;
+			}
+			AlsProgressBar XP = new AlsProgressBar(myColour) { Maximum = eRobo.getAnalysis, Value = tmpAnalysis, Width = 50, Height = 6 };
 			Robo.Controls.Add(XP);
 			Label spd = new Label { AutoSize = true, Text = eRobo.message };
 			Robo.Controls.Add(spd);
@@ -1575,6 +1584,7 @@ namespace TrainingProject
 				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0} {9,-5}{10," + RowTwoLength[3] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Cost", getResearchDevHealCost, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild) };
 				MainPanel.Controls.Add(lblResearchLvl);
 				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs) };
+				int monsterCount = 0;
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
 				MainPanel.Controls.Add(lblMonsterDen);
 				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":c0}", BossCount, BossReward) };
@@ -1594,8 +1604,9 @@ namespace TrainingProject
 			}
 			return MainPanel;
 		}
-		public void displayMonsters(string type)
+		public void displayMonsters(string type, int StartingCount = 0)
 		{
+			
 			Team displayTeam = MonsterOutbreak;
 			if (type.Equals("Boss Monsters"))
 				displayTeam = Bosses;
@@ -1603,19 +1614,43 @@ namespace TrainingProject
 				eRobot.sortSkills();
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-			Label lblTeamName = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine + "Team Name:  " + displayTeam.getName + "\t$:  " + displayTeam.getCurrency };
+			FlowLayoutPanel MyMonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+			FlowLayoutPanel MyButtonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+			Label lblTeamName = new Label { AutoSize = true, Text = String.Format("\n\nTeam Name:  {0}       {1:c0}  ({2}-{3})", displayTeam.getName,displayTeam.getCurrency,type, StartingCount) };
 			Label lblRobots = new Label { AutoSize = true, Text =   "Monsters:   " + displayTeam.MyTeam.Count };
 			MainPanel.Controls.Add(lblTeamName);
 			MainPanel.Controls.Add(lblRobots);
+			int count = 0;
+			int shown = 0;
+			int button = 0;
 			foreach (Robot eRobo in displayTeam.MyTeam)
 			{
-				FlowLayoutPanel MyPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
-				Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
-				MyPanel.Controls.Add(RoboName);
-				MyPanel.Controls.Add(Everything);
-				TopLevelPanel.Controls.Add(MyPanel);
+				if (count >= StartingCount && shown < 50)
+				{
+					FlowLayoutPanel MyIndividualMonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
+					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
+					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
+					MyIndividualMonsterPanel.Controls.Add(RoboName);
+					MyIndividualMonsterPanel.Controls.Add(Everything);
+					MyMonsterPanel.Controls.Add(MyIndividualMonsterPanel);
+					shown++;
+				}
+				if (button <= count)
+				{
+					FlowLayoutPanel MyPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
+					// Add button to show now 100 monsters
+					Label btnNext = new Label { AutoSize = true, Text = String.Format("lvl<={0:n0}", eRobo.getLevel) };
+					string tmpType = type;
+					int tmpCount = count;
+					btnNext.Click += new EventHandler((sender, e) => displayMonsters(tmpType, tmpCount));
+					MyPanel.Controls.Add(btnNext);
+					MyButtonPanel.Controls.Add(MyPanel);
+					button = count + 49;
+				}
+				count++;
 			}
+			TopLevelPanel.Controls.Add(MyButtonPanel);
+			TopLevelPanel.Controls.Add(MyMonsterPanel);
 			MainPanel.Controls.Add(TopLevelPanel);
 			if (MainFormPanel != null)
 			{
@@ -3489,14 +3524,20 @@ namespace TrainingProject
 		public char cSkill = ' ';
 		public bool bMonster = false;
 		public bool bIsMonster = false;
-		public String getNameRank()
+		public String getNameRank(Boolean includeName = true)
 		{
 			double rank = getBaseStats() / 2;
-			return String.Format("{0}.{1}",RobotName, rank);
+			string tmpName = "";
+			if (includeName) tmpName = RobotName; 
+			return String.Format("{0}.{1}",tmpName, rank);
 		}
 		public String getName
 		{
-			get { return RobotName; }
+			get 
+			{
+				if (RobotName.Length > 0) return RobotName;
+				else return "[name]";
+			}
 			set { RobotName = value; }
 		}
 		public int getDexterity
