@@ -853,7 +853,7 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.C) MyGame.clearWarnings();
 			else if (e.KeyCode != Keys.Up && e.KeyCode != Keys.Down && e.KeyCode != Keys.Left 
 				&& e.KeyCode != Keys.Right && e.KeyCode != Keys.LWin && e.KeyCode != Keys.ControlKey 
-				&& e.KeyCode != Keys.Alt && e.KeyCode != Keys.Home) 
+				&& e.KeyCode != Keys.Alt && e.KeyCode != Keys.Home && e.KeyCode != Keys.Menu) 
 				MessageBox.Show(e.KeyCode + "Shortcuts " +
 				"\nPause:               Space" +
 				"\nFight:                Enter / +" +
