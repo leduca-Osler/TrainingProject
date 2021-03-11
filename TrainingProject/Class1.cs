@@ -847,6 +847,26 @@ namespace TrainingProject
 			}
 		}
 
+		public void lowestLevelUp()
+		{
+			//IList<ArenaSeating> Seating;
+			// CurrentSeating = new List<ArenaSeating> { };
+			IList<string> levelUpList;
+			levelUpList = new List<string> { };
+			int lowestLvl = getArenaLvl;
+			if (getShopLvl < lowestLvl) lowestLvl = getShopLvl;
+			if (getResearchDevLvl < lowestLvl) lowestLvl = getResearchDevLvl;
+			if (getMonsterDenLvl < lowestLvl) lowestLvl = getMonsterDenLvl;
+			if (getArenaLvl == lowestLvl) levelUpList.Add("Arena");
+			if (getShopLvl == lowestLvl) levelUpList.Add("Shop");
+			if (getResearchDevLvl == lowestLvl) levelUpList.Add("RD");
+			if (getMonsterDenLvl == lowestLvl) levelUpList.Add("Den");
+			string choise = levelUpList[RndVal.Next(levelUpList.Count)];
+			if (choise == "Arena" && getGameCurrency >= getArenaLvlCost) arenaLevelUp();
+			if (choise == "Shop" && getGameCurrency >= getShopLvlCost) ShopLevelUp();
+			if (choise == "RD" && getGameCurrency >= getResearchDevLvlCost) ResearchDevLevelUp();
+			if (choise == "Den" && getGameCurrency >= getMonsterDenLvlCost) MonsterDenLevelUp();
+		}
 		public void arenaLevelUp()
 		{
 			getFightLog = getWarningLog = "\nArena upgraded!";
@@ -1403,9 +1423,9 @@ namespace TrainingProject
 			if (eRobo.getAnalysisLeft() == 0)
 			{
 				tmpAnalysis = (int)eRobo.getAnalysis;
-				if (RndVal.Next(100) > 75) myColour = Brushes.Red;
-				else if (RndVal.Next(100) > 75) myColour = Brushes.Orange;
-				else if (RndVal.Next(100) > 75) myColour = Brushes.Pink;
+				if (RndVal.Next(100) > 75) myColour = Brushes.LightGoldenrodYellow;
+				else if (RndVal.Next(100) > 75) myColour = Brushes.LightYellow;
+				else if (RndVal.Next(100) > 75) myColour = Brushes.YellowGreen;
 				else myColour = Brushes.Yellow;
 			}
 			AlsProgressBar XP = new AlsProgressBar(myColour) { Maximum = eRobo.getAnalysis, Value = tmpAnalysis, Width = 50, Height = 6 };

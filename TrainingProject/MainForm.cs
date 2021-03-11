@@ -845,6 +845,8 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.D) btnResearchDev.PerformClick();
 			// Den
 			else if (e.KeyCode == Keys.F) btnMonsterDen.PerformClick();
+			// Lowest Level
+			else if (e.KeyCode == Keys.L) MyGame.lowestLevelUp();
 			// Jackpot +
 			else if (e.KeyCode == Keys.J) increaseJackpotToolStripMenuItem.PerformClick();
 			// Jackpot +10
@@ -864,6 +866,7 @@ namespace TrainingApp
 				"\nShop Lvl:            S" +
 				"\nR&D Lvl:             D" +
 				"\nDen Lvl:              F" +
+				"\nLowest Lvl:         F" +
 				"\nJackpot+:           J" +
 				"\nJackpt+10:         K" +
 				"\nClear Warning: C");
