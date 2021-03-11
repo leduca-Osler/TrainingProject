@@ -866,7 +866,7 @@ namespace TrainingApp
 				"\nShop Lvl:            S" +
 				"\nR&D Lvl:             D" +
 				"\nDen Lvl:              F" +
-				"\nLowest Lvl:         F" +
+				"\nLowest Lvl:         L" +
 				"\nJackpot+:           J" +
 				"\nJackpt+10:         K" +
 				"\nClear Warning: C");
