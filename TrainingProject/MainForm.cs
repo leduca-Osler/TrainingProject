@@ -139,6 +139,7 @@ namespace TrainingApp
 				timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
 			}
+			cbTeamSelect.Focus();
 		}
 		public void update()
 		{
@@ -731,6 +732,7 @@ namespace TrainingApp
 				tickRate++;
 			}
 			saveGame();
+			cbTeamSelect.Focus();
 		}
 
 		private void mnuBossFight_Click(object sender, EventArgs e)
