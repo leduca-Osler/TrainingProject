@@ -431,16 +431,18 @@ namespace TrainingProject
 			get { return MonsterDenLvlCost; }
 			set { MonsterDenLvlCost = value; }
 		}
+		public int getMonsterDenLvlImage()
+		{
+			if (MonsterDenLvl > 8)
+			{
+				return 8; // Max number of Monster images
+			}
+			return MonsterDenLvl;
+		}
 		public int getMonsterDenLvl
 		{
 			get
-			{
-				if (MonsterDenLvl > 8)
-				{
-					return 8; // Max number of Monster images
-				}
-				return MonsterDenLvl;
-			}
+			{ return MonsterDenLvl; }
 			set { MonsterDenLvl = value; }
 		}
 		public long getMonsterDenLvlMaint
@@ -855,12 +857,12 @@ namespace TrainingProject
 			int lowestLvl = getArenaLvl;
 			if (getShopLvl < lowestLvl) lowestLvl = getShopLvl;
 			if (getResearchDevLvl < lowestLvl) lowestLvl = getResearchDevLvl;
-			if (MonsterDenLvl < lowestLvl) lowestLvl = MonsterDenLvl;
+			if (getMonsterDenLvl < lowestLvl) lowestLvl = getMonsterDenLvl;
 			// Add all utilities that are the lowest level
 			if (getArenaLvl == lowestLvl) levelUpList.Add("Arena");
 			if (getShopLvl == lowestLvl) levelUpList.Add("Shop");
 			if (getResearchDevLvl == lowestLvl) levelUpList.Add("RD");
-			if (MonsterDenLvl == lowestLvl) levelUpList.Add("Den");
+			if (getMonsterDenLvl == lowestLvl) levelUpList.Add("Den");
 			// randomly choose one of the lowest level utilities
 			string choise = levelUpList[RndVal.Next(levelUpList.Count)];
 			// level up
@@ -1172,7 +1174,7 @@ namespace TrainingProject
 			else
 			{
 				GameDifficultyFight = false;
-				Team Monsters = new Team(gameDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak);
+				Team Monsters = new Team(gameDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
 				Monsters.getName = "Game Diff " + gameDifficulty.ToString();
 				GameTeam2.Add(Monsters);
 				Jackpot = gameDifficulty * getArenaLvl * 1000;
@@ -1322,7 +1324,7 @@ namespace TrainingProject
 						GameTeam1[0].healRobos(0, 999999);
 					}
 					// Monster team... 
-					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak));
+					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak));
 				}
 				else
 				{
@@ -1931,7 +1933,7 @@ namespace TrainingProject
 									WinCount++;
 									GameTeam1[i].getDifficulty++;
 									// fight next difficulty
-									Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvl, findMonster, ref MonsterOutbreak);
+									Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
 									msg = GameTeam1[i].getName + " VS " + GameTeam2[i].getName + msg;
