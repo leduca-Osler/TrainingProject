@@ -849,19 +849,21 @@ namespace TrainingProject
 
 		public void lowestLevelUp()
 		{
-			//IList<ArenaSeating> Seating;
-			// CurrentSeating = new List<ArenaSeating> { };
 			IList<string> levelUpList;
 			levelUpList = new List<string> { };
+			// find lowest level
 			int lowestLvl = getArenaLvl;
 			if (getShopLvl < lowestLvl) lowestLvl = getShopLvl;
 			if (getResearchDevLvl < lowestLvl) lowestLvl = getResearchDevLvl;
-			if (getMonsterDenLvl < lowestLvl) lowestLvl = getMonsterDenLvl;
+			if (MonsterDenLvl < lowestLvl) lowestLvl = MonsterDenLvl;
+			// Add all utilities that are the lowest level
 			if (getArenaLvl == lowestLvl) levelUpList.Add("Arena");
 			if (getShopLvl == lowestLvl) levelUpList.Add("Shop");
 			if (getResearchDevLvl == lowestLvl) levelUpList.Add("RD");
-			if (getMonsterDenLvl == lowestLvl) levelUpList.Add("Den");
+			if (MonsterDenLvl == lowestLvl) levelUpList.Add("Den");
+			// randomly choose one of the lowest level utilities
 			string choise = levelUpList[RndVal.Next(levelUpList.Count)];
+			// level up
 			if (choise == "Arena" && getGameCurrency >= getArenaLvlCost) arenaLevelUp();
 			if (choise == "Shop" && getGameCurrency >= getShopLvlCost) ShopLevelUp();
 			if (choise == "RD" && getGameCurrency >= getResearchDevLvlCost) ResearchDevLevelUp();

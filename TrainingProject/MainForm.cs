@@ -732,7 +732,6 @@ namespace TrainingApp
 				tickRate++;
 			}
 			saveGame();
-			cbTeamSelect.Focus();
 		}
 
 		private void mnuBossFight_Click(object sender, EventArgs e)
