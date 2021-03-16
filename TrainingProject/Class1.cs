@@ -1369,11 +1369,11 @@ namespace TrainingProject
 					GameCurrencyLogMisc -= MonsterFighter*2;
 					GameTeam1[GameTeam1.Count - 1].getCurrency += MonsterFighter;
 					MonsterOutbreak.getCurrency += MonsterFighter;
-					msg += string.Format("${0:n0} MF:${1:n0} R:{2:c0}", tmp, MonsterFighter*2, tmp-(MonsterFighter*2));
+					msg += string.Format("{0:c0} MF:{1:c0} R:{2:c0}", tmp, MonsterFighter*2, tmp-(MonsterFighter*2));
 				}
 				else
 				{
-					msg += string.Format("${0:n0}", tmp);
+					msg += string.Format("{0:c0}", tmp);
 				}
 				if (GameTeam1.Count == 1)
 				{
@@ -1392,7 +1392,7 @@ namespace TrainingProject
 					int tmpFightPerMax = fightPercentMax;
 					if (GameTeam1 != null && GameTeam2 != null && GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated)
 						tmpFightPerMax += GameTeams.Count;
-					msg += String.Format(" R:{0:c0}\n{1}/{2} {3:n2}%\n", tmp - CurrentJackpot, fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
+					msg += String.Format("J:{1:c0} R:{1:c0}\n{2}/{3} {4:n2}%\n", CurrentJackpot, tmp - CurrentJackpot, fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
 				}
 				getFightLog = msg;
 				sortSkills();
@@ -1608,7 +1608,6 @@ namespace TrainingProject
 				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0} {9,-5}{10," + RowTwoLength[3] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Cost", getResearchDevHealCost, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild) };
 				MainPanel.Controls.Add(lblResearchLvl);
 				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs) };
-				int monsterCount = 0;
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
 				MainPanel.Controls.Add(lblMonsterDen);
 				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":c0}", BossCount, BossReward) };
