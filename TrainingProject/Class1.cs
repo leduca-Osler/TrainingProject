@@ -1392,7 +1392,7 @@ namespace TrainingProject
 					int tmpFightPerMax = fightPercentMax;
 					if (GameTeam1 != null && GameTeam2 != null && GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated)
 						tmpFightPerMax += GameTeams.Count;
-					msg += String.Format("J:{1:c0} R:{1:c0}\n{2}/{3} {4:n2}%\n", CurrentJackpot, tmp - CurrentJackpot, fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
+					msg += String.Format(" J:{0:c0} R:{1:c0}\n{2}/{3} {4:n2}%\n", CurrentJackpot, tmp - CurrentJackpot, fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
 				}
 				getFightLog = msg;
 				sortSkills();
