@@ -1427,9 +1427,7 @@ namespace TrainingProject
 			if (eRobo.getAnalysisLeft() == 0)
 			{
 				tmpAnalysis = (int)eRobo.getAnalysis;
-				if (RndVal.Next(100) > 75) myColour = Brushes.LightGoldenrodYellow;
-				else if (RndVal.Next(100) > 75) myColour = Brushes.LightYellow;
-				else if (RndVal.Next(100) > 75) myColour = Brushes.YellowGreen;
+				if (RndVal.Next(100) > 50) myColour = Brushes.LightGoldenrodYellow;
 				else myColour = Brushes.Yellow;
 			}
 			AlsProgressBar XP = new AlsProgressBar(myColour) { Maximum = eRobo.getAnalysis, Value = tmpAnalysis, Width = 50, Height = 6 };
