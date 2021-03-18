@@ -563,9 +563,9 @@ namespace TrainingApp
 				btnAutomatic.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
 					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
-				if (DateTime.Now > MyGame.BreakTime)
-					MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 			}
+			if (DateTime.Now > MyGame.BreakTime)
+				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 			Random rnd = new Random();
 			if (MyGame.getGameCurrency < 0 && rnd.Next(1000) > 990)
 			{
