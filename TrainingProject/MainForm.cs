@@ -552,7 +552,12 @@ namespace TrainingApp
 		private void pause()
 		{
 			MyGame.roundCount = 0;
-			if (timer1.Enabled)
+			if (DateTime.Now > MyGame.BreakTime)
+			{
+				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
+				btnAutomatic.BackColor = Color.White;
+			}
+			else if (timer1.Enabled)
 			{
 				timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
@@ -564,8 +569,6 @@ namespace TrainingApp
 				if (DateTime.Now > MyGame.SafeTime)
 					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 			}
-			if (DateTime.Now > MyGame.BreakTime)
-				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 			Random rnd = new Random();
 			if (MyGame.getGameCurrency < 0 && rnd.Next(1000) > 990)
 			{
