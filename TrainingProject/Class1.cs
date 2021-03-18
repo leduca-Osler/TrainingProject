@@ -4103,7 +4103,7 @@ namespace TrainingProject
 				else if (upSkill.cost < Energy)
 				{
 					int cycle = 0;
-					while (cycle < RndVal.Next(100))
+					while (cycle < RndVal.Next(100) && upSkill.cost < Energy)
 					{
 						upSkill.strength += 10;
 						upSkill.cost++;
