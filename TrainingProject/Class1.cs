@@ -880,12 +880,14 @@ namespace TrainingProject
 			ArenaLvl++;
 			ArenaLvlCost = roundValue(ArenaLvlCost, ArenaLvlCostBase, "up");
 			ArenaLvlCostBase += ArenaLvlCostBaseIncrement;
+			int lastPrice = Seating[0].Price;
 			foreach (ArenaSeating eSeating in Seating)
 			{
 				eSeating.Amount = (int)roundValue(eSeating.Amount, eSeating.AmountBase, "up");
 				eSeating.AmountBase++;
 				if (eSeating.Amount > 5000) eSeating.Amount = 5000;
-				if (RndVal.Next(100) > 50) eSeating.Price++;
+				if (RndVal.Next(100) > 50 || lastPrice > eSeating.Price) eSeating.Price++;
+				lastPrice = eSeating.Price;
 			}
 			// chance to add a new level of seating
 			if (RndVal.Next(100) > 90) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[0].Price * 2, 5, 1));
