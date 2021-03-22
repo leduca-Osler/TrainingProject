@@ -2044,7 +2044,7 @@ namespace TrainingProject
 					{
 						if (!isFighting(eTeam.getName))
 						{
-							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), ResearchDevRebuild, KOCount, this) };
+							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), ResearchDevRebuild, KOCount, this, roundCount) };
 							if (getGameCurrency > 0)
 								lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true, this));
 							MainPanel.Controls.Add(lblTeamstats);
@@ -3304,15 +3304,17 @@ namespace TrainingProject
 			foreach (Robot eRobo in MyTeam) { eRobo.resetLog(); }
 		}
 
-		public string getTeamStats(int[] PadRight, long rebuildSavings, int KOCount, Game myGame)
+		public string getTeamStats(int[] PadRight, long rebuildSavings, int KOCount, Game myGame, int roundCount = 0)
 		{
-			string strStats = "";
+			string strStats = ""; 
 			// If this team is not in Team1 or Team1 list
 			string strBuild = "";
 			int counter = 0;
 			int maxRobos = 50;
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
 				maxRobos = 10;
+			else if (roundCount > 0)
+				maxRobos = (MyTeam.Count * 2) - roundCount;
 			if (getAvailableRobo > 0)
 				strBuild = "!";
 			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(15).Substring(0,15), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
