@@ -3314,7 +3314,7 @@ namespace TrainingProject
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
 				maxRobos = 10;
 			else if (roundCount > 0)
-				maxRobos = (MyTeam.Count * 2) - roundCount;
+				maxRobos = (MyTeam.Count + 8) - roundCount;
 			if (getAvailableRobo > 0)
 				strBuild = "!";
 			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(15).Substring(0,15), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
