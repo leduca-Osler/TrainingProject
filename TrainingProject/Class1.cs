@@ -3310,17 +3310,23 @@ namespace TrainingProject
 			// If this team is not in Team1 or Team1 list
 			string strBuild = "";
 			int counter = 0;
+			int startCounter = 0;
 			int maxRobos = 50;
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
-				maxRobos = 10;
+			{
+				startCounter = RndVal.Next(MyTeam.Count-10);
+				if (MyTeam[startCounter].getKO > KOCount) startCounter = 0;
+				maxRobos = 10 + startCounter;
+			}
 			else if (roundCount > 0)
-				maxRobos = (MyTeam.Count + 8) - roundCount;
+				maxRobos = (20) - roundCount;
 			if (getAvailableRobo > 0)
 				strBuild = "!";
 			strStats = String.Format("{0} C:{1:n0}({2:n0}) W:{8:n0} S:{3:n0}{4}({5:n0}) D:{6:n0}({7:n0})",getName.PadRight(15).Substring(0,15), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
 			foreach (Robot eRobo in MyTeam)
 			{
-				if (counter < maxRobos)
+				// Add different robots...  
+				if (counter < maxRobos && counter >= startCounter)
 				{
 					strStats += eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes);
 					if (eRobo.getKO <= KOCount) counter++;
@@ -3332,12 +3338,12 @@ namespace TrainingProject
 					eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes);
 					if (eRobo.getKO <= KOCount)
 					{
-						if (counter == maxRobos)
+						if (counter == maxRobos || counter == 0)
 							strStats += Environment.NewLine + "->";
 						if (counter % 5 == 0)
 							strStats += " ";
 						strStats += tmpSkill;
-						counter++;
+						if (eRobo.getKO <= KOCount) counter++;
 					}
 
 				}
