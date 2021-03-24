@@ -845,6 +845,8 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.A) btnArenaLvl.PerformClick();
 			// Shop
 			else if (e.KeyCode == Keys.S) btnShop.PerformButtonClick();
+			// Shop restock
+			else if (e.KeyCode == Keys.R) mnuRestockShop.PerformClick();
 			// R&D
 			else if (e.KeyCode == Keys.D) btnResearchDev.PerformClick();
 			// Den
@@ -857,6 +859,7 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
 			// Clear Messages
 			else if (e.KeyCode == Keys.C) MyGame.clearWarnings();
+			// show message box with available shortcuts if not a windows special key
 			else if (e.KeyCode != Keys.Up && e.KeyCode != Keys.Down && e.KeyCode != Keys.Left 
 				&& e.KeyCode != Keys.Right && e.KeyCode != Keys.LWin && e.KeyCode != Keys.ControlKey 
 				&& e.KeyCode != Keys.Alt && e.KeyCode != Keys.Home && e.KeyCode != Keys.Menu
@@ -872,6 +875,7 @@ namespace TrainingApp
 				"\nR&D Lvl:             D" +
 				"\nDen Lvl:              F" +
 				"\nLowest Lvl:         L" +
+				"\nrestock:            R" +
 				"\nJackpot+:           J" +
 				"\nJackpt+10:         K" +
 				"\nClear Warning: C");

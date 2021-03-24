@@ -1371,11 +1371,11 @@ namespace TrainingProject
 					GameCurrencyLogMisc -= MonsterFighter*2;
 					GameTeam1[GameTeam1.Count - 1].getCurrency += MonsterFighter;
 					MonsterOutbreak.getCurrency += MonsterFighter;
-					msg += string.Format("{0:c0} MF:{1:c0} R:{2:c0}", tmp, MonsterFighter*2, tmp-(MonsterFighter*2));
+					msg += string.Format("G:{0:c0} MF:{1:c0} R:{2:c0}", tmp, MonsterFighter*2, tmp-(MonsterFighter*2));
 				}
 				else
 				{
-					msg += string.Format("{0:c0}", tmp);
+					msg += string.Format("G:{0:c0}", tmp);
 				}
 				if (GameTeam1.Count == 1)
 				{
