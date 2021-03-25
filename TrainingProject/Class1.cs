@@ -2338,7 +2338,7 @@ namespace TrainingProject
 			// if arena is in debt, none of the benefits are available (Monster den bonus, Equipment upgrades, Repair bay, etc) so no maintenance required.
 			if (getGameCurrency <= 0)
 				maintValue = RndVal.Next(50, 250);
-			// maintValue = 31; //test
+			// maintValue = 31; //test Monster Outbreak
 			switch (maintValue)
 			{
 				case 1:
@@ -3310,6 +3310,7 @@ namespace TrainingProject
 			// If this team is not in Team1 or Team1 list
 			string strBuild = "";
 			int counter = 0;
+			int shownCounter = 0;
 			int startCounter = 0;
 			int maxRobos = 50;
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
@@ -3317,7 +3318,7 @@ namespace TrainingProject
 				int maxStartCounter = MyTeam.Count - 10;
 				if (maxStartCounter < 0) maxStartCounter = 0;
 				startCounter = RndVal.Next(maxStartCounter);
-				if (MyTeam[startCounter].HP == 0) startCounter = 0;
+				if (MyTeam[startCounter].getKO > KOCount) startCounter = 0;
 				maxRobos = 10 + startCounter;
 			}
 			else if (roundCount > 0)
@@ -3332,6 +3333,7 @@ namespace TrainingProject
 				{
 					strStats += eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes);
 					if (eRobo.getKO <= KOCount) counter++;
+					shownCounter = 0;
 				}
 				else
 				{
@@ -3340,14 +3342,14 @@ namespace TrainingProject
 					eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes);
 					if (eRobo.getKO <= KOCount)
 					{
-						if (counter == maxRobos || counter == 0)
+						if (shownCounter == 0)
 							strStats += Environment.NewLine + "->";
-						if (counter % 5 == 0)
+						if (shownCounter % 5 == 0)
 							strStats += " ";
 						strStats += tmpSkill;
-						//if (eRobo.getKO <= KOCount) 
-						counter++;
+						shownCounter++;
 					}
+					counter++;
 
 				}
 			}
