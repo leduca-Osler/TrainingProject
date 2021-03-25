@@ -3314,7 +3314,9 @@ namespace TrainingProject
 			int maxRobos = 50;
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
 			{
-				startCounter = RndVal.Next(MyTeam.Count-10);
+				int maxStartCounter = MyTeam.Count - 10;
+				if (maxStartCounter < 0) maxStartCounter = 0;
+				startCounter = RndVal.Next(maxStartCounter);
 				if (MyTeam[startCounter].HP == 0) startCounter = 0;
 				maxRobos = 10 + startCounter;
 			}
@@ -3343,7 +3345,8 @@ namespace TrainingProject
 						if (counter % 5 == 0)
 							strStats += " ";
 						strStats += tmpSkill;
-						if (eRobo.getKO <= KOCount) counter++;
+						//if (eRobo.getKO <= KOCount) 
+						counter++;
 					}
 
 				}
