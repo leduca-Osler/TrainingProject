@@ -3315,7 +3315,7 @@ namespace TrainingProject
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
 			{
 				startCounter = RndVal.Next(MyTeam.Count-10);
-				if (MyTeam[startCounter].getKO > KOCount) startCounter = 0;
+				if (MyTeam[startCounter].getKO >= KOCount) startCounter = 0;
 				maxRobos = 10 + startCounter;
 			}
 			else if (roundCount > 0)
