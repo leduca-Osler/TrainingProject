@@ -3313,6 +3313,7 @@ namespace TrainingProject
 			int shownCounter = 0;
 			int startCounter = 0;
 			int maxRobos = 50;
+			int aliveCount = 0;
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
 			{
 				int maxStartCounter = MyTeam.Count - 10;
@@ -3332,7 +3333,11 @@ namespace TrainingProject
 				if (counter < maxRobos && counter >= startCounter)
 				{
 					strStats += eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes);
-					if (eRobo.getKO <= KOCount) counter++;
+					if (eRobo.getKO <= KOCount)
+					{
+						counter++;
+						aliveCount++;
+					}
 					shownCounter = 0;
 				}
 				else
@@ -3348,12 +3353,13 @@ namespace TrainingProject
 							strStats += " ";
 						strStats += tmpSkill;
 						shownCounter++;
+						aliveCount++;
 					}
 					counter++;
 
 				}
 			}
-			if (counter > 30) strStats += string.Format(" T:{0:n0}", counter);
+			if (aliveCount > 30) strStats += string.Format(" T:{0:n0}", aliveCount);
 			return strStats;
 		}
 				
