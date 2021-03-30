@@ -3353,6 +3353,7 @@ namespace TrainingProject
 
 				}
 			}
+			if (counter > 30) strStats += string.Format(" T:{0:n0}", counter);
 			return strStats;
 		}
 				

@@ -694,7 +694,17 @@ namespace TrainingApp
 		}
 		private void BreakTimer_Tick(object sender, EventArgs e)
 		{
-			int fightPercentOffset = 0;
+			int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
+			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
+				btnAutomatic.BackColor = Color.Purple;
+			else if (MyGame.SafeTime <= DateTime.Now || !timer1.Enabled)
+				btnAutomatic.BackColor = Color.Red;
+			else if (MyGame.getGameCurrency >= MyGame.ManagerCost && MyGame.maxManagerHours > MyGame.ManagerHrs && hrs < 1)
+				btnAutomatic.BackColor = Color.Gold;
+			else
+				btnAutomatic.BackColor = Color.White;
+
+				int fightPercentOffset = 0;
 			if (MyGame.GameTeam1 != null && MyGame.GameTeam2 != null && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].Automated && MyGame.GameTeam2[0].Automated)
 			{
 				BreakTimer.Interval = tickRate / MyGame.GameTeams.Count;
@@ -860,10 +870,7 @@ namespace TrainingApp
 			// Clear Messages
 			else if (e.KeyCode == Keys.C) MyGame.clearWarnings();
 			// show message box with available shortcuts if not a windows special key
-			else if (e.KeyCode != Keys.Up && e.KeyCode != Keys.Down && e.KeyCode != Keys.Left 
-				&& e.KeyCode != Keys.Right && e.KeyCode != Keys.LWin && e.KeyCode != Keys.ControlKey 
-				&& e.KeyCode != Keys.Alt && e.KeyCode != Keys.Home && e.KeyCode != Keys.Menu
-				&& e.KeyCode != Keys.Tab && e.KeyCode != Keys.MediaPlayPause) 
+			else if (e.KeyCode == Keys.OemQuestion || e.KeyCode == Keys.OemBackslash)
 				MessageBox.Show("Shortcuts " + e.KeyCode + 
 				"\nPause:               Space" +
 				"\nFight:                Enter / +" +
