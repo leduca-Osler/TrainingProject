@@ -3345,7 +3345,6 @@ namespace TrainingProject
 						if (counter % 5 == 0)
 							strStats += " ";
 						strStats += tmpSkill;
-						//if (eRobo.getKO <= KOCount) 
 						counter++;
 					}
 
