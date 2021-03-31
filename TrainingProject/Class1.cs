@@ -363,9 +363,6 @@ namespace TrainingProject
 		[JsonProperty]
 		private int MonsterDenBonus;
 		[JsonProperty]
-		public long MonsterDenBonusBase;
-		public long MonsterDenBonusBaseIncrement = 1;
-		[JsonProperty]
 		public long MonsterDenRepairs;
 		[JsonProperty]
 		public long MonsterDenRepairsBase;
@@ -595,7 +592,7 @@ namespace TrainingProject
 		}
 		public Game(int pGoalGameScore, int pGoalGameScoreBase, int pMaxTeams, long pTeamCost, long pTeamCostBase, long pGameCurrency, int pArenaLvl, long pArenaLvlCost, 
 			long pArenaLvlCostBase, long pArenaLvlMaint, int pMonsterDenLvl, long pMonsterDenLvlCost, long pMonsterDenLvlCostBase, long pMonsterDenLvlMaint, 
-			int pMonsterDenBonus, int pMonsterDenBonusBase, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint, 
+			int pMonsterDenBonus, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint, 
 			int pShopStock, long pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl,
 			long pResearchDevLvlCost, long pResearchDevLvlCostBase, long pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealValueBase, int pResearchDevHealBays, 
 			int pResearchDevHealCost, long pResearchDevRebuild, long pResearchDevRebuildBase, int pBossLvl, int pBossLvlBase, int pBossCount, int pBossDifficulty, int pBossDifficultyBase, long pBossReward,
@@ -646,10 +643,8 @@ namespace TrainingProject
 			ArenaLvlMaint = pArenaLvlMaint;
 			MonsterDenLvl = pMonsterDenLvl;
 			MonsterDenLvlCost = pMonsterDenLvlCost;
-			MonsterDenLvlCostBase = pMonsterDenBonusBase;
 			MonsterDenLvlMaint = pMonsterDenLvlMaint;
 			MonsterDenBonus = pMonsterDenBonus;
-			MonsterDenBonusBase = pMonsterDenBonusBase;
 			MonsterDenRepairs = pMonsterDenRepair;
 			MonsterDenRepairsBase = pMonsterDenRepairBase;
 			ResearchDevLvl = pResearchDevLvl;
@@ -742,7 +737,6 @@ namespace TrainingProject
 			MonsterDenLvlCostBase = MonsterDenLvlCostBaseIncrement;
 			MonsterDenLvlMaint = 1;
 			MonsterDenBonus = 5;
-			MonsterDenBonusBase = MonsterDenBonusBaseIncrement;
 			MonsterDenRepairs = 200;
 			MonsterDenRepairsBase = MonsterDenRepairsBaseIncrement;
 			ResearchDevLvl = 1;
@@ -930,8 +924,7 @@ namespace TrainingProject
 			MonsterDenLvl++;
 			MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MonsterDenLvlCostBase, "up");
 			MonsterDenLvlCostBase += MonsterDenLvlCostBaseIncrement;
-			MonsterDenBonus = (int)roundValue(MonsterDenBonus, MonsterDenBonusBase, "up");
-			MonsterDenBonusBase += MonsterDenBonusBaseIncrement;
+			MonsterDenBonus++;
 			MonsterDenRepairs = roundValue(MonsterDenRepairs, MonsterDenRepairsBase, "up");
 			MonsterDenRepairsBase += MonsterDenRepairsBaseIncrement;
 		}
@@ -1351,7 +1344,7 @@ namespace TrainingProject
 				int tmp = 0;
 				foreach (ArenaSeating eSeating in CurrentSeating)
 				{
-					int min = 0;// (tmpMonsterDenBonus <= eSeating.Amount / 2 ? tmpMonsterDenBonus : eSeating.Amount / 2);
+					int min = 0;
 					int max = (tmpTotalScore > eSeating.Amount ? eSeating.Amount : tmpTotalScore);
 					if (max < min)
 						max = min;
