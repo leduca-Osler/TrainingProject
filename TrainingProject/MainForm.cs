@@ -315,7 +315,6 @@ namespace TrainingApp
 				long jMonsterDenLvlCostBase = json["MonsterDenLvlCostBase"] != null ? (long)json["MonsterDenLvlCostBase"] : 1000;
 				long jMonsterDenMaint = json["MonsterDenLvlMaint"] != null ? (long)json["MonsterDenLvlMaint"] : 1;
 				int jMonsterDenBonus = json["MonsterDenBonus"] != null ? (int)json["MonsterDenBonus"] : 20;
-				int jMonsterDenBonusBase = json["MonsterDenBonusBase"] != null ? (int)json["MonsterDenBonusBase"] : 10;
 				int jMonsterDenRepair = json["MonsterDenRepair"] != null ? (int)json["MonsterDenRepair"] : 200;
 				int jMonsterDenRepairBase = json["MonsterDenRepairBase"] != null ? (int)json["MonsterDenRepairBase"] : 100;
 				int jShopLvl = json["ShopLvl"] != null ? (int)json["ShopLvl"] : 1;
@@ -346,7 +345,7 @@ namespace TrainingApp
 				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jGoalGameScoreBase, jMaxTeams, jTeamCost, jTeamCostBase, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaLvlCostBase, jArenaMaint, 
-					jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenBonusBase, jMonsterDenRepair, jMonsterDenRepairBase, 
+					jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenRepair, jMonsterDenRepairBase, 
 					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 
 					jResearchDevHealCost, jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty);
