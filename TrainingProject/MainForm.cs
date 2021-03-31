@@ -120,12 +120,7 @@ namespace TrainingApp
          * *******************/
 		private void timer1_Tick(object sender, EventArgs e)
 		{
-			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
-				btnAutomatic.BackColor = Color.Purple;
-			else if (MyGame.getGameCurrency >= MyGame.ManagerCost && MyGame.maxManagerHours > MyGame.ManagerHrs)
-				btnAutomatic.BackColor = Color.Gold;
-			else
-				btnAutomatic.BackColor = Color.White;
+			setColour();
 			if (MyGame.SafeTime > DateTime.Now)
 			{
 				update();
@@ -691,7 +686,7 @@ namespace TrainingApp
 		{
 			MyGame.AddManagerHours();
 		}
-		private void BreakTimer_Tick(object sender, EventArgs e)
+		public void setColour()
 		{
 			int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
 			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
@@ -702,8 +697,11 @@ namespace TrainingApp
 				btnAutomatic.BackColor = Color.Gold;
 			else
 				btnAutomatic.BackColor = Color.White;
-
-				int fightPercentOffset = 0;
+		}
+		private void BreakTimer_Tick(object sender, EventArgs e)
+		{
+			setColour();
+			int fightPercentOffset = 0;
 			if (MyGame.GameTeam1 != null && MyGame.GameTeam2 != null && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].Automated && MyGame.GameTeam2[0].Automated)
 			{
 				BreakTimer.Interval = tickRate / MyGame.GameTeams.Count;
