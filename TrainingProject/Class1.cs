@@ -3407,6 +3407,7 @@ namespace TrainingProject
 				}
 				string strName = MyTeam[robo].getName;
 				bool bIsMonsterTmp = MyTeam[robo].bIsMonster;
+				bool btmpMonster = MyTeam[robo].bMonster;
 				int runesUsed = getRunes(MyTeam[robo].getBaseStats(), true);
 				if (!pay || MyTeam[robo].RebuildPercent + runesUsed > RndVal.Next(100))
 				{
@@ -3414,6 +3415,7 @@ namespace TrainingProject
 					MyTeam[robo] = new Robot(baseStats, "temp", RndVal.Next(8), false);
 					MyTeam[robo].getName = strName;
 					MyTeam[robo].bIsMonster = bIsMonsterTmp;
+					MyTeam[robo].bMonster = btmpMonster;
 					if (!MyTeam[robo].bIsMonster)
 					{
 						string strFormat = "\n +++ {0} : {1} has been rebuilt! Rank {2:n1} (+{3}B/{4}R)";
