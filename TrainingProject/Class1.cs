@@ -1343,7 +1343,6 @@ namespace TrainingProject
 				}
 				int tmp = 0;
 				int countChars = 0;
-				string tmpMessage = "";
 				foreach (ArenaSeating eSeating in CurrentSeating)
 				{
 					int min = 0;
@@ -1354,20 +1353,9 @@ namespace TrainingProject
 					tmpMonsterDenBonus -= NumSeats;
 					tmpTotalScore -= NumSeats;
 					if (tmpMonsterDenBonus < 0) tmpMonsterDenBonus = 0;
-					if (roundCount > 100) 
-						tmpMessage = string.Format("{0}({1:n0}) ", eSeating.Level, NumSeats);
-					else 
-						tmpMessage = string.Format("{0}({1:n0}/{2:n0}) ", eSeating.Level, NumSeats, max);
-					msg += tmpMessage;
+					msg += displaySeating(eSeating.Level.ToString(), NumSeats, max, ref countChars);
 					tmp += eSeating.Price * NumSeats;
 					eSeating.Amount -= NumSeats;
-					countChars += tmpMessage.Length;
-					// Add a new line for every 45 characters
-					if (countChars > 45)
-					{
-						countChars = 0;
-						msg += "\n          ";
-					}
 				}
 				// Monster fighter teams get 10% of jackpot
 				if (GameTeam1.Count > 1)
@@ -1377,11 +1365,13 @@ namespace TrainingProject
 					GameCurrencyLogMisc -= MonsterFighter*2;
 					GameTeam1[GameTeam1.Count - 1].getCurrency += MonsterFighter;
 					MonsterOutbreak.getCurrency += MonsterFighter;
-					msg += string.Format("G:{0:c0} MF:{1:c0} R:{2:c0}", tmp, MonsterFighter*2, tmp-(MonsterFighter*2));
+					msg += displaySeating("G", tmp, -1, ref countChars);
+					msg += displaySeating("MG", MonsterFighter * 2, -1, ref countChars);
+					msg += displaySeating("R", tmp - (MonsterFighter * 2), -1, ref countChars);
 				}
 				else
 				{
-					msg += string.Format("G:{0:c0}", tmp);
+					msg += displaySeating("G", tmp, -1, ref countChars);
 				}
 				if (GameTeam1.Count == 1)
 				{
@@ -1400,13 +1390,36 @@ namespace TrainingProject
 					int tmpFightPerMax = fightPercentMax;
 					if (GameTeam1 != null && GameTeam2 != null && GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated)
 						tmpFightPerMax += GameTeams.Count;
-					msg += String.Format(" J:{0:c0} R:{1:c0}\n{2}/{3} {4:n2}%\n", CurrentJackpot, tmp - CurrentJackpot, fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
+
+					msg += displaySeating("J", CurrentJackpot, -1, ref countChars);
+					msg += displaySeating("R", tmp - CurrentJackpot, -1, ref countChars);
+					msg += String.Format("\n{0}/{1} {2:n2}%\n", fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
+
 				}
 				getFightLog = msg;
 				sortSkills();
 				GameTeam1[GameTeam1.Count - 1].clean();
 				GameTeam2[GameTeam2.Count - 1].clean();
 			}
+		}
+		
+		public string displaySeating(string heading, int Value, int Max, ref int countChars)
+		{
+			string retMessage = "";
+			if (Max == -1)
+				retMessage += string.Format("{0}({1:c0}) ", heading, Value);
+			else if (roundCount > 100)
+				retMessage += string.Format("{0}({1:n0}) ", heading, Value);
+			else
+				retMessage += string.Format("{0}({1:n0}/{2:n0}) ", heading, Value, Max);
+			countChars += retMessage.Length;
+			// Add a new line for every 45 characters
+			if (countChars > 45)
+			{
+				countChars = 0;
+				retMessage += "\n          ";
+			}
+			return retMessage;
 		}
 		public Boolean isFighting()
 		{
