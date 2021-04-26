@@ -1407,11 +1407,11 @@ namespace TrainingProject
 		{
 			string retMessage = "";
 			if (Max == -1)
-				retMessage += string.Format("{0}({1:c0}) ", heading, Value);
+				retMessage += string.Format("{0}:{1:c0} ", heading, Value);
 			else if (roundCount > 100)
-				retMessage += string.Format("{0}({1:n0}) ", heading, Value);
+				retMessage += string.Format("{0}:{1:n0} ", heading, Value);
 			else
-				retMessage += string.Format("{0}({1:n0}/{2:n0}) ", heading, Value, Max);
+				retMessage += string.Format("{0}:{1:n0}/{2:n0} ", heading, Value, Max);
 			countChars += retMessage.Length;
 			// Add a new line for every 45 characters
 			if (countChars > 45)
