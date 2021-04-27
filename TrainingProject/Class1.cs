@@ -1406,6 +1406,12 @@ namespace TrainingProject
 		public string displaySeating(string heading, int Value, int Max, ref int countChars)
 		{
 			string retMessage = "";
+			// Add a new line for every 45 characters
+			if (countChars > 45)
+			{
+				countChars = 0;
+				retMessage += "\n          ";
+			}
 			if (Max == -1)
 				retMessage += string.Format("{0}:{1:c0} ", heading, Value);
 			else if (roundCount > 100)
@@ -1413,12 +1419,6 @@ namespace TrainingProject
 			else
 				retMessage += string.Format("{0}:{1:n0}/{2:n0} ", heading, Value, Max);
 			countChars += retMessage.Length;
-			// Add a new line for every 45 characters
-			if (countChars > 45)
-			{
-				countChars = 0;
-				retMessage += "\n          ";
-			}
 			return retMessage;
 		}
 		public Boolean isFighting()
