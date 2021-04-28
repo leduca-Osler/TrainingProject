@@ -1414,10 +1414,10 @@ namespace TrainingProject
 			}
 			if (Max == -1)
 				retMessage += string.Format("{0}:{1:c0} ", heading, Value);
-			else if (roundCount > 100)
-				if (Value > 0) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
-			else
+			else if (roundCount < 50)
 				retMessage += string.Format("{0}:{1:n0}/{2:n0} ", heading, Value, Max);
+			else if (Value > 0)
+				retMessage += string.Format("{0}:{1:n0} ", heading, Value);
 			countChars += retMessage.Length;
 			return retMessage;
 		}
