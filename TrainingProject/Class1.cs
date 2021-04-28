@@ -805,13 +805,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-
-			/*Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 5) };
-			ArenaLvl = 1;
-			ArenaLvlCost = 2000;
-			ArenaLvlCostBase = ArenaLvlCostBaseIncrement;
-			ArenaLvlMaint = 1;
-			getGameCurrency += 100000000;*/
 		}
 
 		public void resetShowDefeated()
@@ -1422,7 +1415,7 @@ namespace TrainingProject
 			if (Max == -1)
 				retMessage += string.Format("{0}:{1:c0} ", heading, Value);
 			else if (roundCount > 100)
-				retMessage += string.Format("{0}:{1:n0} ", heading, Value);
+				if (Value > 0) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
 			else
 				retMessage += string.Format("{0}:{1:n0}/{2:n0} ", heading, Value, Max);
 			countChars += retMessage.Length;
