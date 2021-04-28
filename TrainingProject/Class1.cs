@@ -805,6 +805,13 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+
+			/*Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 5) };
+			ArenaLvl = 1;
+			ArenaLvlCost = 2000;
+			ArenaLvlCostBase = ArenaLvlCostBaseIncrement;
+			ArenaLvlMaint = 1;
+			getGameCurrency += 100000000;*/
 		}
 
 		public void resetShowDefeated()
@@ -880,11 +887,11 @@ namespace TrainingProject
 				eSeating.Amount = (int)roundValue(eSeating.Amount, eSeating.AmountBase, "up");
 				eSeating.AmountBase++;
 				if (eSeating.Amount > 5000) eSeating.Amount = 5000;
-				if (RndVal.Next(100) > 50 || lastPrice > eSeating.Price) eSeating.Price++;
+				if (RndVal.Next(100) > 98 || lastPrice > eSeating.Price) eSeating.Price++;
 				lastPrice = eSeating.Price;
 			}
 			// chance to add a new level of seating
-			if (RndVal.Next(100) > 90) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[0].Price * 2, 5, 1));
+			if (RndVal.Next(100) > (85 - ArenaLvl + (Seating.Count* 5))) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 5, 1)); 
 		}
 		public string bossLevelUp()
 		{
