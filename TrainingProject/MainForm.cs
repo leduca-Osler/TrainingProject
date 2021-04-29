@@ -549,9 +549,12 @@ namespace TrainingApp
 			if (DateTime.Now > MyGame.BreakTime)
 			{
 				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
+				timer1.Enabled = true;
 				btnAutomatic.BackColor = Color.White;
+				if (DateTime.Now > MyGame.SafeTime)
+					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 			}
-			if (timer1.Enabled)
+			else if (timer1.Enabled)
 			{
 				timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
