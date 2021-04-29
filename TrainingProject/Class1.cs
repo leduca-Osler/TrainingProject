@@ -1327,7 +1327,7 @@ namespace TrainingProject
 					GameTeam2.Add(GameTeams[Team2Index]);
 					PotScore += GameTeam2[GameTeam2.Count - 1].getScore;
 				}
-				string msg = Environment.NewLine + "     Att: ";
+				string msg = "";
 				int tmpMonsterDenBonus = getMonsterDenBonus;
 				if (getGameCurrency <= 0) tmpMonsterDenBonus = 0;
 				if (GameTeam1.Count == 1) PotScore += tmpMonsterDenBonus;
@@ -1343,6 +1343,7 @@ namespace TrainingProject
 				}
 				int tmp = 0;
 				int countChars = 0;
+				int totalAttendance = 0;
 				foreach (ArenaSeating eSeating in CurrentSeating)
 				{
 					int min = 0;
@@ -1355,8 +1356,11 @@ namespace TrainingProject
 					if (tmpMonsterDenBonus < 0) tmpMonsterDenBonus = 0;
 					msg += displaySeating(eSeating.Level.ToString(), NumSeats, max, ref countChars);
 					tmp += eSeating.Price * NumSeats;
+					totalAttendance += NumSeats;
 					eSeating.Amount -= NumSeats;
 				}
+				// total attendance
+				msg = displaySeating("\n   TAttd", totalAttendance, -2, ref countChars) + msg;
 				// Monster fighter teams get 10% of jackpot
 				if (GameTeam1.Count > 1)
 				{
@@ -1407,17 +1411,16 @@ namespace TrainingProject
 		{
 			string retMessage = "";
 			// Add a new line for every 45 characters
-			if (countChars > 45)
+			//MessageBox.Show(MainFormPanel.Width.ToString());
+			if (countChars > MainFormPanel.Width / 10)
 			{
 				countChars = 0;
 				retMessage += "\n          ";
 			}
-			if (Max == -1)
-				retMessage += string.Format("{0}:{1:c0} ", heading, Value);
-			else if (roundCount < 50)
-				retMessage += string.Format("{0}:{1:n0}/{2:n0} ", heading, Value, Max);
-			else if (Value > 0)
-				retMessage += string.Format("{0}:{1:n0} ", heading, Value);
+			if (Max == -1) retMessage += string.Format("{0}:{1:c0} ", heading, Value);
+			else if (Max == -2) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
+			else if (roundCount < 50) retMessage += string.Format("{0}:{1:n0}/{2:n0} ", heading, Value, Max);
+			else if (Value > 0) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
 			countChars += retMessage.Length;
 			return retMessage;
 		}
