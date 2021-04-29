@@ -551,7 +551,7 @@ namespace TrainingApp
 				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 				btnAutomatic.BackColor = Color.White;
 			}
-			else if (timer1.Enabled)
+			if (timer1.Enabled)
 			{
 				timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
