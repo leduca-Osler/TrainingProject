@@ -924,7 +924,7 @@ namespace TrainingProject
 			MonsterDenLvl++;
 			MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MonsterDenLvlCostBase, "up");
 			MonsterDenLvlCostBase += MonsterDenLvlCostBaseIncrement;
-			MonsterDenBonus++;
+			MonsterDenBonus += RndVal.Next(MonsterDenLvl);
 			MonsterDenRepairs = roundValue(MonsterDenRepairs, MonsterDenRepairsBase, "up");
 			MonsterDenRepairsBase += MonsterDenRepairsBaseIncrement;
 		}
