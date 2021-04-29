@@ -1415,7 +1415,7 @@ namespace TrainingProject
 			if (countChars > MainFormPanel.Width / 10)
 			{
 				countChars = 0;
-				retMessage += "\n         ";
+				retMessage += "\n       ";
 			}
 			if (Max == -1) retMessage += string.Format("{0}:{1:c0} ", heading, Value);
 			else if (Max == -2) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
