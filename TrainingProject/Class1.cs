@@ -1360,7 +1360,7 @@ namespace TrainingProject
 					eSeating.Amount -= NumSeats;
 				}
 				// total attendance
-				msg = displaySeating("\n   TAttd", totalAttendance, -2, ref countChars) + msg;
+				msg = displaySeating("\n    Attd", totalAttendance, -2, ref countChars) + msg;
 				// Monster fighter teams get 10% of jackpot
 				if (GameTeam1.Count > 1)
 				{
