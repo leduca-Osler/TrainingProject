@@ -1411,7 +1411,6 @@ namespace TrainingProject
 		{
 			string retMessage = "";
 			// Add a new line for every 45 characters
-			//MessageBox.Show(MainFormPanel.Width.ToString());
 			if (countChars > MainFormPanel.Width / 10)
 			{
 				countChars = 0;
@@ -1420,7 +1419,7 @@ namespace TrainingProject
 			if (Max == -1) retMessage += string.Format("{0}:{1:c0} ", heading, Value);
 			else if (Max == -2) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
 			else if (roundCount < 50) retMessage += string.Format("{0}:{1:n0}/{2:n0} ", heading, Value, Max);
-			else if (Value > 0) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
+			else if (Value > 0 && roundCount < 200) retMessage += string.Format("{0}:{1:n0} ", heading, Value);
 			countChars += retMessage.Length;
 			return retMessage;
 		}
