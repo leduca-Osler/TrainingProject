@@ -1342,7 +1342,7 @@ namespace TrainingProject
 					}
 				}
 				int tmp = 0;
-				int countChars = 0;
+				int countChars = 10 + tmpTotalScore.ToString().Length;
 				int totalAttendance = 0;
 				foreach (ArenaSeating eSeating in CurrentSeating)
 				{
