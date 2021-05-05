@@ -405,7 +405,7 @@ namespace TrainingProject
 		[JsonProperty]
 		public int CurrentJackpot;
 		public int CurrentJackpotLvl;
-		public int MinJackpotLvl;
+		public int MinJackpot;
 		public int CurrentJackpotBase;
 		public int CurrentJackpotBaseIncrement;
 		public long MaxJackpot;
@@ -620,7 +620,7 @@ namespace TrainingProject
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
 			CurrentJackpotLvl = 1;
-			MinJackpotLvl = 1;
+			MinJackpot = 3;
 			CurrentJackpotBase = 1;
 			CurrentJackpotBaseIncrement = 1;
 			fighting = false;
@@ -703,7 +703,7 @@ namespace TrainingProject
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
 			CurrentJackpotLvl = 1; 
-			MinJackpotLvl = 1;
+			MinJackpot = 3;
 			CurrentJackpotBase = 1;
 			CurrentJackpotBaseIncrement = 1;
 			findMonster = 50;
@@ -2144,7 +2144,7 @@ namespace TrainingProject
 		}
 		public int DecreaseJackpot()
 		{
-			if (CurrentJackpot > 3 && CurrentJackpotLvl > MinJackpotLvl)
+			if (CurrentJackpot > MinJackpot)
 			{
 				CurrentJackpotLvl--;
 				CurrentJackpot = roundValue(CurrentJackpot, CurrentJackpotBase, "down");
@@ -2157,7 +2157,7 @@ namespace TrainingProject
 				CurrentJackpotLvl = 1;
 				CurrentJackpotBase = 1;
 				CurrentJackpotBaseIncrement = 1;
-				IncreaseJackpot(MinJackpotLvl);
+				IncreaseJackpot(MinJackpot);
 			}
 			return CurrentJackpot;
 		}
