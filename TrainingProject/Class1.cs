@@ -950,7 +950,7 @@ namespace TrainingProject
 			{
 				getGameCurrency -= ShopStockCost;
 				GameCurrencyLogMisc -= ShopStockCost;
-				storeEquipment.Add(new Equipment(AddArmour(), RndVal.Next(5,ShopMaxStat), RndVal.Next(100, ShopMaxDurability),RndVal));
+				storeEquipment.Add(new Equipment(AddArmour(), RndVal.Next(5,ShopMaxStat), RndVal.Next(100, ShopMaxDurability),RndVal,false,ShopUpgradeValue*100));
 			}
 		}
 
@@ -3439,6 +3439,8 @@ namespace TrainingProject
 				string strName = MyTeam[robo].getName;
 				bool bIsMonsterTmp = MyTeam[robo].bIsMonster;
 				bool btmpMonster = MyTeam[robo].bMonster;
+				Equipment weapon = MyTeam[robo].getEquipWeapon;
+				Equipment armour = MyTeam[robo].getEquipArmour;
 				int runesUsed = getRunes(MyTeam[robo].getBaseStats(), true);
 				if (!pay || MyTeam[robo].RebuildPercent + runesUsed > RndVal.Next(100))
 				{
@@ -3447,6 +3449,8 @@ namespace TrainingProject
 					MyTeam[robo].getName = strName;
 					MyTeam[robo].bIsMonster = bIsMonsterTmp;
 					MyTeam[robo].bMonster = btmpMonster;
+					MyTeam[robo].getEquipWeapon = weapon;
+					MyTeam[robo].getEquipArmour = armour;
 					if (!MyTeam[robo].bIsMonster)
 					{
 						string strFormat = "\n +++ {0} : {1} has been rebuilt! Rank {2:n1} (+{3}B/{4}R)";
@@ -4571,7 +4575,7 @@ namespace TrainingProject
 		public long eUpgradeCostBase = 0;
 		[JsonProperty]
 		public long eUpgradeCostBaseIncrement = 0;
-		public Equipment(bool addWeapon, int value, int durability, Random RndVal, Boolean isBoss = false)
+		public Equipment(bool addWeapon, int value, int durability, Random RndVal, Boolean isBoss = false, int upgradeCost = 10)
 		{
 			int Type = 0;
 			if (addWeapon)
@@ -4628,7 +4632,9 @@ namespace TrainingProject
 					break;
 			}
 			eMaxDurability = eDurability = durability;
-			eUpgradeCost = ePrice = eUpgradeCostBase = eUpgradeCostBaseIncrement = (value * 10) + durability;
+			ePrice = (value * 10) + durability;
+			eUpgradeCost = eUpgradeCostBase = upgradeCost;
+			eUpgradeCostBaseIncrement = (int)(upgradeCost * 0.75);
 		}
 		public Equipment(string pType, string pName, int pHealth, int pEnergy, int pArmour, int pDamage, int pHit, int pMentalStrength, int pMentalDefense, int pSpeed, long pPrice, 
 			int pDurability, int pMaxDurability, long pUpgradeCost, long pUpgradeCostBase, long pUpgradeCostBaseIncrement, int pUpgrade)
