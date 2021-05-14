@@ -518,6 +518,7 @@ namespace TrainingApp
 					}
 				}
 			}
+			MyGame.MainFormPanel = MainPannel;
 			cbTeamSelect.Items.Clear();
 			cbTeamSelect.Items.Add("Stats");
 			foreach (Team eTeam in MyGame.GameTeams)
