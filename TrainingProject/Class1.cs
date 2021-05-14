@@ -384,8 +384,6 @@ namespace TrainingProject
 		[JsonProperty]
 		private int ResearchDevHealBays;
 		[JsonProperty]
-		private int ResearchDevHealCost;
-		[JsonProperty]
 		public long ResearchDevRebuild;
 		[JsonProperty]
 		public long ResearchDevRebuildBase;
@@ -548,11 +546,6 @@ namespace TrainingProject
 			get { return ResearchDevHealBays; }
 			set { ResearchDevHealBays = value; }
 		}
-		public int getResearchDevHealCost
-		{
-			get { return ResearchDevHealCost; }
-			set { ResearchDevHealCost = value; }
-		}
 		public int getAvailableTeams
 		{
 			get
@@ -595,7 +588,7 @@ namespace TrainingProject
 			int pMonsterDenBonus, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint, 
 			int pShopStock, long pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl,
 			long pResearchDevLvlCost, long pResearchDevLvlCostBase, long pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealValueBase, int pResearchDevHealBays, 
-			int pResearchDevHealCost, long pResearchDevRebuild, long pResearchDevRebuildBase, int pBossLvl, int pBossLvlBase, int pBossCount, int pBossDifficulty, int pBossDifficultyBase, long pBossReward,
+			long pResearchDevRebuild, long pResearchDevRebuildBase, int pBossLvl, int pBossLvlBase, int pBossCount, int pBossDifficulty, int pBossDifficultyBase, long pBossReward,
 			int pGameDifficult)
 		{
 			getRoboNumeral = 1;
@@ -654,7 +647,6 @@ namespace TrainingProject
 			ResearchDevHealValue = pResearchDevHealValue;
 			ResearchDevHealValueBase = pResearchDevHealValueBase;
 			ResearchDevHealBays = pResearchDevHealBays;
-			ResearchDevHealCost = pResearchDevHealCost;
 			ResearchDevRebuild = pResearchDevRebuild;
 			ResearchDevRebuildBase = pResearchDevRebuildBase;
 			gameDifficulty = pGameDifficult;
@@ -746,7 +738,6 @@ namespace TrainingProject
 			ResearchDevHealValue = 2;
 			ResearchDevHealValueBase = ResearchDevHealValueBaseIncrement;
 			ResearchDevHealBays = 1;
-			ResearchDevHealCost = 1;
 			ResearchDevRebuild = 50;
 			ResearchDevRebuildBase = ResearchDevRebuildBaseIncrement;
 			gameDifficulty = 1;
@@ -979,7 +970,6 @@ namespace TrainingProject
 			ResearchDevLvl++;
 			ResearchDevLvlCost = roundValue(ResearchDevLvlCost, ResearchDevLvlCostBase, "up");
 			ResearchDevLvlCostBase += ResearchDevLvlCostBaseIncrement;
-			ResearchDevHealCost++;
 			ResearchDevHealValue = roundValue(ResearchDevHealValue, ResearchDevHealValueBase, "up");
 			ResearchDevHealValueBase += ResearchDevHealValueBaseIncrement;
 			ResearchDevRebuild = roundValue(ResearchDevRebuild, ResearchDevRebuildBase, "up");
@@ -1085,24 +1075,19 @@ namespace TrainingProject
 		public Boolean Repair()
 		{
 			Boolean fullHP = true;
-			Team[] teamHeal = new Team[ResearchDevHealBays];
-			for (int i = 0; i < teamHeal.Length; i++)
-				teamHeal[i] = GameTeams[RndVal.Next(GameTeams.Count)];
-			foreach (Team eTeam in GameTeams)
+			int beds = ResearchDevHealBays;
+			for (int index = GameTeams.Count-1; index >= 0; index--) // Team eTeam in GameTeams)
 			{
 				Boolean tmpFullHP = true;
-				if (!isFighting(eTeam.getName) && !isFighting("arena"))
+				if (!isFighting(GameTeams[index].getName) && !isFighting("arena"))
 				{
-					if (!Array.Exists(teamHeal, element => element.Equals(eTeam)) || (getGameCurrency <= 0))
-						tmpFullHP = eTeam.healRobos(0, 1);
-					else
-						tmpFullHP = eTeam.healRobos(ResearchDevHealCost, ResearchDevHealValue);
+					tmpFullHP = GameTeams[index].healRobos(ref beds, ResearchDevHealValue);
 					if (tmpFullHP == false)
 						fullHP = false;
 				}
 			}
-			MonsterOutbreak.healRobos(0, 1);
-			Bosses.healRobos(0, 999, true);
+			MonsterOutbreak.healRobos(ref beds, 2);
+			Bosses.healRobos(ref beds, 999, true);
 			return fullHP;
 		}
 		public bool isFighting(string teamName)
@@ -1316,7 +1301,8 @@ namespace TrainingProject
 						{
 							GameTeam1[0].getDifficulty = RndVal.Next(GameTeam1[0].MyTeam[GameTeam1[0].MyTeam.Count-1].getLevel/5 , GameTeam1[0].MyTeam[0].getLevel/5);
 						}
-						GameTeam1[0].healRobos(0, 999999);
+						int beds = 0;
+						GameTeam1[0].healRobos(ref beds, 999999);
 					}
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak));
@@ -1546,8 +1532,8 @@ namespace TrainingProject
 				};
 				int[] RowTwoLength =
 					{ getMaxLength(new string[] { string.Format("{0}/{1}", storeEquipment.Count, getShopStock), string.Format("{0:n0}", getResearchDevHealValue), string.Format("{0:n0}", MonsterOutbreak.MyTeam.Count) })
-					, getMaxLength(new string[] { string.Format("{0:n0}", getShopMaxDurability), string.Format("{0:n0}", getResearchDevHealCost), string.Format("{0:n0}", MonsterDenBonus) })
-					, getMaxLength(new string[] { string.Format("{0:n0}", getShopMaxStat), string.Format("{0:n0}", getResearchDevHealBays) })
+					, getMaxLength(new string[] { string.Format("{0:n0}", getShopMaxDurability), string.Format("{0:n0}", MonsterDenBonus), string.Format("{0:n0}", getResearchDevHealBays) })
+					, getMaxLength(new string[] { string.Format("{0:n0}", getShopMaxStat) })
 					, getMaxLength(new string[] { string.Format("{0:n0}", getShopStockCost) })
 					, getMaxLength(new string[] { string.Format("{0:n0}", getShopUpgradeValue) })
 				};
@@ -1626,7 +1612,7 @@ namespace TrainingProject
 					}
 				}
 				MainPanel.Controls.Add(pnlEquipment);
-				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0} {9,-5}{10," + RowTwoLength[3] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Cost", getResearchDevHealCost, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild) };
+				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild) };
 				MainPanel.Controls.Add(lblResearchLvl);
 				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
@@ -1957,7 +1943,8 @@ namespace TrainingProject
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
 									msg = GameTeam1[i].getName + " VS " + GameTeam2[i].getName + msg;
-									GameTeam1[i].healRobos(0, 1);
+									int bays = 0;
+									GameTeam1[i].healRobos(ref bays, 1);
 									equip(GameTeam1[i], true);
 									newMonster = true;
 								}
@@ -3488,23 +3475,27 @@ namespace TrainingProject
 			}
 			return num;
 		}
-		public Boolean healRobos(int cost, int value, bool isBoss = false)
+		public Boolean healRobos(ref int beds, int value, bool isBoss = false)
 		{
 			Boolean fullHP = true;
+			Boolean bedUsed = false;
 			foreach (Robot robo in MyTeam)
 			{
-                if (robo.HP < robo.getTHealth())
+				int cost = robo.getBaseStats() / 2;
+				if (robo.HP < robo.getTHealth())
                 {
-                    while ((getCurrency < cost || !PayForRepairs) && cost > 0)
+                    if (getCurrency < cost || !PayForRepairs ||  beds == 0 || bedUsed)
                     {
-                        cost--;
-                        value--;
+                        cost = 0;
+                        value = (int)(value / 2);
 					}
-					if (getScore > 10)
+					else
 					{
-						getCurrency -= cost;
-						CurrencyLog -= cost;
+						beds--;
+						bedUsed = true;
 					}
+					getCurrency -= cost;
+					CurrencyLog -= cost;
 					robo.HP += value;
                     robo.MP += value;
                     robo.getKO = 0;

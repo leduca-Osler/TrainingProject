@@ -333,7 +333,6 @@ namespace TrainingApp
 				int jResearchDevHealValue = json["ResearchDevHealValue"] != null ? (int)json["ResearchDevHealValue"] : 2;
 				int jResearchDevHealValueBase = json["ResearchDevHealValueBase"] != null ? (int)json["ResearchDevHealValueBase"] : 1;
 				int jResearchDevHealBays = json["ResearchDevHealBays"] != null ? (int)json["ResearchDevHealBays"] : 1;
-				int jResearchDevHealCost = json["ResearchDevHealCost"] != null ? (int)json["ResearchDevHealCost"] : 1;
 				long jResearchDevRebuild = json["ResearchDevRebuild"] != null ? (long)json["ResearchDevRebuild"] : 1000;
 				long jResearchDevRebuildBase = json["ResearchDevRebuildBase"] != null ? (long)json["ResearchDevRebuildBase"] : 500;
 				int jBossLvl = json["BossLvl"] != null ? (int)json["BossLvl"] : 5;
@@ -348,7 +347,7 @@ namespace TrainingApp
 					jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenRepair, jMonsterDenRepairBase, 
 					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 
-					jResearchDevHealCost, jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty);
+					jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating
