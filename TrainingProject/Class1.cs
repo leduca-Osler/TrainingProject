@@ -1819,12 +1819,12 @@ namespace TrainingProject
 								background = Color.LightGray;
 							Label lblTeam1stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount, this) };
 							int tmpI = i;
-							if (getGameCurrency > 0)
-								lblTeam1stats.Click += new EventHandler((sender, e) => GameTeam1[tmpI].Rebuild(true, this));
+							/*if (getGameCurrency > 0)
+								lblTeam1stats.Click += new EventHandler((sender, e) => GameTeam1[tmpI].Rebuild(true, this));*/
 							MainPanel.Controls.Add(lblTeam1stats);
 							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount, this) };
-							if (getGameCurrency > 0)
-								lblTeam2stats.Click += new EventHandler((sender, e) => GameTeam2[tmpI].Rebuild(true, this));
+							/*if (getGameCurrency > 0)
+								lblTeam2stats.Click += new EventHandler((sender, e) => GameTeam2[tmpI].Rebuild(true, this));*/
 							MainPanel.Controls.Add(lblTeam2stats);
 						}
 						else
