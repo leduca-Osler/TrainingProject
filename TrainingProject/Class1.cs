@@ -1076,18 +1076,21 @@ namespace TrainingProject
 		{
 			Boolean fullHP = true;
 			int beds = ResearchDevHealBays;
+			if (getGameCurrency <= 0) beds = 0;
 			for (int index = GameTeams.Count-1; index >= 0; index--) // Team eTeam in GameTeams)
 			{
 				Boolean tmpFullHP = true;
 				if (!isFighting(GameTeams[index].getName) && !isFighting("arena"))
 				{
-					tmpFullHP = GameTeams[index].healRobos(ref beds, ResearchDevHealValue);
+					int pay = 0;
+					tmpFullHP = GameTeams[index].healRobos(ref beds, ref pay, ResearchDevHealValue);
+					getGameCurrency += pay;
 					if (tmpFullHP == false)
 						fullHP = false;
 				}
 			}
-			MonsterOutbreak.healRobos(ref beds, 2);
-			Bosses.healRobos(ref beds, 999, true);
+			MonsterOutbreak.healRobos(false);
+			Bosses.healRobos(true);
 			return fullHP;
 		}
 		public bool isFighting(string teamName)
@@ -1302,7 +1305,7 @@ namespace TrainingProject
 							GameTeam1[0].getDifficulty = RndVal.Next(GameTeam1[0].MyTeam[GameTeam1[0].MyTeam.Count-1].getLevel/5 , GameTeam1[0].MyTeam[0].getLevel/5);
 						}
 						int beds = 0;
-						GameTeam1[0].healRobos(ref beds, 999999);
+						GameTeam1[0].healRobos(false);
 					}
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak));
@@ -1944,7 +1947,7 @@ namespace TrainingProject
 									GameTeam2[i] = tmpTeam;
 									msg = GameTeam1[i].getName + " VS " + GameTeam2[i].getName + msg;
 									int bays = 0;
-									GameTeam1[i].healRobos(ref bays, 1);
+									GameTeam1[i].healRobos(false);
 									equip(GameTeam1[i], true);
 									newMonster = true;
 								}
@@ -3475,7 +3478,14 @@ namespace TrainingProject
 			}
 			return num;
 		}
-		public Boolean healRobos(ref int beds, int value, bool isBoss = false)
+		public Boolean healRobos(bool isBoss)
+		{
+			int beds = 0;
+			int pay = 0;
+			int value = 2;
+			return healRobos(ref beds, ref pay, value, isBoss);
+		}
+		public Boolean healRobos(ref int beds, ref int pay, int value, bool isBoss = false)
 		{
 			Boolean fullHP = true;
 			Boolean bedUsed = false;
@@ -3494,6 +3504,7 @@ namespace TrainingProject
 						beds--;
 						bedUsed = true;
 					}
+					pay = cost;
 					getCurrency -= cost;
 					CurrencyLog -= cost;
 					robo.HP += value;
