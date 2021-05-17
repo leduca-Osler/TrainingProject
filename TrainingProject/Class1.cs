@@ -3492,7 +3492,7 @@ namespace TrainingProject
 		{
 			int beds = 0;
 			int pay = 0;
-			int value = MyTeam[RndVal.Next(MyTeam.Count)].HP;
+			int value = MyTeam[RndVal.Next(MyTeam.Count)].getTHealth();
 			return healRobos(ref beds, ref pay, value, isBoss);
 		}
 		public Boolean healRobos(ref int beds, ref int pay, int value, bool isBoss = false)
