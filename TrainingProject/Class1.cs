@@ -3499,10 +3499,10 @@ namespace TrainingProject
 		{
 			Boolean fullHP = true;
 			Boolean bedUsed = false;
-			foreach (Robot robo in MyTeam)
+			for (int robo = MyTeam.Count-1; robo >= 0; robo--)
 			{
-				int cost = robo.getBaseStats() / 2;
-				if (robo.HP < robo.getTHealth())
+				int cost = MyTeam[robo].getBaseStats() / 2;
+				if (MyTeam[robo].HP < MyTeam[robo].getTHealth())
                 {
                     if (getCurrency < cost || !PayForRepairs ||  beds == 0 || bedUsed)
                     {
@@ -3517,21 +3517,21 @@ namespace TrainingProject
 					pay = cost;
 					getCurrency -= cost;
 					CurrencyLog -= cost;
-					robo.HP += value;
-                    robo.MP += value;
-                    robo.getKO = 0;
+					MyTeam[robo].HP += value;
+					MyTeam[robo].MP += value;
+					MyTeam[robo].getKO = 0;
                 }
-                else if (robo.MP < robo.getTEnergy())
-                    robo.MP++;
-				if (robo.HP < robo.getTHealth()) { fullHP = false; }
+                else if (MyTeam[robo].MP < MyTeam[robo].getTEnergy())
+					MyTeam[robo].MP++;
+				if (MyTeam[robo].HP < MyTeam[robo].getTHealth()) { fullHP = false; }
 				// level up
-				if (robo.getAnalysisLeft() <= 0)
+				if (MyTeam[robo].getAnalysisLeft() <= 0)
 				{
-					robo.levelUp(RndVal, isBoss);
-					if (robo.RobotLog.Length > 0 && !robo.name1.Equals("test"))
+					MyTeam[robo].levelUp(RndVal, isBoss);
+					if (MyTeam[robo].RobotLog.Length > 0 && !MyTeam[robo].name1.Equals("test"))
 					{
-						getTeamLog = robo.RobotLog;
-						robo.RobotLog = "";
+						getTeamLog = MyTeam[robo].RobotLog;
+						MyTeam[robo].RobotLog = "";
 					}
 				}
 			}
