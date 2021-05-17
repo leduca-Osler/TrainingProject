@@ -378,6 +378,7 @@ namespace TrainingProject
 		private long ResearchDevMaint;
 		[JsonProperty]
 		private int ResearchDevHealValue;
+		private int ResearchDevHealValueSum;
 		[JsonProperty]
 		public int ResearchDevHealValueBase;
 		public int ResearchDevHealValueBaseIncrement = 1;
@@ -645,6 +646,7 @@ namespace TrainingProject
 			ResearchDevLvlCostBase = pResearchDevLvlCostBase;
 			ResearchDevMaint = pResearchDevMaint;
 			ResearchDevHealValue = pResearchDevHealValue;
+			ResearchDevHealValueSum = 0;
 			ResearchDevHealValueBase = pResearchDevHealValueBase;
 			ResearchDevHealBays = pResearchDevHealBays;
 			ResearchDevRebuild = pResearchDevRebuild;
@@ -736,6 +738,7 @@ namespace TrainingProject
 			ResearchDevLvlCostBase = ResearchDevLvlCostBaseIncrement;
 			ResearchDevMaint = 1;
 			ResearchDevHealValue = 2;
+			ResearchDevHealValueSum = 0;
 			ResearchDevHealValueBase = ResearchDevHealValueBaseIncrement;
 			ResearchDevHealBays = 1;
 			ResearchDevRebuild = 50;
@@ -975,7 +978,7 @@ namespace TrainingProject
 			ResearchDevRebuild = roundValue(ResearchDevRebuild, ResearchDevRebuildBase, "up");
 			ResearchDevRebuildBase += ResearchDevRebuildBaseIncrement;
 			// chance to add a new healing baynic
-			if (RndVal.Next(100) > 95) ResearchDevHealBays++;
+			if (RndVal.Next(100 + GameTeams.Count) > (95 + ResearchDevHealBays)) ResearchDevHealBays++;
 		}
 		public void AddManagerHours()
 		{
@@ -1085,11 +1088,12 @@ namespace TrainingProject
 					int pay = 0;
 					tmpFullHP = GameTeams[index].healRobos(ref beds, ref pay, ResearchDevHealValue);
 					getGameCurrency += pay;
+					ResearchDevHealValueSum += pay;
 					if (tmpFullHP == false)
 						fullHP = false;
 				}
 			}
-			MonsterOutbreak.healRobos(false);
+			MonsterOutbreak.healRobos(true); 
 			Bosses.healRobos(true);
 			return fullHP;
 		}
@@ -1388,6 +1392,12 @@ namespace TrainingProject
 					msg += displaySeating("R", tmp - CurrentJackpot, -1, ref countChars);
 					msg += String.Format("\n{0}/{1} {2:n2}%\n", fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
 
+				}
+				if (ResearchDevHealValueSum > 0)
+				{
+					// add message with income from repairs
+					msg += String.Format("\n$$$ Repair Revenue: {0:c0}", ResearchDevHealValueSum);
+					ResearchDevHealValueSum = 0;
 				}
 				getFightLog = msg;
 				sortSkills();
@@ -3482,7 +3492,7 @@ namespace TrainingProject
 		{
 			int beds = 0;
 			int pay = 0;
-			int value = 2;
+			int value = MyTeam[RndVal.Next(MyTeam.Count)].HP;
 			return healRobos(ref beds, ref pay, value, isBoss);
 		}
 		public Boolean healRobos(ref int beds, ref int pay, int value, bool isBoss = false)
@@ -3497,7 +3507,7 @@ namespace TrainingProject
                     if (getCurrency < cost || !PayForRepairs ||  beds == 0 || bedUsed)
                     {
                         cost = 0;
-                        value = (int)(value / 2);
+                        value = RndVal.Next(value);
 					}
 					else
 					{
