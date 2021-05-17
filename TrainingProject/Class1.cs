@@ -1391,13 +1391,12 @@ namespace TrainingProject
 					msg += displaySeating("J", CurrentJackpot, -1, ref countChars);
 					msg += displaySeating("R", tmp - CurrentJackpot, -1, ref countChars);
 					msg += String.Format("\n{0}/{1} {2:n2}%\n", fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
-
-				}
-				if (ResearchDevHealValueSum > 0)
-				{
-					// add message with income from repairs
-					msg += String.Format("\n$$$ Repair Revenue: {0:c0}", ResearchDevHealValueSum);
-					ResearchDevHealValueSum = 0;
+					if (ResearchDevHealValueSum > 0)
+					{
+						// add message with income from repairs
+						msg += String.Format("\n$$$ Repair Revenue: {0:c0}", ResearchDevHealValueSum);
+						ResearchDevHealValueSum = 0;
+					}
 				}
 				getFightLog = msg;
 				sortSkills();
