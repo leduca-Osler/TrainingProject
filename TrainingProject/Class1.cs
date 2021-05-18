@@ -2198,6 +2198,17 @@ namespace TrainingProject
 				// if has equipment repair / upgrade it
 				if (shopper.getEquipWeapon != null)
 				{
+					// upgrade
+					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent) && shopper.getEquipWeapon.eMaxDurability > 50 && getGameCurrency > 0)
+					{
+						long tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
+						eTeam.getCurrency -= tmpUpgrade;
+						GameCurrency += (int)(tmpUpgrade * 0.1);
+						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
+						shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
+						getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString();
+						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipWeapon.eName;
+					}
 					// Repair
 					if (eTeam.getCurrency > (shopper.getEquipWeapon.ePrice / 10)
 						&& shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent)
@@ -2207,17 +2218,6 @@ namespace TrainingProject
 						eTeam.getCurrency -= (shopper.getEquipWeapon.ePrice / 10);
 						getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipWeapon.ePrice / 10, shopper.getEquipWeapon.eName) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
-					}
-					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipWeapon.eMaxDurability > 50 && getGameCurrency > 0)
-					{
-						long tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
-						eTeam.getCurrency -= tmpUpgrade;
-						GameCurrency += (int)(tmpUpgrade * 0.1);
-						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
-						shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
-						getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString();
-						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipWeapon.eName;
 					}
 				}
 				else
@@ -2242,6 +2242,17 @@ namespace TrainingProject
 				}
 				if (shopper.getEquipArmour != null)
 				{
+					// upgrade
+					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 && getGameCurrency > 0)
+					{
+						long tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
+						eTeam.getCurrency -= tmpUpgrade;
+						GameCurrency += (int)(tmpUpgrade * 0.1);
+						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
+						shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
+						getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString();
+						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipArmour.eName;
+					}
 					// Repair 
 					if (eTeam.getCurrency > (shopper.getEquipArmour.ePrice / 10)
 						&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent)
@@ -2251,17 +2262,6 @@ namespace TrainingProject
 						eTeam.getCurrency -= (shopper.getEquipArmour.ePrice / 10);
 						getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipArmour.ePrice / 10, shopper.getEquipArmour.eName) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName;
-					}
-					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated) && shopper.getEquipArmour.eMaxDurability > 50 && getGameCurrency > 0)
-					{
-						long tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
-						eTeam.getCurrency -= tmpUpgrade;
-						GameCurrency += (int)(tmpUpgrade * 0.1);
-						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
-						shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
-						getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString();
-						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipArmour.eName;
 					}
 				}
 				else
@@ -2293,7 +2293,15 @@ namespace TrainingProject
 					// Repair Monster Weapon
 					if (monster.getEquipWeapon != null)
 					{
-						if (MonsterOutbreak.getCurrency > (monster.getEquipWeapon.ePrice / 10)
+						if (MonsterOutbreak.getCurrency > (monster.getEquipWeapon.eUpgradeCost)
+								&& monster.getEquipWeapon.eDurability < monster.getEquipWeapon.eMaxDurability * repairPercent)
+						{
+							int orig = monster.getEquipWeapon.eDurability;
+							MonsterOutbreak.getCurrency -= (monster.getEquipWeapon.eUpgradeCost / 10);
+							monster.getEquipWeapon.upgrade(monster.getLevel, RndVal);
+							getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " claws strengthened " + Environment.NewLine + "  " + monster.getEquipWeapon.ToString(orig);
+						}
+						else if (MonsterOutbreak.getCurrency > (monster.getEquipWeapon.ePrice / 10)
 								&& monster.getEquipWeapon.eDurability < monster.getEquipWeapon.eMaxDurability * repairPercent)
 						{
 							int orig = monster.getEquipWeapon.eDurability;
@@ -2317,7 +2325,15 @@ namespace TrainingProject
 					// Repair Monster Armour
 					if (monster.getEquipArmour != null)
 					{
-						if (MonsterOutbreak.getCurrency > (monster.getEquipArmour.ePrice / 10)
+						if (MonsterOutbreak.getCurrency > (monster.getEquipArmour.eUpgradeCost)
+								&& monster.getEquipArmour.eDurability < monster.getEquipArmour.eMaxDurability * repairPercent)
+						{
+							int orig = monster.getEquipArmour.eDurability;
+							MonsterOutbreak.getCurrency -= (monster.getEquipArmour.eUpgradeCost);
+							monster.getEquipArmour.upgrade(monster.getLevel, RndVal);
+							getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " hide strengthened " + Environment.NewLine + "  " + monster.getEquipArmour.ToString(orig);
+						}
+						else if (MonsterOutbreak.getCurrency > (monster.getEquipArmour.ePrice / 10)
 								&& monster.getEquipArmour.eDurability < monster.getEquipArmour.eMaxDurability * repairPercent)
 						{
 							int orig = monster.getEquipArmour.eDurability;
