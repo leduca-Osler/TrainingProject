@@ -2777,7 +2777,7 @@ namespace TrainingProject
 				case 249:
 					int leavingTeam = RndVal.Next(2,(50+CurrentJackpotLvl));
 					// team could leave if arena not doing well
-					if (GameTeams.Count > leavingTeam)
+					if (GameTeams.Count > leavingTeam && getScore() > (getGoalGameScore / 3))
 					{
 						getWarningLog = Environment.NewLine + "??? " + GameTeams[leavingTeam].getName + " has left the arena!";
 						GameTeams.RemoveAt(leavingTeam);
