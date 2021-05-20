@@ -1051,6 +1051,9 @@ namespace TrainingProject
 					eTeam.getCurrency += iWinnings;
 				}
 			}
+			// reset jackpot
+			CurrentJackpot = 0;
+			DecreaseJackpot();
 			PurchaseUgrade = false;
 		}
 		public void addRobo(int Team) { addRobo(GameTeams[Team], this); }
@@ -3030,7 +3033,7 @@ namespace TrainingProject
 							{
 								for (int j = 0; j < 5; j++)
 								{
-									addRune(MyTeam[i].getLevel, true);
+									addRune((int)(MyTeam[i].getBaseStats() / 2), true);
 								}
 								strMsg += strDelim + (int)(MyTeam[i].getBaseStats() / 2);
 								strDelim = ",";
@@ -3519,8 +3522,8 @@ namespace TrainingProject
 				int cost = MyTeam[robo].getBaseStats() / 2;
 				if (MyTeam[robo].HP < MyTeam[robo].getTHealth())
                 {
-                    if (getCurrency < cost || !PayForRepairs ||  beds == 0 || bedUsed)
-                    {
+                    if (getCurrency < cost || !PayForRepairs ||  beds == 0 || bedUsed || (MyTeam[robo].getTHealth() - MyTeam[robo].HP) < (value / 2))
+					{
                         cost = 0;
                         value = RndVal.Next(value);
 					}
