@@ -1311,7 +1311,6 @@ namespace TrainingProject
 						{
 							GameTeam1[0].getDifficulty = RndVal.Next(GameTeam1[0].MyTeam[GameTeam1[0].MyTeam.Count-1].getLevel/5 , GameTeam1[0].MyTeam[0].getLevel/5);
 						}
-						int beds = 0;
 						GameTeam1[0].healRobos(false);
 					}
 					// Monster team... 
@@ -1337,26 +1336,43 @@ namespace TrainingProject
 						CurrentSeating.Add(new ArenaSeating(eSeating.Level, eSeating.Price, eSeating.Amount, eSeating.AmountBase));
 					}
 				}
-				int tmp = 0;
-				int countChars = 10 + tmpTotalScore.ToString().Length;
-				int totalAttendance = 0;
-				foreach (ArenaSeating eSeating in CurrentSeating)
+				// randomize each attendee
+				int attendees = RndVal.Next(tmpTotalScore);
+				int unseated = 0;
+				for (int i = 0; i < attendees; i++)
 				{
-					int min = 0;
-					int max = (tmpTotalScore > eSeating.Amount ? eSeating.Amount : tmpTotalScore);
-					if (max < min)
-						max = min;
-					int NumSeats = RndVal.Next(min, max+1);
-					tmpMonsterDenBonus -= NumSeats;
-					tmpTotalScore -= NumSeats;
-					if (tmpMonsterDenBonus < 0) tmpMonsterDenBonus = 0;
-					msg += displaySeating(eSeating.Level.ToString(), NumSeats, max, ref countChars);
-					tmp += eSeating.Price * NumSeats;
-					totalAttendance += NumSeats;
-					eSeating.Amount -= NumSeats;
+					int seatingLevel = RndVal.Next(CurrentSeating.Count);
+					bool seated = false;
+					while (!seated)
+					{
+						if (CurrentSeating[seatingLevel].Attendees < CurrentSeating[seatingLevel].Amount)
+						{
+							CurrentSeating[seatingLevel].Attendees++;
+							seated = true;
+						}
+						else seatingLevel--;
+						if (seatingLevel == -1)
+						{
+							seated = true;
+							unseated++;
+						}
+					}
 				}
 				// total attendance
-				msg = string.Format("\n    Attd:{0:n0} {1}", totalAttendance, msg);
+				int countChars = 10 + tmpTotalScore.ToString().Length;
+				msg += displaySeating("\n    Attd", attendees - unseated, -1, ref countChars);
+
+
+
+				int tmp = 0;
+				foreach (ArenaSeating eSeating in CurrentSeating)
+				{
+					int max = (tmpTotalScore > eSeating.Amount ? eSeating.Amount : tmpTotalScore);
+					msg += displaySeating(eSeating.Level.ToString(), eSeating.Attendees, max, ref countChars);
+					tmp += eSeating.Price * eSeating.Attendees;
+					eSeating.Amount -= eSeating.Attendees;
+					eSeating.Attendees = 0;
+				}
 				// Monster fighter teams get 10% of jackpot
 				if (GameTeam1.Count > 1)
 				{
@@ -1958,7 +1974,6 @@ namespace TrainingProject
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
 									msg = GameTeam1[i].getName + " VS " + GameTeam2[i].getName + msg;
-									int bays = 0;
 									GameTeam1[i].healRobos(false);
 									equip(GameTeam1[i], true);
 									newMonster = true;
@@ -4558,6 +4573,7 @@ namespace TrainingProject
 		public int Amount; // Number of seats
 		[JsonProperty]
 		public int AmountBase; // Number of seats
+		public int Attendees; 
 		public ArenaSeating() { }
 		public ArenaSeating(int pLevel, int pPrice, int pAmount, int pAmountBase)
 		{
@@ -4565,6 +4581,7 @@ namespace TrainingProject
 			Price = pPrice;
 			Amount = pAmount;
 			AmountBase = pAmountBase;
+			Attendees = 0;
 		}
 	}
 	[Serializable]
