@@ -1337,9 +1337,9 @@ namespace TrainingProject
 						CurrentSeating.Add(new ArenaSeating(eSeating.Level, eSeating.Price, eSeating.Amount, eSeating.AmountBase));
 						maxSeating += eSeating.Amount;
 					}
+					if (tmpTotalScore > maxSeating) tmpTotalScore = maxSeating;
 				}
 				// randomize each attendee
-				if (tmpTotalScore > maxSeating) tmpTotalScore = maxSeating;
 				int attendees = RndVal.Next(tmpTotalScore);
 				int unseated = 0;
 				for (int i = 0; i < attendees; i++)
