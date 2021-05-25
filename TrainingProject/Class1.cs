@@ -1327,7 +1327,6 @@ namespace TrainingProject
 				if (getGameCurrency <= 0) tmpMonsterDenBonus = 0;
 				if (GameTeam1.Count == 1) PotScore += tmpMonsterDenBonus;
 				int tmpTotalScore = PotScore;
-				int maxSeating = 0;
 				if (GameTeam1.Count == 1)
 				{
 					CurrentSeating = new List<ArenaSeating> {  };
@@ -1335,9 +1334,7 @@ namespace TrainingProject
 					foreach (ArenaSeating eSeating in Seating)
 					{
 						CurrentSeating.Add(new ArenaSeating(eSeating.Level, eSeating.Price, eSeating.Amount, eSeating.AmountBase));
-						maxSeating += eSeating.Amount;
 					}
-					if (tmpTotalScore > maxSeating) tmpTotalScore = maxSeating;
 				}
 				// randomize each attendee
 				int attendees = RndVal.Next(tmpTotalScore);
