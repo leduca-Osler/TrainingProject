@@ -272,6 +272,7 @@ namespace TrainingProject
 		[JsonProperty]
 		public IList<ArenaSeating> Seating;
 		public IList<ArenaSeating> CurrentSeating;
+		public IList<int> seatingAvailable;
 		[JsonProperty]
 		public IList<Equipment> storeEquipment;
 		public IList<Team> GameTeam1;
@@ -1330,10 +1331,13 @@ namespace TrainingProject
 				if (GameTeam1.Count == 1)
 				{
 					CurrentSeating = new List<ArenaSeating> {  };
+					seatingAvailable = new List<int> { };
 					// reset seating
 					foreach (ArenaSeating eSeating in Seating)
 					{
 						CurrentSeating.Add(new ArenaSeating(eSeating.Level, eSeating.Price, eSeating.Amount, eSeating.AmountBase));
+						for (int i = 0; i < eSeating.Level; i++)
+						{ seatingAvailable.Add(i); }
 					}
 				}
 				// randomize each attendee
@@ -1341,7 +1345,12 @@ namespace TrainingProject
 				int unseated = 0;
 				for (int i = 0; i < attendees; i++)
 				{
-					int seatingLevel = RndVal.Next(CurrentSeating.Count);
+					int seatingLevel = 0;
+					if (seatingAvailable.Count > 0)
+						seatingLevel = seatingAvailable[RndVal.Next(seatingAvailable.Count)];
+
+					for (int j = 0; j < CurrentSeating.Count; j++)
+					{ if (RndVal.Next(CurrentSeating.Count+1) < seatingLevel) seatingLevel--; }
 					bool seated = false;
 					while (!seated)
 					{
