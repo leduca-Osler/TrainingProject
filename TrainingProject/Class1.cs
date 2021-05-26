@@ -91,7 +91,7 @@ namespace TrainingProject
 		[JsonIgnore]
 		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", "Tigers", "Hyenas", "Vulturs" };
 		[JsonIgnore]
-		public string[] name3 = { "Blades", "Arrows", "Staffs", "Sparks", "Factory", "Snipers", "Calvary", "Spears", "Cythes", "Nunchuku" };
+		public string[] name3 = { "Blade", "Arrow", "Spark", "Factory", "Sniper", "Calvary", "Spear", "War Cythe", "Nunchuku", "Riffle", "Pistol", "War Hammer", "Battle Axe", "Bludgeon", "Club", "Flail", "Mace", "Morning Star", "Quarterstaff", "Dagger", "Falchion", "Estoc", "Katana", "Longsword", "Rapier", "Saber", "Shortsword", "Glaive", "Halberd", "Lance", "Partisan", "Pike", "Voulge", "Longbow", "Recurve Bow", "Crossbow", "Musket", "Chakram", "Kunai", "Shuriken"};
 		[JsonIgnore]
 		public string[] RoboName = { "Bolt", "Tinker", "Hammer", "Golem", "Droid", "Tank", "Gunner", "Blaster", "Bot", "iRobo", "gRobo", "mRobo" };
 		[JsonIgnore]
@@ -3260,7 +3260,7 @@ namespace TrainingProject
 			RoboCostBaseIncrement = 0;
 			isMonster = true;
 			TeamLog = "";
-			TeamName = name1[RndVal.Next(name1.Length)] + " " + name2[RndVal.Next(name2.Length)];
+			TeamName = string.Format("M_{0} {1}",name1[RndVal.Next(name1.Length)], name2[RndVal.Next(name2.Length)]);
 			Automated = true;
 			PayForRepairs = true;
 			shownDefeated = false;
@@ -3537,7 +3537,7 @@ namespace TrainingProject
                     if (getCurrency < cost || !PayForRepairs ||  beds == 0 || bedUsed || (MyTeam[robo].getTHealth() - MyTeam[robo].HP) < (value / 2))
 					{
                         cost = 0;
-                        value = RndVal.Next(value);
+                        value = RndVal.Next(value/2);
 					}
 					else
 					{
