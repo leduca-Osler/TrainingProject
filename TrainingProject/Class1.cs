@@ -1348,9 +1348,6 @@ namespace TrainingProject
 					int seatingLevel = 0;
 					if (seatingAvailable.Count > 0)
 						seatingLevel = seatingAvailable[RndVal.Next(seatingAvailable.Count)];
-
-					for (int j = 0; j < CurrentSeating.Count; j++)
-					{ if (RndVal.Next(CurrentSeating.Count+1) < seatingLevel) seatingLevel--; }
 					bool seated = false;
 					while (!seated)
 					{
