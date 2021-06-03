@@ -1813,6 +1813,7 @@ namespace TrainingProject
 			roundCount++;
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
+			// Flags to display to user
 			String strFlags = "";
 			if (bossFight) strFlags += " Boss Fight";
 			if (GameDifficultyFight) strFlags += " Difficulty Fight";
@@ -1820,7 +1821,10 @@ namespace TrainingProject
 			if (JackpotUpTen) strFlags += " Jackpot Up 10";
 			if (JackpotDown) strFlags += " Jackpot Down";
 			if (JackpotDownTen) strFlags += " Jackpot Down 10";
-			if ((getGameCurrency < AverageMaintenance())) strFlags += " !Maintenance NSF!";
+			if (getGameCurrency < AverageMaintenance()) strFlags += " !Maintenance NSF!";
+			if ((getGameCurrency > AverageMaintenance() * 4)) strFlags += " $Maintenance++";
+			else if ((getGameCurrency > AverageMaintenance() * 3)) strFlags += " $Maintenance tripple";
+			else if ((getGameCurrency > AverageMaintenance() * 2)) strFlags += " $Maintenance Double";
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
