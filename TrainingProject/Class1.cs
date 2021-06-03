@@ -1820,6 +1820,7 @@ namespace TrainingProject
 			if (JackpotUpTen) strFlags += " Jackpot Up 10";
 			if (JackpotDown) strFlags += " Jackpot Down";
 			if (JackpotDownTen) strFlags += " Jackpot Down 10";
+			if ((getGameCurrency < AverageMaintenance())) strFlags += " !Maintenance NSF!";
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
