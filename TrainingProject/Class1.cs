@@ -1221,6 +1221,10 @@ namespace TrainingProject
 			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; }
 			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
 		}
+		public long AverageMaintenance()
+		{
+			return (long)(ArenaLvlMaint + ShopLvlMaint + ResearchDevMaint + MonsterDenLvlMaint) / 4;
+		}
 		public void startFight()
         {
 			if ((bossFight || GameDifficultyFight) && !fighting)
@@ -1260,7 +1264,7 @@ namespace TrainingProject
 							DecreaseJackpot(10);
 							JackpotDownTen = false;
 						}
-						else if ((getGameCurrency < 0))
+						else if ((getGameCurrency < AverageMaintenance()))
                         {
 							DecreaseJackpot();
 							MaxJackpot = getGameCurrency;
