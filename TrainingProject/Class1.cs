@@ -2186,10 +2186,10 @@ namespace TrainingProject
 				CurrentJackpotLvl = 1;
 				CurrentJackpotBase = 1;
 				CurrentJackpotBaseIncrement = 1;
-				while (CurrentJackpot < MinJackpot)
-				{
-					IncreaseJackpot();
-				}
+			}
+			while (CurrentJackpot < MinJackpot)
+			{
+				IncreaseJackpot();
 			}
 			return CurrentJackpot;
 		}

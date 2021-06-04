@@ -104,14 +104,18 @@ namespace TrainingApp
 			if (!MyGame.isFighting())
 			{
 				shownCount = maxCount;
-				int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
-				if (Game.RndVal.Next(MyGame.ManagerHrs) < 1 && hrs < 1)
-				{
-					MyGame.ManagerHrs++;
-					MyGame.ManagerCost = MyGame.roundValue(MyGame.ManagerCost, MyGame.ManagerCostBase, "up");
-				}
+				addManagerHrs();
 				MyGame.startFight();
 				update();
+			}
+		}
+		private void addManagerHrs()
+		{
+			int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
+			if (Game.RndVal.Next(MyGame.ManagerHrs) < 1 && hrs < 1)
+			{
+				MyGame.ManagerHrs++;
+				MyGame.ManagerCost = MyGame.roundValue(MyGame.ManagerCost, MyGame.ManagerCostBase, "up");
 			}
 		}
 		/***********************
@@ -207,7 +211,8 @@ namespace TrainingApp
 				if (Game.RndVal.Next(100) > MyGame.FightBreak)
 				{
 					MyGame.startFight();
-					shownCount = maxCount;
+					shownCount = maxCount; 
+					addManagerHrs();
 				}
 				else
 				{
@@ -796,13 +801,11 @@ namespace TrainingApp
 
 		private void increaseJackpotToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			//mnuDisplayJackpot.Text = MyGame.IncreaseJackpot().ToString();
 			MyGame.JackpotUp = true;
 		}
 
         private void decreaseJackpotToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			//mnuDisplayJackpot.Text = MyGame.DecreaseJackpot().ToString();
 			MyGame.JackpotDown = true;
 		}
 
