@@ -112,7 +112,7 @@ namespace TrainingApp
 		private void addManagerHrs()
 		{
 			int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
-			if (Game.RndVal.Next(MyGame.ManagerHrs) < 1 && hrs < 1)
+			if (Game.RndVal.Next(MyGame.ManagerHrs+10) < 1 && hrs < 1)
 			{
 				MyGame.ManagerHrs++;
 				MyGame.ManagerCost = MyGame.roundValue(MyGame.ManagerCost, MyGame.ManagerCostBase, "up");
