@@ -1276,7 +1276,7 @@ namespace TrainingProject
 							incrementArenaOpponent();
 						}
 					}
-					if (ArenaOpponent1 == 0 && ArenaOpponent1 == ArenaOpponent2)
+					if (ArenaOpponent1 == ArenaOpponent2)
 						Team1Index = Team2Index = monsterFight(true);
 					else
 					{
