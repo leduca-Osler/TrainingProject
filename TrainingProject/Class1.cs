@@ -1269,12 +1269,6 @@ namespace TrainingProject
 							DecreaseJackpot();
 							MaxJackpot = getGameCurrency;
 						}
-
-						if (ArenaOpponent1 != 0)
-						{
-							ArenaOpponent2++;
-							incrementArenaOpponent();
-						}
 					}
 					if (ArenaOpponent1 == ArenaOpponent2)
 						Team1Index = Team2Index = monsterFight(true);
