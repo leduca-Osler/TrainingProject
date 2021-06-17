@@ -2401,7 +2401,7 @@ namespace TrainingProject
 			// if arena is in debt, none of the benefits are available (Monster den bonus, Equipment upgrades, Repair bay, etc) so no maintenance required.
 			if (getGameCurrency <= 0)
 				maintValue = RndVal.Next(50, 250);
-			// maintValue = 31; //test Monster Outbreak
+			// maintValue = 32; //test Monster Outbreak
 			switch (maintValue)
 			{
 				case 1:
@@ -2628,12 +2628,18 @@ namespace TrainingProject
 					getFightLog = String.Format("\n*** R&&D: {0} - cost {1:c0}", strMessage, MaintCost);
 					break;
 				case 31:
+					// Monster Den high Maintenance 
+					if (getMonsterDenLvlMaint > 0) MaintCost += ((getMonsterDenLvlMaint - MonsterDenRepairs) / 10);
+					else MaintCost += Math.Abs((getMonsterDenLvlMaint - MonsterDenRepairs) / 10);
+					if (strMessage.Length == 0) strMessage = "!!Major Outbreak";
+					goto case 32;
+				case 32:
 					// Monster Den Maintenance
 					if (MonsterDenLvlMaint > 0)
-						MaintCost = (getMonsterDenLvlMaint - MonsterDenRepairs);
+						MaintCost += (getMonsterDenLvlMaint - MonsterDenRepairs);
 					else
 					{
-						MaintCost = Math.Abs(MonsterDenLvlMaint);
+						MaintCost += Math.Abs(MonsterDenLvlMaint);
 						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
 						{
 							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MonsterDenLvlCostBase, "down");
@@ -2648,44 +2654,45 @@ namespace TrainingProject
 					MonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.1), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = Environment.NewLine + "*** Monster Den: Outbreak - cost " + String.Format("{0:n0}", MaintCost);
+					if (strMessage.Length == 0) strMessage = "!Outbreak";
+					getFightLog = String.Format("\nMonster Den: {0} - cost {1:c0}", strMessage, MaintCost);
 					break;
-				case 32:
+				case 33:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "contagion breakout";
 					goto case 33;
-				case 33:
+				case 34:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "keeper injury";
 					goto case 34;
-				case 34:
+				case 35:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "broken cage";
 					goto case 35;
-				case 35:
-					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
-					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
-					if (strMessage.Length == 0) strMessage = "feeding";
-					goto case 36;
 				case 36:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "feeding";
-					goto case 37;
+					goto case 36;
 				case 37:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
-					if (strMessage.Length == 0) strMessage = "cleaning";
-					goto case 38;
+					if (strMessage.Length == 0) strMessage = "feeding";
+					goto case 37;
 				case 38:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
-					goto case 39;
+					goto case 38;
 				case 39:
+					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
+					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "cleaning";
+					goto case 39;
+				case 40:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
@@ -3231,7 +3238,7 @@ namespace TrainingProject
 				{
 					for (int ii = 0; ii < MonsterOutbreak.MyTeam.Count; ii++)
 					{
-						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl )
+						if (MonsterOutbreak.MyTeam[ii].getLevel <= maxLvl && MonsterOutbreak.MyTeam[ii].getLevel >= minLvl && MonsterOutbreak.MyTeam[ii].HP > 0 )
 						{
 							tmpMon.Add(MonsterOutbreak.MyTeam[ii]);
 							tmpindex.Add( ii);
