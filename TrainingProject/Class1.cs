@@ -2661,37 +2661,37 @@ namespace TrainingProject
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "contagion breakout";
-					goto case 33;
+					goto case 34;
 				case 34:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "keeper injury";
-					goto case 34;
+					goto case 35;
 				case 35:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "broken cage";
-					goto case 35;
+					goto case 36;
 				case 36:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "feeding";
-					goto case 36;
+					goto case 37;
 				case 37:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "feeding";
-					goto case 37;
+					goto case 38;
 				case 38:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
-					goto case 38;
+					goto case 39;
 				case 39:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
-					goto case 39;
+					goto case 40;
 				case 40:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
