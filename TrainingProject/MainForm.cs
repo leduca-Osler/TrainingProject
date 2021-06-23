@@ -48,6 +48,7 @@ namespace TrainingApp
 			InitializeComponent();
 			mnuDisplayJackpot.Text = MyGame.CurrentJackpot.ToString();
 			MinJackpotLevel.Text = MyGame.MinJackpot.ToString();
+			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
@@ -185,6 +186,7 @@ namespace TrainingApp
 			mnuRestockShop.Enabled = shopRestock;
 			btnResearchDev.Enabled = researchLvl;
 			mnuLongBattle.Text = String.Format("Long Battle {0}hrs \n{1:c0}", MyGame.ManagerHrs, MyGame.ManagerCost);
+			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
 			// if fight is active
 			if (MyGame.isFighting())
 			{
@@ -200,7 +202,19 @@ namespace TrainingApp
 				}
 				else
 				{
-					MyGame.continueFight(false);
+					if (MyGame.FastForward)
+					{
+						bool bContinue = true;
+						while (MyGame.FastForwardCount > 0 && bContinue)
+						{
+							MyGame.continueFight(false);
+							MyGame.FastForwardCount--;
+							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) == 0 || MyGame.GameTeam2[0].getNumRobos(false) == 0) bContinue = false;
+						}
+						if (MyGame.FastForwardCount == 0) MyGame.FastForward = false;
+					}
+					else
+						MyGame.continueFight(false);
 				}
 				if (!MyGame.isFighting())
 					shownCount = maxCount;
@@ -889,6 +903,11 @@ namespace TrainingApp
 				"\nJackpot+:           J" +
 				"\nJackpt+10:         K" +
 				"\nClear Warning: C");
+		}
+
+		private void fastForwardToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MyGame.FastForward = true;
 		}
 	}
 	public static class BinarySerialization

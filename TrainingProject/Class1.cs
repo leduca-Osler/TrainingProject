@@ -261,11 +261,12 @@ namespace TrainingProject
 			return tmp;
 		}
 	}
-    [Serializable]
+	[Serializable]
 	[JsonObject(MemberSerialization.OptIn)]
 	class Game : Common
 	{
-		[NonSerialized][JsonIgnore]
+		[NonSerialized]
+		[JsonIgnore]
 		public System.Windows.Forms.FlowLayoutPanel MainFormPanel;
 		[JsonProperty]
 		public List<Team> GameTeams;
@@ -418,6 +419,8 @@ namespace TrainingProject
 		public bool bossFight;
 		public bool GameDifficultyFight;
 		public int WinCount;
+		public int FastForwardCount;
+		public bool FastForward;
 		public int getMonsterDenBonus
 		{
 			get { return MonsterDenBonus; }
@@ -467,7 +470,7 @@ namespace TrainingProject
 			set { GameCurrency = value; }
 			get { return GameCurrency; }
 		}
-		
+
 		public int getArenaLvl
 		{
 			get { return ArenaLvl; }
@@ -585,11 +588,11 @@ namespace TrainingProject
 					RoboNumeral = value;
 			}
 		}
-		public Game(int pGoalGameScore, int pGoalGameScoreBase, int pMaxTeams, long pTeamCost, long pTeamCostBase, long pGameCurrency, int pArenaLvl, long pArenaLvlCost, 
-			long pArenaLvlCostBase, long pArenaLvlMaint, int pMonsterDenLvl, long pMonsterDenLvlCost, long pMonsterDenLvlCostBase, long pMonsterDenLvlMaint, 
-			int pMonsterDenBonus, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint, 
+		public Game(int pGoalGameScore, int pGoalGameScoreBase, int pMaxTeams, long pTeamCost, long pTeamCostBase, long pGameCurrency, int pArenaLvl, long pArenaLvlCost,
+			long pArenaLvlCostBase, long pArenaLvlMaint, int pMonsterDenLvl, long pMonsterDenLvlCost, long pMonsterDenLvlCostBase, long pMonsterDenLvlMaint,
+			int pMonsterDenBonus, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint,
 			int pShopStock, long pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl,
-			long pResearchDevLvlCost, long pResearchDevLvlCostBase, long pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealValueBase, int pResearchDevHealBays, 
+			long pResearchDevLvlCost, long pResearchDevLvlCostBase, long pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealValueBase, int pResearchDevHealBays,
 			long pResearchDevRebuild, long pResearchDevRebuildBase, int pBossLvl, int pBossLvlBase, int pBossCount, int pBossDifficulty, int pBossDifficultyBase, long pBossReward,
 			int pGameDifficult)
 		{
@@ -601,7 +604,7 @@ namespace TrainingProject
 			Seating = new List<ArenaSeating> { };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
-			MonsterOutbreak = new Team(0,1,findMonster, ref MonsterOutbreak);
+			MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
 			MonsterOutbreak.getName = "Monster Outbreak";
 			countdown = new List<KeyValuePair<String, DateTime>>();
 			Bosses = new Team(1, 4, 5);
@@ -680,12 +683,13 @@ namespace TrainingProject
 			fightPercent = 95;
 			fightPercentMax = 100;
 			fightCount = 0;
+			FastForwardCount = 0;
 		}
 		public Game(bool isNew)
 		{
 			getRoboNumeral = 1;
 			maxRoboNumeral = 1000;
-			GameTeams = new List<Team> { new Team(0, this), new Team(0,this) };
+			GameTeams = new List<Team> { new Team(0, this), new Team(0, this) };
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
 			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 5) };
@@ -697,7 +701,7 @@ namespace TrainingProject
 			Bosses = new Team(1, 4, 5);
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
-			CurrentJackpotLvl = 1; 
+			CurrentJackpotLvl = 1;
 			MinJackpot = 3;
 			CurrentJackpotBase = 1;
 			CurrentJackpotBaseIncrement = 1;
@@ -771,6 +775,7 @@ namespace TrainingProject
 			fightPercent = 95;
 			fightPercentMax = 100;
 			fightCount = 0;
+			FastForwardCount = 0;
 		}
 		public bool ShouldSerializeMainFormPanel()
 		{
@@ -1815,10 +1820,8 @@ namespace TrainingProject
 			if (JackpotUpTen) strFlags += " Jackpot Up 10";
 			if (JackpotDown) strFlags += " Jackpot Down";
 			if (JackpotDownTen) strFlags += " Jackpot Down 10";
+			if (FastForward) strFlags += string.Format(" Fast Forward {0:n0}", FastForwardCount);
 			if (getGameCurrency < AverageMaintenance()) strFlags += " !Maintenance NSF!";
-			if ((getGameCurrency > AverageMaintenance() * 4)) strFlags += " $Maintenance++";
-			else if ((getGameCurrency > AverageMaintenance() * 3)) strFlags += " $Maintenance tripple";
-			else if ((getGameCurrency > AverageMaintenance() * 2)) strFlags += " $Maintenance Double";
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
@@ -2706,6 +2709,20 @@ namespace TrainingProject
 						GameCurrencyLogMisc += MaintCost;
 						getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
 					}
+					break;
+				case 46:
+					// Fast Forward
+					FastForwardCount += RndVal.Next(gameDifficulty * 200);
+					goto case 47;
+				case 47:
+					FastForwardCount += RndVal.Next(gameDifficulty * 150);
+					goto case 48;
+				case 48:
+					FastForwardCount += RndVal.Next(gameDifficulty * 100);  
+					goto case 49;
+				case 49:
+					FastForwardCount = (int)roundValue(FastForwardCount + RndVal.Next(gameDifficulty * 50));
+					getWarningLog = Environment.NewLine + "!!! Fast Forward increased! +" + String.Format("{0:n0}", FastForwardCount);
 					break;
 				case 51:
 				case 52:
