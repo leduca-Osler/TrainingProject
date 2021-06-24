@@ -207,7 +207,9 @@ namespace TrainingApp
 						bool bContinue = true;
 						while (MyGame.FastForwardCount > 0 && bContinue)
 						{
-							MyGame.continueFight(false);
+							bool show = false;
+							if (Game.RndVal.Next(100) > 90) show = true;
+							MyGame.continueFight(show);
 							MyGame.FastForwardCount--;
 							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) == 0 || MyGame.GameTeam2[0].getNumRobos(false) == 0) bContinue = false;
 						}

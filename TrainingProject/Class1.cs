@@ -2712,17 +2712,18 @@ namespace TrainingProject
 					break;
 				case 46:
 					// Fast Forward
-					FastForwardCount += RndVal.Next(gameDifficulty * 200);
+					MaintCost += RndVal.Next(gameDifficulty * 100);
 					goto case 47;
 				case 47:
-					FastForwardCount += RndVal.Next(gameDifficulty * 150);
+					MaintCost += RndVal.Next(gameDifficulty * 75);
 					goto case 48;
 				case 48:
-					FastForwardCount += RndVal.Next(gameDifficulty * 100);  
+					MaintCost += RndVal.Next(gameDifficulty * 50);  
 					goto case 49;
 				case 49:
-					FastForwardCount = (int)roundValue(FastForwardCount + RndVal.Next(gameDifficulty * 50));
-					getWarningLog = Environment.NewLine + "!!! Fast Forward increased! +" + String.Format("{0:n0}", FastForwardCount);
+					MaintCost += RndVal.Next(gameDifficulty * 25);
+					FastForwardCount = (int)roundValue(FastForwardCount, MaintCost, "up");
+					getWarningLog = String.Format("\n!!! Fast Forward increased! +{0:n0} T:{1:n0}", MaintCost, FastForwardCount);
 					break;
 				case 51:
 				case 52:
