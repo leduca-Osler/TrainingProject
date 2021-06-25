@@ -828,19 +828,14 @@ namespace TrainingProject
 
 		public void interval(Timer Timer1)
 		{
-			if (GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated)
-				Timer1.Interval = 1000 / getMaxTeams;
-			else
+			CurrentInterval++;
+			if (CurrentInterval > MaxInterval)
 			{
-				CurrentInterval++;
-				if (CurrentInterval > MaxInterval)
-				{
-					CurrentInterval = 1000;
-					MaxInterval++;
-					GameTeams.Sort();
-				}
-				Timer1.Interval = CurrentInterval;
+				CurrentInterval = 1000;
+				MaxInterval++;
+				GameTeams.Sort();
 			}
+			Timer1.Interval = CurrentInterval;
 		}
 
 		public void lowestLevelUp()

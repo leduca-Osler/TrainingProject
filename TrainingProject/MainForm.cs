@@ -725,14 +725,7 @@ namespace TrainingApp
 		private void BreakTimer_Tick(object sender, EventArgs e)
 		{
 			setColour();
-			int fightPercentOffset = 0;
-			if (MyGame.GameTeam1 != null && MyGame.GameTeam2 != null && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].Automated && MyGame.GameTeam2[0].Automated)
-			{
-				BreakTimer.Interval = tickRate / MyGame.GameTeams.Count;
-				fightPercentOffset = MyGame.GameTeams.Count;
-			}
-			else
-				BreakTimer.Interval = tickRate;
+			BreakTimer.Interval = tickRate;
 			Random tmp = new Random();
 			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
 			{
@@ -755,7 +748,7 @@ namespace TrainingApp
 				if (MyGame.Repair())
 					tmpColour = Color.White;
 				MyGame.equip();
-				if (MyGame.isFighting() && tmp.Next(MyGame.fightPercentMax + fightPercentOffset) > MyGame.fightPercent) 
+				if (MyGame.isFighting() && tmp.Next(MyGame.fightPercentMax) > MyGame.fightPercent) 
 					MyGame.startFight();
 				if (!MyGame.isFighting())
 					btnFight.BackColor = tmpColour;
@@ -909,7 +902,7 @@ namespace TrainingApp
 
 		private void fastForwardToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MyGame.FastForward = true;
+			MyGame.FastForward = !MyGame.FastForward;
 		}
 	}
 	public static class BinarySerialization
