@@ -191,7 +191,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if ((shownCount++ >= (getNumRobos() * MyGame.getMaxTeamsAutomated()) / 2 || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
+				if ((shownCount++ >= (getNumRobos() / 2) || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
 				{
 					foreach (Control eControl in MainPannel.Controls)
 						eControl.Dispose();
@@ -211,7 +211,8 @@ namespace TrainingApp
 							if (Game.RndVal.Next(100) > 90) show = true;
 							MyGame.continueFight(show);
 							MyGame.FastForwardCount--;
-							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) == 0 || MyGame.GameTeam2[0].getNumRobos(false) == 0) bContinue = false;
+							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) <= 1 || MyGame.GameTeam2[0].getNumRobos(false) <= 1) 
+								bContinue = false;
 						}
 						if (MyGame.FastForwardCount == 0) MyGame.FastForward = false;
 					}

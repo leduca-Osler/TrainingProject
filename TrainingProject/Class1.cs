@@ -1795,13 +1795,6 @@ namespace TrainingProject
 			MainPanel.Controls.Add(lblCountdown);
 			return MainPanel;
 		}
-		public int getMaxTeamsAutomated()
-		{
-			int myMax = 1;
-			if (GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated)
-				myMax = MaxTeams;
-			return myMax;
-		}
 		public FlowLayoutPanel continueFight(bool display)
         {
 			roundCount++;
@@ -1820,7 +1813,6 @@ namespace TrainingProject
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
-			if (GameTeam1.Count > 0 && GameTeam1[0].Automated && GameTeam2[0].Automated) KOCount = 0;
 			for (int i = 0; i < GameTeam1.Count; i++)
 			{
 				if (GameTeam1[i].getNumRobos(true, KOCount) > 0 && GameTeam2[i].getNumRobos(true, KOCount) > 0)
