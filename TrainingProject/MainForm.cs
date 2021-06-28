@@ -726,7 +726,10 @@ namespace TrainingApp
 		private void BreakTimer_Tick(object sender, EventArgs e)
 		{
 			setColour();
-			BreakTimer.Interval = tickRate;
+			if (!MyGame.FastForward)
+				BreakTimer.Interval = tickRate;
+			else
+				BreakTimer.Interval = 50;
 			Random tmp = new Random();
 			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
 			{
