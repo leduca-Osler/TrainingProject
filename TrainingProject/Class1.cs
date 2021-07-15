@@ -1034,7 +1034,14 @@ namespace TrainingProject
 			{
 				if (RndVal.Next(100) < scouted && rebuild.MyTeam.Count > 1)
 				{
-					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by another team!\n", rebuild.MyTeam[i].getName);
+					Team scoutingTeam = GameTeams[RndVal.Next(GameTeams.Count)];
+					string strScouter = " another arena";
+					if (!scoutingTeam.getName.Equals(rebuild.getName))
+					{
+						scoutingTeam.MyTeam.Add(rebuild.MyTeam[i]);
+						strScouter = scoutingTeam.getName;
+					}
+					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!\n", rebuild.MyTeam[i].getName, strScouter);
 					rebuild.MyTeam.RemoveAt(i);
 					scouted--;
 				}
@@ -1798,6 +1805,7 @@ namespace TrainingProject
 		public FlowLayoutPanel continueFight(bool display)
         {
 			roundCount++;
+			if (roundCount % 10 == 0) getFightLog = string.Format("\n{0}", DateTime.Now);
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
 			// Flags to display to user
@@ -1896,11 +1904,14 @@ namespace TrainingProject
 								gameDifficulty++;
 								GameCurrency += Jackpot;
 								GameCurrencyLogMisc += Jackpot;
-								GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
-								GoalGameScoreBase += GoalGameScoreBaseIncrement;
-								Jackpot = 0;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + " +++ Arena defeated monsters difficulty increased ";
-								resetScore();
+								Jackpot = 0;
+								if (getScore() > (GoalGameScore * 0.8))
+								{
+									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
+									GoalGameScoreBase += GoalGameScoreBaseIncrement;
+									resetScore();
+								}
 							}
 							// Boss Fight
 							else
@@ -1929,8 +1940,11 @@ namespace TrainingProject
 							{
 								Jackpot = 0;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters ";
-								GoalGameScore += RndVal.Next(GoalGameScoreBase);
-								resetScore();
+								if (getScore() > (GoalGameScore * 0.8))
+								{
+									GoalGameScore += RndVal.Next(GoalGameScoreBase);
+									resetScore();
+								}
 							}
 							else
 							{
@@ -3543,7 +3557,8 @@ namespace TrainingProject
 		{
 			int beds = 0;
 			int pay = 0;
-			int value = MyTeam[RndVal.Next(MyTeam.Count)].getTHealth();
+			int value = 0;
+			if (MyTeam.Count > 0) value = MyTeam[RndVal.Next(MyTeam.Count)].getTHealth();
 			return healRobos(ref beds, ref pay, value, isBoss);
 		}
 		public Boolean healRobos(ref int beds, ref int pay, int value, bool isBoss = false)
