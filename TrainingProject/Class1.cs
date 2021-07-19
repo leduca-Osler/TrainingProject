@@ -1805,7 +1805,6 @@ namespace TrainingProject
 		public FlowLayoutPanel continueFight(bool display)
         {
 			roundCount++;
-			if (roundCount % 10 == 0) getFightLog = string.Format("\n{0}", DateTime.Now);
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
 			// Flags to display to user

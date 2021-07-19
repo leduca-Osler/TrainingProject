@@ -155,7 +155,7 @@ namespace TrainingApp
 				btnAutomatic.BackColor = Color.Red;
 			}
 			cbTeamSelect.Focus();
-			SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
+			SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
 		}
 		public void update()
 		{
