@@ -876,7 +876,7 @@ namespace TrainingApp
 			// Pause / resume
 			if (e.KeyCode == Keys.Space) btnAutomatic.PerformButtonClick();
 			// Fight
-			else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Add) btnFight.PerformClick();
+			else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Add || e.KeyCode == Keys.Z) btnFight.PerformClick();
 			// Select Team
 			else if (e.KeyCode == Keys.Q) cbTeamSelect.Focus();
 			// Add Team

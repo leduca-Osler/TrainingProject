@@ -58,6 +58,7 @@
 			this.pauseResumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLongBattle = new System.Windows.Forms.ToolStripMenuItem();
+			this.fastForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.repairEquipAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cboRepairPercent = new System.Windows.Forms.ToolStripComboBox();
 			this.purchaseUpgradeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +75,6 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-			this.fastForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -351,6 +351,13 @@
 			this.mnuLongBattle.Text = "Long Battle";
 			this.mnuLongBattle.Click += new System.EventHandler(this.mnuLongBattle_Click);
 			// 
+			// fastForwardToolStripMenuItem
+			// 
+			this.fastForwardToolStripMenuItem.Name = "fastForwardToolStripMenuItem";
+			this.fastForwardToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.fastForwardToolStripMenuItem.Text = "Fast Forward";
+			this.fastForwardToolStripMenuItem.Click += new System.EventHandler(this.fastForwardToolStripMenuItem_Click);
+			// 
 			// repairEquipAtToolStripMenuItem
 			// 
 			this.repairEquipAtToolStripMenuItem.Enabled = false;
@@ -486,13 +493,6 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
-			// 
-			// fastForwardToolStripMenuItem
-			// 
-			this.fastForwardToolStripMenuItem.Name = "fastForwardToolStripMenuItem";
-			this.fastForwardToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-			this.fastForwardToolStripMenuItem.Text = "Fast Forward";
-			this.fastForwardToolStripMenuItem.Click += new System.EventHandler(this.fastForwardToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 

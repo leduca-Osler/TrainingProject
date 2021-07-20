@@ -2157,7 +2157,7 @@ namespace TrainingProject
 		public int IncreaseJackpot()
 		{
 			CurrentJackpotLvl++;
-			CurrentJackpot = roundValue(CurrentJackpot, CurrentJackpotBase, "up");
+			CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(CurrentJackpotBase), "up");
 			CurrentJackpotBase += CurrentJackpotBaseIncrement;
 			return CurrentJackpot;
 		}
@@ -2173,11 +2173,11 @@ namespace TrainingProject
 			if (CurrentJackpot > MinJackpot)
 			{
 				CurrentJackpotLvl--;
-				CurrentJackpot = roundValue(CurrentJackpot, CurrentJackpotBase, "down");
+				CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(CurrentJackpotBase), "down");
 				CurrentJackpotBase -= CurrentJackpotBaseIncrement;
 			}
 			// current Jackpot reset to min level
-			if (CurrentJackpotLvl < 1 || CurrentJackpot < 3)
+			if (CurrentJackpotLvl < 1 || CurrentJackpot < 1)
             {
 				CurrentJackpot = 3;
 				CurrentJackpotLvl = 1;
