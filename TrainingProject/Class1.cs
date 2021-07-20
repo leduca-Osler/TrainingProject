@@ -2177,12 +2177,11 @@ namespace TrainingProject
 				CurrentJackpotBase -= CurrentJackpotBaseIncrement;
 			}
 			// current Jackpot reset to min level
-			if (CurrentJackpotLvl < 1 || CurrentJackpot < 1)
+			if (CurrentJackpotLvl < 1 || CurrentJackpot < 1 || CurrentJackpotBase < 1)
             {
 				CurrentJackpot = 3;
 				CurrentJackpotLvl = 1;
 				CurrentJackpotBase = 1;
-				CurrentJackpotBaseIncrement = 1;
 			}
 			while (CurrentJackpot < MinJackpot)
 			{
