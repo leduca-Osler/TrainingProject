@@ -144,7 +144,8 @@ namespace TrainingApp
 			if (MyGame.SafeTime > DateTime.Now)
 			{
 				update();
-				MyGame.interval(timer1);
+				if (MyGame.FastForward && !MyGame.isFighting()) timer1.Interval = 50;
+				else MyGame.interval(timer1);
 				#if DEBUG
 					timer1.Interval = 50; //speed up for testing
 				#endif
@@ -227,7 +228,7 @@ namespace TrainingApp
 							if (Game.RndVal.Next(100) > 90) show = true;
 							MyGame.continueFight(show);
 							MyGame.FastForwardCount--;
-							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) <= 1 || MyGame.GameTeam2[0].getNumRobos(false) <= 1) 
+							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) <= 0 || MyGame.GameTeam2[0].getNumRobos(false) <= 0) 
 								bContinue = false;
 						}
 						if (MyGame.FastForwardCount == 0) MyGame.FastForward = false;
@@ -742,10 +743,10 @@ namespace TrainingApp
 		private void BreakTimer_Tick(object sender, EventArgs e)
 		{
 			setColour();
-			if (!MyGame.FastForward)
-				BreakTimer.Interval = tickRate;
+			if (MyGame.FastForward)
+				BreakTimer.Interval = 5;
 			else
-				BreakTimer.Interval = 50;
+				BreakTimer.Interval = tickRate;
 			Random tmp = new Random();
 			if (DateTime.Now > MyGame.BreakTime && breakTimerOn)
 			{
