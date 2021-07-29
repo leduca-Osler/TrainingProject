@@ -1385,14 +1385,13 @@ namespace TrainingProject
 				// Monster fighter teams get 10% of jackpot
 				if (GameTeam1.Count > 1)
 				{
-					int MonsterFighter = (int)(CurrentJackpot * 0.1);
-					GameCurrency -= MonsterFighter*2;
-					GameCurrencyLogMisc -= MonsterFighter*2;
+					int MonsterFighter = (int)(MinJackpot / 2);
+					GameCurrency -= MonsterFighter;
+					GameCurrencyLogMisc -= MonsterFighter;
 					GameTeam1[GameTeam1.Count - 1].getCurrency += MonsterFighter;
-					MonsterOutbreak.getCurrency += MonsterFighter;
 					msg += displaySeating("G", tmp, -1, ref countChars);
-					msg += displaySeating("MG", MonsterFighter * 2, -1, ref countChars);
-					msg += displaySeating("R", tmp - (MonsterFighter * 2), -1, ref countChars);
+					msg += displaySeating("MG", MonsterFighter, -1, ref countChars);
+					msg += displaySeating("R", tmp - (MonsterFighter), -1, ref countChars);
 				}
 				else
 				{
@@ -1509,7 +1508,7 @@ namespace TrainingProject
 			HeaderPanel.Controls.Add(lblBlank);
 			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 200, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
-			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} ({1}) [{2}] -> {3:n0} ({4:n1}) - {5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} S:{1} B:{2} Ramaining: M:{3:n0} H:{4:n1} - Rounds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
