@@ -1277,6 +1277,7 @@ namespace TrainingProject
 							MaxJackpot = getGameCurrency;
 						}
 					}
+					CheckMinJackpot();
 					if (ArenaOpponent1 == ArenaOpponent2)
 						Team1Index = Team2Index = monsterFight(true);
 					else
@@ -1831,7 +1832,7 @@ namespace TrainingProject
 						{
 							if (i == 0)
 							{
-								Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty,Jackpot) };
+								Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} W:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - (MinJackpot / 2), (MinJackpot / 2)) };
 								MainPanel.Controls.Add(lblGameStats);
 							}
 							Color background = Color.Transparent;
@@ -1839,12 +1840,8 @@ namespace TrainingProject
 								background = Color.LightGray;
 							Label lblTeam1stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam1[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount, this) };
 							int tmpI = i;
-							/*if (getGameCurrency > 0)
-								lblTeam1stats.Click += new EventHandler((sender, e) => GameTeam1[tmpI].Rebuild(true, this));*/
 							MainPanel.Controls.Add(lblTeam1stats);
 							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true), ResearchDevRebuild, KOCount, this) };
-							/*if (getGameCurrency > 0)
-								lblTeam2stats.Click += new EventHandler((sender, e) => GameTeam2[tmpI].Rebuild(true, this));*/
 							MainPanel.Controls.Add(lblTeam2stats);
 						}
 						else
@@ -1858,7 +1855,7 @@ namespace TrainingProject
 									Team2.Controls.Add(getCharacterInfo(eRobo));
 								}
 							}
-							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty,Jackpot) };
+							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} W:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - (MinJackpot / 2), (MinJackpot / 2)) };
 							MainPanel.Controls.Add(lblGameStats);
 							Label lblVS2 = new Label { AutoSize = true, Text = GameTeam2[i].getName + " C:" + String.Format("{0:n0}", GameTeam2[i].getCurrency) + " S:" + String.Format("{0:n0}", GameTeam2[i].getScore) + " D:" + String.Format("{0:n0}", GameTeam2[i].getDifficulty) };
 							MainPanel.Controls.Add(lblVS2);
@@ -1968,7 +1965,7 @@ namespace TrainingProject
 							{
 								FightBreak -= 5;
 								lblWinner.Text = GameTeam1[i].getName + " wins!";
-								long tmp = (long)(Jackpot * .7);
+								long tmp = (long)(Jackpot - (MinJackpot / 2));
 								GameTeam1[i].getCurrency += tmp;
 								Jackpot -= tmp;
 								msg += " " + String.Format("{0:n0}", tmp);
@@ -2021,7 +2018,7 @@ namespace TrainingProject
 								if (GameTeam2[i].isMonster)
 								{
 									// pay loosing team
-									long tmp = (long)(Jackpot * .7);
+									long tmp = (long)(Jackpot - (MinJackpot / 2));
 									MonsterOutbreak.getCurrency += tmp;
 									tmp = (int)(Jackpot - tmp);
 									GameTeam1[i].getCurrency += tmp;
@@ -2038,7 +2035,7 @@ namespace TrainingProject
 								else
 								{
 									// team won they get 70%
-									long tmp = (long)(Jackpot * .7);
+									long tmp = (long)(Jackpot - (MinJackpot / 2));
 									GameTeam2[i].getCurrency += tmp;
 									Jackpot -= tmp;
 									msg += " " + String.Format("{0:n0}", tmp);
@@ -2176,9 +2173,13 @@ namespace TrainingProject
 				CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(CurrentJackpotBase), "down");
 				CurrentJackpotBase -= CurrentJackpotBaseIncrement;
 			}
+			return CurrentJackpot;
+		}
+		public void CheckMinJackpot()
+		{
 			// current Jackpot reset to min level
 			if (CurrentJackpotLvl < 1 || CurrentJackpot < 1 || CurrentJackpotBase < 1)
-            {
+			{
 				CurrentJackpot = 3;
 				CurrentJackpotLvl = 1;
 				CurrentJackpotBase = 1;
@@ -2187,7 +2188,6 @@ namespace TrainingProject
 			{
 				IncreaseJackpot();
 			}
-			return CurrentJackpot;
 		}
 		public void equip(Team eTeam, bool checkFight)
 		{
@@ -3494,9 +3494,13 @@ namespace TrainingProject
 				// only increase base stats if level is high enough
 				if (baseStats < MyTeam[robo].getLevel / 5)
 				{
+					int MultiRank = 100 + myGame.getResearchDevLvl;
 					do
+					{
 						baseStats++;
-					while (RndVal.Next(100 + myGame.getResearchDevLvl) > 100);
+						MultiRank -= 5;
+					}
+					while (RndVal.Next(MultiRank) > 100);
 					baseIncreased = baseStats - MyTeam[robo].getBaseStats();
 				}
 				string strName = MyTeam[robo].getName;

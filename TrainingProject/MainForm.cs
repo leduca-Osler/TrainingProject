@@ -263,7 +263,7 @@ namespace TrainingApp
 				}
 			}
 			MainPannel.AutoScrollPosition = new Point(0, 0);
-			mnuDisplayJackpot.Text = String.Format("Jackpot {0:c0}",MyGame.CurrentJackpot);
+			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinJackpot / 2), (MyGame.MinJackpot / 2));
 			MinJackpotLevel.Text = MyGame.MinJackpot.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
