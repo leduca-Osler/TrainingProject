@@ -831,7 +831,8 @@ namespace TrainingProject
 			CurrentInterval++;
 			if (CurrentInterval > MaxInterval)
 			{
-				CurrentInterval = 1000;
+				CurrentInterval = 1000 - (MaxInterval - 1000);
+				if (CurrentInterval < 1) CurrentInterval = 1;
 				MaxInterval++;
 				GameTeams.Sort();
 			}
@@ -1506,7 +1507,7 @@ namespace TrainingProject
 			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
 			HeaderPanel.Controls.Add(lblBlank);
-			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 200, Height = 10 };
+			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 450, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
 			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} S:{1} B:{2} Ramaining: M:{3:n0} H:{4:n1} - Rounds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
 			HeaderPanel.Controls.Add(lblTime);
@@ -1832,6 +1833,7 @@ namespace TrainingProject
 							if (i == 0)
 							{
 								Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} W:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - (MinJackpot / 2), (MinJackpot / 2)) };
+								if (GameTeam1[0].getName == "Arena") lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0} ", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot) };
 								MainPanel.Controls.Add(lblGameStats);
 							}
 							Color background = Color.Transparent;
@@ -1855,6 +1857,7 @@ namespace TrainingProject
 								}
 							}
 							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} W:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - (MinJackpot / 2), (MinJackpot / 2)) };
+							if (GameTeam1[0].getName == "Arena") lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0} ", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot) };
 							MainPanel.Controls.Add(lblGameStats);
 							Label lblVS2 = new Label { AutoSize = true, Text = GameTeam2[i].getName + " C:" + String.Format("{0:n0}", GameTeam2[i].getCurrency) + " S:" + String.Format("{0:n0}", GameTeam2[i].getScore) + " D:" + String.Format("{0:n0}", GameTeam2[i].getDifficulty) };
 							MainPanel.Controls.Add(lblVS2);
@@ -1975,6 +1978,8 @@ namespace TrainingProject
 									WinCount++;
 									GameTeam1[i].getDifficulty++;
 									// fight next difficulty
+									Jackpot += MinJackpot;
+									getGameCurrency -= MinJackpot;
 									Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
@@ -3077,7 +3082,7 @@ namespace TrainingProject
 							{
 								for (int j = 0; j < 5; j++)
 								{
-									addRune((int)(MyTeam[i].getBaseStats() / 2), true);
+									addRune((int)(MyTeam[i].getRankLvl()), true);
 								}
 								strMsg += strDelim + (int)(MyTeam[i].getBaseStats() / 2);
 								strDelim = ",";
@@ -3711,6 +3716,11 @@ namespace TrainingProject
 		{
 			set { Tech = value; }
 			get { return Tech; }
+		}
+
+		public int getRankLvl()
+		{
+			return (int)((getBaseStats() / 2) * 10);
 		}
 		public int getBaseStats()
 		{
