@@ -47,7 +47,8 @@ namespace TrainingApp
 			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
 			InitializeComponent();
-			mnuDisplayJackpot.Text = MyGame.CurrentJackpot.ToString();
+			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinJackpot / 2), (MyGame.MinJackpot / 2));
+			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}",MyGame.getArenaOutreach());
 			MinJackpotLevel.Text = MyGame.MinJackpot.ToString();
 			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
@@ -168,17 +169,21 @@ namespace TrainingApp
 			Boolean monsterLvl = false;
 			Boolean shopLvl = false;
 			Boolean shopRestock = false;
+			Boolean currOneK = false;
+			Boolean currTenK = false;
+			Boolean currHundredK = false;
+			Boolean currOneM = false;
 			Color shopColour = Color.White;
 			Boolean researchLvl = false;
-			if (MyGame.getAvailableTeams > 0 && MyGame.getTeamCost < MyGame.getGameCurrency)
-				addTeam = true;
+			if (MyGame.getAvailableTeams > 0 && MyGame.getTeamCost < MyGame.getGameCurrency) addTeam = true;
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
-					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost)
-				addRobo = true;
-			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)
-				arenaLvl = true;
-			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)
-				monsterLvl = true;
+					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost) addRobo = true;
+			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost) arenaLvl = true;
+			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost) monsterLvl = true;
+			if (MyGame.getGameCurrency >= 1000) currOneK = true;
+			if (MyGame.getGameCurrency >= 10000) currTenK = true;
+			if (MyGame.getGameCurrency >= 100000) currHundredK = true;
+			if (MyGame.getGameCurrency >= 1000000) currOneM = true;
 			// enough money to upgrade or re-stock
 			if (MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
 			{
@@ -202,6 +207,10 @@ namespace TrainingApp
 			mnuShopLevelUp.Enabled = shopLvl;
 			mnuRestockShop.Enabled = shopRestock;
 			btnResearchDev.Enabled = researchLvl;
+			mnuInvest1000.Enabled = currOneK;
+			mnuInvest10000.Enabled = currTenK;
+			mnuInvest100000.Enabled = currHundredK;
+			mnuInvest1000000.Enabled = currOneM;
 			mnuLongBattle.Text = String.Format("Long Battle {0}hrs \n{1:c0}", MyGame.ManagerHrs, MyGame.ManagerCost);
 			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
 			// if fight is active
@@ -264,6 +273,7 @@ namespace TrainingApp
 			}
 			MainPannel.AutoScrollPosition = new Point(0, 0);
 			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinJackpot / 2), (MyGame.MinJackpot / 2));
+			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}", MyGame.getArenaOutreach());
 			MinJackpotLevel.Text = MyGame.MinJackpot.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
@@ -349,6 +359,7 @@ namespace TrainingApp
 				long jArenaLvlCost = json["ArenaLvlCost"] != null ? (long)json["ArenaLvlCost"] : 2000;
 				long jArenaLvlCostBase = json["ArenaLvlCostBase"] != null ? (long)json["ArenaLvlCostBase"] : 1000;
 				long jArenaMaint = json["ArenaLvlMaint"] != null ? (long)json["ArenaLvlMaint"] : 1;
+				long jArenaComunityOutreach = json["ArenaComunityReach"] != null ? (long)json["ArenaComunityReach"] : 100;
 				int jMonsterDenLvl = json["MonsterDenLvl"] != null ? (int)json["MonsterDenLvl"] : 1;
 				long jMonsterDenLvlCost = json["MonsterDenLvlCost"] != null ? (long)json["MonsterDenLvlCost"] : 2000;
 				long jMonsterDenLvlCostBase = json["MonsterDenLvlCostBase"] != null ? (long)json["MonsterDenLvlCostBase"] : 1000;
@@ -383,7 +394,7 @@ namespace TrainingApp
 				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jGoalGameScoreBase, jMaxTeams, jTeamCost, jTeamCostBase, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaLvlCostBase, jArenaMaint, 
-					jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenRepair, jMonsterDenRepairBase, 
+					jArenaComunityOutreach, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenRepair, jMonsterDenRepairBase, 
 					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 
 					jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty);
@@ -924,6 +935,30 @@ namespace TrainingApp
 		private void fastForwardToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			MyGame.FastForward = !MyGame.FastForward;
+		}
+
+		private void invest10ToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MyGame.getGameCurrency -= 1000;
+			MyGame.arenaComunityOutreach();
+		}
+
+		private void mnuInvest10000_Click(object sender, EventArgs e)
+		{
+			MyGame.getGameCurrency -= 10000;
+			MyGame.arenaComunityOutreach(10);
+		}
+
+		private void mnuInvest100000_Click(object sender, EventArgs e)
+		{
+			MyGame.getGameCurrency -= 100000;
+			MyGame.arenaComunityOutreach(100);
+		}
+
+		private void mnuInvest1000000_Click(object sender, EventArgs e)
+		{
+			MyGame.getGameCurrency -= 1000000;
+			MyGame.arenaComunityOutreach(1000);
 		}
 	}
 	public static class BinarySerialization

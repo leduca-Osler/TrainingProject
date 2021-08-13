@@ -354,6 +354,8 @@ namespace TrainingProject
 		[JsonProperty]
 		private long ArenaLvlMaint;
 		[JsonProperty]
+		private long ArenaComunityReach;
+		[JsonProperty]
 		public int MonsterDenLvl;
 		[JsonProperty]
 		private long MonsterDenLvlCost;
@@ -589,7 +591,7 @@ namespace TrainingProject
 			}
 		}
 		public Game(int pGoalGameScore, int pGoalGameScoreBase, int pMaxTeams, long pTeamCost, long pTeamCostBase, long pGameCurrency, int pArenaLvl, long pArenaLvlCost,
-			long pArenaLvlCostBase, long pArenaLvlMaint, int pMonsterDenLvl, long pMonsterDenLvlCost, long pMonsterDenLvlCostBase, long pMonsterDenLvlMaint,
+			long pArenaLvlCostBase, long pArenaLvlMaint, long pArenaComunityReach, int pMonsterDenLvl, long pMonsterDenLvlCost, long pMonsterDenLvlCostBase, long pMonsterDenLvlMaint,
 			int pMonsterDenBonus, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint,
 			int pShopStock, long pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl,
 			long pResearchDevLvlCost, long pResearchDevLvlCostBase, long pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealValueBase, int pResearchDevHealBays,
@@ -639,6 +641,7 @@ namespace TrainingProject
 			ArenaLvlCost = pArenaLvlCost;
 			ArenaLvlCostBase = pArenaLvlCostBase;
 			ArenaLvlMaint = pArenaLvlMaint;
+			ArenaComunityReach = pArenaComunityReach;
 			MonsterDenLvl = pMonsterDenLvl;
 			MonsterDenLvlCost = pMonsterDenLvlCost;
 			MonsterDenLvlMaint = pMonsterDenLvlMaint;
@@ -731,6 +734,7 @@ namespace TrainingProject
 			ArenaLvlCost = 2000;
 			ArenaLvlCostBase = ArenaLvlCostBaseIncrement;
 			ArenaLvlMaint = 1;
+			ArenaComunityReach = 100;
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 2000;
 			MonsterDenLvlCostBase = MonsterDenLvlCostBaseIncrement;
@@ -861,14 +865,24 @@ namespace TrainingProject
 			if (choise == "RD" && getGameCurrency >= getResearchDevLvlCost) ResearchDevLevelUp();
 			if (choise == "Den" && getGameCurrency >= getMonsterDenLvlCost) MonsterDenLevelUp();
 		}
+		public void arenaComunityOutreach(int recursions)
+		{
+			for (int i = 0; i < recursions; i++)
+			{ arenaComunityOutreach(); }
+		}
+		public void arenaComunityOutreach()
+		{
+			ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
+		}
 		public void arenaLevelUp()
 		{
-			getFightLog = getWarningLog = "\nArena upgraded!";
+			getFightLog = getWarningLog = "\nArena upgraded!"; 
 			getGameCurrency -= ArenaLvlCost;
 			GameCurrencyLogUp -= ArenaLvlCost;
 			ArenaLvlMaint += ArenaLvlCost/2;
 			ArenaLvl++;
 			ArenaLvlCost = roundValue(ArenaLvlCost, ArenaLvlCostBase, "up");
+			ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
 			ArenaLvlCostBase += ArenaLvlCostBaseIncrement;
 			int lastPrice = Seating[0].Price;
 			foreach (ArenaSeating eSeating in Seating)
@@ -1031,11 +1045,18 @@ namespace TrainingProject
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
 			int winGoal = rebuild.Win;
 			int scouted = rebuild.Win * 10;
+			IList<int> scoutingTeams = new List<int> { };
+			// teams for scouting
+			for (int i = 0; i < GameTeams.Count; i++)
+			{
+				for (int j = 0; j <= i; j++)
+				{ scoutingTeams.Add(j); }
+			}
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 			{
 				if (RndVal.Next(100) < scouted && rebuild.MyTeam.Count > 1)
 				{
-					Team scoutingTeam = GameTeams[RndVal.Next(GameTeams.Count)];
+					Team scoutingTeam = GameTeams[scoutingTeams[RndVal.Next(scoutingTeams.Count)]];
 					string strScouter = " another arena";
 					if (!scoutingTeam.getName.Equals(rebuild.getName))
 					{
@@ -1334,7 +1355,9 @@ namespace TrainingProject
 				int tmpMonsterDenBonus = getMonsterDenBonus;
 				if (getGameCurrency <= 0) tmpMonsterDenBonus = 0;
 				if (GameTeam1.Count == 1) PotScore += tmpMonsterDenBonus;
-				int tmpTotalScore = PotScore;
+				// small chance to reduce the outreach percentage 
+				if (RndVal.Next(1000) < ArenaLvl) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 100), "down");
+				int tmpTotalScore = (int)(PotScore * getArenaOutreach());
 				if (GameTeam1.Count == 1)
 				{
 					CurrentSeating = new List<ArenaSeating> {  };
@@ -1418,7 +1441,7 @@ namespace TrainingProject
 
 					msg += displaySeating("J", CurrentJackpot, -1, ref countChars);
 					msg += displaySeating("R", tmp - CurrentJackpot, -1, ref countChars);
-					msg += String.Format("\n{0}/{1} {2:n2}%\n", fightPercent.ToString(), tmpFightPerMax.ToString(), ((double)(tmpFightPerMax - fightPercent) / tmpFightPerMax * 100));
+					msg += String.Format("\nComunity Bonus: {0:P2}\n", getArenaOutreach()); 
 					if (ResearchDevHealValueSum > 0)
 					{
 						// add message with income from repairs
@@ -1507,11 +1530,15 @@ namespace TrainingProject
 			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
 			HeaderPanel.Controls.Add(lblBlank);
-			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1000, Width = 450, Height = 10 };
+			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = 450, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
 			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} S:{1} B:{2} Ramaining: M:{3:n0} H:{4:n1} - Rounds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
+		}
+		public double getArenaOutreach()
+		{
+			return ((double)ArenaComunityReach / (double)ArenaLvlCost);
 		}
 		public FlowLayoutPanel showSelectedTeam(int TeamSelect, bool showAll)
 		{
@@ -1584,7 +1611,7 @@ namespace TrainingProject
 				//Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0} \n{2,-13}{3," + RowOneLength[0] + ":c0}\n{4,-13}{5," + RowOneLength[0] + ":c0}\n{6,-13}{7," + RowOneLength[0] + ":c0}\n{8,-13}{9," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency, "   Misc ",  GameCurrencyLogMisc, "   Maint -", 0 - GameCurrencyLogMaint, "   Upgr  -", 0 - GameCurrencyLogUp, "   Total =", GameCurrencyLogMisc + GameCurrencyLogMaint + GameCurrencyLogUp) };
 				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency)};
 				MainPanel.Controls.Add(lblCurrency);
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint) };
+				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3:P4}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint, getArenaOutreach()) };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				// get highest width for columns in seating.
@@ -1983,7 +2010,7 @@ namespace TrainingProject
 									Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
-									msg = GameTeam1[i].getName + " VS " + GameTeam2[i].getName + msg;
+									msg = string.Format("{0} VS {1} ({2:n0}) {3}", GameTeam1[i].getName, GameTeam2[i].getName, MinJackpot, msg);
 									GameTeam1[i].healRobos(false);
 									equip(GameTeam1[i], true);
 									newMonster = true;
@@ -2229,7 +2256,7 @@ namespace TrainingProject
 				if (shopper.getEquipWeapon != null)
 				{
 					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent) && shopper.getEquipWeapon.eMaxDurability > 50 + (shopper.getEquipWeapon.eUpgrade * 10) && getGameCurrency > 0)
+					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent) && shopper.getEquipWeapon.eMaxDurability > 50 + (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 2)) && getGameCurrency > 0)
 					{
 						long tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
 						eTeam.getCurrency -= tmpUpgrade;
@@ -2273,7 +2300,7 @@ namespace TrainingProject
 				if (shopper.getEquipArmour != null)
 				{
 					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 + (shopper.getEquipArmour.eUpgrade * 10) && getGameCurrency > 0)
+					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 + (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 2)) && getGameCurrency > 0)
 					{
 						long tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
 						eTeam.getCurrency -= tmpUpgrade;
@@ -2407,7 +2434,7 @@ namespace TrainingProject
 			// if arena is in debt, none of the benefits are available (Monster den bonus, Equipment upgrades, Repair bay, etc) so no maintenance required.
 			if (getGameCurrency <= 0)
 				maintValue = RndVal.Next(50, 250);
-			// maintValue = 32; //test Monster Outbreak
+			// maintValue = 220; //test 
 			switch (maintValue)
 			{
 				case 1:
@@ -2704,13 +2731,16 @@ namespace TrainingProject
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					goto case 210;
 				case 45:
-					// Arena Sponsor 
-					if (RndVal.Next(100) < GameTeams.Count)
+					if (ArenaLvl < 50)
 					{
-						MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000));
-						getGameCurrency += MaintCost;
-						GameCurrencyLogMisc += MaintCost;
-						getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						// Arena Sponsor 
+						if (RndVal.Next(100) < GameTeams.Count)
+						{
+							MaintCost += roundValue(RndVal.Next(gameDifficulty * BossCount * getArenaLvl * 1000));
+							getGameCurrency += MaintCost;
+							GameCurrencyLogMisc += MaintCost;
+							getWarningLog = Environment.NewLine + "!!! Arena Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
+						}
 					}
 					break;
 				case 46:
@@ -2761,6 +2791,10 @@ namespace TrainingProject
 						GameTeams[team].getCurrency += MaintCost;
 						getWarningLog = Environment.NewLine + "!!! " + GameTeams[team].getName + " Received a sponsor! +" + String.Format("{0:n0}", MaintCost);
 					}
+					break;
+				case 100:
+					ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 2), "down");
+					getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to +" + String.Format("{0:p2}", getArenaOutreach());
 					break;
 				case 203:
 					if (ArenaLvlMaint > 0) MaintCost += (getArenaLvlMaint / 200);
@@ -2822,6 +2856,55 @@ namespace TrainingProject
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
 					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}", strMessage, MaintCost);
+					break;
+				case 211:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 212;
+				case 212:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 213;
+				case 213:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 214;
+				case 214:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 215;
+				case 215:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 216;
+				case 216:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 217;
+				case 217:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 218;
+				case 218:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 219;
+				case 219:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 220;
+				case 220:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 221;
+				case 221:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 222;
+				case 222:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 223;
+				case 223:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 224;
+				case 224:
+					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					goto case 225;
+				case 225:
+					if (getArenaOutreach() < 0.5)
+					{
+						ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
+						getWarningLog = Environment.NewLine + "% Arena did comunity outreach " + String.Format("{0:p2}!", getArenaOutreach());
+					}
 					break;
 				case 249:
 					int leavingTeam = RndVal.Next(2,(50+CurrentJackpotLvl));

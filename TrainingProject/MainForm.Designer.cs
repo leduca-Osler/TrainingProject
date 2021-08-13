@@ -75,6 +75,11 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
+			this.mnuComunityOutreach = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuInvest1000 = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuInvest10000 = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuInvest100000 = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuInvest1000000 = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -291,7 +296,8 @@
             this.cboSaveCredits,
             this.maxHoursToolStripMenuItem,
             this.txtMaxManagerHrs,
-            this.mnuDisplayJackpot});
+            this.mnuDisplayJackpot,
+            this.mnuComunityOutreach});
 			this.btnAutomatic.Image = global::TrainingProject.Properties.Resources.Auto;
 			this.btnAutomatic.ImageTransparentColor = System.Drawing.Color.White;
 			this.btnAutomatic.Name = "btnAutomatic";
@@ -431,28 +437,28 @@
 			// increaseJackpotToolStripMenuItem
 			// 
 			this.increaseJackpotToolStripMenuItem.Name = "increaseJackpotToolStripMenuItem";
-			this.increaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+			this.increaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.increaseJackpotToolStripMenuItem.Text = "Increase Jackpot";
 			this.increaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpotToolStripMenuItem_Click);
 			// 
 			// increaseJackpot10ToolStripMenuItem
 			// 
 			this.increaseJackpot10ToolStripMenuItem.Name = "increaseJackpot10ToolStripMenuItem";
-			this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+			this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.increaseJackpot10ToolStripMenuItem.Text = "Increase Jackpot 10";
 			this.increaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpot10ToolStripMenuItem_Click);
 			// 
 			// decreaseJackpotToolStripMenuItem
 			// 
 			this.decreaseJackpotToolStripMenuItem.Name = "decreaseJackpotToolStripMenuItem";
-			this.decreaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+			this.decreaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.decreaseJackpotToolStripMenuItem.Text = "Decrease Jackpot";
 			this.decreaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpotToolStripMenuItem_Click);
 			// 
 			// decreaseJackpot10ToolStripMenuItem
 			// 
 			this.decreaseJackpot10ToolStripMenuItem.Name = "decreaseJackpot10ToolStripMenuItem";
-			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.decreaseJackpot10ToolStripMenuItem.Text = "Decrease Jackpot 10";
 			this.decreaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpot10ToolStripMenuItem_Click);
 			// 
@@ -460,7 +466,7 @@
 			// 
 			this.minLevelToolStripMenuItem.Enabled = false;
 			this.minLevelToolStripMenuItem.Name = "minLevelToolStripMenuItem";
-			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.minLevelToolStripMenuItem.Text = "Min Value";
 			// 
 			// MinJackpotLevel
@@ -493,6 +499,45 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
+			// 
+			// mnuComunityOutreach
+			// 
+			this.mnuComunityOutreach.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuInvest1000,
+            this.mnuInvest10000,
+            this.mnuInvest100000,
+            this.mnuInvest1000000});
+			this.mnuComunityOutreach.Name = "mnuComunityOutreach";
+			this.mnuComunityOutreach.Size = new System.Drawing.Size(181, 22);
+			this.mnuComunityOutreach.Text = "Comunity Outreach";
+			// 
+			// mnuInvest1000
+			// 
+			this.mnuInvest1000.Name = "mnuInvest1000";
+			this.mnuInvest1000.Size = new System.Drawing.Size(180, 22);
+			this.mnuInvest1000.Text = "Invest 1,000";
+			this.mnuInvest1000.Click += new System.EventHandler(this.invest10ToolStripMenuItem_Click);
+			// 
+			// mnuInvest10000
+			// 
+			this.mnuInvest10000.Name = "mnuInvest10000";
+			this.mnuInvest10000.Size = new System.Drawing.Size(180, 22);
+			this.mnuInvest10000.Text = "Invest 10,000";
+			this.mnuInvest10000.Click += new System.EventHandler(this.mnuInvest10000_Click);
+			// 
+			// mnuInvest100000
+			// 
+			this.mnuInvest100000.Name = "mnuInvest100000";
+			this.mnuInvest100000.Size = new System.Drawing.Size(180, 22);
+			this.mnuInvest100000.Text = "invest 100,000";
+			this.mnuInvest100000.Click += new System.EventHandler(this.mnuInvest100000_Click);
+			// 
+			// mnuInvest1000000
+			// 
+			this.mnuInvest1000000.Name = "mnuInvest1000000";
+			this.mnuInvest1000000.Size = new System.Drawing.Size(180, 22);
+			this.mnuInvest1000000.Text = "invest 1,000,000";
+			this.mnuInvest1000000.Click += new System.EventHandler(this.mnuInvest1000000_Click);
 			// 
 			// MainForm
 			// 
@@ -561,6 +606,11 @@
 		private System.Windows.Forms.ToolStripMenuItem purchaseUpgradeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem maxHoursToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem fastForwardToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem mnuComunityOutreach;
+		private System.Windows.Forms.ToolStripMenuItem mnuInvest1000;
+		private System.Windows.Forms.ToolStripMenuItem mnuInvest10000;
+		private System.Windows.Forms.ToolStripMenuItem mnuInvest100000;
+		private System.Windows.Forms.ToolStripMenuItem mnuInvest1000000;
 	}
 }
 
