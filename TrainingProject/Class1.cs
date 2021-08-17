@@ -1441,7 +1441,7 @@ namespace TrainingProject
 
 					msg += displaySeating("J", CurrentJackpot, -1, ref countChars);
 					msg += displaySeating("R", tmp - CurrentJackpot, -1, ref countChars);
-					msg += String.Format("\nComunity Bonus: {0:P2}\n", getArenaOutreach()); 
+					msg += String.Format("\n    Comunity Bonus: {0:P2}\n", (getArenaOutreach()-1.00)); 
 					if (ResearchDevHealValueSum > 0)
 					{
 						// add message with income from repairs
@@ -1611,7 +1611,7 @@ namespace TrainingProject
 				//Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0} \n{2,-13}{3," + RowOneLength[0] + ":c0}\n{4,-13}{5," + RowOneLength[0] + ":c0}\n{6,-13}{7," + RowOneLength[0] + ":c0}\n{8,-13}{9," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency, "   Misc ",  GameCurrencyLogMisc, "   Maint -", 0 - GameCurrencyLogMaint, "   Upgr  -", 0 - GameCurrencyLogUp, "   Total =", GameCurrencyLogMisc + GameCurrencyLogMaint + GameCurrencyLogUp) };
 				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency)};
 				MainPanel.Controls.Add(lblCurrency);
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3:P4}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint, getArenaOutreach()) };
+				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3:P2}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint, getArenaOutreach()-1) };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				// get highest width for columns in seating.
@@ -2256,7 +2256,12 @@ namespace TrainingProject
 				if (shopper.getEquipWeapon != null)
 				{
 					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent) && shopper.getEquipWeapon.eMaxDurability > 50 + (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 2)) && getGameCurrency > 0)
+					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost 
+						&& (PurchaseUgrade 
+							|| bAutomated 
+							|| shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent) 
+						&& shopper.getEquipWeapon.eMaxDurability > 50 + (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 2)) 
+						&& getGameCurrency > 0)
 					{
 						long tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
 						eTeam.getCurrency -= tmpUpgrade;
@@ -2268,7 +2273,8 @@ namespace TrainingProject
 					}
 					// Repair
 					if (eTeam.getCurrency > (shopper.getEquipWeapon.ePrice / 10)
-						&& shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent)
+						&& shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent 
+						&& shopper.getEquipWeapon.eMaxDurability > (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 4)))
 					{
 						int orig = shopper.getEquipWeapon.eDurability;
 						shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
@@ -2312,7 +2318,8 @@ namespace TrainingProject
 					}
 					// Repair 
 					if (eTeam.getCurrency > (shopper.getEquipArmour.ePrice / 10)
-						&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent)
+						&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent
+						&& shopper.getEquipArmour.eMaxDurability > (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 4)))
 					{
 						int orig = shopper.getEquipArmour.eDurability;
 						shopper.getEquipArmour.eDurability = shopper.getEquipArmour.eMaxDurability = (int)(shopper.getEquipArmour.eMaxDurability * .9);
@@ -2794,7 +2801,7 @@ namespace TrainingProject
 					break;
 				case 100:
 					ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 2), "down");
-					getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to +" + String.Format("{0:p2}", getArenaOutreach());
+					getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to +" + String.Format("{0:p2}", getArenaOutreach() - 1);
 					break;
 				case 203:
 					if (ArenaLvlMaint > 0) MaintCost += (getArenaLvlMaint / 200);
@@ -2858,52 +2865,53 @@ namespace TrainingProject
 					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}", strMessage, MaintCost);
 					break;
 				case 211:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.05) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 212;
 				case 212:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.1) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 213;
 				case 213:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.15) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 214;
 				case 214:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.2) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 215;
 				case 215:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.25) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 216;
 				case 216:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.3) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 217;
 				case 217:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.35) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 218;
 				case 218:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.4) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 219;
 				case 219:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.45) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 220;
 				case 220:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.5) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 221;
 				case 221:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.55) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 222;
 				case 222:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.6) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 223;
 				case 223:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.65) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 224;
 				case 224:
-					if (getArenaOutreach() < 0.5) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 10), "up");
+					if (getArenaOutreach() < 0.7) MaintCost += (ArenaLvlCostBase / 10);
 					goto case 225;
 				case 225:
-					if (getArenaOutreach() < 0.5)
+					if (getArenaOutreach() < 0.75)
 					{
-						ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
-						getWarningLog = Environment.NewLine + "% Arena did comunity outreach " + String.Format("{0:p2}!", getArenaOutreach());
+						MaintCost += (ArenaLvlCostBase / 10);
+						ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
+						getWarningLog = Environment.NewLine + "% Arena did comunity outreach " + String.Format("{0:p2}!", getArenaOutreach()-1);
 					}
 					break;
 				case 249:
