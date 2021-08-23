@@ -1587,7 +1587,10 @@ namespace TrainingProject
 					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
-					Button btnRebuild = new Button { AutoSize = true, Text = String.Format("Rebuild ({0:n0} {1:p0})", eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes), eRobo.rebuildSavings(GameTeams[TeamSelect - 1].Runes), eRobo.RoboRebuildCost) };
+					long ActualRebuildCost = eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes);
+					string strFormat = "Rebuild {0:c0}\nSave {1:c0}";
+					if (ActualRebuildCost == 100) strFormat = "Reset $100";
+					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), eRobo.rebuildSavings(GameTeams[TeamSelect - 1].Runes), eRobo.RoboRebuildCost) };
 					int innerIndex = index++;
 					if (getGameCurrency > 0)
 						btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, this));
