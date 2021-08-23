@@ -1530,7 +1530,19 @@ namespace TrainingProject
 			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
 			HeaderPanel.Controls.Add(lblBlank);
-			ProgressBar Progress = new ProgressBar { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = 450, Height = 10 };
+			Brush myColour = Brushes.Black;
+			if (CurrentInterval < 500) myColour = Brushes.LightYellow;
+			else if (CurrentInterval < 1000) myColour = Brushes.Yellow;
+			else if (CurrentInterval < 1300) myColour = Brushes.LawnGreen;
+			else if (CurrentInterval < 1600) myColour = Brushes.SpringGreen;
+			else if (CurrentInterval < 2000) myColour = Brushes.DarkGreen;
+			else if (CurrentInterval < 2300) myColour = Brushes.AliceBlue;
+			else if (CurrentInterval < 2600) myColour = Brushes.CadetBlue;
+			else if (CurrentInterval < 3000) myColour = Brushes.DarkBlue;
+			else if (CurrentInterval < 3300) myColour = Brushes.BlueViolet;
+			else if (CurrentInterval < 3600) myColour = Brushes.Violet;
+			else if (CurrentInterval < 4000) myColour = Brushes.DarkViolet;
+			AlsProgressBar Progress = new AlsProgressBar(myColour) { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = 450, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
 			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} S:{1} B:{2} Ramaining: M:{3:n0} H:{4:n1} - Rounds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
 			HeaderPanel.Controls.Add(lblTime);
@@ -2274,7 +2286,7 @@ namespace TrainingProject
 					// Repair
 					if (eTeam.getCurrency > (shopper.getEquipWeapon.ePrice / 10)
 						&& shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent 
-						&& shopper.getEquipWeapon.eMaxDurability > (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 4)))
+						&& shopper.getEquipWeapon.eMaxDurability > 20)
 					{
 						int orig = shopper.getEquipWeapon.eDurability;
 						shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
@@ -2319,7 +2331,7 @@ namespace TrainingProject
 					// Repair 
 					if (eTeam.getCurrency > (shopper.getEquipArmour.ePrice / 10)
 						&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent
-						&& shopper.getEquipArmour.eMaxDurability > (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 4)))
+						&& shopper.getEquipArmour.eMaxDurability > 20)
 					{
 						int orig = shopper.getEquipArmour.eDurability;
 						shopper.getEquipArmour.eDurability = shopper.getEquipArmour.eMaxDurability = (int)(shopper.getEquipArmour.eMaxDurability * .9);
@@ -2801,7 +2813,7 @@ namespace TrainingProject
 					break;
 				case 100:
 					ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 2), "down");
-					getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to +" + String.Format("{0:p2}", getArenaOutreach() - 1);
+					getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to " + String.Format("{0:p2}", getArenaOutreach() - 1);
 					break;
 				case 203:
 					if (ArenaLvlMaint > 0) MaintCost += (getArenaLvlMaint / 200);
