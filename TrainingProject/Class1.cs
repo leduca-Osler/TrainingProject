@@ -408,7 +408,7 @@ namespace TrainingProject
 		[JsonProperty]
 		public int CurrentJackpot;
 		public int CurrentJackpotLvl;
-		public int MinJackpot;
+		public int MinWage;
 		public int CurrentJackpotBase;
 		public int CurrentJackpotBaseIncrement;
 		public long MaxJackpot;
@@ -620,7 +620,7 @@ namespace TrainingProject
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
 			CurrentJackpotLvl = 1;
-			MinJackpot = 3;
+			MinWage = 1;
 			CurrentJackpotBase = 1;
 			CurrentJackpotBaseIncrement = 1;
 			fighting = false;
@@ -705,7 +705,7 @@ namespace TrainingProject
 			CurrentJackpot = 3;
 			MaxJackpot = 0;
 			CurrentJackpotLvl = 1;
-			MinJackpot = 3;
+			MinWage = 1;
 			CurrentJackpotBase = 1;
 			CurrentJackpotBaseIncrement = 1;
 			findMonster = 50;
@@ -840,7 +840,7 @@ namespace TrainingProject
 				MaxInterval++;
 				GameTeams.Sort();
 			}
-			Timer1.Interval = CurrentInterval;
+			else Timer1.Interval = CurrentInterval;
 		}
 
 		public void lowestLevelUp()
@@ -1409,13 +1409,12 @@ namespace TrainingProject
 				// Monster fighter teams get 10% of jackpot
 				if (GameTeam1.Count > 1)
 				{
-					int MonsterFighter = (int)(MinJackpot / 2);
-					GameCurrency -= MonsterFighter;
-					GameCurrencyLogMisc -= MonsterFighter;
-					GameTeam1[GameTeam1.Count - 1].getCurrency += MonsterFighter;
+					GameCurrency -= MinWage;
+					GameCurrencyLogMisc -= MinWage;
+					GameTeam1[GameTeam1.Count - 1].getCurrency += MinWage;
 					msg += displaySeating("G", tmp, -1, ref countChars);
-					msg += displaySeating("MG", MonsterFighter, -1, ref countChars);
-					msg += displaySeating("R", tmp - (MonsterFighter), -1, ref countChars);
+					msg += displaySeating("MG", MinWage, -1, ref countChars);
+					msg += displaySeating("R", tmp - (MinWage), -1, ref countChars);
 				}
 				else
 				{
@@ -1531,20 +1530,15 @@ namespace TrainingProject
 			Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
 			HeaderPanel.Controls.Add(lblBlank);
 			Brush myColour = Brushes.Black;
-			if (CurrentInterval < 500) myColour = Brushes.LightYellow;
-			else if (CurrentInterval < 1000) myColour = Brushes.Yellow;
-			else if (CurrentInterval < 1300) myColour = Brushes.LawnGreen;
-			else if (CurrentInterval < 1600) myColour = Brushes.SpringGreen;
-			else if (CurrentInterval < 2000) myColour = Brushes.DarkGreen;
-			else if (CurrentInterval < 2300) myColour = Brushes.AliceBlue;
-			else if (CurrentInterval < 2600) myColour = Brushes.CadetBlue;
-			else if (CurrentInterval < 3000) myColour = Brushes.DarkBlue;
-			else if (CurrentInterval < 3300) myColour = Brushes.BlueViolet;
-			else if (CurrentInterval < 3600) myColour = Brushes.Violet;
-			else if (CurrentInterval < 4000) myColour = Brushes.DarkViolet;
+			if (CurrentInterval < 1000) myColour = Brushes.Gray;
+			else if (CurrentInterval < 2000) myColour = Brushes.White;
+			else if (CurrentInterval < 3000) myColour = Brushes.Yellow;
+			else if (CurrentInterval < 4000) myColour = Brushes.Green;
+			else if (CurrentInterval < 5000) myColour = Brushes.Blue;
+			else if (CurrentInterval < 6000) myColour = Brushes.Red;
 			AlsProgressBar Progress = new AlsProgressBar(myColour) { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = 450, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
-			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} S:{1} B:{2} Ramaining: M:{3:n0} H:{4:n1} - Rounds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
@@ -1588,9 +1582,10 @@ namespace TrainingProject
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
 					long ActualRebuildCost = eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes);
-					string strFormat = "Rebuild {0:c0}\nSave {1:c0}";
+					string strFormat = "Rebuild {0:c0}\nSave {1:c0} {2:n0}%";
 					if (ActualRebuildCost == 100) strFormat = "Reset $100";
-					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), eRobo.rebuildSavings(GameTeams[TeamSelect - 1].Runes), eRobo.RoboRebuildCost) };
+					int stats = (eRobo.getBaseStats());
+					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), GameTeams[TeamSelect - 1].Runes[stats / 2]) };
 					int innerIndex = index++;
 					if (getGameCurrency > 0)
 						btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, this));
@@ -1874,7 +1869,7 @@ namespace TrainingProject
 						{
 							if (i == 0)
 							{
-								Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} W:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - (MinJackpot / 2), (MinJackpot / 2)) };
+								Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - MinWage, MinWage) };
 								if (GameTeam1[0].getName == "Arena") lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0} ", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot) };
 								MainPanel.Controls.Add(lblGameStats);
 							}
@@ -1898,7 +1893,7 @@ namespace TrainingProject
 									Team2.Controls.Add(getCharacterInfo(eRobo));
 								}
 							}
-							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} W:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - (MinJackpot / 2), (MinJackpot / 2)) };
+							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - MinWage , MinWage ) };
 							if (GameTeam1[0].getName == "Arena") lblGameStats = new Label { AutoSize = true, Text = String.Format("C:{0:n0} TS:{1:n0}({2:n0}) D:{3:n0} J:{4:n0} ", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot) };
 							MainPanel.Controls.Add(lblGameStats);
 							Label lblVS2 = new Label { AutoSize = true, Text = GameTeam2[i].getName + " C:" + String.Format("{0:n0}", GameTeam2[i].getCurrency) + " S:" + String.Format("{0:n0}", GameTeam2[i].getScore) + " D:" + String.Format("{0:n0}", GameTeam2[i].getDifficulty) };
@@ -2009,7 +2004,7 @@ namespace TrainingProject
 							{
 								FightBreak -= 5;
 								lblWinner.Text = GameTeam1[i].getName + " wins!";
-								long tmp = (long)(Jackpot - (MinJackpot / 2));
+								long tmp = (long)(Jackpot - MinWage );
 								GameTeam1[i].getCurrency += tmp;
 								Jackpot -= tmp;
 								msg += " " + String.Format("{0:n0}", tmp);
@@ -2020,12 +2015,12 @@ namespace TrainingProject
 									WinCount++;
 									GameTeam1[i].getDifficulty++;
 									// fight next difficulty
-									Jackpot += MinJackpot;
-									getGameCurrency -= MinJackpot;
+									Jackpot += MinWage;
+									getGameCurrency -= MinWage;
 									Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
 									addMonsters(GameTeam2[i]);
 									GameTeam2[i] = tmpTeam;
-									msg = string.Format("{0} VS {1} ({2:n0}) {3}", GameTeam1[i].getName, GameTeam2[i].getName, MinJackpot, msg);
+									msg = string.Format("{0} VS {1} ({2:n0}) {3}", GameTeam1[i].getName, GameTeam2[i].getName, MinWage, msg);
 									GameTeam1[i].healRobos(false);
 									equip(GameTeam1[i], true);
 									newMonster = true;
@@ -2064,7 +2059,7 @@ namespace TrainingProject
 								if (GameTeam2[i].isMonster)
 								{
 									// pay loosing team
-									long tmp = (long)(Jackpot - (MinJackpot / 2));
+									long tmp = (long)(Jackpot - MinWage);
 									MonsterOutbreak.getCurrency += tmp;
 									tmp = (int)(Jackpot - tmp);
 									GameTeam1[i].getCurrency += tmp;
@@ -2080,8 +2075,8 @@ namespace TrainingProject
 								}
 								else
 								{
-									// team won they get 70%
-									long tmp = (long)(Jackpot - (MinJackpot / 2));
+									// team won 
+									long tmp = (long)(Jackpot - MinWage);
 									GameTeam2[i].getCurrency += tmp;
 									Jackpot -= tmp;
 									msg += " " + String.Format("{0:n0}", tmp);
@@ -2124,6 +2119,7 @@ namespace TrainingProject
 							}
 						}
 					}
+					if (getScore() % 100 == 0) employeePayroll();
 				}
 				// last team add extra details
 				if (i == GameTeam1.Count - 1 && !GameTeam1[0].getName.Equals("Arena"))
@@ -2213,7 +2209,7 @@ namespace TrainingProject
 		}
 		public int DecreaseJackpot()
 		{
-			if (CurrentJackpot > MinJackpot)
+			if (CurrentJackpot > (MinWage * 2))
 			{
 				CurrentJackpotLvl--;
 				CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(CurrentJackpotBase), "down");
@@ -2230,7 +2226,7 @@ namespace TrainingProject
 				CurrentJackpotLvl = 1;
 				CurrentJackpotBase = 1;
 			}
-			while (CurrentJackpot < MinJackpot)
+			while (CurrentJackpot < (MinWage * 2))
 			{
 				IncreaseJackpot();
 			}
@@ -2447,6 +2443,20 @@ namespace TrainingProject
 				value -= 2000000000;
 			}
 			return retVal + RndVal.Next((int)value);
+		}
+		public void employeePayroll()
+		{
+			long MaintCost = 0;
+			long employees = 0;
+			// Pay employees
+			for (int i = 0; i < Seating.Count; i++)
+			{
+				MaintCost += (Seating[i].Amount / 25) * Seating[i].Level;
+				employees += Seating[i].Amount / 25;
+			}
+			getGameCurrency -= MaintCost;
+			GameCurrencyLogMaint -= MaintCost;
+			getFightLog = string.Format("\n\n$!! Payroll processed - cost {0:c0} employees {1:n0}", MaintCost, employees);
 		}
 		public void buildingMaintenance()
 		{
@@ -4232,7 +4242,6 @@ namespace TrainingProject
 		{
 			int percent = 100;
 			int stats = (Dexterity + Strength + Agility + Tech + Accuracy);
-			//getFightLog = string.Format("runes.Count {0} > stats {1}", runes.Count, stats);
 			if (runes.Count > stats / 2) percent -= runes[stats / 2];
 			return percent/100.0;
 		}

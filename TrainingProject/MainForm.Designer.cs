@@ -56,7 +56,6 @@
 			this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.btnPurchaseManager = new System.Windows.Forms.ToolStripMenuItem();
 			this.pauseResumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuWork = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLongBattle = new System.Windows.Forms.ToolStripMenuItem();
 			this.fastForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.repairEquipAtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -285,9 +284,8 @@
 			this.btnAutomatic.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnAutomatic.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuAutobattle,
-            this.btnPurchaseManager,
             this.pauseResumeToolStripMenuItem,
-            this.mnuWork,
+            this.btnPurchaseManager,
             this.mnuLongBattle,
             this.fastForwardToolStripMenuItem,
             this.repairEquipAtToolStripMenuItem,
@@ -342,13 +340,6 @@
 			this.pauseResumeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
 			this.pauseResumeToolStripMenuItem.Text = "Pause / Resume";
 			this.pauseResumeToolStripMenuItem.Click += new System.EventHandler(this.pauseResumeToolStripMenuItem_Click);
-			// 
-			// mnuWork
-			// 
-			this.mnuWork.Name = "mnuWork";
-			this.mnuWork.Size = new System.Drawing.Size(181, 22);
-			this.mnuWork.Text = "Back to work";
-			this.mnuWork.Click += new System.EventHandler(this.mnuWork_Click);
 			// 
 			// mnuLongBattle
 			// 
@@ -585,7 +576,6 @@
 		private System.Windows.Forms.ToolStripComboBox cboSaveCredits;
 		private System.Windows.Forms.ToolStripButton btnResearchDev;
 		private System.Windows.Forms.ToolStripMenuItem mnuLongBattle;
-		private System.Windows.Forms.ToolStripMenuItem mnuWork;
 		private System.Windows.Forms.ToolStripMenuItem btnPurchaseManager;
 		private System.Windows.Forms.Timer BreakTimer;
 		private System.Windows.Forms.ToolStripSplitButton btnFight;

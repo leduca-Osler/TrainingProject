@@ -47,9 +47,9 @@ namespace TrainingApp
 			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
 			InitializeComponent();
-			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinJackpot / 2), (MyGame.MinJackpot / 2));
+			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinWage / 2), (MyGame.MinWage / 2));
 			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}",MyGame.getArenaOutreach());
-			MinJackpotLevel.Text = MyGame.MinJackpot.ToString();
+			MinJackpotLevel.Text = MyGame.MinWage.ToString();
 			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
@@ -272,9 +272,9 @@ namespace TrainingApp
 				}
 			}
 			MainPannel.AutoScrollPosition = new Point(0, 0);
-			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinJackpot / 2), (MyGame.MinJackpot / 2));
+			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinWage / 2), (MyGame.MinWage / 2));
 			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}", MyGame.getArenaOutreach());
-			MinJackpotLevel.Text = MyGame.MinJackpot.ToString();
+			MinJackpotLevel.Text = MyGame.MinWage.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
@@ -696,7 +696,13 @@ namespace TrainingApp
 
 		private void mnuLongBattle_Click(object sender, EventArgs e)
 		{
-			if (MyGame.ManagerHrs > 0)
+
+			// recover unused hours
+			if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
+			{
+				returnToWork();
+			}
+			else if (MyGame.ManagerHrs > 0)
 			{
 				MyGame.SafeTime = DateTime.Now.AddHours(MyGame.ManagerHrs);
 				MyGame.ManagerHrs = 0;
@@ -719,9 +725,14 @@ namespace TrainingApp
 
 		private void mnuWork_Click(object sender, EventArgs e)
 		{
+			
+		}
+
+		private void returnToWork()
+		{ 
 			// recover unused hours
-			if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
-			{
+			//if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
+			//{
 				int hrs = (int)(MyGame.SafeTime - DateTime.Now).TotalHours;
 				while (hrs > 0)
 				{
@@ -730,7 +741,7 @@ namespace TrainingApp
 					MyGame.ManagerCostBase = MyGame.ManagerCostBase + MyGame.ManagerCostBaseIncrement;
 					hrs--;
 				}
-			}
+			//}
 			MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 			MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 		}
@@ -864,9 +875,9 @@ namespace TrainingApp
 		{
 			int lvl = 1;
 			if (int.TryParse(MinJackpotLevel.Text, out lvl))
-				MyGame.MinJackpot = lvl;
+				MyGame.MinWage = lvl;
 			else
-				MinJackpotLevel.Text = MyGame.MinJackpot.ToString();
+				MinJackpotLevel.Text = MyGame.MinWage.ToString();
 		}
 
 		private void toolStripMenuItem1_Click(object sender, EventArgs e)
