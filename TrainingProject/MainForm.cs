@@ -272,7 +272,7 @@ namespace TrainingApp
 				}
 			}
 			MainPannel.AutoScrollPosition = new Point(0, 0);
-			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinWage / 2), (MyGame.MinWage / 2));
+			mnuDisplayJackpot.Text = String.Format("J:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - MyGame.MinWage, MyGame.MinWage );
 			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}", MyGame.getArenaOutreach());
 			MinJackpotLevel.Text = MyGame.MinWage.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
