@@ -47,7 +47,7 @@ namespace TrainingApp
 			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
 			InitializeComponent();
-			mnuDisplayJackpot.Text = String.Format("W:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - (MyGame.MinWage / 2), (MyGame.MinWage / 2));
+			mnuDisplayJackpot.Text = String.Format("J:{0:c0} L:{1:c0}", MyGame.CurrentJackpot - MyGame.MinWage, MyGame.MinWage);
 			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}",MyGame.getArenaOutreach());
 			MinJackpotLevel.Text = MyGame.MinWage.ToString();
 			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
@@ -724,9 +724,7 @@ namespace TrainingApp
 		}
 
 		private void mnuWork_Click(object sender, EventArgs e)
-		{
-			
-		}
+		{}
 
 		private void returnToWork()
 		{ 
