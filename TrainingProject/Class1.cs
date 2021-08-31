@@ -2013,17 +2013,21 @@ namespace TrainingProject
 								{
 									msg = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
 									WinCount++;
-									GameTeam1[i].getDifficulty++;
-									// fight next difficulty
-									Jackpot += MinWage;
-									getGameCurrency -= MinWage;
-									Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
-									addMonsters(GameTeam2[i]);
-									GameTeam2[i] = tmpTeam;
-									msg = string.Format("{0} VS {1} ({2:n0}) {3}", GameTeam1[i].getName, GameTeam2[i].getName, MinWage, msg);
-									GameTeam1[i].healRobos(false);
-									equip(GameTeam1[i], true);
-									newMonster = true;
+									// increase difficulty if not greater than monsterDenLvl
+									if (GameTeam1[i].getDifficulty < MonsterDenLvl)
+									{
+										GameTeam1[i].getDifficulty++; 
+										// fight next difficulty
+										Jackpot += MinWage;
+										getGameCurrency -= MinWage;
+										Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
+										addMonsters(GameTeam2[i]);
+										GameTeam2[i] = tmpTeam;
+										msg = string.Format("{0} VS {1} ({2:n0}) {3}", GameTeam1[i].getName, GameTeam2[i].getName, MinWage, msg);
+										GameTeam1[i].healRobos(false);
+										equip(GameTeam1[i], true);
+										newMonster = true;
+									}
 								}
 								else
 								{
@@ -2118,8 +2122,8 @@ namespace TrainingProject
 								buildingMaintenance();
 							}
 						}
+						if (getScore() % 100 == 0) employeePayroll();
 					}
-					if (getScore() % 100 == 0) employeePayroll();
 				}
 				// last team add extra details
 				if (i == GameTeam1.Count - 1 && !GameTeam1[0].getName.Equals("Arena"))
