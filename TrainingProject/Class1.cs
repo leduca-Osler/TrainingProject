@@ -885,6 +885,7 @@ namespace TrainingProject
 			ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
 			ArenaLvlCostBase += ArenaLvlCostBaseIncrement;
 			int lastPrice = Seating[0].Price;
+			int totalLev = 0;
 			foreach (ArenaSeating eSeating in Seating)
 			{
 				eSeating.Amount = (int)roundValue(eSeating.Amount, eSeating.AmountBase, "up");
@@ -892,9 +893,10 @@ namespace TrainingProject
 				if (eSeating.Amount > 5000) eSeating.Amount = 5000;
 				if (RndVal.Next(100) > 98 || lastPrice > eSeating.Price) eSeating.Price++;
 				lastPrice = eSeating.Price;
+				totalLev += eSeating.Level;
 			}
 			// chance to add a new level of seating
-			if (RndVal.Next(100) > (85 - ArenaLvl + (Seating.Count* 5))) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 5, 1)); 
+			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl)) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 5, 1)); 
 		}
 		public string bossLevelUp()
 		{
@@ -2088,8 +2090,8 @@ namespace TrainingProject
 									GameTeam1[i].getCurrency += Jackpot;
 									msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
 									Jackpot = 0;
+									msg = Environment.NewLine + GameTeam2[i].getName + " Won against " + GameTeam1[i].getName + msg;
 								}
-								msg = Environment.NewLine + GameTeam2[i].getName + " Won against " + GameTeam1[i].getName + msg;
 							}
 							getFightLog = Environment.NewLine + msg;
 							MainPanel.Controls.Add(lblWinner);
@@ -2112,6 +2114,7 @@ namespace TrainingProject
 							}
 							else
 							{
+								if (getScore() % 100 == 0 && !GameTeam2[0].isMonster) employeePayroll();
 								// add all monsters to Monster Outbreak
 								foreach (Team eTeam in GameTeam2)
 								{
@@ -2122,7 +2125,6 @@ namespace TrainingProject
 								buildingMaintenance();
 							}
 						}
-						if (getScore() % 100 == 0) employeePayroll();
 					}
 				}
 				// last team add extra details
@@ -3780,6 +3782,8 @@ namespace TrainingProject
 		[JsonProperty]
 		private string Image;
         private string tmpImage;
+		[JsonProperty]
+		private int type;
 		[JsonProperty]
 		private int Speed;
 		private int CurrentSpeed;
