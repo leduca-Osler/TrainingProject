@@ -93,7 +93,7 @@ namespace TrainingProject
 		[JsonIgnore]
 		public string[] name3 = { "Blade", "Arrow", "Spark", "Factory", "Sniper", "Calvary", "Spear", "War Cythe", "Nunchuku", "Riffle", "Pistol", "War Hammer", "Battle Axe", "Bludgeon", "Club", "Flail", "Mace", "Morning Star", "Quarterstaff", "Dagger", "Falchion", "Estoc", "Katana", "Longsword", "Rapier", "Saber", "Shortsword", "Glaive", "Halberd", "Lance", "Partisan", "Pike", "Voulge", "Longbow", "Recurve Bow", "Crossbow", "Musket", "Chakram", "Kunai", "Shuriken"};
 		[JsonIgnore]
-		public string[] RoboName = { "Bolt", "Tinker", "Hammer", "Golem", "Droid", "Tank", "Gunner", "Blaster", "Bot", "iRobo", "gRobo", "mRobo" };
+		public string[] RoboName = { "Bolt", "Tinker", "Hammer", "Golem", "Droid", "Tank", "Gunner", "Blaster", "Bot" };
 		[JsonIgnore]
 		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp", "Element", "HandEye" };
 		[JsonIgnore]
@@ -788,14 +788,18 @@ namespace TrainingProject
 		}
 		public string setRoboName()
 		{
+			return setRoboName(RndVal.Next(8));
+		}
+		public string setRoboName(int index)
+		{
 			string name = "";
 			int RoboType = RndVal.Next(100);
 			if (RoboType < 40)
-				name = string.Format("{0} {1}", RoboName[RndVal.Next(RoboName.Length)], ToRoman(getRoboNumeral++));
+				name = string.Format("{0} {1}", RoboName[index], ToRoman(getRoboNumeral++));
 			else if (RoboType < 70)
-				name = string.Format("{0} #{1:X}", RoboName[RndVal.Next(RoboName.Length)], getRoboNumeral++);
+				name = string.Format("{0} #{1:X}", RoboName[index], getRoboNumeral++);
 			else
-				name = string.Format("{0} {1:N0}", RoboName[RndVal.Next(RoboName.Length)], getRoboNumeral++);
+				name = string.Format("{0} {1:N0}", RoboName[index], getRoboNumeral++);
 			return name;
 		}
 		public int maxWins()
@@ -1095,7 +1099,8 @@ namespace TrainingProject
 			Team.getCurrency -= Team.getRoboCost;
 			Team.getRoboCost = roundValue(Team.getRoboCost, Team.getRoboCostBase, "up");
 			Team.getRoboCostBase += Team.RoboCostBaseIncrement;
-			Robot tmp = new Robot(0,Game.setRoboName(), RndVal.Next(8), false);
+			int roboType = RndVal.Next(8);
+			Robot tmp = new Robot(0,Game.setRoboName(roboType), roboType, false);
             Team.MyTeam.Add(tmp);
         }
         public int getScore()
@@ -1623,7 +1628,7 @@ namespace TrainingProject
 				//Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0} \n{2,-13}{3," + RowOneLength[0] + ":c0}\n{4,-13}{5," + RowOneLength[0] + ":c0}\n{6,-13}{7," + RowOneLength[0] + ":c0}\n{8,-13}{9," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency, "   Misc ",  GameCurrencyLogMisc, "   Maint -", 0 - GameCurrencyLogMaint, "   Upgr  -", 0 - GameCurrencyLogUp, "   Total =", GameCurrencyLogMisc + GameCurrencyLogMaint + GameCurrencyLogUp) };
 				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency)};
 				MainPanel.Controls.Add(lblCurrency);
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3:P2}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint, getArenaOutreach()-1) };
+				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint) };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				// get highest width for columns in seating.
@@ -3301,7 +3306,8 @@ namespace TrainingProject
 
 		public Team(int baseStats, Game myGame)
         {
-            MyTeam = new List<Robot> { new Robot(baseStats, myGame.setRoboName(), RndVal.Next(8), false) };
+			int type = RndVal.Next(8);
+			MyTeam = new List<Robot> { new Robot(baseStats, myGame.setRoboName(type), type, false) };
 			Runes = new List<int> { 0 };
 			Score = 0;
 			Difficulty = 1;
@@ -3634,11 +3640,12 @@ namespace TrainingProject
 				bool btmpMonster = MyTeam[robo].bMonster;
 				Equipment weapon = MyTeam[robo].getEquipWeapon;
 				Equipment armour = MyTeam[robo].getEquipArmour;
+				int type = MyTeam[robo].type;
 				int runesUsed = getRunes(MyTeam[robo].getBaseStats(), true);
 				if (!pay || MyTeam[robo].RebuildPercent + runesUsed > RndVal.Next(100))
 				{
 					if (!pay) baseStats = baseStats / 2;
-					MyTeam[robo] = new Robot(baseStats, "temp", RndVal.Next(8), false);
+					MyTeam[robo] = new Robot(baseStats, "temp", type , false);
 					MyTeam[robo].getName = strName;
 					MyTeam[robo].bIsMonster = bIsMonsterTmp;
 					MyTeam[robo].bMonster = btmpMonster;
@@ -3783,7 +3790,7 @@ namespace TrainingProject
 		private string Image;
         private string tmpImage;
 		[JsonProperty]
-		private int type;
+		public int type;
 		[JsonProperty]
 		private int Speed;
 		private int CurrentSpeed;
@@ -3999,7 +4006,7 @@ namespace TrainingProject
 			set { EquipArmour = value; }
 		}
 		public Robot(string pRobotName, int pDexterity, int pStrength, int pAgility, int pTech, int pAccuracy, int pHealth, int pEnergy, int pArmour, int pDamage, int pHit, int pMentalStrength, int pMentalDefense, 
-			string pImage, int pSpeed, int pLevel, int pAnalysis, int pCurrentAnalysis, long pRebuildCost)
+			string pImage, int pType, int pSpeed, int pLevel, int pAnalysis, int pCurrentAnalysis, long pRebuildCost)
 		{
 			getName = pRobotName;
 			Analysis = pAnalysis;
@@ -4008,6 +4015,7 @@ namespace TrainingProject
 			message = "";
 			RobotLog = "";
 			Image = pImage;
+			type = pType;
 			ListSkills = new List<Skill> {};
 			RoboStrategy = new List<Strategy> {};
 			tmpImage = "";
@@ -4043,6 +4051,7 @@ namespace TrainingProject
 			Level = 0;
 			message = "";
 			RobotLog = "";
+			type = imageIndex;
 			if (isMonster)
 			{
 				Image = MonsterImages[imageIndex];
@@ -4053,7 +4062,6 @@ namespace TrainingProject
 			else
 			{
 				Image = RoboImages[imageIndex];
-				//RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Lowest", "HP") };
 				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Current", "Level") };
 				RoboRebuildCost = 2000;
 				long RoboRebuildCostBase = 1000;
@@ -4072,7 +4080,7 @@ namespace TrainingProject
 			for (int i = iBasePoints; i > 0; i--)
 			{
 				// Random 
-				RandomValue = RndVal.Next(1,6);
+				RandomValue = RndVal.Next(1,7);
 				// Case statement to set values
 				switch (RandomValue)
 				{
@@ -4090,6 +4098,38 @@ namespace TrainingProject
 						break;
 					case 5:
 						Accuracy++;
+						break;
+					case 6:
+						switch (type)
+						{
+							case 0:
+								Agility++;
+								break;
+							case 1:
+								Tech++;
+								break;
+							case 2:
+								Strength++;
+								break;
+							case 3:
+								Dexterity++;
+								break;
+							case 4:
+								Agility++;
+								break;
+							case 5:
+								Dexterity++;
+								break;
+							case 6:
+								Accuracy++;
+								break;
+							case 7:
+								Accuracy++;
+								break;
+							case 8:
+								Tech++;
+								break;
+						}
 						break;
 				}
 			}
@@ -4113,7 +4153,7 @@ namespace TrainingProject
 
 		public Robot DupeMonster()
 		{
-			Robot tmp = new Robot("." + MonsterName[RndVal.Next(MonsterName.Length)], Dexterity, Strength, Agility, Tech, Accuracy, Health, Energy, Armour, Damage, Hit, MentalStrength, MentalDefense, Image, Speed, Level, Analysis, 0, 0);
+			Robot tmp = new Robot("." + MonsterName[RndVal.Next(MonsterName.Length)], Dexterity, Strength, Agility, Tech, Accuracy, Health, Energy, Armour, Damage, Hit, MentalStrength, MentalDefense, Image, type, Speed, Level, Analysis, 0, 0);
 			foreach (Skill eSkill in ListSkills)
 				tmp.ListSkills.Add(eSkill);
 			foreach (Strategy eStrategy in RoboStrategy)

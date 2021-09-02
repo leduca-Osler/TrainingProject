@@ -471,6 +471,7 @@ namespace TrainingApp
 						int jRoboHit = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Hit"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Hit"] : 1;
 						int jRoboMstr = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalStrength"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalStrength"] : 1;
 						int jRoboMDef = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalDefense"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["MentalDefense"] : 1;
+						int jRoboType = json["type"][GameTeamIndex]["MyTeam"][RobotIndex]["type"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["type"] : 0;
 						string jRoboImg = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Image"] != null ? (string)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Image"] : "";
 						int jRoboSpd = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Speed"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Speed"] : 1;
 						int jRoboLvl = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Level"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["Level"] : 1;
@@ -479,8 +480,8 @@ namespace TrainingApp
 						int jRoboRebuildCost = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RebuildCost"] != null ? (int)json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["RebuildCost"] : 0;
 						// add robot
 						MyGame.GameTeams[GameTeamIndex].MyTeam.Add(
-							new Robot(jRoboName, jRoboDex, jRoboStr, jRoboAgi, jRoboTec, jRoboAcc, jRoboHea, jRoboEnr, jRoboArm, jRoboDam, jRoboHit, jRoboMstr, jRoboMDef, jRoboImg, jRoboSpd, jRoboLvl, 
-										jRoboAnl, jRoboCurAnl, jRoboRebuildCost)
+							new Robot(jRoboName, jRoboDex, jRoboStr, jRoboAgi, jRoboTec, jRoboAcc, jRoboHea, jRoboEnr, jRoboArm, jRoboDam, jRoboHit, jRoboMstr, jRoboMDef, jRoboImg, jRoboType, jRoboSpd, 
+								jRoboLvl, jRoboAnl, jRoboCurAnl, jRoboRebuildCost)
 						);
 						// if robot has a weapon
 						int jWeaonCount = json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"] != null ? json["GameTeams"][GameTeamIndex]["MyTeam"][RobotIndex]["EquipWeapon"].Count() : 0;
