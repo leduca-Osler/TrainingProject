@@ -306,6 +306,10 @@ namespace TrainingProject
 		[JsonProperty]
 		private int GoalGameScore;
 		[JsonProperty]
+		private long LifetimeGameScore;
+		[JsonProperty]
+		private long GoalLifetimeGameScore;
+		[JsonProperty]
 		private int GoalGameScoreBase;
 		private int GoalGameScoreBaseIncrement = 100;
 		[JsonProperty]
@@ -596,7 +600,7 @@ namespace TrainingProject
 			int pShopStock, long pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl,
 			long pResearchDevLvlCost, long pResearchDevLvlCostBase, long pResearchDevMaint, int pResearchDevHealValue, int pResearchDevHealValueBase, int pResearchDevHealBays,
 			long pResearchDevRebuild, long pResearchDevRebuildBase, int pBossLvl, int pBossLvlBase, int pBossCount, int pBossDifficulty, int pBossDifficultyBase, long pBossReward,
-			int pGameDifficult)
+			int pGameDifficult, long pLifetimeGameScore, long pGoalLifetimeGameScore)
 		{
 			getRoboNumeral = 1;
 			maxRoboNumeral = 1000;
@@ -665,6 +669,8 @@ namespace TrainingProject
 			BossDifficulty = pBossDifficulty;
 			BossDifficultyBase = pBossDifficultyBase;
 			BossReward = pBossReward;
+			LifetimeGameScore = pLifetimeGameScore;
+			GoalLifetimeGameScore = pGoalLifetimeGameScore;
 			ManagerHrs = 0;
 			ManagerCost = 2000;
 			ManagerCostBase = ManagerCostBaseIncrement = 1000;
@@ -756,6 +762,8 @@ namespace TrainingProject
 			ManagerHrs = 0;
 			ManagerCost = 2000;
 			ManagerCostBase = ManagerCostBaseIncrement = 1000;
+			LifetimeGameScore = 0;
+			GoalLifetimeGameScore = 1000;
 			BreakTime = DateTime.Now.AddMinutes(55);
 			SafeTime = DateTime.Now.AddMinutes(20);
 			// Timer
@@ -780,6 +788,18 @@ namespace TrainingProject
 			fightPercentMax = 100;
 			fightCount = 0;
 			FastForwardCount = 0;
+		}
+		public void addScore()
+		{
+			LifetimeGameScore++;
+			if (GoalLifetimeGameScore == 0) GoalLifetimeGameScore = 1000;
+			if (LifetimeGameScore > GoalLifetimeGameScore)
+			{
+				getGameCurrency += GoalLifetimeGameScore * 10;
+				GameCurrencyLogUp += GoalLifetimeGameScore * 10;
+				getWarningLog = getFightLog = string.Format("\n\n!*!*! Reached new Lifetime Game Score! {0:n0} {1:c0}\n", GoalLifetimeGameScore, GoalLifetimeGameScore * 10);
+				GoalLifetimeGameScore *= 10;
+			}
 		}
 		public bool ShouldSerializeMainFormPanel()
 		{
@@ -1365,6 +1385,7 @@ namespace TrainingProject
 				// small chance to reduce the outreach percentage 
 				if (RndVal.Next(1000) < ArenaLvl) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 100), "down");
 				int tmpTotalScore = (int)(PotScore * getArenaOutreach());
+				if (tmpTotalScore < 0) tmpTotalScore = 0;
 				if (GameTeam1.Count == 1)
 				{
 					CurrentSeating = new List<ArenaSeating> {  };
@@ -1703,10 +1724,13 @@ namespace TrainingProject
 				MainPanel.Controls.Add(lblMonsterDen);
 				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":c0}", BossCount, BossReward) };
 				lblBossMonsters.Click += new EventHandler((sender, e) => displayMonsters("Boss Monsters"));
-				MainPanel.Controls.Add(lblBossMonsters);
+				MainPanel.Controls.Add(lblBossMonsters); 
 				Label lblManager = new Label { AutoSize = true, Text = String.Format("Manager:     {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\+#,###}", ManagerHrs, ManagerCost) };
 				lblManager.Click += new EventHandler((sender, e) => AddManagerHours());
 				MainPanel.Controls.Add(lblManager);
+				Label lblAchievments = new Label { AutoSize = true, Text = String.Format("Achievments") };
+				lblAchievments.Click += new EventHandler((sender, e) => displayAchievements());
+				MainPanel.Controls.Add(lblAchievments);
 				if (getWarningLog.Length > 0)
 				{
 					Label lblWarningLog = new Label { AutoSize = true, Font = new Font(new FontFamily("Courier New"), 12, FontStyle.Bold, GraphicsUnit.Pixel), Text = Environment.NewLine + "Warnings:" + getWarningLog };
@@ -1718,9 +1742,73 @@ namespace TrainingProject
 			}
 			return MainPanel;
 		}
+		public void displayAchievements()
+		{ 
+			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+			int[] RowOneLength =
+					{ getMaxLength(new string[] { string.Format("{0:n0}", LifetimeGameScore) })
+					, getMaxLength(new string[] { string.Format("{0:n0}", GoalLifetimeGameScore) })
+				}; 
+			int[] TeamRowLength = { 0 , 0 };
+			foreach (Team eTeam in GameTeams)
+			{
+				for (int i = 0; i < 9; i++)
+				{
+					if (TeamRowLength[0] < string.Format("{0:n0}", eTeam.RobotDestroyed[i]).Length) TeamRowLength[0] = string.Format("{0:n0}", eTeam.RobotDestroyed[i]).Length;
+					if (TeamRowLength[1] < string.Format("{0:n0}", eTeam.RobotDestroyedGoal[i]).Length) TeamRowLength[1] = string.Format("{0:n0}", eTeam.RobotDestroyedGoal[i]).Length;
+					if (TeamRowLength[0] < string.Format("{0:n0}", eTeam.MonsterDestroyed[i]).Length) TeamRowLength[0] = string.Format("{0:n0}", eTeam.MonsterDestroyed[i]).Length;
+					if (TeamRowLength[1] < string.Format("{0:n0}", eTeam.MonsterDestroyedGoal[i]).Length) TeamRowLength[1] = string.Format("{0:n0}", eTeam.MonsterDestroyedGoal[i]).Length;
+				}
+			}
+			Label lblHeading = new Label { AutoSize = true, Text = String.Format("Achievements: \n") };
+			MainPanel.Controls.Add(lblHeading);
+			Label lblLifetimeGameScore = new Label { AutoSize = true, Text = String.Format("\n{0,-20} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}", "Lifetime Game Score", LifetimeGameScore, GoalLifetimeGameScore) };
+			MainPanel.Controls.Add(lblLifetimeGameScore);
+			// Lifetime Teams added
+			// Lifetime Currency
+
+			// Add for each team
+			foreach (Team eTeam in GameTeams)
+			{
+				// Lifetime robots created
+				// Lifetime robots rebuilt
+				FlowLayoutPanel TeamPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+				Label lblTeamInfo = new Label { AutoSize = true, Text = String.Format("\n{0,-20}", eTeam.getName) };
+				MainPanel.Controls.Add(lblTeamInfo);
+				int space = 12 + TeamRowLength[0] + TeamRowLength[1];
+				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
+				TeamPanel.Controls.Add(lblRobotList);
+				for (int i = 0; i < 9; i++)
+				{
+					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[i], eTeam.RobotDestroyed[i], eTeam.RobotDestroyedGoal[i]) };
+					TeamPanel.Controls.Add(lblRobot);
+				}
+				FlowLayoutPanel MonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+				Label lblMonsterList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Monsters Dest.") };
+				MonsterPanel.Controls.Add(lblMonsterList);
+				for (int i = 0; i < 9; i++)
+				{
+					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[i], eTeam.MonsterDestroyed[i], eTeam.MonsterDestroyedGoal[i]) };
+					MonsterPanel.Controls.Add(lblMonster);
+				}
+				MainPanel.Controls.Add(TeamPanel);
+				MainPanel.Controls.Add(MonsterPanel);
+			}
+
+			// FlowLayoutPanel TeamPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+
+			if (MainFormPanel != null)
+			{
+				foreach (Control eControl in MainFormPanel.Controls)
+				{
+					eControl.Dispose();
+				}
+				MainFormPanel.Controls.Clear();
+				MainFormPanel.Controls.Add(MainPanel);
+			}
+		}
 		public void displayMonsters(string type, int StartingCount = 0)
 		{
-			
 			Team displayTeam = MonsterOutbreak;
 			if (type.Equals("Boss Monsters"))
 				displayTeam = Bosses;
@@ -2040,6 +2128,7 @@ namespace TrainingProject
 								{
 									// increase score 
 									GameTeam1[i].getScore++;
+									addScore();
 									// Try difficulty fight 
 									if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
 									if (RndVal.Next(100) > 90)
@@ -2059,6 +2148,7 @@ namespace TrainingProject
 								FightBreak = 95;
 								lblWinner.Text = GameTeam2[i].getName + " winns!";
 								GameTeam2[i].getScore++;
+								addScore();
 								// Try difficulty fight 
 								if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
 								if (RndVal.Next(100) > 90)
@@ -3068,7 +3158,7 @@ namespace TrainingProject
 				{
 					if (eDefender.HP > 0 && RndVal.Next(attacker.getLevel) <= RndVal.Next(eDefender.getLevel))
 					{
-						eDefender.damage(attacker, currSkill);
+						eDefender.damage(attacker, currSkill, attackers);
 						if (eDefender.HP <= 0) attackers.addRune(eDefender.getLevel);
 					}
 				}
@@ -3076,7 +3166,7 @@ namespace TrainingProject
 			// attacking a single enemy
 			else
 			{
-				defender.damage(attacker, currSkill);
+				defender.damage(attacker, currSkill, attackers);
 				if (defender.HP <= 0) attackers.addRune(defender.getLevel);
 			}
 			if (defender.RobotLog.Length > 0)
@@ -3144,6 +3234,14 @@ namespace TrainingProject
 	{
 		[JsonProperty]
 		public List<Robot> MyTeam;
+		[JsonProperty]
+		public int[] RobotDestroyed;
+		[JsonProperty]
+		public int[] RobotDestroyedGoal;
+		[JsonProperty]
+		public int[] MonsterDestroyed;
+		[JsonProperty]
+		public int[] MonsterDestroyedGoal;
 		[JsonProperty]
 		public List<int> Runes;
 		[JsonProperty]
@@ -3283,10 +3381,16 @@ namespace TrainingProject
 			set { MyTeam = value; }
 		}
 
-		public Team(int pScore, int pGoalScore, int pGoalScoreBase, int pWin, long pCurrency, int pDifficulty, int pMaxRobo, long pRoboCost, long pRoboCostBase, string pTeamName, bool pAutomated)
+		public Team(int pScore, int pGoalScore, int pGoalScoreBase, int pWin, long pCurrency, int pDifficulty, int pMaxRobo,
+			long pRoboCost, long pRoboCostBase, string pTeamName, bool pAutomated, int[] pRobotDestroyed, int[] pRobotDestroyedGoal, 
+			int[] pMonsterDestroyed, int[] pMonsterDestroyedGoal)
 		{
 			MyTeam = new List<Robot> { };
 			Runes = new List<int> { 0 };
+			RobotDestroyed = pRobotDestroyed;
+			RobotDestroyedGoal = pRobotDestroyedGoal;
+			MonsterDestroyed = pMonsterDestroyed;
+			MonsterDestroyedGoal = pMonsterDestroyedGoal;
 			Score = pScore;
 			Currency = pCurrency;
 			Difficulty = pDifficulty;
@@ -3304,11 +3408,20 @@ namespace TrainingProject
 			shownDefeated = false;
 		}
 
+		public Team(int pScore, int pGoalScore, int pGoalScoreBase, int pWin, long pCurrency, int pDifficulty, int pMaxRobo,
+			long pRoboCost, long pRoboCostBase, string pTeamName, bool pAutomated) : this (pScore, pGoalScore, pGoalScoreBase, pWin, pCurrency, pDifficulty, pMaxRobo, pRoboCost, pRoboCostBase, pTeamName, pAutomated,
+				new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 },
+				new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 }) {}
+
 		public Team(int baseStats, Game myGame)
         {
 			int type = RndVal.Next(8);
 			MyTeam = new List<Robot> { new Robot(baseStats, myGame.setRoboName(type), type, false) };
 			Runes = new List<int> { 0 };
+			RobotDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 			Score = 0;
 			Difficulty = 1;
             GoalScore = 25;
@@ -3330,6 +3443,10 @@ namespace TrainingProject
 		{
 			MyTeam = new List<Robot> { };
 			Runes = new List<int> { 0 };
+			RobotDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 			for (int i = 0; i < numMonsters; i++)
 			{
 				int Monster = RndVal.Next(numMonsters);
@@ -3376,6 +3493,10 @@ namespace TrainingProject
 			}
 			MyTeam = new List<Robot> { };
 			Runes = new List<int> { 0 };
+			RobotDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 			for (int i = 0; i < (int)(numMonsters); i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
@@ -3429,6 +3550,31 @@ namespace TrainingProject
 			Automated = true;
 			PayForRepairs = true;
 			shownDefeated = false;
+		}
+		public void AddRobotDestroyed(int type, bool isMonster)
+		{
+			if (isMonster)
+			{
+				MonsterDestroyed[type]++;
+				if (MonsterDestroyed[type] > MonsterDestroyedGoal[type])
+				{
+					getCurrency += MonsterDestroyedGoal[type] * 100;
+					CurrencyLog += MonsterDestroyedGoal[type] * 100;
+					getWarningLog = getFightLog = string.Format("\n\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}\n", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * 100, getName);
+					MonsterDestroyedGoal[type] *= 10;
+				}
+			}
+			else
+			{
+				RobotDestroyed[type]++;
+				if (RobotDestroyed[type] > RobotDestroyedGoal[type])
+				{
+					getCurrency += RobotDestroyedGoal[type] * 100;
+					CurrencyLog += RobotDestroyedGoal[type] * 100;
+					getWarningLog = getFightLog = string.Format("\n\n!*!*! {3}  Destroyed {0:n0} {1}s   {2:c0}\n", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
+					RobotDestroyedGoal[type] *= 10;
+				}
+			}
 		}
 		public string getRunes()
 		{
@@ -3585,6 +3731,11 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
+
+			RobotDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 		}
 		public void Rebuild(bool pay, Game myGame)
 		{
@@ -4458,7 +4609,7 @@ namespace TrainingProject
 			}
 		}
 
-		public void damage(Robot attacker, Skill currSkill)
+		public void damage(Robot attacker, Skill currSkill, Team ATeam)
 		{
 			bool critical = RndVal.Next(100) > 95;
 			// If agility greater than hit attacker missed
@@ -4588,11 +4739,13 @@ namespace TrainingProject
 					if (attacker.getLevel <= getLevel)
 					{
 						attacker.getCurrentAnalysis += getLevel - attacker.getLevel + 1;
-						if (HP == 0) { attacker.getCurrentAnalysis += 10;}
+						if (HP == 0) attacker.getCurrentAnalysis += 10;
 					}
 					// if attacker is higher level, get less exp
 					else if (RndVal.Next(100) > 80)
 						attacker.getCurrentAnalysis++;
+					// if robot / monster is defeated addTo achievement vars. 
+					if (HP == 0) ATeam.AddRobotDestroyed(type, bIsMonster);
 				}
 			}
 		}
@@ -4655,6 +4808,9 @@ namespace TrainingProject
 				};
 			tmp += ("*Base Stats*\n");
 			tmp += string.Format("{0,-10}{1}/{2}\n", "Level", Level, getMaxLevel());
+			string strType = RoboName[type];
+			if (bIsMonster) strType = MonsterName[type];
+			tmp += string.Format("{0,-10}{1}\n", "type", strType);
 			tmp += string.Format("{0,-10}{1}\n", "Rank", (Dexterity + Strength + Agility + Tech + Accuracy) / 2.0);
 			tmp += string.Format("{0,-10}{1}\n", "Dexterity", Dexterity);
 			tmp += string.Format("{0,-10}{1}\n", "Strength", Strength);

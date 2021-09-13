@@ -30,7 +30,7 @@ namespace TrainingApp
 			try
 			{
 				MyGame = BinarySerialization.ReadFromBinaryFile<Game>("data\\TrainingProject.bin");
-				MyGame.fixTech();
+				//MyGame.fixTech();
 			}
 			catch
 			{
@@ -392,12 +392,15 @@ namespace TrainingApp
 				int jBossDifficultyBase = json["BossDifficultyBase"] != null ? (int)json["BossDifficultyBase"] : 2;
 				int jGameDifficulty = json["gameDifficulty"] != null ? (int)json["gameDifficulty"] : 1;
 				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
+				long jLifetimeGameScore = json["LifetimeGameScore"] != null ? (long)json["LifetimeGameScore"] : 0;
+				long jGoalLifetimeGameScore = json["GoalLifetimeGameScore"] != null ? (long)json["GoalLifetimeGameScore"] : 0;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jGoalGameScoreBase, jMaxTeams, jTeamCost, jTeamCostBase, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaLvlCostBase, jArenaMaint, 
 					jArenaComunityOutreach, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenRepair, jMonsterDenRepairBase, 
 					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 
-					jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty);
+					jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty,
+					jLifetimeGameScore, jGoalLifetimeGameScore);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating
