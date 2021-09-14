@@ -310,6 +310,14 @@ namespace TrainingProject
 		[JsonProperty]
 		private long GoalLifetimeGameScore;
 		[JsonProperty]
+		private long LifetimeTeams;
+		[JsonProperty]
+		private long GoalLifetimeTeams;
+		[JsonProperty]
+		private long LifetimeRevenue;
+		[JsonProperty]
+		private long GoalLifetimeRevenue;
+		[JsonProperty]
 		private int GoalGameScoreBase;
 		private int GoalGameScoreBaseIncrement = 100;
 		[JsonProperty]
@@ -789,18 +797,43 @@ namespace TrainingProject
 			fightCount = 0;
 			FastForwardCount = 0;
 		}
-		public void addScore()
+		public void addLifetimeScore()
 		{
 			LifetimeGameScore++;
 			if (GoalLifetimeGameScore == 0) GoalLifetimeGameScore = 1000;
-			if (LifetimeGameScore > GoalLifetimeGameScore)
+			if (LifetimeGameScore >= GoalLifetimeGameScore)
 			{
 				getGameCurrency += GoalLifetimeGameScore * 10;
 				GameCurrencyLogUp += GoalLifetimeGameScore * 10;
-				getWarningLog = getFightLog = string.Format("\n\n!*!*! Reached new Lifetime Game Score! {0:n0} {1:c0}\n", GoalLifetimeGameScore, GoalLifetimeGameScore * 10);
+				getWarningLog = getFightLog = string.Format("\n\n!*!*! Reached new Lifetime Game Score! {0:n0} awarded {1:c0}\n", GoalLifetimeGameScore, GoalLifetimeGameScore * 10);
 				GoalLifetimeGameScore *= 10;
 			}
 		}
+		public void addLifetimeTeam()
+		{
+			LifetimeTeams++;
+			if (GoalLifetimeTeams == 0) GoalLifetimeTeams = 10;
+			if (LifetimeTeams >= GoalLifetimeTeams)
+			{
+				getGameCurrency += GoalLifetimeTeams * 10000;
+				GameCurrencyLogUp += GoalLifetimeTeams * 10000;
+				getWarningLog = getFightLog = string.Format("\n\n!*!*! Reached new Lifetime Teams created! {0:n0} awarded {1:c0}\n", GoalLifetimeTeams, GoalLifetimeTeams * 10000);
+				GoalLifetimeTeams += 10;
+			}
+		}
+		public void addLifetimeRevenue(int revenue)
+		{
+			LifetimeRevenue += revenue;
+			if (GoalLifetimeRevenue == 0) GoalLifetimeRevenue = 10000;
+			if (LifetimeRevenue >= GoalLifetimeRevenue)
+			{
+				getGameCurrency += GoalLifetimeRevenue;
+				GameCurrencyLogUp += GoalLifetimeRevenue;
+				getWarningLog = getFightLog = string.Format("\n\n!*!*! Reached new Lifetime revenue! {0:c0} awarded {1:c0}\n", GoalLifetimeRevenue, GoalLifetimeRevenue);
+				GoalLifetimeRevenue += 10;
+			}
+		}
+
 		public bool ShouldSerializeMainFormPanel()
 		{
 			// don't serialize the MainFormPanel
@@ -1053,6 +1086,7 @@ namespace TrainingProject
 				GameTeams.Add(tmp);
 				getWarningLog = getFightLog = tmp.getTeamLog = string.Format("\n!*!*! new team {0} was added!", tmp.getName);
 			}
+			addLifetimeTeam();
 			return TeamName;
 		}
 		public void resetScore()
@@ -1443,6 +1477,7 @@ namespace TrainingProject
 					msg += displaySeating("G", tmp, -1, ref countChars);
 					msg += displaySeating("MG", MinWage, -1, ref countChars);
 					msg += displaySeating("R", tmp - (MinWage), -1, ref countChars);
+					addLifetimeRevenue(tmp - (MinWage));
 				}
 				else
 				{
@@ -1468,6 +1503,7 @@ namespace TrainingProject
 
 					msg += displaySeating("J", CurrentJackpot, -1, ref countChars);
 					msg += displaySeating("R", tmp - CurrentJackpot, -1, ref countChars);
+					addLifetimeRevenue(tmp - (CurrentJackpot));
 					msg += String.Format("\n    Comunity Bonus: {0:P2}\n", (getArenaOutreach()-1.00)); 
 					if (ResearchDevHealValueSum > 0)
 					{
@@ -1746,8 +1782,8 @@ namespace TrainingProject
 		{ 
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			int[] RowOneLength =
-					{ getMaxLength(new string[] { string.Format("{0:n0}", LifetimeGameScore) })
-					, getMaxLength(new string[] { string.Format("{0:n0}", GoalLifetimeGameScore) })
+					{ getMaxLength(new string[] { string.Format("{0:n0}", LifetimeGameScore),     string.Format("{0:n0}", LifetimeTeams),     string.Format("{0:n0}", LifetimeRevenue) })
+					, getMaxLength(new string[] { string.Format("{0:n0}", GoalLifetimeGameScore), string.Format("{0:n0}", GoalLifetimeTeams), string.Format("{0:n0}", GoalLifetimeRevenue) })
 				}; 
 			int[] TeamRowLength = { 0 , 0 };
 			foreach (Team eTeam in GameTeams)
@@ -1762,10 +1798,12 @@ namespace TrainingProject
 			}
 			Label lblHeading = new Label { AutoSize = true, Text = String.Format("Achievements: \n") };
 			MainPanel.Controls.Add(lblHeading);
-			Label lblLifetimeGameScore = new Label { AutoSize = true, Text = String.Format("\n{0,-20} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}", "Lifetime Game Score", LifetimeGameScore, GoalLifetimeGameScore) };
+			Label lblLifetimeGameScore = new Label { AutoSize = true, Text = String.Format("\n{0,-24} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}", "Lifetime Game Score", LifetimeGameScore, GoalLifetimeGameScore) };
 			MainPanel.Controls.Add(lblLifetimeGameScore);
-			// Lifetime Teams added
-			// Lifetime Currency
+			Label lblLifetimeTeams = new Label { AutoSize = true, Text = String.Format("{0,-24} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}",     "Lifetime Teams Created", LifetimeTeams, GoalLifetimeTeams) };
+			MainPanel.Controls.Add(lblLifetimeTeams);
+			Label lblLifetimeRevenue = new Label { AutoSize = true, Text = String.Format("{0,-24} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}",   "Lifetime Revenue Aquired", LifetimeRevenue, GoalLifetimeRevenue) };
+			MainPanel.Controls.Add(lblLifetimeRevenue);
 
 			// Add for each team
 			foreach (Team eTeam in GameTeams)
@@ -1775,12 +1813,12 @@ namespace TrainingProject
 				FlowLayoutPanel TeamPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblTeamInfo = new Label { AutoSize = true, Text = String.Format("\n{0,-20}", eTeam.getName) };
 				MainPanel.Controls.Add(lblTeamInfo);
-				int space = 12 + TeamRowLength[0] + TeamRowLength[1];
+				int space = 9 + TeamRowLength[0] + TeamRowLength[1];
 				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
 				TeamPanel.Controls.Add(lblRobotList);
 				for (int i = 0; i < 9; i++)
 				{
-					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[i], eTeam.RobotDestroyed[i], eTeam.RobotDestroyedGoal[i]) };
+					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-7} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[i], eTeam.RobotDestroyed[i], eTeam.RobotDestroyedGoal[i]) };
 					TeamPanel.Controls.Add(lblRobot);
 				}
 				FlowLayoutPanel MonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
@@ -1788,7 +1826,7 @@ namespace TrainingProject
 				MonsterPanel.Controls.Add(lblMonsterList);
 				for (int i = 0; i < 9; i++)
 				{
-					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[i], eTeam.MonsterDestroyed[i], eTeam.MonsterDestroyedGoal[i]) };
+					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-7} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[i], eTeam.MonsterDestroyed[i], eTeam.MonsterDestroyedGoal[i]) };
 					MonsterPanel.Controls.Add(lblMonster);
 				}
 				MainPanel.Controls.Add(TeamPanel);
@@ -2128,7 +2166,7 @@ namespace TrainingProject
 								{
 									// increase score 
 									GameTeam1[i].getScore++;
-									addScore();
+									addLifetimeScore();
 									// Try difficulty fight 
 									if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
 									if (RndVal.Next(100) > 90)
@@ -2148,7 +2186,7 @@ namespace TrainingProject
 								FightBreak = 95;
 								lblWinner.Text = GameTeam2[i].getName + " winns!";
 								GameTeam2[i].getScore++;
-								addScore();
+								addLifetimeScore();
 								// Try difficulty fight 
 								if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
 								if (RndVal.Next(100) > 90)
@@ -3556,22 +3594,22 @@ namespace TrainingProject
 			if (isMonster)
 			{
 				MonsterDestroyed[type]++;
-				if (MonsterDestroyed[type] > MonsterDestroyedGoal[type])
+				if (MonsterDestroyed[type] >= MonsterDestroyedGoal[type])
 				{
 					getCurrency += MonsterDestroyedGoal[type] * 100;
 					CurrencyLog += MonsterDestroyedGoal[type] * 100;
-					getWarningLog = getFightLog = string.Format("\n\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}\n", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * 100, getName);
+					getWarningLog = getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}\n", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * 100, getName);
 					MonsterDestroyedGoal[type] *= 10;
 				}
 			}
 			else
 			{
 				RobotDestroyed[type]++;
-				if (RobotDestroyed[type] > RobotDestroyedGoal[type])
+				if (RobotDestroyed[type] >= RobotDestroyedGoal[type])
 				{
 					getCurrency += RobotDestroyedGoal[type] * 100;
 					CurrencyLog += RobotDestroyedGoal[type] * 100;
-					getWarningLog = getFightLog = string.Format("\n\n!*!*! {3}  Destroyed {0:n0} {1}s   {2:c0}\n", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
+					getWarningLog = getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}\n", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
 					RobotDestroyedGoal[type] *= 10;
 				}
 			}
@@ -3731,11 +3769,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
-
-			RobotDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 		}
 		public void Rebuild(bool pay, Game myGame)
 		{
