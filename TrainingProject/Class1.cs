@@ -709,7 +709,7 @@ namespace TrainingProject
 			GameTeams = new List<Team> { new Team(0, this), new Team(0, this) };
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
-			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 5) };
+			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 25) };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
 			MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
@@ -748,7 +748,7 @@ namespace TrainingProject
 			ArenaLvlCost = 2000;
 			ArenaLvlCostBase = ArenaLvlCostBaseIncrement;
 			ArenaLvlMaint = 1;
-			ArenaComunityReach = 100;
+			ArenaComunityReach = 2000;
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 2000;
 			MonsterDenLvlCostBase = MonsterDenLvlCostBaseIncrement;
@@ -1156,7 +1156,8 @@ namespace TrainingProject
 			int roboType = RndVal.Next(8);
 			Robot tmp = new Robot(0,Game.setRoboName(roboType), roboType, false);
             Team.MyTeam.Add(tmp);
-        }
+			Team.AddRobotCreated();
+		}
         public int getScore()
         {
             int iTmpScore = 0;
@@ -1813,6 +1814,10 @@ namespace TrainingProject
 				FlowLayoutPanel TeamPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblTeamInfo = new Label { AutoSize = true, Text = String.Format("\n{0,-20}", eTeam.getName) };
 				MainPanel.Controls.Add(lblTeamInfo);
+				Label lblRobotCreated = new Label { AutoSize = true, Text = String.Format("  {0,-23} {1,2:n0}/{2,2:n0}", "Lifetime Robots Created", eTeam.LifetimeRobotsCreated, eTeam.GoalLifetimeRobotsCreated) };
+				TeamPanel.Controls.Add(lblRobotCreated);
+				Label lblRobotRebuilt = new Label { AutoSize = true, Text = String.Format("  {0,-23} {1,2:n0}/{2,2:n0}", "Lifetime Robots Rebuilt", eTeam.LifetimeRobotsRebuilt, eTeam.GoalLifetimeRobotsRebuilt) };
+				TeamPanel.Controls.Add(lblRobotRebuilt);
 				int space = 9 + TeamRowLength[0] + TeamRowLength[1];
 				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
 				TeamPanel.Controls.Add(lblRobotList);
@@ -3281,6 +3286,14 @@ namespace TrainingProject
 		[JsonProperty]
 		public int[] MonsterDestroyedGoal;
 		[JsonProperty]
+		public int LifetimeRobotsCreated;
+		[JsonProperty]
+		public int GoalLifetimeRobotsCreated;
+		[JsonProperty]
+		public int LifetimeRobotsRebuilt;
+		[JsonProperty]
+		public int GoalLifetimeRobotsRebuilt;
+		[JsonProperty]
 		public List<int> Runes;
 		[JsonProperty]
 		private int Score;
@@ -3421,7 +3434,8 @@ namespace TrainingProject
 
 		public Team(int pScore, int pGoalScore, int pGoalScoreBase, int pWin, long pCurrency, int pDifficulty, int pMaxRobo,
 			long pRoboCost, long pRoboCostBase, string pTeamName, bool pAutomated, int[] pRobotDestroyed, int[] pRobotDestroyedGoal, 
-			int[] pMonsterDestroyed, int[] pMonsterDestroyedGoal)
+			int[] pMonsterDestroyed, int[] pMonsterDestroyedGoal, int pLifetimeRobotsCreated, int pGoalLifetimeRobotsCreated,
+			int pLifetimeRobotsRebuilt, int pGoalLifetimeRobotsRebuilt)
 		{
 			MyTeam = new List<Robot> { };
 			Runes = new List<int> { 0 };
@@ -3429,6 +3443,10 @@ namespace TrainingProject
 			RobotDestroyedGoal = pRobotDestroyedGoal;
 			MonsterDestroyed = pMonsterDestroyed;
 			MonsterDestroyedGoal = pMonsterDestroyedGoal;
+			LifetimeRobotsCreated = pLifetimeRobotsCreated;
+			GoalLifetimeRobotsCreated = pGoalLifetimeRobotsCreated;
+			LifetimeRobotsRebuilt = pLifetimeRobotsRebuilt;
+			GoalLifetimeRobotsRebuilt = pGoalLifetimeRobotsRebuilt;
 			Score = pScore;
 			Currency = pCurrency;
 			Difficulty = pDifficulty;
@@ -3449,7 +3467,7 @@ namespace TrainingProject
 		public Team(int pScore, int pGoalScore, int pGoalScoreBase, int pWin, long pCurrency, int pDifficulty, int pMaxRobo,
 			long pRoboCost, long pRoboCostBase, string pTeamName, bool pAutomated) : this (pScore, pGoalScore, pGoalScoreBase, pWin, pCurrency, pDifficulty, pMaxRobo, pRoboCost, pRoboCostBase, pTeamName, pAutomated,
 				new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 },
-				new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 }) {}
+				new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 }, 0, 10, 0, 10) {}
 
 		public Team(int baseStats, Game myGame)
         {
@@ -3460,6 +3478,10 @@ namespace TrainingProject
 			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+			LifetimeRobotsCreated = 0;
+			GoalLifetimeRobotsCreated = 10;
+			LifetimeRobotsRebuilt = 0;
+			GoalLifetimeRobotsRebuilt = 10;
 			Score = 0;
 			Difficulty = 1;
             GoalScore = 25;
@@ -3485,6 +3507,10 @@ namespace TrainingProject
 			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+			LifetimeRobotsCreated = 0;
+			GoalLifetimeRobotsCreated = 10;
+			LifetimeRobotsRebuilt = 0;
+			GoalLifetimeRobotsRebuilt = 10;
 			for (int i = 0; i < numMonsters; i++)
 			{
 				int Monster = RndVal.Next(numMonsters);
@@ -3535,6 +3561,10 @@ namespace TrainingProject
 			RobotDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
 			MonsterDestroyed = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			MonsterDestroyedGoal = new int[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+			LifetimeRobotsCreated = 0;
+			GoalLifetimeRobotsCreated = 10;
+			LifetimeRobotsRebuilt = 0;
+			GoalLifetimeRobotsRebuilt = 10;
 			for (int i = 0; i < (int)(numMonsters); i++)
 			{
 				int Monster = RndVal.Next(MonsterLvl);
@@ -3593,7 +3623,28 @@ namespace TrainingProject
 		{
 			if (isMonster)
 			{
+				if (MonsterDestroyed == null)
+				{
+					MonsterDestroyed = new int[1];
+					MonsterDestroyedGoal = new int[1];
+				}
+				if (MonsterDestroyed.Length <= type)
+				{
+					int[] tmp = new int[type+1];
+					int[] Goaltmp = new int[type+1];
+					for (int i = 0; i < type; i++)
+					{
+						if (i < MonsterDestroyed.Length)
+						{
+							tmp[i] = MonsterDestroyed[i];
+							Goaltmp[i] = MonsterDestroyedGoal[i];
+						}
+					}
+					MonsterDestroyed = tmp;
+					MonsterDestroyedGoal = Goaltmp;
+				}
 				MonsterDestroyed[type]++;
+				if (MonsterDestroyedGoal[type] == 0) MonsterDestroyedGoal[type] = 100;
 				if (MonsterDestroyed[type] >= MonsterDestroyedGoal[type])
 				{
 					getCurrency += MonsterDestroyedGoal[type] * 100;
@@ -3604,7 +3655,28 @@ namespace TrainingProject
 			}
 			else
 			{
+				if (RobotDestroyed == null)
+				{
+					RobotDestroyed = new int[1];
+					RobotDestroyedGoal = new int[1];
+				}
+				if (RobotDestroyed.Length <= type)
+				{
+					int[] tmp = new int[type+1];
+					int[] Goaltmp = new int[type+1];
+					for (int i = 0; i < type; i++)
+					{
+						if (i < RobotDestroyed.Length)
+						{
+							tmp[i] = RobotDestroyed[i];
+							Goaltmp[i] = RobotDestroyedGoal[i];
+						}
+					}
+					RobotDestroyed = tmp;
+					RobotDestroyedGoal = Goaltmp;
+				}
 				RobotDestroyed[type]++;
+				if (RobotDestroyedGoal[type] == 0) RobotDestroyedGoal[type] = 100;
 				if (RobotDestroyed[type] >= RobotDestroyedGoal[type])
 				{
 					getCurrency += RobotDestroyedGoal[type] * 100;
@@ -3612,6 +3684,30 @@ namespace TrainingProject
 					getWarningLog = getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}\n", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
 					RobotDestroyedGoal[type] *= 10;
 				}
+			}
+		}
+		public void AddRobotCreated()
+		{
+			LifetimeRobotsCreated++;
+			if (GoalLifetimeRobotsCreated == 0) GoalLifetimeRobotsCreated = 10;
+			if (LifetimeRobotsCreated >= GoalLifetimeRobotsCreated)
+			{
+				getCurrency += GoalLifetimeRobotsCreated * 1000;
+				CurrencyLog += GoalLifetimeRobotsCreated * 1000;
+				getWarningLog = getFightLog = string.Format("\n!*!*! {2} created {0:n0} robots and was awarded {1:c0}\n", GoalLifetimeRobotsCreated, GoalLifetimeRobotsCreated * 1000, getName);
+				GoalLifetimeRobotsCreated += 10;
+			}
+		}
+		public void AddRobotRebuilt()
+		{
+			LifetimeRobotsRebuilt++;
+			if (GoalLifetimeRobotsRebuilt == 0) GoalLifetimeRobotsRebuilt = 10;
+			if (LifetimeRobotsRebuilt >= GoalLifetimeRobotsRebuilt)
+			{
+				getCurrency += GoalLifetimeRobotsRebuilt * 1000;
+				CurrencyLog += GoalLifetimeRobotsRebuilt * 1000;
+				getWarningLog = getFightLog = string.Format("\n!*!*! {2} created {0:n0} robots and was awarded {1:c0}\n", GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt * 1000, getName);
+				GoalLifetimeRobotsRebuilt = roundValue(GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt, "up");
 			}
 		}
 		public string getRunes()
@@ -3818,6 +3914,7 @@ namespace TrainingProject
 					}
 					while (RndVal.Next(MultiRank) > 100);
 					baseIncreased = baseStats - MyTeam[robo].getBaseStats();
+					AddRobotRebuilt();
 				}
 				string strName = MyTeam[robo].getName;
 				bool bIsMonsterTmp = MyTeam[robo].bIsMonster;
@@ -3902,6 +3999,7 @@ namespace TrainingProject
 					pay = cost;
 					getCurrency -= cost;
 					CurrencyLog -= cost;
+					if (value == 0) value = 1;
 					MyTeam[robo].HP += value;
 					MyTeam[robo].MP += value;
 					MyTeam[robo].getKO = 0;
