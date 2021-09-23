@@ -393,14 +393,21 @@ namespace TrainingApp
 				int jGameDifficulty = json["gameDifficulty"] != null ? (int)json["gameDifficulty"] : 1;
 				int jBossReward = json["BossReward"] != null ? (int)json["BossReward"] : 1000;
 				long jLifetimeGameScore = json["LifetimeGameScore"] != null ? (long)json["LifetimeGameScore"] : 0;
-				long jGoalLifetimeGameScore = json["GoalLifetimeGameScore"] != null ? (long)json["GoalLifetimeGameScore"] : 0;
+				long jGoalLifetimeGameScore = json["GoalLifetimeGameScore"] != null ? (long)json["GoalLifetimeGameScore"] : 1000;
+				long jLifetimeTeams = json["LifetimeTeams"] != null ? (long)json["LifetimeTeams"] : 0;
+				long jGoalLifetimeTeams = json["GoalLifetimeTeams"] != null ? (long)json["GoalLifetimeTeams"] : 10;
+				long jLifetimeEquipmentForged = json["LifetimeEquipmentForged"] != null ? (long)json["LifetimeEquipmentForged"] : 0;
+				long jGoalLifetimeEquipmentForged = json["GoalLifetimeEquipmentForged"] != null ? (long)json["GoalLifetimeEquipmentForged"] : 100;
+				long jLifetimeRevenue = json["LifetimeRevenue"] != null ? (long)json["LifetimeRevenue"] : 0;
+				long jGoalLifetimeRevenue = json["GoalLifetimeRevenue"] != null ? (long)json["GoalLifetimeRevenue"] : 10000;
 				// Parse json and assign to MyGame
 				MyGame = new Game(jGoalGameScore, jGoalGameScoreBase, jMaxTeams, jTeamCost, jTeamCostBase, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaLvlCostBase, jArenaMaint, 
 					jArenaComunityOutreach, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenRepair, jMonsterDenRepairBase, 
 					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 
 					jResearchDevRebuild, jResearchDevRebuildBase, jBossLvl, jBossLvlBase, jBossCount, jBossDifficulty, jBossDifficultyBase, jBossReward, jGameDifficulty,
-					jLifetimeGameScore, jGoalLifetimeGameScore);
+					jLifetimeGameScore, jGoalLifetimeGameScore, jLifetimeTeams, jGoalLifetimeTeams, jLifetimeEquipmentForged, jGoalLifetimeEquipmentForged, 
+					jLifetimeRevenue, jGoalLifetimeRevenue);
 				for (int seatingIndex = 0; seatingIndex < json["Seating"].Count(); seatingIndex++)
 				{
 					// get variables for seating
@@ -908,16 +915,18 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.W) btnAddTeam.PerformClick();
 			// Add Robo
 			else if (e.KeyCode == Keys.E) btnAddRobo.PerformClick();
+			// Shop restock
+			else if (e.KeyCode == Keys.R) mnuRestockShop.PerformClick();
+			/*
 			// Arena
 			else if (e.KeyCode == Keys.A) btnArenaLvl.PerformClick();
 			// Shop
 			else if (e.KeyCode == Keys.S) btnShop.PerformButtonClick();
-			// Shop restock
-			else if (e.KeyCode == Keys.R) mnuRestockShop.PerformClick();
 			// R&D
 			else if (e.KeyCode == Keys.D) btnResearchDev.PerformClick();
 			// Den
 			else if (e.KeyCode == Keys.F) btnMonsterDen.PerformClick();
+			*/
 			// Lowest Level
 			else if (e.KeyCode == Keys.L) MyGame.lowestLevelUp();
 			// Jackpot +
@@ -934,10 +943,10 @@ namespace TrainingApp
 				"\nTeam:                 Q" +
 				"\nAdd Team:         W" +
 				"\nAdd Robo:         E" +
-				"\nArena Lvl:           A" +
+				/*"\nArena Lvl:           A" +
 				"\nShop Lvl:            S" +
 				"\nR&D Lvl:             D" +
-				"\nDen Lvl:              F" +
+				"\nDen Lvl:              F" +*/
 				"\nLowest Lvl:         L" +
 				"\nrestock:            R" +
 				"\nJackpot+:           J" +
