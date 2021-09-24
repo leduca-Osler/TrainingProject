@@ -87,7 +87,9 @@ namespace TrainingProject
 			new Skill("Corosion", "Enemy", 1, "Multiple tech", 3, corosion, '^')
 		};
 		[JsonIgnore]
-		public string[] name1 = { "Green", "Blue", "Yellow", "Orange", "Black", "Pink", "Great", "Strong", "Cunning", "Dashing", "Chivalrous", "Wise", "Brilliant", "Resourceful"};
+		public string[] name1 = { "Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
+			"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny", 
+			"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic"};
 		[JsonIgnore]
 		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", "Tigers", "Hyenas", "Vulturs" };
 		[JsonIgnore]
@@ -1184,7 +1186,7 @@ namespace TrainingProject
 			Team.getRoboCostBase += Team.RoboCostBaseIncrement;
 			int roboType = RndVal.Next(RoboName.Length);
 			Robot tmp = new Robot(0,Game.setRoboName(roboType), roboType, false);
-			getWarningLog = getFightLog = string.Format("{0} added new robot {1}", Team.getName, tmp.getName);
+			getWarningLog = getFightLog = string.Format("\n{0} added new robot {1}", Team.getName, tmp.getName);
             Team.MyTeam.Add(tmp);
 			Team.AddRobotCreated();
 		}
@@ -1816,10 +1818,15 @@ namespace TrainingProject
 			int[] RowOneLength =
 					{ getMaxLength(new string[] { string.Format("{0:n0}", LifetimeGameScore),     string.Format("{0:n0}", LifetimeTeams),     string.Format("{0:n0}", LifetimeRevenue),     string.Format("{0:n0}", LifetimeEquipmentForged) })
 					, getMaxLength(new string[] { string.Format("{0:n0}", GoalLifetimeGameScore), string.Format("{0:n0}", GoalLifetimeTeams), string.Format("{0:n0}", GoalLifetimeRevenue), string.Format("{0:n0}", GoalLifetimeEquipmentForged) })
-				}; 
-			int[] TeamRowLength = { 0 , 0 };
+				};
+			int[] TeamHeadingRowLength = { 0, 0 };
+			int[] TeamRowLength = { 0, 0 };
 			foreach (Team eTeam in GameTeams)
 			{
+				int tmp = getMaxLength(new string[] { string.Format("{0:n0}", eTeam.LifetimeRobotsCreated),			string.Format("{0:n0}", eTeam.LifetimeRobotsRebuilt),		string.Format("{0:n0}", eTeam.LifetimeEquipmentPurchased), string.Format("{0:n0}",		eTeam.LifetimeEquipmentUpgraded) });
+				int tmpGoal = getMaxLength(new string[] { string.Format("{0:n0}", eTeam.GoalLifetimeRobotsCreated), string.Format("{0:n0}", eTeam.GoalLifetimeRobotsRebuilt),	string.Format("{0:n0}", eTeam.GoalLifetimeEquipmentPurchased), string.Format("{0:n0}",	eTeam.GoalLifetimeEquipmentUpgraded) });
+				if (TeamHeadingRowLength[0] < tmp) TeamHeadingRowLength[0] = tmp;
+				if (TeamHeadingRowLength[1] < tmp) TeamHeadingRowLength[1] = tmpGoal;
 				for (int i = 0; i < 9; i++)
 				{
 					if (TeamRowLength[0] < string.Format("{0:n0}", eTeam.RobotDestroyed[i]).Length) TeamRowLength[0] = string.Format("{0:n0}", eTeam.RobotDestroyed[i]).Length;
@@ -1831,11 +1838,11 @@ namespace TrainingProject
 					if (TeamRowLength[1] < string.Format("{0:n0}", eTeam.MonsterDestroyedGoal[i]).Length) TeamRowLength[1] = string.Format("{0:n0}", eTeam.MonsterDestroyedGoal[i]).Length;
 				}
 			}
-			Label lblHeading = new Label { AutoSize = true, Text = String.Format("Achievements: \n") };
+			Label lblHeading = new Label { AutoSize = true, Text = String.Format("\n\nAchievements:") };
 			MainPanel.Controls.Add(lblHeading);
 			Label lblLifetimeRevenue = new Label { AutoSize = true, Text = String.Format("{0,-24} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}", "Revenue Aquired", LifetimeRevenue, GoalLifetimeRevenue) };
 			MainPanel.Controls.Add(lblLifetimeRevenue);
-			Label lblLifetimeGameScore = new Label { AutoSize = true, Text = String.Format("\n{0,-24} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}", "Game Score", LifetimeGameScore, GoalLifetimeGameScore) };
+			Label lblLifetimeGameScore = new Label { AutoSize = true, Text = String.Format("{0,-24} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}", "Game Score", LifetimeGameScore, GoalLifetimeGameScore) };
 			MainPanel.Controls.Add(lblLifetimeGameScore);
 			Label lblLifetimeEquipmentForged = new Label { AutoSize = true, Text = String.Format("{0,-24} {1," + RowOneLength[0] + ":n0}/{2," + RowOneLength[1] + ":n0}", "Equipment Forged", LifetimeEquipmentForged, GoalLifetimeEquipmentForged) };
 			MainPanel.Controls.Add(lblLifetimeEquipmentForged);
@@ -1848,13 +1855,13 @@ namespace TrainingProject
 				FlowLayoutPanel TeamPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblTeamInfo = new Label { AutoSize = true, Text = String.Format("\n{0,-20}", eTeam.getName) };
 				MainPanel.Controls.Add(lblTeamInfo);
-				Label lblRobotCreated = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1,2:n0}/{2,2:n0}", "Robots Created", eTeam.LifetimeRobotsCreated, eTeam.GoalLifetimeRobotsCreated) };
+				Label lblRobotCreated = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Robots Created", eTeam.LifetimeRobotsCreated, eTeam.GoalLifetimeRobotsCreated) };
 				TeamPanel.Controls.Add(lblRobotCreated);
-				Label lblRobotRebuilt = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1,2:n0}/{2,2:n0}", "Robots Rebuilt", eTeam.LifetimeRobotsRebuilt, eTeam.GoalLifetimeRobotsRebuilt) };
+				Label lblRobotRebuilt = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Robots Rebuilt", eTeam.LifetimeRobotsRebuilt, eTeam.GoalLifetimeRobotsRebuilt) };
 				TeamPanel.Controls.Add(lblRobotRebuilt);
-				Label lblEquipmentPurchased = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1,2:n0}/{2,2:n0}", "Equipment Purchased", eTeam.LifetimeEquipmentPurchased, eTeam.GoalLifetimeEquipmentPurchased) };
+				Label lblEquipmentPurchased = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Equipment Purchased", eTeam.LifetimeEquipmentPurchased, eTeam.GoalLifetimeEquipmentPurchased) };
 				TeamPanel.Controls.Add(lblEquipmentPurchased);
-				Label lblEquipmentUpgraded = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1,2:n0}/{2,2:n0}", "Equipment Upgraded", eTeam.LifetimeEquipmentUpgraded, eTeam.GoalLifetimeEquipmentUpgraded) };
+				Label lblEquipmentUpgraded = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Equipment Upgraded", eTeam.LifetimeEquipmentUpgraded, eTeam.GoalLifetimeEquipmentUpgraded) };
 				TeamPanel.Controls.Add(lblEquipmentUpgraded);
 				int space = 9 + TeamRowLength[0] + TeamRowLength[1];
 				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
