@@ -434,6 +434,7 @@ namespace TrainingProject
 		public Boolean JackpotUpTen;
 		public Boolean JackpotDown;
 		public Boolean JackpotDownTen;
+		public Boolean StartForge;
 		private long BossReward;
 		public int roundCount;
 		public bool bossFight;
@@ -1044,12 +1045,24 @@ namespace TrainingProject
 		}
 		public void AddStock()
 		{
+			StartForge = true;
+		}
+		public void ForgeEquipment()
+		{
 			// Add new equipent to stock
-			while (ShopStock > storeEquipment.Count && getGameCurrency >= ShopStockCost)
+			if (ShopStock > storeEquipment.Count && getGameCurrency >= ShopStockCost)
 			{
 				getGameCurrency -= ShopStockCost;
 				GameCurrencyLogMisc -= ShopStockCost;
-				storeEquipment.Add(new Equipment(AddArmour(), RndVal.Next(5,ShopMaxStat), RndVal.Next(100, ShopMaxDurability),RndVal,false,ShopUpgradeValue*100));
+				Equipment tmp = new Equipment(AddArmour(), RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, ShopUpgradeValue * 100);
+				int upgradeVal = 100;
+				while (RndVal.Next(upgradeVal) < getShopLvl)
+				{
+					long cost = tmp.eUpgradeCost;
+					tmp.upgrade(ShopUpgradeValue, RndVal);
+					tmp.ePrice += (long)(cost * .75);
+				}
+				storeEquipment.Add(tmp);
 				addLifetimeEquipmentForged();
 			}
 		}
@@ -1363,6 +1376,11 @@ namespace TrainingProject
 				// usually fight other teams. 
 				if (GameTeam1.Count == 0)
 				{
+					if (StartForge)
+					{
+						ForgeEquipment();
+						if (ShopStock <= storeEquipment.Count) StartForge = false;
+					}
 					WinCount = 0;
 					incrementArenaOpponent();
 					if (ArenaOpponent1 == ArenaOpponent2)
@@ -2032,6 +2050,7 @@ namespace TrainingProject
 			String strFlags = "";
 			if (bossFight) strFlags += " Boss Fight";
 			if (GameDifficultyFight) strFlags += " Difficulty Fight";
+			if (StartForge) strFlags += " Forge Equipment";
 			if (JackpotUp) strFlags += " Jackpot Up";
 			if (JackpotUpTen) strFlags += " Jackpot Up 10";
 			if (JackpotDown) strFlags += " Jackpot Down";
