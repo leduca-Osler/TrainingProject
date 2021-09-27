@@ -1037,7 +1037,7 @@ namespace TrainingProject
 			ShopLvl++;
 			ShopLvlCost = roundValue(ShopLvlCost, ShopLvlCostBase, "up");
 			ShopLvlCostBase += ShopLvlCostBaseIncrement;
-			if (RndVal.Next(100) > 90) ShopStock++;
+			if (RndVal.Next(100) > 85) ShopStock++;
 			ShopMaxDurability = roundValue(ShopMaxDurability, 10, "up");
 			ShopMaxStat = roundValue(ShopMaxStat, 2, "up");
 			ShopUpgradeValue++;
@@ -1061,6 +1061,7 @@ namespace TrainingProject
 					long cost = tmp.eUpgradeCost;
 					tmp.upgrade(ShopUpgradeValue, RndVal);
 					tmp.ePrice += (long)(cost * .75);
+					upgradeVal += 10;
 				}
 				storeEquipment.Add(tmp);
 				addLifetimeEquipmentForged();
@@ -1769,7 +1770,7 @@ namespace TrainingProject
 				RowThreeLength = new int[] { 8, 3, 1, 3 };
 				foreach (Equipment eEquipment in storeEquipment)
 				{
-					if (eEquipment.eName.Length > RowThreeLength[0]) RowThreeLength[0] = eEquipment.eName.Length;
+					if (string.Format("{0}", eEquipment.eName + "+" + eEquipment.eUpgrade).Length > RowThreeLength[0]) RowThreeLength[0] = string.Format("{0}", eEquipment.eName + "+" + eEquipment.eUpgrade).Length;
 					if (string.Format("{0:n0}", eEquipment.eMaxDurability).Length > RowThreeLength[1]) RowThreeLength[1] = string.Format("{0:n0}", eEquipment.eMaxDurability).Length;
 					if (string.Format("{0:\\+#,###}", eEquipment.eHealth).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eHealth).Length;
 					if (string.Format("{0:\\+#,###}", eEquipment.eEnergy).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:\\+#,###}", eEquipment.eEnergy).Length;
@@ -1788,7 +1789,7 @@ namespace TrainingProject
 					{
 						string ending = "";
 						if (index == 2 && !showAll && storeEquipment.Count > 3) ending = "...";
-						string tmp = string.Format("{0,-" + RowThreeLength[0] + "}", eEquipment.eName);
+						string tmp = string.Format("{0,-" + RowThreeLength[0] + "}", eEquipment.eName + "+" + eEquipment.eUpgrade);
 						tmp += String.Format(" Dur {0," + RowThreeLength[1] + ":n0}", eEquipment.eDurability);
 						if (eEquipment.eHealth > 0) { tmp += String.Format(" Hea{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eHealth); }
 						if (eEquipment.eEnergy > 0) { tmp += String.Format(" Enr{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eEnergy); }
