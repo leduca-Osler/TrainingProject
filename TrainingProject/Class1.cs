@@ -304,7 +304,7 @@ namespace TrainingProject
 		public DateTime BreakTime;
 		public double repairPercent;
 		public int maxManagerHours;
-		public bool PurchaseUgrade;
+		public bool PurchaseUpgrade;
 		[JsonProperty]
 		private int GoalGameScore;
 		[JsonProperty]
@@ -435,6 +435,7 @@ namespace TrainingProject
 		public Boolean JackpotDown;
 		public Boolean JackpotDownTen;
 		public Boolean StartForge;
+		public Boolean RobotPriority;
 		private long BossReward;
 		public int roundCount;
 		public bool bossFight;
@@ -656,7 +657,7 @@ namespace TrainingProject
 			ShopUpgradeValue = pShopUpgradeValue;
 			repairPercent = .5;
 			maxManagerHours = 10;
-			PurchaseUgrade = false;
+			PurchaseUpgrade = false;
 			ArenaLvl = pArenaLvl;
 			ArenaLvlCost = pArenaLvlCost;
 			ArenaLvlCostBase = pArenaLvlCostBase;
@@ -757,7 +758,7 @@ namespace TrainingProject
 			ShopUpgradeValue = 1;
 			repairPercent = .5;
 			maxManagerHours = 10;
-			PurchaseUgrade = false;
+			PurchaseUpgrade = false;
 			ArenaLvl = 1;
 			ArenaLvlCost = 2000;
 			ArenaLvlCostBase = ArenaLvlCostBaseIncrement;
@@ -1189,7 +1190,7 @@ namespace TrainingProject
 			// reset jackpot
 			CurrentJackpot = 0;
 			DecreaseJackpot();
-			PurchaseUgrade = false;
+			PurchaseUpgrade = false;
 		}
 		public void addRobo(int Team) { addRobo(GameTeams[Team], this); }
 
@@ -2448,7 +2449,7 @@ namespace TrainingProject
 				shopper = eTeam.MyTeam[RndVal.Next(0, eTeam.MyTeam.Count)];
 				bool bAutomated = eTeam.Automated;
 				// Automated teams automatically build new robots and rebuild robots
-				if (PurchaseUgrade || bAutomated)
+				if ( PurchaseUpgrade || bAutomated )
 				{
 					// Add Robot
 					if (eTeam.getCurrency >= eTeam.getRoboCost && eTeam.getAvailableRobo > 0 && getGameCurrency > 0)
@@ -2477,9 +2478,10 @@ namespace TrainingProject
 					int orig = shopper.getEquipWeapon.eDurability;
 					// upgrade
 					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost 
-						&& (PurchaseUgrade 
-							|| bAutomated 
-							|| shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent) 
+						&& (	(PurchaseUpgrade && !RobotPriority)
+								|| bAutomated 
+								|| shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent
+							) 
 						&& shopper.getEquipWeapon.eMaxDurability > 50 + (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 2)) 
 						&& getGameCurrency > 0)
 					{
@@ -2498,8 +2500,8 @@ namespace TrainingProject
 						&& shopper.getEquipWeapon.eMaxDurability > 20)
 					{
 						shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
-						eTeam.getCurrency -= (shopper.getEquipWeapon.ePrice / 10);
-						getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipWeapon.ePrice / 10, shopper.getEquipWeapon.eName) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
+						eTeam.getCurrency -= 25;
+						getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipWeapon.eName) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
 					}
 				}
@@ -2509,7 +2511,10 @@ namespace TrainingProject
 					int index = 0;
 					foreach (Equipment eEquip in storeEquipment)
 					{
-						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Weapon" && (PurchaseUgrade || bAutomated) && getGameCurrency > 0)
+						if (eTeam.getCurrency > eEquip.ePrice 
+							&& eEquip.eType == "Weapon" 
+							&& (PurchaseUpgrade || bAutomated) 
+							&& getGameCurrency > 0)
 						{
 							eTeam.getCurrency -= eEquip.ePrice;
 							GameCurrency += eEquip.ePrice;
@@ -2528,7 +2533,9 @@ namespace TrainingProject
 				{
 					int orig = shopper.getEquipArmour.eDurability;
 					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost && (PurchaseUgrade || bAutomated || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 + (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 2)) && getGameCurrency > 0)
+					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost 
+						&& ((PurchaseUpgrade && !RobotPriority) || bAutomated || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 + (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 2)) 
+						&& getGameCurrency > 0)
 					{
 						long tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
 						eTeam.getCurrency -= tmpUpgrade;
@@ -2545,8 +2552,8 @@ namespace TrainingProject
 						&& shopper.getEquipArmour.eMaxDurability > 20)
 					{
 						shopper.getEquipArmour.eDurability = shopper.getEquipArmour.eMaxDurability = (int)(shopper.getEquipArmour.eMaxDurability * .9);
-						eTeam.getCurrency -= (shopper.getEquipArmour.ePrice / 10);
-						getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", shopper.getEquipArmour.ePrice / 10, shopper.getEquipArmour.eName) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
+						eTeam.getCurrency -= 25;
+						getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipArmour.eName) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
 						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipArmour.ePrice / 10) + shopper.getEquipArmour.eName;
 					}
 				}
@@ -2556,7 +2563,9 @@ namespace TrainingProject
 					int index = 0;
 					foreach (Equipment eEquip in storeEquipment)
 					{
-						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Armour" && (PurchaseUgrade || bAutomated) && getGameCurrency > 0)
+						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Armour"
+							&& (PurchaseUpgrade || bAutomated)
+							&& getGameCurrency > 0)
 						{
 							eTeam.getCurrency -= eEquip.ePrice;
 							GameCurrency += eEquip.ePrice;

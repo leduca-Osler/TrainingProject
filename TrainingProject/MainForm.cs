@@ -52,7 +52,11 @@ namespace TrainingApp
 			MinJackpotLevel.Text = MyGame.MinWage.ToString();
 			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
-			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
+			if (MyGame.RobotPriority)
+				mnuPriority.SelectedIndex = 1; // Robot Priority
+			else
+				mnuPriority.SelectedIndex = 0; // Equipment Priority
+			cboSaveCredits.SelectedItem = MyGame.PurchaseUpgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
 			MyGame.MainFormPanel = MainPannel;
 			// set interval
@@ -65,7 +69,7 @@ namespace TrainingApp
 			}
 			cbTeamSelect.SelectedIndex = 0;
 			// select correct repair percentage, and saveCredits values
-			if (MyGame.PurchaseUgrade)
+			if (MyGame.PurchaseUpgrade)
 				cboSaveCredits.SelectedItem = "Yes";
 			else
 				cboSaveCredits.SelectedItem = "No";
@@ -275,7 +279,7 @@ namespace TrainingApp
 			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}", MyGame.getArenaOutreach());
 			MinJackpotLevel.Text = MyGame.MinWage.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
-			cboSaveCredits.SelectedItem = MyGame.PurchaseUgrade;
+			cboSaveCredits.SelectedItem = MyGame.PurchaseUpgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
 		}
 		private int getNumRobos()
@@ -688,9 +692,9 @@ namespace TrainingApp
 		private void cboSaveCredits_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (cboSaveCredits.Text == "Yes")
-				MyGame.PurchaseUgrade = true;
+				MyGame.PurchaseUpgrade = true;
 			else
-				MyGame.PurchaseUgrade = false;
+				MyGame.PurchaseUpgrade = false;
 		}
 
 		private void cboRepairPercent_SelectedIndexChanged(object sender, EventArgs e)
@@ -980,6 +984,12 @@ namespace TrainingApp
 		{
 			MyGame.getGameCurrency -= 1000000;
 			MyGame.arenaComunityOutreach(1000);
+		}
+
+		private void mnuPriority_Click(object sender, EventArgs e)
+		{
+			if (mnuPriority.SelectedItem.Equals("Prioritize Robot")) MyGame.RobotPriority = true;
+			else MyGame.RobotPriority = false;
 		}
 	}
 	public static class BinarySerialization
