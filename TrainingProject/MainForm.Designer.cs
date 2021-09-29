@@ -389,6 +389,7 @@
             "Prioritize Robot"});
 			this.mnuPriority.Name = "mnuPriority";
 			this.mnuPriority.Size = new System.Drawing.Size(121, 23);
+			this.mnuPriority.SelectedIndexChanged += new System.EventHandler(this.mnuPriority_SelectedIndexChanged);
 			this.mnuPriority.Click += new System.EventHandler(this.mnuPriority_Click);
 			// 
 			// purchaseUpgradeToolStripMenuItem

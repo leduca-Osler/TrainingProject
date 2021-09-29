@@ -30,7 +30,7 @@ namespace TrainingApp
 			try
 			{
 				MyGame = BinarySerialization.ReadFromBinaryFile<Game>("data\\TrainingProject.bin");
-				//MyGame.fixTech();
+				MyGame.fixTech();
 			}
 			catch
 			{
@@ -190,7 +190,7 @@ namespace TrainingApp
 			if (MyGame.getGameCurrency >= 10000)						currTenK = true;
 			if (MyGame.getGameCurrency >= 100000)						currHundredK = true;
 			if (MyGame.getGameCurrency >= 1000000)						currOneM = true;
-			if (MyGame.StartForge)										shopColour = Color.Indigo;
+			if (MyGame.StartForge)										shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
 			else if (MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
 			{
@@ -279,6 +279,10 @@ namespace TrainingApp
 			mnuComunityOutreach.Text = String.Format("Comunity: {0:P2}", MyGame.getArenaOutreach());
 			MinJackpotLevel.Text = MyGame.MinWage.ToString();
 			cboRepairPercent.SelectedItem = MyGame.repairPercent;
+			if (MyGame.RobotPriority)
+				mnuPriority.SelectedIndex = 1; // Robot Priority
+			else
+				mnuPriority.SelectedIndex = 0; // Equipment Priority
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUpgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
 		}
@@ -613,19 +617,19 @@ namespace TrainingApp
 			if (DateTime.Now > MyGame.BreakTime)
 			{
 				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
-				timer1.Enabled = true;
+				MyGame.paused = timer1.Enabled = true;
 				btnAutomatic.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
 					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 			}
 			else if (timer1.Enabled)
 			{
-				timer1.Enabled = false;
+				MyGame.paused = timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
 			}
 			else
 			{
-				timer1.Enabled = true;
+				MyGame.paused = timer1.Enabled = true;
 				btnAutomatic.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
 					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
@@ -986,9 +990,11 @@ namespace TrainingApp
 			MyGame.arenaComunityOutreach(1000);
 		}
 
-		private void mnuPriority_Click(object sender, EventArgs e)
+		private void mnuPriority_Click(object sender, EventArgs e) { }
+
+		private void mnuPriority_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (mnuPriority.SelectedItem.Equals("Prioritize Robot")) MyGame.RobotPriority = true;
+			if (mnuPriority.SelectedIndex == 1) MyGame.RobotPriority = true;
 			else MyGame.RobotPriority = false;
 		}
 	}

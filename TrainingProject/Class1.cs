@@ -29,19 +29,25 @@ namespace TrainingProject
 			"Robo6.jpg",
 			"Robo7.jpg",
 			"Robo8.jpg",
-			"Robo9.jpg",
+			"Robo9.jpg"
 		};
 		[JsonIgnore]
 		public string[] MonsterImages = {
-			"Monster1.png",
-			"Monster2.png",
-			"Monster3.png",
-			"Monster4.png",
-			"Monster5.png",
-			"Monster6.png",
-			"Monster7.png",
-			"Monster8.png",
-			"Monster9.png",
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // White
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Yellow
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Green
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Blue
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Red
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Black
+		};
+		[JsonIgnore]
+		public string[] MonsterName = {
+			"W.Devil", "W.Alien", "W.Slither", "W.Blob", "W.Bat", "W.Titan", "W.Chomp", "W.Element", "W.HandEye", // White
+			"Y.Devil", "Y.Alien", "Y.Slither", "Y.Blob", "Y.Bat", "Y.Titan", "Y.Chomp", "Y.Element", "Y.HandEye", // Yellow
+			"G.Devil", "G.Alien", "G.Slither", "G.Blob", "G.Bat", "G.Titan", "G.Chomp", "G.Element", "G.HandEye", // Green
+			"B.Devil", "B.Alien", "B.Slither", "B.Blob", "B.Bat", "B.Titan", "B.Chomp", "B.Element", "B.HandEye", // Blue
+			"R.Devil", "R.Alien", "R.Slither", "R.Blob", "R.Bat", "R.Titan", "R.Chomp", "R.Element", "R.HandEye", // Red
+			"Bl.Devil", "Bl.Alien", "Bl.Slither", "Bl.Blob", "Bl.Bat", "Bl.Titan", "Bl.Chomp", "Bl.Element", "Bl.HandEye", // Black
 		};
 		[JsonIgnore]
 		public static string strike = "Strike.jpg";
@@ -96,8 +102,6 @@ namespace TrainingProject
 		public string[] name3 = { "Blade", "Arrow", "Spark", "Factory", "Sniper", "Calvary", "Spear", "War Cythe", "Nunchuku", "Riffle", "Pistol", "War Hammer", "Battle Axe", "Bludgeon", "Club", "Flail", "Mace", "Morning Star", "Quarterstaff", "Dagger", "Falchion", "Estoc", "Katana", "Longsword", "Rapier", "Saber", "Shortsword", "Glaive", "Halberd", "Lance", "Partisan", "Pike", "Voulge", "Longbow", "Recurve Bow", "Crossbow", "Musket", "Chakram", "Kunai", "Shuriken"};
 		[JsonIgnore]
 		public string[] RoboName = { "Cyborg", "Repair", "Guard", "Golem", "Droid", "Tank", "Gundam", "ATV", "Concept" };
-		[JsonIgnore]
-		public string[] MonsterName = { "Devil", "Alien", "Slither", "Blob", "Bat", "Titan", "Chomp", "Element", "HandEye" };
 		[JsonIgnore]
 		public string[] BossName = { "Great", "Estemed", "Grand", "Large", "Strong", "Fast", "Tyrant"};
 		public string getWarningLog
@@ -436,6 +440,7 @@ namespace TrainingProject
 		public Boolean JackpotDownTen;
 		public Boolean StartForge;
 		public Boolean RobotPriority;
+		public Boolean paused;
 		private long BossReward;
 		public int roundCount;
 		public bool bossFight;
@@ -455,9 +460,9 @@ namespace TrainingProject
 		}
 		public int getMonsterDenLvlImage()
 		{
-			if (MonsterDenLvl > 8)
+			if (MonsterDenLvl > MonsterImages.Length)
 			{
-				return 8; // Max number of Monster images
+				return MonsterImages.Length - 1; // Max number of Monster images
 			}
 			return MonsterDenLvl;
 		}
@@ -898,7 +903,25 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-		}
+
+
+			MonsterImages = new string[] {
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // White
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Yellow
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Green
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Blue
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Red
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png" // Black
+			};
+			MonsterName = new string[] {
+			"W.Devil", "W.Alien", "W.Slither", "W.Blob", "W.Bat", "W.Titan", "W.Chomp", "W.Element", "W.HandEye", // White
+			"Y.Devil", "Y.Alien", "Y.Slither", "Y.Blob", "Y.Bat", "Y.Titan", "Y.Chomp", "Y.Element", "Y.HandEye", // Yellow
+			"G.Devil", "G.Alien", "G.Slither", "G.Blob", "G.Bat", "G.Titan", "G.Chomp", "G.Element", "G.HandEye", // Green
+			"B.Devil", "B.Alien", "B.Slither", "B.Blob", "B.Bat", "B.Titan", "B.Chomp", "B.Element", "B.HandEye", // Blue
+			"R.Devil", "R.Alien", "R.Slither", "R.Blob", "R.Bat", "R.Titan", "R.Chomp", "R.Element", "R.HandEye", // Red
+			"Bl.Devil", "Bl.Alien", "Bl.Slither", "Bl.Blob", "Bl.Bat", "Bl.Titan", "Bl.Chomp", "Bl.Element", "Bl.HandEye" // Black
+			};
+	}
 
 		public void resetShowDefeated()
 		{
@@ -1732,7 +1755,7 @@ namespace TrainingProject
 					, getMaxLength(new string[] { string.Format("{0:n0}", getShopStockCost) })
 					, getMaxLength(new string[] { string.Format("{0:n0}", getShopUpgradeValue) })
 				};
-				Label lblTotalScore = new Label { AutoSize = true, Text = String.Format("Total Score: {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\*#,###}", getScore(), getGoalGameScore) };
+				Label lblTotalScore = new Label { AutoSize = true, Text = String.Format("Total Score: {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\*#,###} Robot Priority{2}", getScore(), getGoalGameScore, RobotPriority) };
 				MainPanel.Controls.Add(lblTotalScore);
 				Label lblTeams = new Label { AutoSize = true, Text =	  String.Format("Teams:       {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\+#,###}", string.Format("{0:n0}/{1:n0}",GameTeams.Count, getMaxTeams), getTeamCost)};
 				MainPanel.Controls.Add(lblTeams);
@@ -1883,23 +1906,25 @@ namespace TrainingProject
 				TeamPanel.Controls.Add(lblEquipmentPurchased);
 				Label lblEquipmentUpgraded = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Equipment Upgraded", eTeam.LifetimeEquipmentUpgraded, eTeam.GoalLifetimeEquipmentUpgraded) };
 				TeamPanel.Controls.Add(lblEquipmentUpgraded);
-				int space = 9 + TeamRowLength[0] + TeamRowLength[1];
+				FlowLayoutPanel RobotPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+				int space = 12 + TeamRowLength[0] + TeamRowLength[1];
 				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
-				TeamPanel.Controls.Add(lblRobotList);
+				RobotPanel.Controls.Add(lblRobotList);
 				for (int i = 0; i < 9; i++)
 				{
-					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-7} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[i], eTeam.RobotDestroyed[i], eTeam.RobotDestroyedGoal[i]) };
-					TeamPanel.Controls.Add(lblRobot);
+					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[i], eTeam.RobotDestroyed[i], eTeam.RobotDestroyedGoal[i]) };
+					RobotPanel.Controls.Add(lblRobot);
 				}
 				FlowLayoutPanel MonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblMonsterList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Monsters Dest.") };
 				MonsterPanel.Controls.Add(lblMonsterList);
 				for (int i = 0; i < eTeam.MonsterDestroyed.Length; i++)
 				{
-					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-7} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[i], eTeam.MonsterDestroyed[i], eTeam.MonsterDestroyedGoal[i]) };
+					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[i], eTeam.MonsterDestroyed[i], eTeam.MonsterDestroyedGoal[i]) };
 					MonsterPanel.Controls.Add(lblMonster);
 				}
 				MainPanel.Controls.Add(TeamPanel);
+				MainPanel.Controls.Add(RobotPanel);
 				MainPanel.Controls.Add(MonsterPanel);
 			}
 
@@ -2491,8 +2516,7 @@ namespace TrainingProject
 						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
 						shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
 						eTeam.AddEquipmentUpgraded();
-						getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
-						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Upgraded " + String.Format("({0:n0}) ", tmpUpgrade) + shopper.getEquipWeapon.eName;
+						eTeam.getTeamLog = getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
 					}
 					// Repair
 					if (eTeam.getCurrency > (shopper.getEquipWeapon.ePrice / 10)
@@ -2501,8 +2525,7 @@ namespace TrainingProject
 					{
 						shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
 						eTeam.getCurrency -= 25;
-						getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipWeapon.eName) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
-						eTeam.getTeamLog = Environment.NewLine + " " + shopper.getName + " Repaired " + String.Format("({0:n0}) ", shopper.getEquipWeapon.ePrice / 10) + shopper.getEquipWeapon.eName;
+						eTeam.getTeamLog = getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipWeapon.eName) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
 					}
 				}
 				else
@@ -2581,7 +2604,7 @@ namespace TrainingProject
 					}
 				}
 				// Rebuild Monster
-				if (MonsterOutbreak.MyTeam.Count > 0 && SafeTime >= DateTime.Now)
+				if (MonsterOutbreak.MyTeam.Count > 0 && SafeTime >= DateTime.Now && !paused)
 				{
 					monster = MonsterOutbreak.MyTeam[RndVal.Next(0, MonsterOutbreak.MyTeam.Count)];
 					if ((monster.rebuildCost(ResearchDevRebuild, eTeam.Runes) > 100) && RndVal.Next(1000) < MonsterDenLvl)
@@ -4550,7 +4573,7 @@ namespace TrainingProject
 
 		public Robot DupeMonster()
 		{
-			Robot tmp = new Robot("." + MonsterName[RndVal.Next(MonsterName.Length)], Dexterity, Strength, Agility, Tech, Accuracy, Health, Energy, Armour, Damage, Hit, MentalStrength, MentalDefense, Image, type, Speed, Level, Analysis, 0, 0);
+			Robot tmp = new Robot("." + MonsterName[type], Dexterity, Strength, Agility, Tech, Accuracy, Health, Energy, Armour, Damage, Hit, MentalStrength, MentalDefense, Image, type, Speed, Level, Analysis, 0, 0);
 			foreach (Skill eSkill in ListSkills)
 				tmp.ListSkills.Add(eSkill);
 			foreach (Strategy eStrategy in RoboStrategy)
@@ -5064,17 +5087,17 @@ namespace TrainingProject
 			tmp += string.Format("{0,-10}{1}\n", "Tech", Tech);
 			tmp += string.Format("{0,-10}{1}\n", "Accuracy", Accuracy);
 			tmp += ("*Elevated Stats*\n");
-			
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "T.Power", (getTHealth() / 3) + (getTEnergy() / 2) + getTArmour() + getTDamage() + getTHit() + getTSpeed() + getTMentalStrength() + getTMentalDefense());
 			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Health", HP, getTHealth(), Health, wHealth, aHealth);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Energy", MP, getTEnergy(), Energy, wEnergy, aEnergy);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Armour", getTArmour(), Armour, wArmour, aArmour);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Damage", getTDamage(), Damage, wDamage, aDamage);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Hit", getTHit(), Hit, wHit, aHit);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Speed", getTSpeed(), Speed, wSpeed, aSpeed);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalStr", getTMentalStrength(), MentalStrength, wMentalStr, aMentalStr);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalDef", getTMentalDefense(), MentalDefense, wMentalDef, aMentalDef);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "}\n", "Analysis", getAnalysisLeft());
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + "}\n", "Rebuild %", RebuildPercent);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Armour", getTArmour(), Armour, wArmour, aArmour);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Damage", getTDamage(), Damage, wDamage, aDamage);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Hit", getTHit(), Hit, wHit, aHit);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Speed", getTSpeed(), Speed, wSpeed, aSpeed);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalStr", getTMentalStrength(), MentalStrength, wMentalStr, aMentalStr);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalDef", getTMentalDefense(), MentalDefense, wMentalDef, aMentalDef);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "Analysis", getAnalysisLeft());
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "Rebuild %", RebuildPercent);
 			tmp += "-----\n";
 			foreach (Strategy eStrategy in RoboStrategy)
 			{
