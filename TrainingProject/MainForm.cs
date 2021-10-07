@@ -214,7 +214,10 @@ namespace TrainingApp
 			mnuInvest10000.Enabled = currTenK;
 			mnuInvest100000.Enabled = currHundredK;
 			mnuInvest1000000.Enabled = currOneM;
-			mnuLongBattle.Text = String.Format("Long Battle {0}hrs \n{1:c0}", MyGame.ManagerHrs, MyGame.ManagerCost);
+			if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
+				mnuLongBattle.Text = String.Format("Return to work");
+			else
+				mnuLongBattle.Text = String.Format("Long Battle {0}hrs \n{1:c0}", MyGame.ManagerHrs, MyGame.ManagerCost);
 			fastForwardToolStripMenuItem.Text = string.Format(" Fast Forward {0:n0}", MyGame.FastForwardCount);
 			// if fight is active
 			if (MyGame.isFighting())
