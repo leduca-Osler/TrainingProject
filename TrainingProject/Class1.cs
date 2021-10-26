@@ -1170,6 +1170,7 @@ namespace TrainingProject
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
 			int winGoal = rebuild.Win;
 			int scouted = rebuild.Win * 10;
+			int bonusScore = rebuild.getScore / 2;
 			IList<int> scoutingTeams = new List<int> { };
 			// teams for scouting
 			for (int i = 0; i < GameTeams.Count; i++)
@@ -1195,6 +1196,11 @@ namespace TrainingProject
 			}
 			foreach (Team eTeam in GameTeams)
 			{
+				if (eTeam.getScore < bonusScore)
+				{
+					eTeam.getMaxRobos++; const string Format = "\n*!* {0} added robot during reset!";
+					getWarningLog = getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName);
+				}
 				eTeam.getScore = 0;
 				if (eTeam.Win < winGoal)
 				{
@@ -2092,8 +2098,8 @@ namespace TrainingProject
 				if (maxTeamLengths[2] < string.Format("{0:c0}", eTeam.getCurrency).Length) maxTeamLengths[2] = string.Format("{0:c0}", eTeam.getCurrency).Length;
 				if (maxTeamLengths[3] < string.Format("{0:c0}", eTeam.CurrencyLog).Length) maxTeamLengths[3] = string.Format("{0:c0}", eTeam.CurrencyLog).Length;
 				if (maxTeamLengths[4] < string.Format("{0:n0}", eTeam.Win).Length) maxTeamLengths[4] = string.Format("{0:n0}", eTeam.Win).Length;
-				if (maxTeamLengths[5] < string.Format("{0:n0}", eTeam.getDifficulty).Length) maxTeamLengths[4] = string.Format("{0:n0}", eTeam.getDifficulty).Length;
-				if (maxTeamLengths[6] < string.Format("{0:n0}", eTeam.DifficultyLog).Length) maxTeamLengths[4] = string.Format("{0:n0}", eTeam.DifficultyLog).Length;
+				if (maxTeamLengths[5] < string.Format("{0:n0}", eTeam.getDifficulty).Length) maxTeamLengths[5] = string.Format("{0:n0}", eTeam.getDifficulty).Length;
+				if (maxTeamLengths[6] < string.Format("{0:n0}", eTeam.DifficultyLog).Length) maxTeamLengths[6] = string.Format("{0:n0}", eTeam.DifficultyLog).Length;
 			}
 			for (int i = 0; i < GameTeam1.Count; i++)
 			{
@@ -2316,8 +2322,22 @@ namespace TrainingProject
 									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
 									if (GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[lastRobo].getLevel && GameTeam1[i].getAvailableRobo == 0 && RndVal.Next(100) > 75)
 									{
-										GameTeam1[i].getMaxRobos++;
-										getFightLog = getWarningLog = string.Format("\n!*!* {0} added robot!", GameTeam1[i].getName);
+										long lProffitSharing = 0;
+										if (getGameCurrency > 0)
+										{
+											lProffitSharing = GameTeam1[i].getDifficulty * 1000;
+											getGameCurrency -= lProffitSharing;
+										}
+										foreach (Team eTeam in GameTeams)
+										{
+											if (eTeam.getCurrency > 0 && !eTeam.getName.Equals(GameTeam1[i].getName))
+											{
+												lProffitSharing += eTeam.getCurrency / 2;
+												eTeam.getCurrency /= 2;
+											}
+										}
+										GameTeam1[i].getCurrency += lProffitSharing;
+										getFightLog = getWarningLog = string.Format("\n!*!* {0} received proffit sharing! {1:c0}", GameTeam1[i].getName, lProffitSharing);
 									}
 								}
 								else
@@ -3944,7 +3964,7 @@ namespace TrainingProject
 		{
 			string strStats = ""; 
 			// If this team is not in Team1 or Team1 list
-			string strBuild = "";
+			string strBuild = " ";
 			int counter = 0;
 			int shownCounter = 0;
 			int startCounter = 0;
@@ -5293,7 +5313,7 @@ namespace TrainingProject
 				case 4:
 					eType = "Weapon";
 					eName = "Ramp";
-					eHealth = value;
+					eHealth = value * 3;
 					break;
 				case 5:
 					eType = "Armour";
@@ -5313,7 +5333,7 @@ namespace TrainingProject
 				case 8:
 					eType = "Armour";
 					eName = "Field";
-					eEnergy = value;
+					eEnergy = value * 2;
 					break;
 			}
 			eMaxDurability = eDurability = durability;
@@ -5351,10 +5371,10 @@ namespace TrainingProject
 			switch (Type)
 			{
 				case 1:
-					eHealth += value;
+					eHealth += value * 3;
 					break;
 				case 2:
-					eEnergy += value;
+					eEnergy += value * 2;
 					break;
 				case 3:
 					eDamage += value;
