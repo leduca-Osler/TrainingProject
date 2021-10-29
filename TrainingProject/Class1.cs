@@ -2108,18 +2108,21 @@ namespace TrainingProject
 					getNext(i);
 					if (display)
 					{
+						char goalScore = ' ';
+						if (getScore() > (GoalGameScore * 0.8)) goalScore = '!';
+
+						string strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
+						if (roundCount < 20 && GameTeam1[0].getName != "Arena")
+							strFormat = "TS:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
+						else if (roundCount < 20 && GameTeam1[0].getName == "Arena")
+							strFormat = "TS:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{6:n0}";
+						else if (GameTeam1[0].getName == "Arena")
+							strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{6:n0}";
 						if (auto)
 						{
 							if (i == 0)
 							{
-								string strFormat = "TS:{1:n0} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
-								if (roundCount < 20 && GameTeam1[0].getName != "Arena")
-									strFormat = "TS:{1:n0}->{2:n0} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
-								else if (roundCount < 20 && GameTeam1[0].getName == "Arena")
-									strFormat = "TS:{1:n0}->{2:n0} {0:c0} D:{3:n0} J:{6:n0}";
-								else if (GameTeam1[0].getName == "Arena")
-									strFormat = "TS:{1:n0} {0:c0} D:{3:n0} J:{6:n0}";
-								Label lblGameStats = new Label { AutoSize = true, Text = String.Format(strFormat, getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - MinWage, MinWage, Jackpot) };
+								Label lblGameStats = new Label { AutoSize = true, Text = String.Format(strFormat, getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - MinWage, MinWage, Jackpot, goalScore) };
 								MainPanel.Controls.Add(lblGameStats);
 							}
 							Color background = Color.Transparent;
@@ -2142,7 +2145,7 @@ namespace TrainingProject
 									Team2.Controls.Add(getCharacterInfo(eRobo));
 								}
 							}
-							Label lblGameStats = new Label { AutoSize = true, Text = String.Format("TS:{1:n0}({2:n0}) {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - MinWage , MinWage ) };
+							Label lblGameStats = new Label { AutoSize = true, Text = String.Format(strFormat, getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - MinWage, MinWage, Jackpot, goalScore) };
 							if (GameTeam1[0].getName == "Arena") lblGameStats = new Label { AutoSize = true, Text = String.Format("TS:{1:n0}({2:n0}) {0:c0} D:{3:n0} J:{4:n0} ", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot) };
 							MainPanel.Controls.Add(lblGameStats);
 							Label lblVS2 = new Label { AutoSize = true, Text = String.Format("{0} S:{1:n0} {2:c0} D:{3:n0}",GameTeam2[i].getName,GameTeam2[i].getScore,GameTeam2[i].getCurrency, GameTeam2[i].getDifficulty) };
@@ -2325,18 +2328,21 @@ namespace TrainingProject
 										long lProffitSharing = 0;
 										if (getGameCurrency > 0)
 										{
-											lProffitSharing = getGameCurrency / 2;
+											lProffitSharing = getGameCurrency / (GameTeam1[i].Win + 2);
 											getGameCurrency -= lProffitSharing;
 										}
 										foreach (Team eTeam in GameTeams)
 										{
+											int factor = 10 - eTeam.Win;
+											if (factor <= 0) factor = 1;
 											if (eTeam.getCurrency > 0 && !eTeam.getName.Equals(GameTeam1[i].getName))
 											{
-												lProffitSharing += eTeam.getCurrency / 2;
+												lProffitSharing += eTeam.getCurrency / factor;
 												eTeam.getCurrency /= 2;
 											}
 										}
 										GameTeam1[i].getCurrency += lProffitSharing;
+										GameTeam1[i].getDifficulty = 1;
 										getFightLog = getWarningLog = string.Format("\n!*!* {0} received proffit sharing! {1:c0}", GameTeam1[i].getName, lProffitSharing);
 									}
 								}
@@ -2709,7 +2715,7 @@ namespace TrainingProject
 			// Pay employees
 			for (int i = 0; i < Seating.Count; i++)
 			{
-				MaintCost += (Seating[i].Amount / 25) * Seating[i].Level;
+				MaintCost += (Seating[i].Amount / 25) * (Seating[i].Level * 10);
 				employees += Seating[i].Amount / 25;
 			}
 			getGameCurrency -= MaintCost;
