@@ -2320,12 +2320,12 @@ namespace TrainingProject
 									msg += String.Format("\n Win:{0}", WinCount);
 									int lastRobo = GameTeam1[i].MyTeam.Count - 1;
 									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
-									if (GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[lastRobo].getLevel && GameTeam1[i].getAvailableRobo == 0 && RndVal.Next(100) > 75)
+									if (GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[lastRobo].getLevel)
 									{
 										long lProffitSharing = 0;
 										if (getGameCurrency > 0)
 										{
-											lProffitSharing = GameTeam1[i].getDifficulty * 1000;
+											lProffitSharing = getGameCurrency / 2;
 											getGameCurrency -= lProffitSharing;
 										}
 										foreach (Team eTeam in GameTeams)
