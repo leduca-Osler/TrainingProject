@@ -180,16 +180,16 @@ namespace TrainingApp
 			Color shopColour = Color.White;
 			Boolean researchLvl = false;
 			if (MyGame.getAvailableTeams > 0 && MyGame.getTeamCost < MyGame.getGameCurrency) 
-																		addTeam = true;
+																						addTeam = true;
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
 					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost) 
-																		addRobo = true;
-			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)		arenaLvl = true;
-			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)	monsterLvl = true;
-			if (MyGame.getGameCurrency >= 1000)							currOneK = true;
-			if (MyGame.getGameCurrency >= 10000)						currTenK = true;
-			if (MyGame.getGameCurrency >= 100000)						currHundredK = true;
-			if (MyGame.getGameCurrency >= 1000000)						currOneM = true;
+																						addRobo = true;
+			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						arenaLvl = true;
+			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)					monsterLvl = true;
+			if (MyGame.getGameCurrency >= 1000 && MyGame.getGameCurrency < 10000)		currOneK = true;
+			if (MyGame.getGameCurrency >= 10000 && MyGame.getGameCurrency < 100000)		currTenK = true;
+			if (MyGame.getGameCurrency >= 100000 && MyGame.getGameCurrency < 10000000)	currHundredK = true;
+			if (MyGame.getGameCurrency >= 1000000)										currOneM = true;
 			if (MyGame.StartForge)										shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
 			else if (MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)

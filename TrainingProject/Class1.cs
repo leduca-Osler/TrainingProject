@@ -1405,8 +1405,8 @@ namespace TrainingProject
 				{
 					if (StartForge)
 					{
-						ForgeEquipment();
-						if (ShopStock <= storeEquipment.Count) StartForge = false;
+						if (ShopStock > storeEquipment.Count) ForgeEquipment();
+						else StartForge = false;
 					}
 					WinCount = 0;
 					incrementArenaOpponent();
