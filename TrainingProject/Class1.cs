@@ -1170,7 +1170,7 @@ namespace TrainingProject
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
 			int winGoal = rebuild.Win;
 			int scouted = rebuild.Win * 10;
-			int bonusScore = rebuild.getScore / 2;
+			int bonusScore = rebuild.getScore / 4;
 			IList<int> scoutingTeams = new List<int> { };
 			// teams for scouting
 			for (int i = 0; i < GameTeams.Count; i++)
@@ -2198,6 +2198,9 @@ namespace TrainingProject
 									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
 									GoalGameScoreBase += GoalGameScoreBaseIncrement;
 									resetScore();
+									GameTeam1[0].healRobos(false);
+									equip(GameTeam1[0], true);
+									GameDifficultyFight = true;
 								}
 							}
 							// Boss Fight
@@ -3996,7 +3999,7 @@ namespace TrainingProject
 				// Add different robots...  
 				if (counter < maxRobos && counter >= startCounter)
 				{
-					strStats += eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes);
+					strStats += eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes, roundCount);
 					if (eRobo.getKO <= KOCount)
 					{
 						counter++;
@@ -4008,7 +4011,7 @@ namespace TrainingProject
 				{
 					char tmpSkill = '.';
 					if (eRobo.cSkill != ' ') tmpSkill = eRobo.cSkill;
-					eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes);
+					eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes, roundCount);
 					if (eRobo.getKO <= KOCount)
 					{
 						if (shownCounter == 0)
@@ -4702,11 +4705,12 @@ namespace TrainingProject
 			AnalysisLog = 0;
 		}
 
-		public string getRoboStats(int[] PadRight, Game myGame, Team myTeam, long rebuildSavings, List<int> Runes)
+		public string getRoboStats(int[] PadRight, Game myGame, Team myTeam, long rebuildSavings, List<int> Runes, int roundCount)
 		{
 			char cRebuild = ' ';
 			string strStats = "";
 			string strMsg = "";
+			string strFormat = "";
 			if (HP == 0)
 				getKO++;
 			if (rebuildCost(rebuildSavings, Runes) != 100 && !bIsMonster)
@@ -4726,7 +4730,9 @@ namespace TrainingProject
 				crit = false;
 			}
 			if (getKO <= 3)
-				strStats = string.Format("\n{0}{1}{2} L:{3}({4}) A:{5} MP:{6} HP:{7}{8} ",cRebuild, cSkill, 
+				strFormat = "\n{0}{1}{2} L:{3} A:{5} MP:{6} HP:{7}{8} ";
+				if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{3}->{4} A:{5} MP:{6} HP:{7}{8} ";
+				strStats = string.Format(strFormat, cRebuild, cSkill, 
 					getNameRank().PadRight(PadRight[0]),
 					String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
 					String.Format("{0:n0}", LevelLog).PadLeft(PadRight[2]),
