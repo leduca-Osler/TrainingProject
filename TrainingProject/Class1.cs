@@ -434,10 +434,8 @@ namespace TrainingProject
 		public int CurrentJackpotBase;
 		public int CurrentJackpotBaseIncrement;
 		public long MaxJackpot;
-		public Boolean JackpotUp;
-		public Boolean JackpotUpTen;
-		public Boolean JackpotDown;
-		public Boolean JackpotDownTen;
+		public Boolean JackpotUpDown;
+		public int JackpotMovement;
 		public Boolean StartForge;
 		public Boolean RobotPriority;
 		public Boolean paused;
@@ -1074,7 +1072,7 @@ namespace TrainingProject
 			{
 				getGameCurrency -= ShopStockCost;
 				GameCurrencyLogMisc -= ShopStockCost;
-				Equipment tmp = new Equipment(AddArmour(), RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, ShopUpgradeValue * 100);
+				Equipment tmp = new Equipment(AddArmour(), RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, 100);
 				int upgradeVal = 100;
 				while (RndVal.Next(upgradeVal) < getShopLvl)
 				{
@@ -1170,7 +1168,7 @@ namespace TrainingProject
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
 			int winGoal = rebuild.Win;
 			int scouted = rebuild.Win * 10;
-			int bonusScore = rebuild.getScore / 4;
+			int bonusScore = rebuild.getScore / GameTeams.Count;
 			IList<int> scoutingTeams = new List<int> { };
 			// teams for scouting
 			for (int i = 0; i < GameTeams.Count; i++)
@@ -1214,7 +1212,8 @@ namespace TrainingProject
 			}
 			// reset jackpot
 			CurrentJackpot = 0;
-			DecreaseJackpot(); 
+			JackpotMovement = -10;
+			IncreaseJackpot(); 
 		}
 		public void addRobo(int Team) { addRobo(GameTeams[Team], this); }
 
@@ -1412,30 +1411,14 @@ namespace TrainingProject
 					incrementArenaOpponent();
 					if (ArenaOpponent1 == ArenaOpponent2)
 					{
-						if (JackpotUp)
+						if (JackpotUpDown)
                         {
 							IncreaseJackpot();
-							JackpotUp = false;
                         }
-						else if (JackpotUpTen)
-						{
-							IncreaseJackpot(10);
-							JackpotUpTen = false;
-						}
-						else if (JackpotDown)
-						{
-							DecreaseJackpot();
-							JackpotDown = false;
-						}
-						else if (JackpotDownTen)
-						{
-							DecreaseJackpot(10);
-							JackpotDownTen = false;
-						}
 						else if ((getGameCurrency < AverageMaintenance()))
                         {
-							DecreaseJackpot();
-							MaxJackpot = getGameCurrency;
+							JackpotMovement--;
+							IncreaseJackpot();
 						}
 					}
 					CheckMinJackpot();
@@ -2080,10 +2063,12 @@ namespace TrainingProject
 			if (bossFight) strFlags += " Boss Fight!";
 			if (GameDifficultyFight) strFlags += " Difficulty Fight!";
 			if (StartForge) strFlags += " Forge Equipment!";
-			if (JackpotUp) strFlags += " Jackpot Up!";
-			if (JackpotUpTen) strFlags += " Jackpot Up 10!";
-			if (JackpotDown) strFlags += " Jackpot Down!";
-			if (JackpotDownTen) strFlags += " Jackpot Down 10!";
+			if (JackpotUpDown)
+			{
+				char strOperand = '+';
+				if (JackpotMovement < 0)	strOperand = '-';
+				strFlags += " Jackpot " + strOperand + JackpotMovement.ToString() + "!";
+			}
 			if (FastForward) strFlags += string.Format(" Fast Forward {0:n0}!", FastForwardCount);
 			if (getGameCurrency < AverageMaintenance()) strFlags += " !Maintenance NSF!";
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
@@ -2463,35 +2448,28 @@ namespace TrainingProject
 		{
 			equip(GameTeams[RndVal.Next(GameTeams.Count)], false);
 		}
-		public int IncreaseJackpot(int recall)
-		{
-			int retVal = 0;
-			for (int i = 0; i < recall; i++)
-				retVal = IncreaseJackpot();
-			return retVal;
-		}
 		public int IncreaseJackpot()
 		{
-			CurrentJackpotLvl++;
-			CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(1,CurrentJackpotBase), "up");
-			CurrentJackpotBase += CurrentJackpotBaseIncrement;
-			return CurrentJackpot;
-		}
-		public int DecreaseJackpot(int recall)
-		{
-			int retVal = 0;
-			for (int i = 0; i < recall; i++)
-				retVal = DecreaseJackpot();
-			return retVal;
-		}
-		public int DecreaseJackpot()
-		{
-			if (CurrentJackpot > (MinWage * 2))
+			if (JackpotMovement > 0)
 			{
-				CurrentJackpotLvl--;
-				CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(CurrentJackpotBase), "down");
-				CurrentJackpotBase -= CurrentJackpotBaseIncrement;
+				CurrentJackpotLvl++;
+				CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(1, CurrentJackpotBase), "up");
+				CurrentJackpotBase += CurrentJackpotBaseIncrement;
+				JackpotMovement--;
 			}
+			if (JackpotMovement < 0)
+			{
+				if (CurrentJackpot > (MinWage * 2))
+				{
+					CurrentJackpotLvl--;
+					CurrentJackpot = roundValue(CurrentJackpot, RndVal.Next(CurrentJackpotBase), "down");
+					CurrentJackpotBase -= CurrentJackpotBaseIncrement;
+					JackpotMovement++;
+				}
+				else
+				{ JackpotMovement = 0; }
+			}
+			if (JackpotMovement == 0) JackpotUpDown = false;
 			return CurrentJackpot;
 		}
 		public void CheckMinJackpot()
@@ -2505,6 +2483,7 @@ namespace TrainingProject
 			}
 			while (CurrentJackpot < (MinWage * 2))
 			{
+				JackpotMovement++;
 				IncreaseJackpot();
 			}
 		}
@@ -5292,7 +5271,7 @@ namespace TrainingProject
 		public long eUpgradeCostBase = 0;
 		[JsonProperty]
 		public long eUpgradeCostBaseIncrement = 0;
-		public Equipment(bool addWeapon, int value, int durability, Random RndVal, Boolean isBoss = false, int upgradeCost = 10)
+		public Equipment(bool addWeapon, int value, int durability, Random RndVal, Boolean isBoss = false, int upgradeCost = 100)
 		{
 			int Type = 0;
 			if (addWeapon)
@@ -5351,7 +5330,7 @@ namespace TrainingProject
 			eMaxDurability = eDurability = durability;
 			ePrice = (value * 10) + durability;
 			eUpgradeCost = eUpgradeCostBase = upgradeCost;
-			eUpgradeCostBaseIncrement = (int)(upgradeCost * 0.75);
+			eUpgradeCostBaseIncrement = 75;
 		}
 		public Equipment(string pType, string pName, int pHealth, int pEnergy, int pArmour, int pDamage, int pHit, int pMentalStrength, int pMentalDefense, int pSpeed, long pPrice, 
 			int pDurability, int pMaxDurability, long pUpgradeCost, long pUpgradeCostBase, long pUpgradeCostBaseIncrement, int pUpgrade)

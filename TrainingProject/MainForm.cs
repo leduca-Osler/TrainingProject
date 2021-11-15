@@ -43,6 +43,7 @@ namespace TrainingApp
 				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
 				MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 			}
+			tickRate -= MyGame.getResearchDevLvl;
 			MyGame.BreakTime = DateTime.Now.AddMinutes(5); // remove
 			saveTime = DateTime.Now.AddHours(1);
 			Application.EnableVisualStyles();
@@ -665,7 +666,7 @@ namespace TrainingApp
 		private void btnAutomatic_ButtonClick(object sender, EventArgs e)
 		{
 			BreakTimer.Interval = 1000;
-			tickRate = 1000;
+			tickRate = 1000 - MyGame.getResearchDevLvl;
 			#if DEBUG
 				BreakTimer.Interval = 50; ; //speed up for testing
 			#endif
@@ -800,8 +801,7 @@ namespace TrainingApp
 				MainPannel.Controls.Add(MyGame.showCountdown());
 			}
 
-			if (MyGame.SafeTime < DateTime.Now)
-				MyGame.equip();
+			MyGame.equip();
 
 			// don't heal if Arena fight is on
 			if ((MyGame.GameTeam1.Count == 0 || !MyGame.GameTeam1[0].getName.Equals("Arena")))
@@ -809,7 +809,6 @@ namespace TrainingApp
 				Color tmpColour = Color.Yellow;
 				if (MyGame.Repair())
 					tmpColour = Color.White;
-				MyGame.equip();
 				if (MyGame.isFighting() && tmp.Next(MyGame.fightPercentMax) > MyGame.fightPercent) 
 					MyGame.startFight();
 				if (!MyGame.isFighting())
@@ -818,7 +817,6 @@ namespace TrainingApp
 			if (tmp.Next(100) > 90 && DateTime.Now > MyGame.SafeTime)
 			{
 				MyGame.continueFight(false);
-				tickRate++;
 			}
 			saveGame();
 		}
@@ -872,22 +870,26 @@ namespace TrainingApp
 
 		private void increaseJackpotToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MyGame.JackpotUp = true;
+			MyGame.JackpotMovement++;
+			MyGame.JackpotUpDown = true;
 		}
 
         private void decreaseJackpotToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MyGame.JackpotDown = true;
+			MyGame.JackpotMovement--;
+			MyGame.JackpotUpDown = true;
 		}
 
         private void increaseJackpot10ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MyGame.JackpotUpTen = true;
+			MyGame.JackpotMovement += 10;
+			MyGame.JackpotUpDown = true;
 		}
 
 		private void decreaseJackpot10ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MyGame.JackpotDownTen = true;
+			MyGame.JackpotMovement -= 10;
+			MyGame.JackpotUpDown = true;
 		}
 
 		private void MinJackpotLevel_TextChanged(object sender, EventArgs e)
