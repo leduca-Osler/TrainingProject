@@ -1200,6 +1200,7 @@ namespace TrainingProject
 					getWarningLog = getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName);
 				}
 				eTeam.getScore = 0;
+				eTeam.HealScore = 0;
 				if (eTeam.Win < winGoal)
 				{
 					long iWinnings = getArenaLvl * 1000 * (winGoal + 1);
@@ -1687,9 +1688,7 @@ namespace TrainingProject
 				Label lblRunes = new Label { AutoSize = true, Text = "Runes:     " + GameTeams[TeamSelect - 1].getRunes() };
 				Label lblDifficulty = new Label { AutoSize = true, Text =     "Difficulty: " + GameTeams[TeamSelect - 1].getDifficulty };
 				Label lblAutomatic = new Label { AutoSize = true, Text =    "Automated:  " + GameTeams[TeamSelect - 1].Automated };
-				Label lblPayForRepair = new Label { AutoSize = true, Text = "Pay For Rep:" + GameTeams[TeamSelect - 1].PayForRepairs };
 				lblAutomatic.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].changeAutomated());
-				lblPayForRepair.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].changePayForRepairs());
 				MainPanel.Controls.Add(lblTeamName);
 				MainPanel.Controls.Add(lblTeamCurrency);
 				MainPanel.Controls.Add(lblScore);
@@ -1698,7 +1697,6 @@ namespace TrainingProject
 				MainPanel.Controls.Add(lblRunes);
 				MainPanel.Controls.Add(lblDifficulty);
 				MainPanel.Controls.Add(lblAutomatic);
-				MainPanel.Controls.Add(lblPayForRepair);
 				int index = 0;
 				foreach (Robot eRobo in GameTeams[TeamSelect - 1].MyTeam)
 				{
@@ -3433,11 +3431,10 @@ namespace TrainingProject
 		public Boolean isMonster;
 		[JsonProperty]
 		public Boolean Automated;
-		[JsonProperty]
-		public Boolean PayForRepairs;
 		[JsonIgnore]
 		private string TeamLog;
 		public bool shownDefeated;
+		public int HealScore;
 
 		public int getAvailableRobo
 		{
@@ -3612,7 +3609,6 @@ namespace TrainingProject
 			isMonster = false;
 			TeamLog = "";
 			Automated = true;
-			PayForRepairs = true;
 			Win = 0;
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
 			shownDefeated = false;
@@ -3661,7 +3657,6 @@ namespace TrainingProject
 			Win = 0;
 			TeamName = BossName[RndVal.Next(BossName.Length)] + " " + name2[RndVal.Next(name2.Length)];
 			Automated = true;
-			PayForRepairs = true;
 			shownDefeated = false;
 		}
 		// Monster team
@@ -3743,7 +3738,6 @@ namespace TrainingProject
 			TeamLog = "";
 			TeamName = string.Format("M_{0} {1}",name1[RndVal.Next(name1.Length)], name2[RndVal.Next(name2.Length)]);
 			Automated = true;
-			PayForRepairs = true;
 			shownDefeated = false;
 		}
 		public void AddRobotDestroyed(int type, bool isMonster)
@@ -3930,10 +3924,6 @@ namespace TrainingProject
 		public void changeAutomated()
 		{
 			Automated = !Automated;
-		}
-		public void changePayForRepairs()
-		{
-			PayForRepairs = !PayForRepairs;
 		}
 		public void rename(string newName)
 		{
@@ -4133,18 +4123,23 @@ namespace TrainingProject
 		{
 			Boolean fullHP = true;
 			Boolean bedUsed = false;
+			int cost = 0;
 			for (int robo = MyTeam.Count-1; robo >= 0; robo--)
 			{
-				int cost = MyTeam[robo].getBaseStats() / 2;
 				if (MyTeam[robo].HP < MyTeam[robo].getTHealth())
                 {
-                    if (getCurrency < cost || !PayForRepairs ||  beds == 0 || bedUsed || (MyTeam[robo].getTHealth() - MyTeam[robo].HP) < (value / 2))
+					if (getCurrency < cost || beds == 0 || bedUsed || (MyTeam[robo].getTHealth() - MyTeam[robo].HP) < (value / 2))
 					{
-                        cost = 0;
-                        value = RndVal.Next(value/2);
+						cost = 0;
+						value = RndVal.Next(value / 2);
 					}
 					else
 					{
+						if (getScore >= HealScore)
+						{ 
+							cost = MyTeam[robo].getBaseStats() / 2;
+							HealScore = getScore++;
+						}
 						beds--;
 						bedUsed = true;
 					}
