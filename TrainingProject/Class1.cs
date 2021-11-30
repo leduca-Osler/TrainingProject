@@ -33,28 +33,27 @@ namespace TrainingProject
 		};
 		[JsonIgnore]
 		public string[] MonsterImages = {
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // White
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Yellow
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Green
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Blue
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Red
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Black
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Rank 1
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Rank 2
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Rank 3
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Rank 4
+			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png" // Rank 6
 		};
 		[JsonIgnore]
 		public string[] MonsterName = {
-			"W.Devil", "W.Alien", "W.Slither", "W.Blob", "W.Bat", "W.Titan", "W.Chomp", "W.Element", "W.HandEye", // White
-			"Y.Devil", "Y.Alien", "Y.Slither", "Y.Blob", "Y.Bat", "Y.Titan", "Y.Chomp", "Y.Element", "Y.HandEye", // Yellow
-			"G.Devil", "G.Alien", "G.Slither", "G.Blob", "G.Bat", "G.Titan", "G.Chomp", "G.Element", "G.HandEye", // Green
-			"B.Devil", "B.Alien", "B.Slither", "B.Blob", "B.Bat", "B.Titan", "B.Chomp", "B.Element", "B.HandEye", // Blue
-			"R.Devil", "R.Alien", "R.Slither", "R.Blob", "R.Bat", "R.Titan", "R.Chomp", "R.Element", "R.HandEye", // Red
-			"Bl.Devil", "Bl.Alien", "Bl.Slither", "Bl.Blob", "Bl.Bat", "Bl.Titan", "Bl.Chomp", "Bl.Element", "Bl.HandEye", // Black
+			"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
+			"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
+			"Devil 3", "Alien 3", "Slither 3", "Blob 3", "Bat 3", "Titan 3", "Chomp 3", "Element 3", "HandEye 3", // Rank 3
+			"Devil 4", "Alien 4", "Slither 4", "Blob 4", "Bat 4", "Titan 4", "Chomp 4", "Element 4", "HandEye 4", // Rank 4
+			"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
+			"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
 		};
 		[JsonIgnore]
 		public static string strike = "Strike.jpg";
 		[JsonIgnore]
 		public static string pound = "Pound.jpg";
 		[JsonIgnore]
-		public static string scratch = "Pound.jpg"; // 
+		public static string scratch = "Pound.jpg"; 
 		[JsonIgnore]
 		public static string shrapnel = "Shrapnel.png";
 		[JsonIgnore]
@@ -184,9 +183,15 @@ namespace TrainingProject
 			}
 			return retVal;
 		}
-		public long roundValue(double value)
+		public long roundValue(double value, int digit = 2)
 		{
-			long power = (long)Math.Pow(10, value.ToString().Length - 2);
+			long power = (long)Math.Pow(10, value.ToString().Length - digit);
+			return (long)Math.Round((double)(value) / power) * power;
+		}
+
+		public long roundValue(long value, int digit = 2)
+		{
+			long power = (long)Math.Pow(10, value.ToString().Length - digit);
 			return (long)Math.Round((double)(value) / power) * power;
 		}
 		public int getMaxLength(string[] strValues)
@@ -472,7 +477,7 @@ namespace TrainingProject
 		}
 		public long getMonsterDenLvlMaint
 		{
-			get { return MonsterDenLvlMaint; }
+			get { return MonsterDenLvlMaint - MonsterDenRepairs; }
 			set { MonsterDenLvlMaint = value; }
 		}
 		public int getMaxTeams
@@ -508,7 +513,7 @@ namespace TrainingProject
 		}
 		public long getArenaLvlMaint
 		{
-			get { return ArenaLvlMaint; }
+			get { return ArenaLvlMaint - MonsterDenRepairs; }
 			set { ArenaLvlMaint = value; }
 		}
 		public int getShopLvl
@@ -523,7 +528,7 @@ namespace TrainingProject
 		}
 		public long getShopLvlMaint
 		{
-			get { return ShopLvlMaint; }
+			get { return ShopLvlMaint - MonsterDenRepairs; }
 			set { ShopLvlMaint = value; }
 		}
 		public int getShopStock
@@ -563,7 +568,7 @@ namespace TrainingProject
 		}
 		public long getResearchDevMaint
 		{
-			get { return ResearchDevMaint; }
+			get { return ResearchDevMaint - MonsterDenRepairs; }
 			set { ResearchDevMaint = value; }
 		}
 		public int getResearchDevHealValue
@@ -828,8 +833,8 @@ namespace TrainingProject
 			if (LifetimeGameScore >= GoalLifetimeGameScore)
 			{
 				getGameCurrency += GoalLifetimeGameScore * 10;
-				getWarningLog = getFightLog = string.Format("\n!*!*! Reached new Lifetime Game Score! {0:n0} awarded {1:c0}", GoalLifetimeGameScore, GoalLifetimeGameScore * 10);
-				GoalLifetimeGameScore *= 10;
+				getWarningLog = getFightLog = string.Format ("\n!*!*! Reached new Lifetime Game Score! {0:n0} awarded {1:c0}", GoalLifetimeGameScore, GoalLifetimeGameScore * 10);
+				GoalLifetimeGameScore = roundValue(GoalLifetimeGameScore * 2, 1);
 			}
 		}
 		public void addLifetimeTeam()
@@ -840,7 +845,7 @@ namespace TrainingProject
 			{
 				getGameCurrency += GoalLifetimeTeams * 10000;
 				getWarningLog = getFightLog = string.Format("\n!*!*! Reached new Lifetime Teams created! {0:n0} awarded {1:c0}", GoalLifetimeTeams, GoalLifetimeTeams * 10000);
-				GoalLifetimeTeams += 10;
+				GoalLifetimeTeams = roundValue(GoalLifetimeTeams * 2, 1);
 			}
 		}
 		public void addLifetimeRevenue(int revenue)
@@ -851,7 +856,7 @@ namespace TrainingProject
 			{
 				getGameCurrency += GoalLifetimeRevenue / 10;
 				getWarningLog = getFightLog = string.Format("\n!*!*! Reached new Lifetime revenue! {0:c0} awarded {1:c0}", GoalLifetimeRevenue, GoalLifetimeRevenue / 10);
-				GoalLifetimeRevenue = roundValue(GoalLifetimeRevenue, GoalLifetimeRevenue, "up");
+				GoalLifetimeRevenue = roundValue(GoalLifetimeRevenue * 2, 1);
 			}
 		}
 		public void addLifetimeEquipmentForged()
@@ -862,7 +867,7 @@ namespace TrainingProject
 			{
 				getGameCurrency += GoalLifetimeEquipmentForged * 100;
 				getWarningLog = getFightLog = string.Format("\n!*!*! Reached new Equipment Forged! {0:c0} awarded {1:c0}", GoalLifetimeEquipmentForged, GoalLifetimeEquipmentForged * 100);
-				GoalLifetimeEquipmentForged *= 10;
+				GoalLifetimeEquipmentForged = roundValue(GoalLifetimeEquipmentForged * 2, 1);
 			}
 		}
 		public bool ShouldSerializeMainFormPanel()
@@ -898,24 +903,15 @@ namespace TrainingProject
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
 
-
-			MonsterImages = new string[] {
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // White
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Yellow
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Green
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Blue
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Red
-			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png" // Black
-			};
 			MonsterName = new string[] {
-			"W.Devil", "W.Alien", "W.Slither", "W.Blob", "W.Bat", "W.Titan", "W.Chomp", "W.Element", "W.HandEye", // White
-			"Y.Devil", "Y.Alien", "Y.Slither", "Y.Blob", "Y.Bat", "Y.Titan", "Y.Chomp", "Y.Element", "Y.HandEye", // Yellow
-			"G.Devil", "G.Alien", "G.Slither", "G.Blob", "G.Bat", "G.Titan", "G.Chomp", "G.Element", "G.HandEye", // Green
-			"B.Devil", "B.Alien", "B.Slither", "B.Blob", "B.Bat", "B.Titan", "B.Chomp", "B.Element", "B.HandEye", // Blue
-			"R.Devil", "R.Alien", "R.Slither", "R.Blob", "R.Bat", "R.Titan", "R.Chomp", "R.Element", "R.HandEye", // Red
-			"Bl.Devil", "Bl.Alien", "Bl.Slither", "Bl.Blob", "Bl.Bat", "Bl.Titan", "Bl.Chomp", "Bl.Element", "Bl.HandEye" // Black
+				"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
+				"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
+				"Devil 3", "Alien 3", "Slither 3", "Blob 3", "Bat 3", "Titan 3", "Chomp 3", "Element 3", "HandEye 3", // Rank 3
+				"Devil 4", "Alien 4", "Slither 4", "Blob 4", "Bat 4", "Titan 4", "Chomp 4", "Element 4", "HandEye 4", // Rank 4
+				"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
+				"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
 			};
-	}
+		}
 
 		public void resetShowDefeated()
 		{
@@ -2427,11 +2423,11 @@ namespace TrainingProject
 						{
 							int type = RndVal.Next(100);
 							if (type < 60)
-								eMonster.getName += " " + ToRoman(getNumeral++);
+								eMonster.getName += "." + ToRoman(getNumeral++);
 							else if (type < 90)
-								eMonster.getName += string.Format(" #{0:X}", getNumeral++);
+								eMonster.getName += string.Format(".#{0:X}", getNumeral++);
 							else
-								eMonster.getName += string.Format(" {0:N0}", getNumeral++);
+								eMonster.getName += string.Format(".{0:N0}", getNumeral++);
 							eMonster.bMonster = true;
 						}
 						for (int i = 100; i < RndVal.Next(findMonster); i += 100)
@@ -2716,7 +2712,7 @@ namespace TrainingProject
 				case 1:
 					// Arena Maintenance
 					if (ArenaLvlMaint > 0)
-						MaintCost += roundValue(getArenaLvlMaint - MonsterDenRepairs);
+						MaintCost += roundValue(getArenaLvlMaint);
 					else
 					{
 						MaintCost += Math.Abs(getArenaLvlMaint);
@@ -2724,13 +2720,13 @@ namespace TrainingProject
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, ArenaLvlCostBase, "down");
 							getArenaLvlMaint = getArenaLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}", getArenaLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
 					}
-					getArenaLvlMaint = roundValue(getArenaLvlMaint, (int)((double)MaintCost * 0.1), "down");
+					getArenaLvlMaint = roundValue(ArenaLvlMaint, (int)((double)MaintCost * 0.1), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = Environment.NewLine + "*** Arena: !boiler replaced - cost " + String.Format("{0:n0}", MaintCost);
+					getFightLog = Environment.NewLine + "*** Arena: !boiler replaced - cost " + String.Format("{0:c0}/{1:c0}", MaintCost, getArenaLvlMaint);
 					break;
 				case 2:
 					if (ArenaLvlMaint > 0) MaintCost += (getArenaLvlMaint / 100);
@@ -2780,7 +2776,7 @@ namespace TrainingProject
 				case 11:
 					// Shop Maintenance
 					if (getShopLvlMaint > 0)
-						MaintCost = roundValue(getShopLvlMaint - MonsterDenRepairs);
+						MaintCost = roundValue(getShopLvlMaint);
 					else
 					{
 						MaintCost = Math.Abs(getShopLvlMaint);
@@ -2789,13 +2785,13 @@ namespace TrainingProject
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
 							getShopLvlMaint = getShopLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}", getShopLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
-					getShopLvlMaint = roundValue(getShopLvlMaint, (int)((double)MaintCost * 0.1), "down");
+					getShopLvlMaint = roundValue(ShopLvlMaint, (int)((double)MaintCost * 0.1), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = Environment.NewLine + "*** Shop: !forge replaced - cost " + string.Format("{0:n0}", MaintCost);
+					getFightLog = Environment.NewLine + "*** Shop: !forge replaced - cost " + string.Format("{0:c0}/{1:c0}", MaintCost, getShopLvlMaint);
 					break;
 				case 12:
 					if (getShopLvlMaint > 0) MaintCost += (getShopLvlMaint / 100);
@@ -2848,20 +2844,20 @@ namespace TrainingProject
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
 							getShopLvlMaint = getShopLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}", getShopLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					MaintCost = roundValue(MaintCost);
-					getShopLvlMaint = roundValue(getShopLvlMaint, (int)((double)MaintCost * 0.01), "down");
+					getShopLvlMaint = roundValue(ShopLvlMaint, (int)((double)MaintCost * 0.01), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = String.Format("\n*** Shop: {0} - cost {1:c0}", strMessage, MaintCost);
+					getFightLog = String.Format("\n*** Shop: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getShopLvlMaint);
 					break;
 				case 21:
 					// Research and Development Maintenance
 					if (ResearchDevMaint > 0)
-						MaintCost = roundValue((getResearchDevMaint - MonsterDenRepairs));
+						MaintCost = roundValue((getResearchDevMaint));
 					else
 					{
 						MaintCost = Math.Abs(getResearchDevMaint);
@@ -2869,13 +2865,13 @@ namespace TrainingProject
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, ResearchDevLvlCostBase, "down");
 							ResearchDevMaint = getResearchDevLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}", getResearchDevLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
-					getResearchDevMaint = roundValue(getResearchDevMaint, (int)((double)MaintCost * 0.1), "down");
+					getResearchDevMaint = roundValue(ResearchDevMaint, (int)((double)MaintCost * 0.1), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = Environment.NewLine + "*** R&&D: !experiment explosion - cost " + String.Format("{0:n0}", MaintCost);
+					getFightLog = Environment.NewLine + "*** R&&D: !experiment explosion - cost " + String.Format("{0:n0}/{1:c0}", MaintCost, getResearchDevMaint);
 					break;
 				case 22:
 					if (ResearchDevMaint > 0) MaintCost += (ResearchDevMaint / 100);
@@ -2926,26 +2922,26 @@ namespace TrainingProject
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, ResearchDevLvlCostBase, "down");
 							ResearchDevMaint = getResearchDevLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}", getResearchDevLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					MaintCost = roundValue(MaintCost);
-					getResearchDevMaint = roundValue(getResearchDevMaint, (int)((double)MaintCost * 0.01), "down");
+					getResearchDevMaint = roundValue(ResearchDevMaint, (int)((double)MaintCost * 0.01), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = String.Format("\n*** R&&D: {0} - cost {1:c0}", strMessage, MaintCost);
+					getFightLog = String.Format("\n*** R&&D: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getResearchDevMaint);
 					break;
 				case 31:
 					// Monster Den high Maintenance 
-					if (getMonsterDenLvlMaint > 0) MaintCost += ((getMonsterDenLvlMaint - MonsterDenRepairs) / 10);
-					else MaintCost += Math.Abs((getMonsterDenLvlMaint - MonsterDenRepairs) / 10);
+					if (getMonsterDenLvlMaint > 0) MaintCost += ((getMonsterDenLvlMaint) / 10);
+					else MaintCost += Math.Abs((getMonsterDenLvlMaint) / 10);
 					if (strMessage.Length == 0) strMessage = "!!Major Outbreak";
 					goto case 32;
 				case 32:
 					// Monster Den Maintenance
 					if (MonsterDenLvlMaint > 0)
-						MaintCost += (getMonsterDenLvlMaint - MonsterDenRepairs);
+						MaintCost += (getMonsterDenLvlMaint);
 					else
 					{
 						MaintCost += Math.Abs(MonsterDenLvlMaint);
@@ -2953,18 +2949,18 @@ namespace TrainingProject
 						{
 							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MonsterDenLvlCostBase, "down");
 							MonsterDenLvlMaint = getMonsterDenLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}", getMonsterDenLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
 					// split value in two
 					long monsterOutbreakCost = roundValue(longRandom(MaintCost));
 					startMonsterOutbreak(monsterOutbreakCost);
 					MaintCost = roundValue(MaintCost - monsterOutbreakCost);
-					MonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.1), "down");
+					getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.1), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
 					if (strMessage.Length == 0) strMessage = "!Outbreak";
-					getFightLog = String.Format("\nMonster Den: {0} - cost {1:c0}", strMessage, MaintCost);
+					getFightLog = String.Format("\nMonster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
 					break;
 				case 33:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
@@ -3040,7 +3036,11 @@ namespace TrainingProject
 				case 54:
 				case 55:
 					// Tax
-					long tmpMaint = (long)((ArenaLvlMaint-- * 0.1) + (MonsterDenLvlMaint-- * 0.1) + (ShopLvlMaint-- * 0.1) + (ResearchDevMaint-- * 0.1));
+					long tmpMaint = (long)((ArenaLvlMaint * 0.1) + (MonsterDenLvlMaint * 0.1) + (ShopLvlMaint * 0.1) + (ResearchDevMaint * 0.1));
+					ArenaLvlMaint -=		(ArenaLvlCostBase / 100);
+					MonsterDenLvlMaint -=	(MonsterDenLvlCostBase / 100);
+					ShopLvlMaint -=			(ShopLvlCostBase / 100);
+					ResearchDevMaint -=		(ResearchDevLvlCostBase / 100);
 					if (tmpMaint > 0)
 						MaintCost = roundValue(tmpMaint);
 					else
@@ -3093,15 +3093,15 @@ namespace TrainingProject
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, ArenaLvlCostBase, "down");
 							getArenaLvlMaint = getArenaLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}", getArenaLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
 					}
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					MaintCost = roundValue(MaintCost);
-					getArenaLvlMaint = roundValue(getArenaLvlMaint, (int)((double)MaintCost * 0.01), "down");
+					getArenaLvlMaint = roundValue(ArenaLvlMaint, (int)((double)MaintCost * 0.01), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = String.Format("\n*** Arena: {0} - cost {1:c0}", strMessage, MaintCost);
+					getFightLog = String.Format("\n*** Arena: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getArenaLvlMaint);
 					break;
 
 				case 208:
@@ -3123,15 +3123,15 @@ namespace TrainingProject
 						{
 							MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MonsterDenLvlCostBase, "down");
 							MonsterDenLvlMaint = MonsterDenLvlCost / 10;
-							getWarningLog = getFightLog = String.Format("\n*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}", MonsterDenLvlCost, MaintCost);
+							getWarningLog = getFightLog = String.Format("\n*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					MaintCost = roundValue(MaintCost);
-					getMonsterDenLvlMaint = roundValue(getMonsterDenLvlMaint, (int)((double)MaintCost * 0.01), "down");
+					getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.01), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}", strMessage, MaintCost);
+					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
 					break;
 				case 211:
 					if (getArenaOutreach() < 0.05) MaintCost += (ArenaLvlCostBase / 10);
@@ -3474,7 +3474,7 @@ namespace TrainingProject
 						}
 						else
 						{
-							getCurrency += GoalScore * getDifficulty;
+							getCurrency += GoalScore * getDifficulty * 10;
 							getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - currency awarded {2:c0}! ", getName, GoalScore, GoalScore * getDifficulty);
 						}
 						roundValue(GoalScore, GoalScoreBase, "up");
@@ -3770,7 +3770,7 @@ namespace TrainingProject
 				{
 					getCurrency += MonsterDestroyedGoal[type] * 100;
 					getWarningLog = getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * 100, getName);
-					MonsterDestroyedGoal[type] *= 10;
+					MonsterDestroyedGoal[type] = (int)roundValue(MonsterDestroyedGoal[type] * 2, 1);
 				}
 			}
 			else
@@ -3801,7 +3801,7 @@ namespace TrainingProject
 				{
 					getCurrency += RobotDestroyedGoal[type] * 100;
 					getWarningLog = getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
-					RobotDestroyedGoal[type] *= 10;
+					RobotDestroyedGoal[type] = (int)roundValue(RobotDestroyedGoal[type] * 2, 1);
 				}
 			}
 		}
@@ -3813,7 +3813,7 @@ namespace TrainingProject
 			{
 				getCurrency += GoalLifetimeRobotsCreated * 10000;
 				getWarningLog = getFightLog = string.Format("\n!*!*! {2} created {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsCreated, GoalLifetimeRobotsCreated * 10000, getName);
-				GoalLifetimeRobotsCreated += 10;
+				GoalLifetimeRobotsCreated = (int)roundValue(GoalLifetimeRobotsCreated * 2, 1);
 			}
 		}
 		public void AddRobotRebuilt()
@@ -3824,7 +3824,7 @@ namespace TrainingProject
 			{
 				getCurrency += GoalLifetimeRobotsRebuilt * 10000;
 				getWarningLog = getFightLog = string.Format("\n!*!*! {2} rebuilt {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt * 10000, getName);
-				GoalLifetimeRobotsRebuilt = roundValue(GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt, "up");
+				GoalLifetimeRobotsRebuilt = (int)roundValue(GoalLifetimeRobotsRebuilt * 2, 1);
 			}
 		}
 		public void AddEquipmentPurchased()
@@ -3835,7 +3835,7 @@ namespace TrainingProject
 			{
 				getCurrency += GoalLifetimeEquipmentPurchased * 1000;
 				getWarningLog = getFightLog = string.Format("\n!*!*! {2} purchased {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentPurchased, GoalLifetimeEquipmentPurchased * 1000, getName);
-				GoalLifetimeEquipmentPurchased *= 10;
+				GoalLifetimeEquipmentPurchased = (int)roundValue(GoalLifetimeEquipmentPurchased * 2, 1);
 			}
 		}
 		public void AddEquipmentUpgraded()
@@ -3846,7 +3846,7 @@ namespace TrainingProject
 			{
 				getCurrency += GoalLifetimeEquipmentUpgraded * 1000;
 				getWarningLog = getFightLog = string.Format("\n!*!*! {2} upgraded {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentUpgraded, GoalLifetimeEquipmentUpgraded * 1000, getName);
-				GoalLifetimeEquipmentUpgraded *= 10; 
+				GoalLifetimeEquipmentUpgraded = (int)roundValue(GoalLifetimeEquipmentUpgraded *2, 1); 
 			}
 		}
 		public string getRunes()
@@ -4138,7 +4138,7 @@ namespace TrainingProject
 						if (getScore >= HealScore)
 						{ 
 							cost = MyTeam[robo].getBaseStats() / 2;
-							HealScore = getScore++;
+							HealScore = getScore + 1;
 						}
 						beds--;
 						bedUsed = true;
