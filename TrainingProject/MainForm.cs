@@ -30,7 +30,7 @@ namespace TrainingApp
 			try
 			{
 				MyGame = BinarySerialization.ReadFromBinaryFile<Game>("data\\TrainingProject.bin");
-				MyGame.fixTech();
+				//MyGame.fixTech();
 			}
 			catch
 			{

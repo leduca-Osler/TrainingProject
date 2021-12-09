@@ -4002,6 +4002,16 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
+
+
+			MonsterName = new string[] {
+				"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
+				"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
+				"Devil 3", "Alien 3", "Slither 3", "Blob 3", "Bat 3", "Titan 3", "Chomp 3", "Element 3", "HandEye 3", // Rank 3
+				"Devil 4", "Alien 4", "Slither 4", "Blob 4", "Bat 4", "Titan 4", "Chomp 4", "Element 4", "HandEye 4", // Rank 4
+				"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
+				"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
+			};
 		}
 		public void Rebuild(bool pay, Game myGame)
 		{
@@ -4671,7 +4681,16 @@ namespace TrainingProject
 		}
 
 		public void fixTech()
-		{ }
+		{
+			MonsterName = new string[] {
+				"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
+				"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
+				"Devil 3", "Alien 3", "Slither 3", "Blob 3", "Bat 3", "Titan 3", "Chomp 3", "Element 3", "HandEye 3", // Rank 3
+				"Devil 4", "Alien 4", "Slither 4", "Blob 4", "Bat 4", "Titan 4", "Chomp 4", "Element 4", "HandEye 4", // Rank 4
+				"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
+				"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
+			};
+		}
 
 		public void resetLog()
 		{
@@ -5089,8 +5108,9 @@ namespace TrainingProject
 				};
 			tmp += ("*Base Stats*\n");
 			tmp += string.Format("{0,-10}{1}/{2}\n", "Level", Level, getMaxLevel());
-			string strType = RoboName[type];
+			string strType;
 			if (bIsMonster) strType = MonsterName[type];
+			else strType = RoboName[type];
 			tmp += string.Format("{0,-10}{1}\n", "type", strType);
 			tmp += string.Format("{0,-10}{1}\n", "Rank", (Dexterity + Strength + Agility + Tech + Accuracy) / 2.0);
 			tmp += string.Format("{0,-10}{1}\n", "Dexterity", Dexterity);
@@ -5383,7 +5403,8 @@ namespace TrainingProject
 			}
 			eUpgrade++;
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
-			eUpgradeCostBase += eUpgradeCostBaseIncrement;
+			if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
+			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
 		}
 		public string ToString(int originalDur = 0)
 		{
