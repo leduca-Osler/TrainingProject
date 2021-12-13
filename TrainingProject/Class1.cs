@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Xml;
 using Newtonsoft.Json;
+using System.Runtime;
 
 namespace TrainingProject
 {
@@ -1889,17 +1890,24 @@ namespace TrainingProject
 				int space = 12 + TeamRowLength[0] + TeamRowLength[1];
 				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
 				RobotPanel.Controls.Add(lblRobotList);
+				int[] tmpRobotsDestroyed = (int[])eTeam.RobotDestroyed.Clone();
+				int[] tmpRobotsDestroyedKey = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+				Array.Sort(tmpRobotsDestroyed, tmpRobotsDestroyedKey);
 				for (int i = 0; i < 9; i++)
 				{
-					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[i], eTeam.RobotDestroyed[i], eTeam.RobotDestroyedGoal[i]) };
+					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[tmpRobotsDestroyedKey[i]], eTeam.RobotDestroyed[tmpRobotsDestroyedKey[i]], eTeam.RobotDestroyedGoal[tmpRobotsDestroyedKey[i]]) };
 					RobotPanel.Controls.Add(lblRobot);
 				}
 				FlowLayoutPanel MonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblMonsterList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Monsters Dest.") };
 				MonsterPanel.Controls.Add(lblMonsterList);
+				int[] tmpMonstersDestroyed = (int[])eTeam.MonsterDestroyed.Clone();
+				int[] tmpMonstersDestroyedKey = new int[eTeam.MonsterDestroyed.Length];
+				for (int i = 0; i < eTeam.MonsterDestroyed.Length; i++) { tmpMonstersDestroyedKey[i] = i; }
+				Array.Sort(tmpMonstersDestroyed, tmpMonstersDestroyedKey);
 				for (int i = 0; i < eTeam.MonsterDestroyed.Length; i++)
 				{
-					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[i], eTeam.MonsterDestroyed[i], eTeam.MonsterDestroyedGoal[i]) };
+					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[tmpMonstersDestroyedKey[i]], eTeam.MonsterDestroyed[tmpMonstersDestroyedKey[i]], eTeam.MonsterDestroyedGoal[tmpMonstersDestroyedKey[i]]) };
 					MonsterPanel.Controls.Add(lblMonster);
 				}
 				MainPanel.Controls.Add(TeamPanel);
