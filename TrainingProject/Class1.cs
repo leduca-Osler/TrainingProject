@@ -1153,7 +1153,7 @@ namespace TrainingProject
 		{
 			getGameCurrency += MaxTeams * getArenaLvl * 1000;
 			GameCurrencyLogMisc += TeamCost;
-			// team with top score has 50% chance to loose robots
+			// team with top score has chance to loose robots
 			Team rebuild = new Team(1,1,1);
 			foreach (Team eTeam in GameTeams)
 			{
@@ -2332,7 +2332,7 @@ namespace TrainingProject
 											}
 										}
 										GameTeam1[i].getCurrency += lProffitSharing;
-										GameTeam1[i].getDifficulty = 1;
+										if (WinCount == 0) GameTeam1[i].getDifficulty = 1;
 										getFightLog = getWarningLog = string.Format("\n!*!* {0} received proffit sharing! {1:c0}", GameTeam1[i].getName, lProffitSharing);
 									}
 								}
@@ -5050,7 +5050,7 @@ namespace TrainingProject
 						if (HP == 0) attacker.getCurrentAnalysis += 10;
 					}
 					// if attacker is higher level, get less exp
-					else if (RndVal.Next(100) > 80)
+					else if (RndVal.Next(attacker.getLevel) < getLevel)
 						attacker.getCurrentAnalysis++;
 					// if robot / monster is defeated addTo achievement vars. 
 					if (HP == 0) ATeam.AddRobotDestroyed(type, bIsMonster);
