@@ -363,6 +363,7 @@ namespace TrainingApp
 				int jGoalGameScore = json["GoalGameScore"] != null ? (int)json["GoalGameScore"] : 20;
 				int jGoalGameScoreBase = json["GoalGameScoreBase"] != null ? (int)json["GoalGameScoreBase"] : 10;
 				int jMaxTeams = json["MaxTeams"] != null ? (int)json["MaxTeams"] : 2;
+				int JMaxRobo = json["MaxRobo"] != null ? (int)json["MaxRobo"] : 1;
 				long jTeamCost = json["TeamCost"] != null ? (long)json["TeamCost"] : 2000;
 				long jTeamCostBase = json["TeamCostBase"] != null ? (long)json["TeamCostBase"] : 1000;
 				long jGameCurrency = json["GameCurrency"] != null ? (long)json["GameCurrency"] : 0;
@@ -412,7 +413,7 @@ namespace TrainingApp
 				long jLifetimeRevenue = json["LifetimeRevenue"] != null ? (long)json["LifetimeRevenue"] : 0;
 				long jGoalLifetimeRevenue = json["GoalLifetimeRevenue"] != null ? (long)json["GoalLifetimeRevenue"] : 10000;
 				// Parse json and assign to MyGame
-				MyGame = new Game(jGoalGameScore, jGoalGameScoreBase, jMaxTeams, jTeamCost, jTeamCostBase, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaLvlCostBase, jArenaMaint, 
+				MyGame = new Game(jGoalGameScore, jGoalGameScoreBase, jMaxTeams, JMaxRobo, jTeamCost, jTeamCostBase, jGameCurrency, jArenaLvl, jArenaLvlCost, jArenaLvlCostBase, jArenaMaint, 
 					jArenaComunityOutreach, jMonsterDenLvl, jMonsterDenLvlCost, jMonsterDenLvlCostBase, jMonsterDenMaint, jMonsterDenBonus, jMonsterDenRepair, jMonsterDenRepairBase, 
 					jShopLvl, jShopLvlCost, jShopLvlCostBase, jShopMaint, jShopStock, jShopStockCost, jShopMaxStat, jShopMaxDur, jShopUpValue, 
 					jResearchDevLvl, jResearchDevLvlCost, jResearchDevLvlCostBase, jResearchDevMaint, jResearchDevHealValue, jResearchDevHealValueBase, jResearchDevHealBays, 

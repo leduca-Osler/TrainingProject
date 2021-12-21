@@ -187,13 +187,25 @@ namespace TrainingProject
 		public long roundValue(double value, int digit = 2)
 		{
 			long power = (long)Math.Pow(10, value.ToString().Length - digit);
-			return (long)Math.Round((double)(value) / power) * power;
+			long returnValue = (long)Math.Round((double)(value) / power) * power;
+			if (returnValue.ToString().Substring(0, 1).Equals("8") && digit == 1)
+			{
+				power = (long)Math.Pow(10, value.ToString().Length);
+				returnValue = (long)Math.Round((double)(value) / power) * power;
+			}
+			return returnValue;
 		}
 
 		public long roundValue(long value, int digit = 2)
 		{
 			long power = (long)Math.Pow(10, value.ToString().Length - digit);
-			return (long)Math.Round((double)(value) / power) * power;
+			long returnValue = (long)Math.Round((double)(value) / power) * power;
+			if (returnValue.ToString().Substring(0, 1).Equals("8") && digit == 1)
+			{
+				power = (long)Math.Pow(10, value.ToString().Length);
+				returnValue = (long)Math.Round((double)(value) / power) * power;
+			}
+			return returnValue;
 		}
 		public int getMaxLength(string[] strValues)
 		{
@@ -317,6 +329,8 @@ namespace TrainingProject
 		public bool PurchaseUpgrade;
 		[JsonProperty]
 		private int GoalGameScore;
+		[JsonProperty]
+		private int MaxRobo;
 		[JsonProperty]
 		private long LifetimeGameScore;
 		[JsonProperty]
@@ -619,7 +633,7 @@ namespace TrainingProject
 					RoboNumeral = value;
 			}
 		}
-		public Game(int pGoalGameScore, int pGoalGameScoreBase, int pMaxTeams, long pTeamCost, long pTeamCostBase, long pGameCurrency, int pArenaLvl, long pArenaLvlCost,
+		public Game(int pGoalGameScore, int pGoalGameScoreBase, int pMaxTeams, int pMaxRobo, long pTeamCost, long pTeamCostBase, long pGameCurrency, int pArenaLvl, long pArenaLvlCost,
 			long pArenaLvlCostBase, long pArenaLvlMaint, long pArenaComunityReach, int pMonsterDenLvl, long pMonsterDenLvlCost, long pMonsterDenLvlCostBase, long pMonsterDenLvlMaint,
 			int pMonsterDenBonus, long pMonsterDenRepair, long pMonsterDenRepairBase, int pShopLvl, long pShopLvlCost, long pShopLvlCostBase, long pShopLvlMaint,
 			int pShopStock, long pShopStockCost, int pShopMaxStat, int pShopMaxDurability, int pShopUpgradeValue, int pResearchDevLvl,
@@ -644,6 +658,7 @@ namespace TrainingProject
 			GoalGameScore = pGoalGameScore;
 			GoalGameScoreBase = pGoalGameScoreBase;
 			MaxTeams = pMaxTeams;
+			MaxRobo = pMaxRobo;
 			TeamCost = pTeamCost;
 			TeamCostBase = pTeamCostBase;
 			GameCurrency = pGameCurrency;
@@ -751,6 +766,7 @@ namespace TrainingProject
 			GoalGameScore = 200;
 			GoalGameScoreBase = GoalGameScoreBaseIncrement;
 			MaxTeams = 2;
+			MaxRobo = 1;
 			TeamCost = 2000;
 			TeamCostBase = TeamCostBaseIncrement;
 			fighting = false;
@@ -836,6 +852,15 @@ namespace TrainingProject
 				getGameCurrency += GoalLifetimeGameScore * 10;
 				getWarningLog = getFightLog = string.Format ("\n!*!*! Reached new Lifetime Game Score! {0:n0} awarded {1:c0}", GoalLifetimeGameScore, GoalLifetimeGameScore * 10);
 				GoalLifetimeGameScore = roundValue(GoalLifetimeGameScore * 2, 1);
+				MaxRobo++;
+				UpdateMaxRobo();
+			}
+		}
+		public void UpdateMaxRobo()
+		{
+			foreach (Team eTeam in GameTeams)
+			{
+				eTeam.getMaxRobos = MaxRobo;
 			}
 		}
 		public void addLifetimeTeam()
@@ -848,6 +873,7 @@ namespace TrainingProject
 				getWarningLog = getFightLog = string.Format("\n!*!*! Reached new Lifetime Teams created! {0:n0} awarded {1:c0}", GoalLifetimeTeams, GoalLifetimeTeams * 10000);
 				GoalLifetimeTeams = roundValue(GoalLifetimeTeams * 2, 1);
 			}
+			UpdateMaxRobo();
 		}
 		public void addLifetimeRevenue(int revenue)
 		{
@@ -1191,11 +1217,6 @@ namespace TrainingProject
 			}
 			foreach (Team eTeam in GameTeams)
 			{
-				if (eTeam.getScore < bonusScore)
-				{
-					eTeam.getMaxRobos++; const string Format = "\n*!* {0} added robot during reset!";
-					getWarningLog = getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName);
-				}
 				eTeam.getScore = 0;
 				eTeam.HealScore = 0;
 				if (eTeam.Win < winGoal)
@@ -2277,12 +2298,8 @@ namespace TrainingProject
 									GameTeam1[i].getScore++;
 									addLifetimeScore();
 									// Try difficulty fight 
-									if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
-									if (RndVal.Next(100) > 90)
-									{
-										GameTeam2[i].getScore--;
-										GameTeam1[i].getScore++;
-									}
+									if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) 
+										GameDifficultyFight = true;
 									// pay team 2 remaining;
 									GameTeam2[i].getCurrency += Jackpot;
 									msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
@@ -2313,7 +2330,7 @@ namespace TrainingProject
 									msg += String.Format("\n Win:{0}", WinCount);
 									int lastRobo = GameTeam1[i].MyTeam.Count - 1;
 									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
-									if (GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[lastRobo].getLevel)
+									if (GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[lastRobo].getLevel && GameTeam1[i].getScore < GameTeam1[0].getScore / 4)
 									{
 										long lProffitSharing = 0;
 										if (getGameCurrency > 0)
@@ -2328,7 +2345,7 @@ namespace TrainingProject
 											if (eTeam.getCurrency > 0 && !eTeam.getName.Equals(GameTeam1[i].getName))
 											{
 												lProffitSharing += eTeam.getCurrency / factor;
-												eTeam.getCurrency /= 2;
+												eTeam.getCurrency -= eTeam.getCurrency / factor;
 											}
 										}
 										GameTeam1[i].getCurrency += lProffitSharing;
@@ -2429,13 +2446,13 @@ namespace TrainingProject
 					{
 						if (!eMonster.bMonster)
 						{
-							int type = RndVal.Next(100);
-							if (type < 60)
+							int type = RndVal.Next(getNumeral);
+							if (type < 30)
 								eMonster.getName += "." + ToRoman(getNumeral++);
-							else if (type < 90)
-								eMonster.getName += string.Format(".#{0:X}", getNumeral++);
-							else
+							else if (type < 100)
 								eMonster.getName += string.Format(".{0:N0}", getNumeral++);
+							else
+								eMonster.getName += string.Format(".#{0:X}", getNumeral++);
 							eMonster.bMonster = true;
 						}
 						for (int i = 100; i < RndVal.Next(findMonster); i += 100)
@@ -3460,12 +3477,7 @@ namespace TrainingProject
 					Score = value;
 					if (Score >= GoalScore && !isMonster)
 					{
-						if (GoalScoreBase % 75 == 0)
-						{
-							MaxRobo++;
-							getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - Robot added! ", getName, GoalScore);
-						}
-						else if (GoalScoreBase % 50 == 0)
+						if (GoalScoreBase % 50 == 0)
 						{
 							string strMsg = "";
 							string strDelim = "";
