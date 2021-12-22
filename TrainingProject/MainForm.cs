@@ -622,19 +622,22 @@ namespace TrainingApp
 			if (DateTime.Now > MyGame.BreakTime)
 			{
 				MyGame.BreakTime = DateTime.Now.AddMinutes(55);
-				MyGame.paused = timer1.Enabled = true;
+				MyGame.paused = false;
+				timer1.Enabled = true;
 				btnAutomatic.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
 					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
 			}
 			else if (timer1.Enabled)
 			{
-				MyGame.paused = timer1.Enabled = false;
+				MyGame.paused = true;
+				timer1.Enabled = false;
 				btnAutomatic.BackColor = Color.Red;
 			}
 			else
 			{
-				MyGame.paused = timer1.Enabled = true;
+				MyGame.paused = false;
+				timer1.Enabled = true;
 				btnAutomatic.BackColor = Color.White;
 				if (DateTime.Now > MyGame.SafeTime)
 					MyGame.SafeTime = DateTime.Now.AddMinutes(20);
