@@ -328,7 +328,7 @@ namespace TrainingProject
 		public int maxManagerHours;
 		public bool PurchaseUpgrade;
 		[JsonProperty]
-		private int GoalGameScore;
+		private int GoalGameScoreGoalGameScore;
 		[JsonProperty]
 		private int MaxRobo;
 		[JsonProperty]
@@ -2117,7 +2117,7 @@ namespace TrainingProject
 					if (display)
 					{
 						char goalScore = ' ';
-						if (getScore() > (GoalGameScore * 0.8)) goalScore = '!';
+						if (getScore() > (GoalGameScore * 0.9)) goalScore = '!';
 
 						string strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
 						if (roundCount < 20 && GameTeam1[0].getName != "Arena")
@@ -2201,7 +2201,7 @@ namespace TrainingProject
 								GameCurrencyLogMisc += Jackpot;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + " +++ Arena defeated monsters difficulty increased ";
 								Jackpot = 0;
-								if (getScore() > (GoalGameScore * 0.8))
+								if (getScore() > (GoalGameScore * 0.9))
 								{
 									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
 									GoalGameScoreBase += GoalGameScoreBaseIncrement;
@@ -2238,7 +2238,7 @@ namespace TrainingProject
 							{
 								Jackpot = 0;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters ";
-								if (getScore() > (GoalGameScore * 0.8))
+								if (getScore() > (GoalGameScore * 0.9))
 								{
 									GoalGameScore += RndVal.Next(GoalGameScoreBase);
 									resetScore();
@@ -2641,7 +2641,7 @@ namespace TrainingProject
 					}
 				}
 				// Rebuild Monster
-				if (MonsterOutbreak.MyTeam.Count > 0 && SafeTime >= DateTime.Now && !paused)
+				if (MonsterOutbreak.MyTeam.Count > 0 && SafeTime >= DateTime.Now && !paused && checkFight)
 				{
 					monster = MonsterOutbreak.MyTeam[RndVal.Next(0, MonsterOutbreak.MyTeam.Count)];
 					if ((monster.rebuildCost(ResearchDevRebuild, eTeam.Runes) > 100) && RndVal.Next(1000) < MonsterDenLvl)
@@ -3477,26 +3477,18 @@ namespace TrainingProject
 					Score = value;
 					if (Score >= GoalScore && !isMonster)
 					{
-						if (GoalScoreBase % 50 == 0)
+						string strMsg = "";
+						string strDelim = "";
+						for (int i = 0; i < MyTeam.Count; i++)
 						{
-							string strMsg = "";
-							string strDelim = "";
-							for (int i = 0; i < MyTeam.Count; i++)
+							for (int j = 0; j < 5; j++)
 							{
-								for (int j = 0; j < 5; j++)
-								{
-									addRune((int)(MyTeam[i].getRankLvl()), true);
-								}
-								strMsg += strDelim + (int)(MyTeam[i].getBaseStats() / 2);
-								strDelim = ",";
+								addRune((int)(MyTeam[i].getRankLvl()), true);
 							}
-							getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - Runes awarded to Rank(s): {2}! ", getName, GoalScore, strMsg);
+							strMsg += strDelim + (int)(MyTeam[i].getBaseStats() / 2);
+							strDelim = ",";
 						}
-						else
-						{
-							getCurrency += GoalScore * getDifficulty * 10;
-							getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - currency awarded {2:c0}! ", getName, GoalScore, GoalScore * getDifficulty);
-						}
+						getWarningLog = getFightLog = getTeamLog = String.Format("\n@{0} Score goal reached ({1:n0}) - Runes awarded to Rank(s): {2}! ", getName, GoalScore, strMsg);
 						roundValue(GoalScore, GoalScoreBase, "up");
 						GoalScore += GoalScoreBase;
 						GoalScoreBase += GoalScoreBaseIncrement;
