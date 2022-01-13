@@ -328,7 +328,7 @@ namespace TrainingProject
 		public int maxManagerHours;
 		public bool PurchaseUpgrade;
 		[JsonProperty]
-		private int GoalGameScoreGoalGameScore;
+		private int GoalGameScore;
 		[JsonProperty]
 		private int MaxRobo;
 		[JsonProperty]
