@@ -237,6 +237,13 @@ namespace TrainingProject
 			if (number >= 1) return "I" + ToRoman(number - 1);
 			throw new ArgumentOutOfRangeException("something bad happened");
 		}
+		public static string ToAlphaNumeric(int number)
+		{
+			if (number < 1) return string.Empty;
+			if (number >= 94) return ((char)((int)(number/94) + 32)).ToString() + ToAlphaNumeric(number - ((int)(number / 94) * 94));
+			else return ((char)(number+32)).ToString();
+			throw new ArgumentOutOfRangeException("something bad happened");
+		}
 		public Common() { }
 		public static string InputBox(string title, string promptText)
 		{
@@ -909,13 +916,15 @@ namespace TrainingProject
 		public string setRoboName(int index)
 		{
 			string name = "";
-			int RoboType = RndVal.Next(100);
-			if (RoboType < 40)
-				name = string.Format("{0} {1}", RoboName[index], ToRoman(getRoboNumeral++));
-			else if (RoboType < 70)
-				name = string.Format("{0} #{1:X}", RoboName[index], getRoboNumeral++);
+			int RoboType = RndVal.Next(index);
+			if (RoboType < 20)
+				name = string.Format("{0} {1}", RoboName[index], ToRoman(getRoboNumeral++)); // Roman Numeral
+			else if (RoboType < 100)
+				name = string.Format("{0} {1:N0}", RoboName[index], getRoboNumeral++); // base 10
+			else if (RoboType < 250)
+				name = string.Format("{0} #{1:X}", RoboName[index], getRoboNumeral++); // Hex
 			else
-				name = string.Format("{0} {1:N0}", RoboName[index], getRoboNumeral++);
+				name = string.Format("{0} ~{1}", RoboName[index], ToAlphaNumeric(getRoboNumeral++)); // Alphanumberic
 			return name;
 		}
 		public int maxWins()
@@ -2451,8 +2460,10 @@ namespace TrainingProject
 								eMonster.getName += "." + ToRoman(getNumeral++);
 							else if (type < 100)
 								eMonster.getName += string.Format(".{0:N0}", getNumeral++);
-							else
+							else if (type < 250)
 								eMonster.getName += string.Format(".#{0:X}", getNumeral++);
+							else
+								eMonster.getName += ".~" + ToAlphaNumeric(getNumeral++);
 							eMonster.bMonster = true;
 						}
 						for (int i = 100; i < RndVal.Next(findMonster); i += 100)
@@ -4111,7 +4122,7 @@ namespace TrainingProject
 					{
 						string strFormat = "\n--- {0} : {1} failed the rebuild (+{2}A/{3}R)";
 						if (Cost > 0) strFormat += " ic:{5:c0}";
-						getTeamLog = getFightLog = getWarningLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Cost);
+						getTeamLog = getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Cost);
 						MyTeam[robo].RebuildPercent += runesUsed;
 					}
 					else
