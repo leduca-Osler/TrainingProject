@@ -1411,9 +1411,9 @@ namespace TrainingProject
 			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; }
 			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
 		}
-		public long AverageMaintenance()
+		public long MaxMaintenance()
 		{
-			return (long)(ArenaLvlMaint + ShopLvlMaint + ResearchDevMaint + MonsterDenLvlMaint) / 4;
+			return (long)(Math.Max(Math.Max(ArenaLvlMaint, ShopLvlMaint), Math.Max(ResearchDevMaint, MonsterDenLvlMaint)));
 		}
 		public void startFight()
         {
@@ -1443,7 +1443,7 @@ namespace TrainingProject
                         {
 							IncreaseJackpot();
                         }
-						else if ((getGameCurrency < AverageMaintenance()))
+						else if ((getGameCurrency < MaxMaintenance()))
                         {
 							JackpotMovement--;
 							IncreaseJackpot();
@@ -2102,7 +2102,7 @@ namespace TrainingProject
 				strFlags += " Jackpot " + strOperand + JackpotMovement.ToString() + "!";
 			}
 			if (FastForward) strFlags += string.Format(" Fast Forward {0:n0}!", FastForwardCount);
-			if (getGameCurrency < AverageMaintenance()) strFlags += " !Maintenance NSF!";
+			if (getGameCurrency < MaxMaintenance()) strFlags += " !Maintenance NSF!";
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
@@ -2566,9 +2566,9 @@ namespace TrainingProject
 						eTeam.getCurrency -= tmpUpgrade;
 						GameCurrency += (int)(tmpUpgrade * 0.1);
 						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
-						shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
+						string strUpgrade = shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
 						eTeam.AddEquipmentUpgraded();
-						eTeam.getTeamLog = getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipWeapon.eName, shopper.getEquipWeapon.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
+						eTeam.getTeamLog = getFightLog = string.Format("\n +++ {0}:{1} Upgraded {2}", eTeam.getName, shopper.getName, strUpgrade);
 					}
 					// Repair
 					if (eTeam.getCurrency > (shopper.getEquipWeapon.ePrice / 10)
@@ -2615,9 +2615,10 @@ namespace TrainingProject
 						eTeam.getCurrency -= tmpUpgrade;
 						GameCurrency += (int)(tmpUpgrade * 0.1);
 						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
-						shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
+						string strUpgrade = shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
 						eTeam.AddEquipmentUpgraded();
-						eTeam.getTeamLog = getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
+						//eTeam.getTeamLog = getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
+						eTeam.getTeamLog = getFightLog = string.Format("\n +++ {0}:{1} Upgraded {2}", eTeam.getName, shopper.getName, strUpgrade);
 					}
 					// Repair 
 					if (eTeam.getCurrency > (shopper.getEquipArmour.ePrice / 10)
@@ -2662,9 +2663,9 @@ namespace TrainingProject
 					{
 						if (RndVal.Next(1000 + (monster.getEquipWeapon.eUpgrade * 1000)) < MonsterDenLvl)
 						{
-							int orig = monster.getEquipWeapon.eDurability;
-							monster.getEquipWeapon.upgrade(monster.getLevel + monster.type, RndVal);
-							getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " claws strengthened " + Environment.NewLine + "  " + monster.getEquipWeapon.ToString(orig);
+							string strUpgrade = monster.getEquipWeapon.upgrade(monster.getLevel + monster.type, RndVal);
+							//getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " claws strengthened " + Environment.NewLine + "  " + monster.getEquipWeapon.ToString(orig);
+							getFightLog = string.Format("\n [M] Monsert:{0} claws strengthened {1}", monster.getName, strUpgrade);
 						}
 						else if (monster.getEquipWeapon.eDurability < monster.getEquipWeapon.eMaxDurability * .5 )
 						{
@@ -2686,9 +2687,9 @@ namespace TrainingProject
 					{
 						if (RndVal.Next(1000 + (monster.getEquipWeapon.eUpgrade * 1000)) < MonsterDenLvl)
 						{
-							int orig = monster.getEquipArmour.eDurability;
-							monster.getEquipArmour.upgrade(monster.getLevel + monster.type, RndVal);
-							getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " hide strengthened " + Environment.NewLine + "  " + monster.getEquipArmour.ToString(orig);
+							string strUpgrade = monster.getEquipArmour.upgrade(monster.getLevel + monster.type, RndVal);
+							// getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " hide strengthened " + Environment.NewLine + "  " + monster.getEquipArmour.ToString(orig);
+							eTeam.getTeamLog = getFightLog = string.Format("\n [M] Monster:{0} hide strengthened {2}", monster.getName, strUpgrade);
 						}
 						else if (monster.getEquipArmour.eDurability < monster.getEquipArmour.eMaxDurability * .5)
 						{
@@ -5391,9 +5392,13 @@ namespace TrainingProject
 			eUpgradeCostBaseIncrement = pUpgradeCostBaseIncrement;
 			eUpgrade = pUpgrade;
 		}
-		public void upgrade(int value, Random RndVal)
+		public string upgrade(int value, Random RndVal)
 		{
 			int Type = RndVal.Next(1, 9);
+			string strUpgrade = "",
+				strDurability = eDurability.ToString(),
+				strUpgradeCost = eUpgradeCost.ToString();
+				
 			eMaxDurability += value;
 			eDurability = eMaxDurability;
 			value = RndVal.Next(1, value);
@@ -5401,33 +5406,42 @@ namespace TrainingProject
 			{
 				case 1:
 					eHealth += value * 3;
+					strUpgrade = string.Format(" Health+{0:n0}", value * 3);
 					break;
 				case 2:
 					eEnergy += value * 2;
+					strUpgrade = string.Format(" Energy+{0:n0}", value * 2);
 					break;
 				case 3:
 					eDamage += value;
+					strUpgrade = string.Format(" Damage+{0:n0}", value);
 					break;
 				case 4:
 					eHit += value;
+					strUpgrade = string.Format(" Hit+{0:n0}", value);
 					break;
 				case 5:
 					eMentalStrength += value;
+					strUpgrade = string.Format(" Mental Str+{0:n0}", value);
 					break;
 				case 6:
 					eArmour += value;
+					strUpgrade = string.Format(" Armour+{0:n0}", value);
 					break;
 				case 7:
 					eSpeed += value;
+					strUpgrade = string.Format(" Speed+{0:n0}", value);
 					break;
 				case 8:
 					eMentalDefense += value;
+					strUpgrade = string.Format(" Mental Def+{0:n0} ", value);
 					break;
 			}
 			eUpgrade++;
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
 			if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
 			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
+			return String.Format(" ({5}) {0}+{1:n0} Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, strDurability, eDurability, strUpgrade, strUpgradeCost);
 		}
 		public string ToString(int originalDur = 0)
 		{
