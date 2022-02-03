@@ -240,8 +240,9 @@ namespace TrainingProject
 		public static string ToAlphaNumeric(int number)
 		{
 			if (number < 1) return string.Empty;
-			if (number >= 94) return ((char)((int)(number/94) + 32)).ToString() + ToAlphaNumeric(number - ((int)(number / 94) * 94));
-			else return ((char)(number+32)).ToString();
+			if (number >= 1849) return ((char)((int)(number / 1849) + 47)).ToString() + ToAlphaNumeric(number - ((int)(number / 1849) * 1849));
+			if (number >= 43) return ((char)((int)(number / 43) + 47)).ToString() + ToAlphaNumeric(number - ((int)(number / 43) * 43));
+			else return ((char)(number+47)).ToString();
 			throw new ArgumentOutOfRangeException("something bad happened");
 		}
 		public Common() { }
@@ -2129,12 +2130,14 @@ namespace TrainingProject
 						if (getScore() > (GoalGameScore * 0.9)) goalScore = '!';
 
 						string strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
-						if (roundCount < 20 && GameTeam1[0].getName != "Arena")
+						if (roundCount < 20 && GameTeam1[0].getName != "Arena" && !GameTeam2[0].isMonster)
 							strFormat = "TS:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
 						else if (roundCount < 20 && GameTeam1[0].getName == "Arena")
 							strFormat = "TS:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{6:n0}";
 						else if (GameTeam1[0].getName == "Arena")
 							strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{6:n0}";
+						else if (GameTeam2[0].isMonster)
+							strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0}"; // Monster fight, only show winning jackpot
 						if (auto)
 						{
 							if (i == 0)
@@ -5441,7 +5444,7 @@ namespace TrainingProject
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
 			if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
 			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
-			return String.Format(" ({5}) {0}+{1:n0} Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, strDurability, eDurability, strUpgrade, strUpgradeCost);
+			return String.Format("{0}+{1:n0} ({5}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, strDurability, eDurability, strUpgrade, strUpgradeCost);
 		}
 		public string ToString(int originalDur = 0)
 		{
