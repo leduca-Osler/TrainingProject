@@ -2213,6 +2213,7 @@ namespace TrainingProject
 								GameCurrencyLogMisc += Jackpot;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + " +++ Arena defeated monsters difficulty increased ";
 								Jackpot = 0;
+								GameDifficultyFight = true;
 								if (getScore() > (GoalGameScore * 0.9))
 								{
 									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
@@ -2220,7 +2221,6 @@ namespace TrainingProject
 									resetScore();
 									GameTeam1[0].healRobos(false);
 									equip(GameTeam1[0], true);
-									GameDifficultyFight = true;
 								}
 							}
 							// Boss Fight
@@ -5444,7 +5444,7 @@ namespace TrainingProject
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
 			if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
 			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
-			return String.Format("{0}+{1:n0} ({5}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, strDurability, eDurability, strUpgrade, strUpgradeCost);
+			return String.Format("{0}+{1:n0} ({5:c0}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, strDurability, eDurability, strUpgrade, strUpgradeCost);
 		}
 		public string ToString(int originalDur = 0)
 		{
