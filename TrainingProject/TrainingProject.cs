@@ -5398,9 +5398,9 @@ namespace TrainingProject
 		public string upgrade(int value, Random RndVal)
 		{
 			int Type = RndVal.Next(1, 9);
-			string strUpgrade = "",
-				strDurability = eDurability.ToString(),
-				strUpgradeCost = eUpgradeCost.ToString();
+			string strUpgrade = "";
+			long tmpDurability = eDurability,
+				tmpUpgradeCost = eUpgradeCost;
 				
 			eMaxDurability += value;
 			eDurability = eMaxDurability;
@@ -5444,7 +5444,7 @@ namespace TrainingProject
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
 			if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
 			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
-			return String.Format("{0}+{1:n0} ({5:c0}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, strDurability, eDurability, strUpgrade, strUpgradeCost);
+			return String.Format("{0}+{1:n0} ({5:c0}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, tmpDurability, eDurability, strUpgrade, tmpUpgradeCost);
 		}
 		public string ToString(int originalDur = 0)
 		{
