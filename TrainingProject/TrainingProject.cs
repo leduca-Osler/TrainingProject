@@ -240,10 +240,70 @@ namespace TrainingProject
 		public static string ToAlphaNumeric(int number)
 		{
 			if (number < 1) return string.Empty;
-			if (number >= 1849) return ((char)((int)(number / 1849) + 47)).ToString() + ToAlphaNumeric(number - ((int)(number / 1849) * 1849));
-			if (number >= 43) return ((char)((int)(number / 43) + 47)).ToString() + ToAlphaNumeric(number - ((int)(number / 43) * 43));
-			else return ((char)(number+47)).ToString();
+			if (number >= 1296) return returnAlphaChar(number / 1296) + ToAlphaNumeric(number - ((int)(number / 1296) * 1296));
+			if (number >= 36) return returnAlphaChar(number / 36) + ToAlphaNumeric(number - ((int)(number / 36) * 36));
+			else return returnAlphaChar(number);
 			throw new ArgumentOutOfRangeException("something bad happened");
+		}
+		public static string returnAlphaChar(int number)
+		{
+			string retval = number.ToString();
+			switch (number)
+			{
+				case 10:
+					retval = "A"; break;
+				case 11:
+					retval = "B"; break;
+				case 12:
+					retval = "C"; break;
+				case 13:
+					retval = "D"; break;
+				case 14:
+					retval = "E"; break;
+				case 15:
+					retval = "F"; break;
+				case 16:
+					retval = "G"; break;
+				case 17:
+					retval = "H"; break;
+				case 18:
+					retval = "I"; break;
+				case 19:
+					retval = "J"; break;
+				case 20:
+					retval = "K"; break;
+				case 21:
+					retval = "L"; break;
+				case 22:
+					retval = "M"; break;
+				case 23:
+					retval = "N"; break;
+				case 24:
+					retval = "O"; break;
+				case 25:
+					retval = "P"; break;
+				case 26:
+					retval = "Q"; break;
+				case 27:
+					retval = "R"; break;
+				case 28:
+					retval = "S"; break;
+				case 29:
+					retval = "T"; break;
+				case 30:
+					retval = "U"; break;
+				case 31:
+					retval = "V"; break;
+				case 32:
+					retval = "W"; break;
+				case 33:
+					retval = "X"; break;
+				case 34:
+					retval = "Y"; break;
+				case 35:
+					retval = "Z"; break;
+			}
+			return retval;
 		}
 		public Common() { }
 		public static string InputBox(string title, string promptText)
@@ -1707,7 +1767,9 @@ namespace TrainingProject
 			if (TeamSelect > 0)
 			{
 				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-				Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + GameTeams[TeamSelect - 1].getName };
+				Label lblNextNumeral	= new Label { AutoSize = true, Text = String.Format("Next Numbr: {0}/{1:n0}/#{1:X}/`{2}", ToRoman(getRoboNumeral), getRoboNumeral, ToAlphaNumeric(getRoboNumeral)) };
+				Label lblTeamName		= new Label { AutoSize = true, Text = String.Format("\nTeam Name:  {0}", GameTeams[TeamSelect - 1].getName) };
+				//Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + GameTeams[TeamSelect - 1].getName };
 				lblTeamName.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].rename(InputBox("Enter Name ", "Enter Name")));
 				Label lblTeamCurrency = new Label { AutoSize = true, Text = "Currency:   " + String.Format("{0:c0}", GameTeams[TeamSelect - 1].getCurrency) };
 				Label lblScore = new Label { AutoSize = true, Text = "Score:      " + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getScore) + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getGoalScore) + ")" };
@@ -1717,6 +1779,7 @@ namespace TrainingProject
 				Label lblDifficulty = new Label { AutoSize = true, Text =     "Difficulty: " + GameTeams[TeamSelect - 1].getDifficulty };
 				Label lblAutomatic = new Label { AutoSize = true, Text =    "Automated:  " + GameTeams[TeamSelect - 1].Automated };
 				lblAutomatic.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].changeAutomated());
+				MainPanel.Controls.Add(lblNextNumeral);
 				MainPanel.Controls.Add(lblTeamName);
 				MainPanel.Controls.Add(lblTeamCurrency);
 				MainPanel.Controls.Add(lblScore);
@@ -1968,8 +2031,8 @@ namespace TrainingProject
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 			FlowLayoutPanel MyMonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-			FlowLayoutPanel MyButtonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-			Label lblTeamName = new Label { AutoSize = true, Text = String.Format("\n\nTeam Name:  {0}       {1:c0}  ({2}-{3})", displayTeam.getName,displayTeam.getCurrency,type, StartingCount) };
+			 FlowLayoutPanel MyButtonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
+			Label lblTeamName = new Label { AutoSize = true, Text = String.Format("\n\nTeam Name:  {0}       {1:c0}  ({2}-{3})\nNext Numeral: {4}/{5:n0}/#{5:X}/`{6}", displayTeam.getName,displayTeam.getCurrency,type, StartingCount, ToRoman(getNumeral), getNumeral, ToAlphaNumeric(getNumeral)) };
 			Label lblRobots = new Label { AutoSize = true, Text =   "Monsters:   " + displayTeam.MyTeam.Count };
 			MainPanel.Controls.Add(lblTeamName);
 			MainPanel.Controls.Add(lblRobots);
@@ -2692,7 +2755,7 @@ namespace TrainingProject
 						{
 							string strUpgrade = monster.getEquipArmour.upgrade(monster.getLevel + monster.type, RndVal);
 							// getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " hide strengthened " + Environment.NewLine + "  " + monster.getEquipArmour.ToString(orig);
-							eTeam.getTeamLog = getFightLog = string.Format("\n [M] Monster:{0} hide strengthened {2}", monster.getName, strUpgrade);
+							eTeam.getTeamLog = getFightLog = string.Format("\n [M] Monster:{0} hide strengthened {1}", monster.getName, strUpgrade);
 						}
 						else if (monster.getEquipArmour.eDurability < monster.getEquipArmour.eMaxDurability * .5)
 						{
