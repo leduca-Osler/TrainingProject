@@ -1236,7 +1236,7 @@ namespace TrainingProject
 			ResearchDevHealValueBase += ResearchDevHealValueBaseIncrement;
 			ResearchDevRebuild = roundValue(ResearchDevRebuild, ResearchDevRebuildBase, "up");
 			ResearchDevRebuildBase += ResearchDevRebuildBaseIncrement;
-			msg += string.Format("\n  Heal +{0:n0} Rebuild +{1:n0}", ResearchDevHealValue - ResearchDevHealValue, ResearchDevRebuild - tmpResearchDevRebuild);
+			msg += string.Format("\n  Heal +{0:n0} Rebuild +{1:n0}", ResearchDevHealValue - tmpResearchDevHealValue, ResearchDevRebuild - tmpResearchDevRebuild);
 			// chance to add a new healing baynic
 			if (RndVal.Next(100 + GameTeams.Count) > (95 + ResearchDevHealBays))
 			{
