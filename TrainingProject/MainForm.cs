@@ -950,7 +950,7 @@ namespace TrainingApp
 			// Jackpot +10
 			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
 			// Clear Messages
-			else if (e.KeyCode == Keys.C) MyGame.clearWarnings();
+			else if (e.KeyCode == Keys.C) MyGame.resetAll();
 			// show message box with available shortcuts if not a windows special key
 			else if (e.KeyCode == Keys.OemQuestion || e.KeyCode == Keys.OemBackslash)
 				MessageBox.Show("Shortcuts " + e.KeyCode + 

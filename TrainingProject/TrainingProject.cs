@@ -239,7 +239,7 @@ namespace TrainingProject
 		}
 		public static string ToAlphaNumeric(int number)
 		{
-			if (number < 1) return string.Empty;
+			if (number < 0) return string.Empty;
 			if (number >= 1296) return returnAlphaChar(number / 1296) + ToAlphaNumeric(number - ((int)(number / 1296) * 1296));
 			if (number >= 36) return returnAlphaChar(number / 36) + ToAlphaNumeric(number - ((int)(number / 36) * 36));
 			else return returnAlphaChar(number);
@@ -1029,6 +1029,12 @@ namespace TrainingProject
 			foreach (Team eTeam in GameTeams) { eTeam.resetLogs(); }
 		}
 
+		public void resetAll()
+		{
+			resetAuto();
+			clearWarnings();
+		}
+
 		public void interval(Timer Timer1)
 		{
 			CurrentInterval++;
@@ -1075,7 +1081,7 @@ namespace TrainingProject
 		}
 		public void arenaLevelUp()
 		{
-			getFightLog = getWarningLog = "\nArena upgraded!"; 
+			string msg = "\nArena upgraded!";
 			getGameCurrency -= ArenaLvlCost;
 			GameCurrencyLogUp -= ArenaLvlCost;
 			ArenaLvlMaint += ArenaLvlCost/2;
@@ -1087,15 +1093,23 @@ namespace TrainingProject
 			int totalLev = 0;
 			foreach (ArenaSeating eSeating in Seating)
 			{
+				int lstAmt = eSeating.Amount;
 				eSeating.Amount = (int)roundValue(eSeating.Amount, eSeating.AmountBase, "up");
 				eSeating.AmountBase++;
 				if (eSeating.Amount > 5000) eSeating.Amount = 5000;
-				if (RndVal.Next(100) > 98 || lastPrice > eSeating.Price) eSeating.Price++;
+				if (RndVal.Next(100) > 98 || lastPrice > eSeating.Price)
+				{
+					eSeating.Price++;
+					msg += string.Format("\n  level {0} price up 1", eSeating.Level);
+				}
+				msg += string.Format("\n  level {0} seating up {1:n0}", eSeating.Level, eSeating.Amount - lstAmt);
 				lastPrice = eSeating.Price;
 				totalLev += eSeating.Level;
 			}
 			// chance to add a new level of seating
-			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl)) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 5, 1)); 
+			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl)) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 5, 1));
+
+			getFightLog = getWarningLog = msg; 
 		}
 		public string bossLevelUp()
 		{
@@ -1128,7 +1142,9 @@ namespace TrainingProject
 		}
 		public void MonsterDenLevelUp()
 		{
-			getFightLog = getWarningLog = "\nMonster Den upgraded!";
+			string msg = "\nMonster Den upgraded!";
+			long tmpMonsterDenBonus = MonsterDenBonus;
+			long tmpMonsterDenRepairs = MonsterDenRepairs;
 			getGameCurrency -= MonsterDenLvlCost;
 			GameCurrencyLogUp -= MonsterDenLvlCost;
 			MonsterDenLvlMaint += MonsterDenLvlCost / 2;
@@ -1138,21 +1154,31 @@ namespace TrainingProject
 			MonsterDenBonus += RndVal.Next(MonsterDenLvl);
 			MonsterDenRepairs = roundValue(MonsterDenRepairs, MonsterDenRepairsBase, "up");
 			MonsterDenRepairsBase += MonsterDenRepairsBaseIncrement;
+			msg += string.Format("\n  Bonus +{0:n0} Repairs +{1:n0}", MonsterDenBonus - tmpMonsterDenBonus, MonsterDenRepairs - tmpMonsterDenRepairs);
+			getFightLog = getWarningLog = msg;
 		}
 		public void ShopLevelUp()
 		{
-			getFightLog = getWarningLog = "\nShop upgraded!";
+			string msg = "\nShop upgraded!";
 			getGameCurrency -= ShopLvlCost;
 			GameCurrencyLogUp -= ShopLvlCost;
 			ShopLvlMaint += ShopLvlCost / 2;
 			ShopLvl++;
 			ShopLvlCost = roundValue(ShopLvlCost, ShopLvlCostBase, "up");
 			ShopLvlCostBase += ShopLvlCostBaseIncrement;
-			if (RndVal.Next(100) > ((75 + (ShopStock * 10)) - ShopLvl)) ShopStock++;
+			if (RndVal.Next(100) > ((75 + (ShopStock * 10)) - ShopLvl))
+			{
+				ShopStock++;
+				msg += string.Format("\n  stock +1");
+			}
+			int tmpDurability = ShopMaxDurability;
+			int tmpStat = ShopMaxStat;
 			ShopMaxDurability = roundValue(ShopMaxDurability, 10, "up");
 			ShopMaxStat = roundValue(ShopMaxStat, 2, "up");
 			ShopUpgradeValue++;
 			ShopStockCost = ((ShopMaxStat * 10) + ShopMaxDurability) / 3;
+			msg += string.Format("\n  Durability +{0:n0} Stats +{1:n0} Upgrade +1", ShopMaxDurability - tmpDurability, ShopMaxStat - tmpStat);
+			getFightLog = getWarningLog = msg;
 		}
 		public void AddStock()
 		{
@@ -1197,7 +1223,9 @@ namespace TrainingProject
 
 		public void ResearchDevLevelUp()
 		{
-			getFightLog = getWarningLog = "\nResearch and Development upgraded!";
+			string msg = "\nResearch and Development upgraded!";
+			long tmpResearchDevHealValue = ResearchDevHealValue;
+			long tmpResearchDevRebuild = ResearchDevRebuild;
 			getGameCurrency -= ResearchDevLvlCost;
 			GameCurrencyLogUp -= ResearchDevLvlCost;
 			ResearchDevMaint += ResearchDevLvlCost / 2;
@@ -1208,8 +1236,14 @@ namespace TrainingProject
 			ResearchDevHealValueBase += ResearchDevHealValueBaseIncrement;
 			ResearchDevRebuild = roundValue(ResearchDevRebuild, ResearchDevRebuildBase, "up");
 			ResearchDevRebuildBase += ResearchDevRebuildBaseIncrement;
+			msg += string.Format("\n  Heal +{0:n0} Rebuild +{1:n0}", ResearchDevHealValue - ResearchDevHealValue, ResearchDevRebuild - tmpResearchDevRebuild);
 			// chance to add a new healing baynic
-			if (RndVal.Next(100 + GameTeams.Count) > (95 + ResearchDevHealBays)) ResearchDevHealBays++;
+			if (RndVal.Next(100 + GameTeams.Count) > (95 + ResearchDevHealBays))
+			{
+				ResearchDevHealBays++;
+				msg += string.Format("\n  Heal Bays +1");
+			}
+			getFightLog = getWarningLog = msg;
 		}
 		public void AddManagerHours()
 		{
@@ -2032,8 +2066,8 @@ namespace TrainingProject
 			FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 			FlowLayoutPanel MyMonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 			 FlowLayoutPanel MyButtonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-			Label lblTeamName = new Label { AutoSize = true, Text = String.Format("\n\nTeam Name:  {0}       {1:c0}  ({2}-{3})\nNext Numeral: {4}/{5:n0}/#{5:X}/`{6}", displayTeam.getName,displayTeam.getCurrency,type, StartingCount, ToRoman(getNumeral), getNumeral, ToAlphaNumeric(getNumeral)) };
-			Label lblRobots = new Label { AutoSize = true, Text =   "Monsters:   " + displayTeam.MyTeam.Count };
+			Label lblTeamName = new Label { AutoSize = true, Text = String.Format("\n\nTeam Name:  {0}       {1:c0}  ({2}-{3})\nNext Numbr: {4}/{5:n0}/#{5:X}/`{6}", displayTeam.getName,displayTeam.getCurrency,type, StartingCount, ToRoman(getNumeral), getNumeral, ToAlphaNumeric(getNumeral)) };
+			Label lblRobots = new Label { AutoSize = true, Text = "Monsters:   " + displayTeam.MyTeam.Count };
 			MainPanel.Controls.Add(lblTeamName);
 			MainPanel.Controls.Add(lblRobots);
 			int count = 0;
