@@ -734,6 +734,7 @@ namespace TrainingApp
 				MyGame.ManagerHrs = 0;
 				MyGame.ManagerCost = MyGame.ManagerCostBaseIncrement;
 				MyGame.ManagerCostBase = MyGame.ManagerCostBaseIncrement;
+				MyGame.FastForward = false;
 			}
 			update();
 		}
