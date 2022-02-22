@@ -1097,7 +1097,7 @@ namespace TrainingProject
 				eSeating.Amount = (int)roundValue(eSeating.Amount, eSeating.AmountBase, "up");
 				eSeating.AmountBase++;
 				if (eSeating.Amount > 5000) eSeating.Amount = 5000;
-				if (RndVal.Next(100) > 98 || lastPrice > eSeating.Price)
+				if (RndVal.Next(100) > 98 || lastPrice >= eSeating.Price)
 				{
 					eSeating.Price++;
 					msg += string.Format("\n  level {0} price up 1", eSeating.Level);
@@ -1169,7 +1169,7 @@ namespace TrainingProject
 			if (RndVal.Next(100) > ((75 + (ShopStock * 10)) - ShopLvl))
 			{
 				ShopStock++;
-				msg += string.Format("\n  stock +1");
+				msg += string.Format("\n  Stock +1");
 			}
 			int tmpDurability = ShopMaxDurability;
 			int tmpStat = ShopMaxStat;
