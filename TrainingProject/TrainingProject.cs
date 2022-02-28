@@ -1089,7 +1089,7 @@ namespace TrainingProject
 			ArenaLvlCost = roundValue(ArenaLvlCost, ArenaLvlCostBase, "up");
 			ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
 			ArenaLvlCostBase += ArenaLvlCostBaseIncrement;
-			int lastPrice = Seating[0].Price;
+			int lastPrice = 0;
 			int totalLev = 0;
 			foreach (ArenaSeating eSeating in Seating)
 			{
