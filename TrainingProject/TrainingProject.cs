@@ -2820,6 +2820,8 @@ namespace TrainingProject
 				value -= 2000000000;
 			}
 			return retVal + RndVal.Next((int)value);
+			// randomly start boss fight
+			if (RndVal.Next(GoalGameScore * 20) < getScore()) bossFight = true;
 		}
 		public void employeePayroll()
 		{
@@ -3164,8 +3166,11 @@ namespace TrainingProject
 					goto case 49;
 				case 49:
 					MaintCost += RndVal.Next(gameDifficulty * 25);
-					FastForwardCount = (int)roundValue(FastForwardCount, MaintCost, "up");
-					getWarningLog = String.Format("\n!!! Fast Forward increased! +{0:n0} T:{1:n0}", MaintCost, FastForwardCount);
+					if (!FastForward)
+					{
+						FastForwardCount = (int)roundValue(FastForwardCount, MaintCost, "up");
+						getWarningLog = String.Format("\n!!! Fast Forward increased! +{0:n0} T:{1:n0}", MaintCost, FastForwardCount);
+					}
 					break;
 				case 51:
 				case 52:
