@@ -17,8 +17,8 @@ namespace TrainingProject
 	{
 		[JsonIgnore]
 		public static readonly Random RndVal = new Random();
-		private static string WarningLog;
-		private static string FightLog;
+		public string WarningLog;
+		public string FightLog;
 		//public Random RndVal = new Random();
 		[JsonIgnore]
 		public string[] RoboImages = {
