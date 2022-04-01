@@ -174,10 +174,7 @@ namespace TrainingApp
 			Boolean monsterLvl = false;
 			Boolean shopLvl = false;
 			Boolean shopRestock = false;
-			Boolean currOneK = false;
-			Boolean currTenK = false;
-			Boolean currHundredK = false;
-			Boolean currOneM = false;
+			Boolean ComunityOutreach = false;
 			Color shopColour = Color.White;
 			Boolean researchLvl = false;
 			if (MyGame.getAvailableTeams > 0 && MyGame.getTeamCost < MyGame.getGameCurrency) 
@@ -187,11 +184,8 @@ namespace TrainingApp
 																						addRobo = true;
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						arenaLvl = true;
 			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)					monsterLvl = true;
-			if (MyGame.getGameCurrency >= 1000 && MyGame.getGameCurrency < 10000)		currOneK = true;
-			if (MyGame.getGameCurrency >= 10000 && MyGame.getGameCurrency < 100000)		currTenK = true;
-			if (MyGame.getGameCurrency >= 100000 && MyGame.getGameCurrency < 10000000)	currHundredK = true;
-			if (MyGame.getGameCurrency >= 1000000)										currOneM = true;
-			if (MyGame.StartForge)										shopColour = Color.Aquamarine;
+			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						ComunityOutreach = true;
+			if (MyGame.StartForge)														shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
 			else if (MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
 			{
@@ -211,10 +205,7 @@ namespace TrainingApp
 			mnuShopLevelUp.Enabled = shopLvl;
 			mnuRestockShop.Enabled = shopRestock;
 			btnResearchDev.Enabled = researchLvl;
-			mnuInvest1000.Enabled = currOneK;
-			mnuInvest10000.Enabled = currTenK;
-			mnuInvest100000.Enabled = currHundredK;
-			mnuInvest1000000.Enabled = currOneM;
+			mnuComunityOutreach.Enabled = ComunityOutreach;
 			if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
 				mnuLongBattle.Text = String.Format("Return to work");
 			else
@@ -978,7 +969,7 @@ namespace TrainingApp
 
 		private void invest10ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MyGame.getGameCurrency -= 1000;
+			MyGame.getGameCurrency -= MyGame.getArenaLvlCost;
 			MyGame.arenaComunityOutreach();
 		}
 
@@ -1006,6 +997,12 @@ namespace TrainingApp
 		{
 			if (mnuPriority.SelectedIndex == 1) MyGame.RobotPriority = true;
 			else MyGame.RobotPriority = false;
+		}
+
+		private void mnuComunityOutreach_Click(object sender, EventArgs e)
+		{
+			MyGame.getGameCurrency -= MyGame.getArenaLvlCost;
+			MyGame.arenaComunityOutreach();
 		}
 	}
 	public static class BinarySerialization

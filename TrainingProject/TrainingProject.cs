@@ -1077,7 +1077,7 @@ namespace TrainingProject
 		}
 		public void arenaComunityOutreach()
 		{
-			ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
+			ArenaComunityReach = roundValue(ArenaComunityReach, RndVal.Next((int)(ArenaLvlCost)), "up");
 		}
 		public void arenaLevelUp()
 		{
