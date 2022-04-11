@@ -17,8 +17,8 @@ namespace TrainingProject
 	{
 		[JsonIgnore]
 		public static readonly Random RndVal = new Random();
-		public string WarningLog;
-		public string FightLog;
+		public static string WarningLog;
+		public static string FightLog;
 		//public Random RndVal = new Random();
 		[JsonIgnore]
 		public string[] RoboImages = {
@@ -373,6 +373,9 @@ namespace TrainingProject
 		public List<KeyValuePair<String, DateTime>> countdown;
 		public Team MonsterOutbreak;
 		public Team Bosses;
+		[JsonIgnore]
+		public string fightLogSave;
+		public String warningLogSave;
 		private int RoboNumeral;
 		private int maxRoboNumeral;
 		private int findMonster;
@@ -1512,6 +1515,9 @@ namespace TrainingProject
 		}
 		public void startFight()
         {
+			// Save logs
+			fightLogSave = FightLog;
+			warningLogSave = WarningLog;
 			if ((bossFight || GameDifficultyFight) && !fighting)
 			{
 				startBossFight();
@@ -2184,12 +2190,16 @@ namespace TrainingProject
 			return MainPanel;
 		}
 		public FlowLayoutPanel continueFight(bool display)
-        {
+		{
+			// restore fight log if blank.
+			if (FightLog == null || FightLog.Length == 0) getFightLog = fightLogSave;
+			if (WarningLog == null || WarningLog.Length == 0) getWarningLog = warningLogSave;
 			roundCount++;
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
 			// Flags to display to user
 			String strFlags = "";
+			if ((SafeTime - DateTime.Now).TotalHours > 1) strFlags += " (Long Battle)";
 			if (bossFight) strFlags += " Boss Fight!";
 			if (GameDifficultyFight) strFlags += " Difficulty Fight!";
 			if (StartForge) strFlags += " Forge Equipment!";
@@ -2819,9 +2829,8 @@ namespace TrainingProject
 				retVal += RndVal.Next(2000000000);
 				value -= 2000000000;
 			}
+			// return random value
 			return retVal + RndVal.Next((int)value);
-			// randomly start boss fight
-			if (RndVal.Next(GoalGameScore * 20) < getScore()) bossFight = true;
 		}
 		public void employeePayroll()
 		{
@@ -2836,6 +2845,8 @@ namespace TrainingProject
 			getGameCurrency -= MaintCost;
 			GameCurrencyLogMaint -= MaintCost;
 			getFightLog = string.Format("\n\n$!! Payroll processed - cost {0:c0} employees {1:n0}", MaintCost, employees);
+			// randomly start boss fight
+			if (RndVal.Next(GoalGameScore * 20) < getScore()) bossFight = true;
 		}
 		public void buildingMaintenance()
 		{
