@@ -1047,6 +1047,7 @@ namespace TrainingProject
 				if (CurrentInterval < 1) CurrentInterval = 1;
 				MaxInterval++;
 				GameTeams.Sort();
+				if (MaxInterval > 2000) FastForwardCount += (int)roundValue(FastForwardCount, RndVal.Next(MaxInterval), "up");
 			}
 			else Timer1.Interval = CurrentInterval;
 		}
@@ -2192,8 +2193,11 @@ namespace TrainingProject
 		public FlowLayoutPanel continueFight(bool display)
 		{
 			// restore fight log if blank.
-			if (FightLog == null || FightLog.Length == 0) getFightLog = fightLogSave;
-			if (WarningLog == null || WarningLog.Length == 0) getWarningLog = warningLogSave;
+			if (FightLog == null || FightLog.Length == 0)
+			{
+				getFightLog = fightLogSave; 
+				getWarningLog = warningLogSave;
+			}
 			roundCount++;
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 			MainPanel.Controls.Add(showHeader());
@@ -4024,8 +4028,12 @@ namespace TrainingProject
 					// if we have 100 runes add to the next level
 					if (Runes[index] >= 100)
 					{
-						Runes[index] = RndVal.Next(Runes[index]);
+						Runes[index] = 0;
 						addRune(level + 10, true);
+						// Add bonus rebuild
+						Robot tmpRobot = MyTeam[RndVal.Next(MyTeam.Count)]; 
+						tmpRobot.rebuildBonus++;
+						getWarningLog = getFightLog = String.Format("\n ^@^{0} received a bonus rebuild! ", tmpRobot.getName);
 					}
 					else
 					{
