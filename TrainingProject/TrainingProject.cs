@@ -3226,7 +3226,7 @@ namespace TrainingProject
 					break;
 				case 100:
 					ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 2), "down");
-					getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to " + String.Format("{0:p2}", getArenaOutreach() - 1);
+					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to " + String.Format("{0:p2}", getArenaOutreach() - 1);
 					break;
 				case 203:
 					if (ArenaLvlMaint > 0) MaintCost += (getArenaLvlMaint / 200);
@@ -4032,7 +4032,7 @@ namespace TrainingProject
 						// Add bonus rebuild
 						Robot tmpRobot = MyTeam[RndVal.Next(MyTeam.Count)]; 
 						tmpRobot.rebuildBonus++;
-						getWarningLog = getFightLog = String.Format("\n ^@^{0} received a bonus rebuild! ", tmpRobot.getName);
+						getWarningLog = getFightLog = String.Format("\n ^@^{0}-{1} received a bonus rebuild! ", getName, tmpRobot.getName);
 					}
 					else
 					{
