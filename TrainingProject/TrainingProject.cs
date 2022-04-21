@@ -1047,7 +1047,6 @@ namespace TrainingProject
 				if (CurrentInterval < 1) CurrentInterval = 1;
 				MaxInterval++;
 				GameTeams.Sort();
-				if (MaxInterval > 2000) FastForwardCount += (int)roundValue(FastForwardCount, RndVal.Next(MaxInterval), "up");
 			}
 			else Timer1.Interval = CurrentInterval;
 		}
