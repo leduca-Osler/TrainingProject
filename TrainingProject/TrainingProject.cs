@@ -3336,7 +3336,7 @@ namespace TrainingProject
 					{
 						MaintCost += (ArenaLvlCostBase / 10);
 						ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
-						getWarningLog = Environment.NewLine + "% Arena did comunity outreach " + String.Format("{0:p2}!", getArenaOutreach()-1);
+						if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach " + String.Format("{0:p2}!", getArenaOutreach()-1);
 					}
 					break;
 				case 249:
@@ -3912,7 +3912,7 @@ namespace TrainingProject
 				if (MonsterDestroyed[type] >= MonsterDestroyedGoal[type])
 				{
 					getCurrency += MonsterDestroyedGoal[type] * 100;
-					getWarningLog = getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * 100, getName);
+					getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * 100, getName);
 					MonsterDestroyedGoal[type] = (int)roundValue(MonsterDestroyedGoal[type] * 2, 1);
 				}
 			}
@@ -3943,7 +3943,7 @@ namespace TrainingProject
 				if (RobotDestroyed[type] >= RobotDestroyedGoal[type])
 				{
 					getCurrency += RobotDestroyedGoal[type] * 100;
-					getWarningLog = getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
+					getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
 					RobotDestroyedGoal[type] = (int)roundValue(RobotDestroyedGoal[type] * 2, 1);
 				}
 			}
@@ -3955,7 +3955,7 @@ namespace TrainingProject
 			if (LifetimeRobotsCreated >= GoalLifetimeRobotsCreated)
 			{
 				getCurrency += GoalLifetimeRobotsCreated * 10000;
-				getWarningLog = getFightLog = string.Format("\n!*!*! {2} created {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsCreated, GoalLifetimeRobotsCreated * 10000, getName);
+				getFightLog = string.Format("\n!*!*! {2} created {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsCreated, GoalLifetimeRobotsCreated * 10000, getName);
 				GoalLifetimeRobotsCreated = (int)roundValue(GoalLifetimeRobotsCreated * 2, 1);
 			}
 		}
@@ -3966,7 +3966,7 @@ namespace TrainingProject
 			if (LifetimeRobotsRebuilt >= GoalLifetimeRobotsRebuilt)
 			{
 				getCurrency += GoalLifetimeRobotsRebuilt * 10000;
-				getWarningLog = getFightLog = string.Format("\n!*!*! {2} rebuilt {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt * 10000, getName);
+				getFightLog = string.Format("\n!*!*! {2} rebuilt {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt * 10000, getName);
 				GoalLifetimeRobotsRebuilt = (int)roundValue(GoalLifetimeRobotsRebuilt * 2, 1);
 			}
 		}
@@ -3977,7 +3977,7 @@ namespace TrainingProject
 			if (LifetimeEquipmentPurchased >= GoalLifetimeEquipmentPurchased)
 			{
 				getCurrency += GoalLifetimeEquipmentPurchased * 1000;
-				getWarningLog = getFightLog = string.Format("\n!*!*! {2} purchased {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentPurchased, GoalLifetimeEquipmentPurchased * 1000, getName);
+				getFightLog = string.Format("\n!*!*! {2} purchased {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentPurchased, GoalLifetimeEquipmentPurchased * 1000, getName);
 				GoalLifetimeEquipmentPurchased = (int)roundValue(GoalLifetimeEquipmentPurchased * 2, 1);
 			}
 		}
@@ -3988,7 +3988,7 @@ namespace TrainingProject
 			if (LifetimeEquipmentUpgraded >= GoalLifetimeEquipmentUpgraded)
 			{
 				getCurrency += GoalLifetimeEquipmentUpgraded * 1000;
-				getWarningLog = getFightLog = string.Format("\n!*!*! {2} upgraded {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentUpgraded, GoalLifetimeEquipmentUpgraded * 1000, getName);
+				getFightLog = string.Format("\n!*!*! {2} upgraded {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentUpgraded, GoalLifetimeEquipmentUpgraded * 1000, getName);
 				GoalLifetimeEquipmentUpgraded = (int)roundValue(GoalLifetimeEquipmentUpgraded *2, 1); 
 			}
 		}
@@ -4032,7 +4032,7 @@ namespace TrainingProject
 						// Add bonus rebuild
 						Robot tmpRobot = MyTeam[RndVal.Next(MyTeam.Count)]; 
 						tmpRobot.rebuildBonus++;
-						getWarningLog = getFightLog = String.Format("\n ^@^{0}-{1} received a bonus rebuild! ", getName, tmpRobot.getName);
+						getFightLog = String.Format("\n ^@^{0}-{1} received a bonus rebuild! ", getName, tmpRobot.getName);
 					}
 					else
 					{
