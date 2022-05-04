@@ -1056,15 +1056,15 @@ namespace TrainingProject
 			IList<string> levelUpList;
 			levelUpList = new List<string> { };
 			// find lowest level
-			int lowestLvl = getArenaLvl;
-			if (getShopLvl < lowestLvl) lowestLvl = getShopLvl;
-			if (getResearchDevLvl < lowestLvl) lowestLvl = getResearchDevLvl;
-			if (getMonsterDenLvl < lowestLvl) lowestLvl = getMonsterDenLvl;
+			long lowestLvl = getArenaLvlCost;
+			if (getShopLvlCost < lowestLvl) lowestLvl = getShopLvl;
+			if (getResearchDevLvlCost < lowestLvl) lowestLvl = getResearchDevLvl;
+			if (getMonsterDenLvlCost < lowestLvl) lowestLvl = getMonsterDenLvl;
 			// Add all utilities that are the lowest level
-			if (getArenaLvl == lowestLvl) levelUpList.Add("Arena");
-			if (getShopLvl == lowestLvl) levelUpList.Add("Shop");
-			if (getResearchDevLvl == lowestLvl) levelUpList.Add("RD");
-			if (getMonsterDenLvl == lowestLvl) levelUpList.Add("Den");
+			if (getArenaLvlCost == lowestLvl) levelUpList.Add("Arena");
+			if (getShopLvlCost == lowestLvl) levelUpList.Add("Shop");
+			if (getResearchDevLvlCost == lowestLvl) levelUpList.Add("RD");
+			if (getMonsterDenLvlCost == lowestLvl) levelUpList.Add("Den");
 			// randomly choose one of the lowest level utilities
 			string choise = levelUpList[RndVal.Next(levelUpList.Count)];
 			// level up
@@ -1127,7 +1127,12 @@ namespace TrainingProject
 			retVal = getFightLog = String.Format("\nArena destroyed boss monsters! ({1:n0}) ", DateTime.Now.ToString(), BossReward);
 			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
 			int Monster = RndVal.Next(BossCount);
-			Bosses.MyTeam.Add(new Robot(BossDifficulty, setName("boss", Monster), Monster, true));
+			int tmpDifficulty = BossDifficulty;
+			do
+			{
+				Bosses.MyTeam.Add(new Robot(tmpDifficulty, setName("boss", Monster), Monster, true));
+				tmpDifficulty = (tmpDifficulty - 20);
+			} while (tmpDifficulty >= 1);
 			// Add equipment
 			for (int i = 0; i < BossCount; i++)
 			{
@@ -1792,7 +1797,9 @@ namespace TrainingProject
 			else if (CurrentInterval < 6000) myColour = Brushes.Red;
 			AlsProgressBar Progress = new AlsProgressBar(myColour) { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = 450, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
-			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString("HH:mm"), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
+			string SafeFormat = "HH:mm";
+			if (SafeTime.Day > DateTime.Now.Day) SafeFormat = "MM-dd HH:mm";
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
@@ -2937,7 +2944,7 @@ namespace TrainingProject
 						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
-							getShopLvlMaint = getShopLvlCost / 10;
+							getShopLvlMaint = getShopLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -2996,7 +3003,7 @@ namespace TrainingProject
 						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
-							getShopLvlMaint = getShopLvlCost / 10;
+							getShopLvlMaint = getShopLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -3074,7 +3081,7 @@ namespace TrainingProject
 						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > 1000)
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, ResearchDevLvlCostBase, "down");
-							ResearchDevMaint = getResearchDevLvlCost / 10;
+							ResearchDevMaint = getResearchDevLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
@@ -3101,7 +3108,7 @@ namespace TrainingProject
 						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
 						{
 							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MonsterDenLvlCostBase, "down");
-							MonsterDenLvlMaint = getMonsterDenLvlCost / 10;
+							MonsterDenLvlMaint = getMonsterDenLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
@@ -3180,7 +3187,7 @@ namespace TrainingProject
 					goto case 49;
 				case 49:
 					MaintCost += RndVal.Next(gameDifficulty * 25);
-					if (!FastForward)
+					if (!FastForward && FastForwardCount < 100000)
 					{
 						FastForwardCount = (int)roundValue(FastForwardCount, MaintCost, "up");
 						getWarningLog = String.Format("\n!!! Fast Forward increased! +{0:n0} T:{1:n0}", MaintCost, FastForwardCount);
@@ -3225,7 +3232,7 @@ namespace TrainingProject
 					}
 					break;
 				case 100:
-					ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 2), "down");
+					ArenaComunityReach = roundValue(ArenaComunityReach, (RndVal.Next((int)ArenaLvlCostBase) / 2), "down");
 					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to " + String.Format("{0:p2}", getArenaOutreach() - 1);
 					break;
 				case 203:
