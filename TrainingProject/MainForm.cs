@@ -943,9 +943,10 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
 			// Clear Messages
 			else if (e.KeyCode == Keys.C) MyGame.resetAll();
+			else if (e.KeyCode == Keys.M) MyGame.fixTech();
 			// show message box with available shortcuts if not a windows special key
 			else if (e.KeyCode == Keys.OemQuestion || e.KeyCode == Keys.OemBackslash)
-				MessageBox.Show("Shortcuts " + e.KeyCode + 
+				MessageBox.Show("Shortcuts " + e.KeyCode +
 				"\nPause:               Space" +
 				"\nFight:                Enter / +" +
 				"\nTeam:                 Q" +

@@ -964,7 +964,7 @@ namespace TrainingProject
 			if (LifetimeEquipmentForged >= GoalLifetimeEquipmentForged)
 			{
 				getGameCurrency += GoalLifetimeEquipmentForged * 100;
-				getWarningLog = getFightLog = string.Format("\n!*!*! Reached new Equipment Forged! {0:c0} awarded {1:c0}", GoalLifetimeEquipmentForged, GoalLifetimeEquipmentForged * 100);
+				getWarningLog = getFightLog = string.Format("\n!*!*! Reached new Equipment Forged! {0:n0} awarded {1:c0}", GoalLifetimeEquipmentForged, GoalLifetimeEquipmentForged * 100);
 				GoalLifetimeEquipmentForged = roundValue(GoalLifetimeEquipmentForged * 2, 1);
 			}
 		}
@@ -1001,16 +1001,8 @@ namespace TrainingProject
 		}
 		public void fixTech()
 		{
+			bossLevelUp();
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-
-			MonsterName = new string[] {
-				"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
-				"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
-				"Devil 3", "Alien 3", "Slither 3", "Blob 3", "Bat 3", "Titan 3", "Chomp 3", "Element 3", "HandEye 3", // Rank 3
-				"Devil 4", "Alien 4", "Slither 4", "Blob 4", "Bat 4", "Titan 4", "Chomp 4", "Element 4", "HandEye 4", // Rank 4
-				"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
-				"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
-			};
 		}
 
 		public void resetShowDefeated()
@@ -1057,9 +1049,9 @@ namespace TrainingProject
 			levelUpList = new List<string> { };
 			// find lowest level
 			long lowestLvl = getArenaLvlCost;
-			if (getShopLvlCost < lowestLvl) lowestLvl = getShopLvl;
-			if (getResearchDevLvlCost < lowestLvl) lowestLvl = getResearchDevLvl;
-			if (getMonsterDenLvlCost < lowestLvl) lowestLvl = getMonsterDenLvl;
+			if (getShopLvlCost < lowestLvl) lowestLvl = getShopLvlCost;
+			if (getResearchDevLvlCost < lowestLvl) lowestLvl = getResearchDevLvlCost;
+			if (getMonsterDenLvlCost < lowestLvl) lowestLvl = getMonsterDenLvlCost;
 			// Add all utilities that are the lowest level
 			if (getArenaLvlCost == lowestLvl) levelUpList.Add("Arena");
 			if (getShopLvlCost == lowestLvl) levelUpList.Add("Shop");
@@ -1080,7 +1072,7 @@ namespace TrainingProject
 		}
 		public void arenaComunityOutreach()
 		{
-			ArenaComunityReach = roundValue(ArenaComunityReach, RndVal.Next((int)(ArenaLvlCost)), "up");
+			ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCost), "up");
 		}
 		public void arenaLevelUp()
 		{
@@ -1130,7 +1122,15 @@ namespace TrainingProject
 			int tmpDifficulty = BossDifficulty;
 			do
 			{
-				Bosses.MyTeam.Add(new Robot(tmpDifficulty, setName("boss", Monster), Monster, true));
+				Robot tmpBoss = new Robot(tmpDifficulty, setName("boss", Monster), Monster, true);
+				// Level up
+				for (int ii = 1; ii < BossLvl; ii++)
+				{
+					tmpBoss.levelUp(RndVal, true);
+					tmpBoss.HP = tmpBoss.getTHealth();
+					tmpBoss.MP = tmpBoss.getTEnergy();
+				}
+				Bosses.MyTeam.Add(tmpBoss);
 				tmpDifficulty = (tmpDifficulty - 20);
 			} while (tmpDifficulty >= 1);
 			// Add equipment
@@ -1138,12 +1138,6 @@ namespace TrainingProject
 			{
 				Bosses.MyTeam[i].getEquipWeapon = new Equipment(true, BossLvl + Bosses.MyTeam[i].type, 10000, RndVal, true);
 				Bosses.MyTeam[i].getEquipArmour = new Equipment(false, BossLvl + Bosses.MyTeam[i].type, 10000, RndVal, true);
-			}
-			for (int ii = 1; ii < BossLvl; ii++)
-			{
-				Bosses.MyTeam[BossCount - 1].levelUp(RndVal, true);
-				Bosses.MyTeam[BossCount - 1].HP = Bosses.MyTeam[BossCount - 1].getTHealth();
-				Bosses.MyTeam[BossCount - 1].MP = Bosses.MyTeam[BossCount - 1].getTEnergy();
 			}
 			Bosses.resetLogs();
 			return retVal;
@@ -1847,7 +1841,9 @@ namespace TrainingProject
 					if (ActualRebuildCost == 100) strFormat = "Reset $100";
 					int stats = (eRobo.getBaseStats());
 					if (GameTeams[TeamSelect - 1].Runes.Count < (stats / 2)) GameTeams[TeamSelect - 1].addRune((int)(stats / 2) * 10);
-					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), GameTeams[TeamSelect - 1].Runes[stats / 2]) };
+					int tmpRunes = 0;
+					if (GameTeams[TeamSelect - 1].Runes.Count > stats / 2) tmpRunes = GameTeams[TeamSelect - 1].Runes[stats / 2];
+					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), tmpRunes) };
 					int innerIndex = index++;
 					if (getGameCurrency > 0)
 						btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, this));
@@ -2879,7 +2875,8 @@ namespace TrainingProject
 						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > 1000)
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, ArenaLvlCostBase, "down");
-							getArenaLvlMaint = getArenaLvlCost / 10;
+							if (getArenaLvlCost < 1000) getArenaLvlCost = 1000;
+							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
 					}
@@ -2944,7 +2941,8 @@ namespace TrainingProject
 						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
-							getShopLvlMaint = getShopLvlCost / 2;
+							if (getShopLvlCost < 1000) getShopLvlCost = 1000;
+							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -3003,7 +3001,8 @@ namespace TrainingProject
 						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
-							getShopLvlMaint = getShopLvlCost / 2;
+							if (getShopLvlCost < 1000) getShopLvlCost = 1000;
+							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -3024,7 +3023,8 @@ namespace TrainingProject
 						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > 1000)
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, ResearchDevLvlCostBase, "down");
-							ResearchDevMaint = getResearchDevLvlCost / 10;
+							if (getResearchDevLvlCost < 1000) getResearchDevLvlCost = 1000;
+							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
@@ -3081,7 +3081,8 @@ namespace TrainingProject
 						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > 1000)
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, ResearchDevLvlCostBase, "down");
-							ResearchDevMaint = getResearchDevLvlCost / 2;
+							if (getResearchDevLvlCost < 1000) getResearchDevLvlCost = 1000;
+							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
@@ -3108,7 +3109,8 @@ namespace TrainingProject
 						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
 						{
 							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MonsterDenLvlCostBase, "down");
-							MonsterDenLvlMaint = getMonsterDenLvlCost / 2;
+							if (getMonsterDenLvlCost < 1000) getMonsterDenLvlCost = 1000;
+							MonsterDenLvlMaint = getMonsterDenLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
@@ -3255,7 +3257,8 @@ namespace TrainingProject
 						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > 1000)
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, ArenaLvlCostBase, "down");
-							getArenaLvlMaint = getArenaLvlCost / 10;
+							if (getArenaLvlCost < 1000) getArenaLvlCost = 1000;
+							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
 					}
@@ -3285,7 +3288,8 @@ namespace TrainingProject
 						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
 						{
 							MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MonsterDenLvlCostBase, "down");
-							MonsterDenLvlMaint = MonsterDenLvlCost / 10;
+							if (MonsterDenLvlCost < 1000) MonsterDenLvlCost = 1000;
+							MonsterDenLvlMaint = MonsterDenLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
@@ -4155,17 +4159,7 @@ namespace TrainingProject
 				
 		public void fixTech()
 		{
-			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
-
-
-			MonsterName = new string[] {
-				"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
-				"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
-				"Devil 3", "Alien 3", "Slither 3", "Blob 3", "Bat 3", "Titan 3", "Chomp 3", "Element 3", "HandEye 3", // Rank 3
-				"Devil 4", "Alien 4", "Slither 4", "Blob 4", "Bat 4", "Titan 4", "Chomp 4", "Element 4", "HandEye 4", // Rank 4
-				"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
-				"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
-			};
+			foreach (Robot eRobo in MyTeam) eRobo.fixTech();			
 		}
 		public void Rebuild(bool pay, Game myGame)
 		{
@@ -4836,14 +4830,6 @@ namespace TrainingProject
 
 		public void fixTech()
 		{
-			MonsterName = new string[] {
-				"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
-				"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
-				"Devil 3", "Alien 3", "Slither 3", "Blob 3", "Bat 3", "Titan 3", "Chomp 3", "Element 3", "HandEye 3", // Rank 3
-				"Devil 4", "Alien 4", "Slither 4", "Blob 4", "Bat 4", "Titan 4", "Chomp 4", "Element 4", "HandEye 4", // Rank 4
-				"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
-				"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
-			};
 		}
 
 		public void resetLog()
