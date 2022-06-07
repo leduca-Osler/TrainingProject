@@ -537,6 +537,7 @@ namespace TrainingProject
 		public int WinCount;
 		public int FastForwardCount;
 		public bool FastForward;
+		public int tmpRev;
 		public int getMonsterDenBonus
 		{
 			get { return MonsterDenBonus; }
@@ -1415,6 +1416,9 @@ namespace TrainingProject
 			GameTeam1[GameTeam1.Count - 1].MyTeam.Sort();
 			GameTeam2.Add(new Team(0,0,0,0,0,0,0,0,0,"Monster Outbreak",false));
 			GameTeam2[GameTeam2.Count - 1].isMonster = true;
+			int tmpFindMonster = 10;
+			if (findMonster > 10) tmpFindMonster = RndVal.Next(findMonster - 10, findMonster + 10);
+			else tmpFindMonster = RndVal.Next(1, findMonster + 10);
 			for (int i = 0; i < MonsterOutbreak.MyTeam.Count;)
 			{
 				if (RndVal.Next(100) < findMonster) 
@@ -1665,8 +1669,10 @@ namespace TrainingProject
 					GameTeam1[GameTeam1.Count - 1].getCurrency += MinWage;
 					msg += displaySeating("G", tmp, -1, ref countChars);
 					msg += displaySeating("MG", MinWage, -1, ref countChars);
-					msg += displaySeating("R", tmp - (MinWage), -1, ref countChars);
-					addLifetimeRevenue(tmp - (MinWage));
+					int thisRev = tmp - MinWage;
+					msg += displaySeating("R", thisRev, -1, ref countChars);
+					addLifetimeRevenue(thisRev);
+					tmpRev += thisRev;
 				}
 				else
 				{
@@ -1691,8 +1697,10 @@ namespace TrainingProject
 						tmpFightPerMax += GameTeams.Count;
 
 					msg += displaySeating("J", CurrentJackpot, -1, ref countChars);
-					msg += displaySeating("R", tmp - CurrentJackpot, -1, ref countChars);
-					addLifetimeRevenue(tmp - (CurrentJackpot));
+					int thisRev = tmp - CurrentJackpot;
+					msg += displaySeating("R", thisRev, -1, ref countChars);
+					addLifetimeRevenue(thisRev);
+					tmpRev += thisRev;
 					msg += String.Format("\n    Comunity Bonus: {0:P2}\n", (getArenaOutreach()-1.00)); 
 					if (ResearchDevHealValueSum > 0)
 					{
@@ -2347,17 +2355,12 @@ namespace TrainingProject
 						{
 							if (GameTeam2[i].getName.Equals("Monster Outbreak"))
 							{
-								// fewer new monsters
-								findMonster -= 5;
-								if (findMonster < 5)
-								{
-									MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
-									MonsterOutbreak.getName = "Monster Outbreak";
-								}
+								lblWinner.Text = getWarningLog = getFightLog = Environment.NewLine + "--- Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1}%)", Jackpot, findMonster) ;
+								// reset findMonster
+								findMonster = 5;
 								getGameCurrency -= Jackpot;
 								GameCurrencyLogMaint -= Jackpot;
-								lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena suffered damages from Monster outbreak -" + String.Format("{0:n0} ({1}%)", Jackpot, findMonster) ;
-								addMonsters(GameTeam2[0]);
+								// addMonsters(GameTeam2[0]);
 							}
 							else if (GameTeam2[i].getName.Equals("Game Diff " + gameDifficulty.ToString()))
 							{
@@ -2395,11 +2398,10 @@ namespace TrainingProject
 								long tmp = (long)(Jackpot - MinWage );
 								GameTeam1[i].getCurrency += tmp;
 								Jackpot -= tmp;
-								msg += " " + String.Format("{0:n0}", tmp);
+								// msg += " " + String.Format("{0:n0}", tmp);
 								// increase difficulty if monster
 								if (GameTeam2[i].isMonster)
 								{
-									msg = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
 									WinCount++;
 									// increase difficulty if not greater than monsterDenLvl
 									if (GameTeam1[i].getDifficulty < MonsterDenLvl)
@@ -2408,13 +2410,18 @@ namespace TrainingProject
 										// fight next difficulty
 										Jackpot += MinWage;
 										getGameCurrency -= MinWage;
+										tmpRev -= MinWage;
 										Team tmpTeam = new Team(GameTeam1[i].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak);
 										addMonsters(GameTeam2[i]);
 										GameTeam2[i] = tmpTeam;
-										msg = string.Format("{0} VS {1} ({2:n0}) {3}", GameTeam1[i].getName, GameTeam2[i].getName, MinWage, msg);
+										msg = string.Format("{0} VS {1} R:({2:n0}) {3}", GameTeam1[i].getName, GameTeam2[i].getName, MinWage, msg);
 										GameTeam1[i].healRobos(false);
 										equip(GameTeam1[i], true);
 										newMonster = true;
+									}
+									else
+									{
+										msg = string.Format("\n{0} Won against {1} TR:{2:c0} {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
 									}
 								}
 								else
@@ -2427,9 +2434,10 @@ namespace TrainingProject
 										GameDifficultyFight = true;
 									// pay team 2 remaining;
 									GameTeam2[i].getCurrency += Jackpot;
-									msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
+									//msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
+									msg = string.Format("\n{0} Won against {1} TR:{2:c0} {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
 									Jackpot = 0;
-									msg = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
+									//msg = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
 								}
 							}
 							else
@@ -2452,7 +2460,8 @@ namespace TrainingProject
 									getGameCurrency += tmp;
 									GameTeam1[i].getCurrency += MinWage;
 									Jackpot = 0;
-									msg += String.Format("\n Win:{0}", WinCount);
+									msg = string.Format("\n{1} Won against {0} TR:{2:c0} Win:{3:n0} {4}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, WinCount, msg);
+									//msg += String.Format("\n Win:{0}", WinCount);
 									int lastRobo = GameTeam1[i].MyTeam.Count - 1;
 									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
 									if (GameTeam1[i].getDifficulty * 5 < GameTeam1[i].MyTeam[lastRobo].getLevel && GameTeam1[i].getScore < GameTeam1[0].getScore / 4)
@@ -2485,12 +2494,11 @@ namespace TrainingProject
 									long tmp = (long)(Jackpot - MinWage);
 									GameTeam2[i].getCurrency += tmp;
 									Jackpot -= tmp;
-									msg += " " + String.Format("{0:n0}", tmp);
 									// team lost gets remaining
 									GameTeam1[i].getCurrency += Jackpot;
-									msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
+									msg = string.Format("\n{1} Won against {0} TR:{2:c0} {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
 									Jackpot = 0;
-									msg = Environment.NewLine + GameTeam2[i].getName + " Won against " + GameTeam1[i].getName + msg;
+									//msg = Environment.NewLine + GameTeam2[i].getName + " Won against " + GameTeam1[i].getName + msg;
 								}
 							}
 							getFightLog = Environment.NewLine + msg;
@@ -2499,6 +2507,7 @@ namespace TrainingProject
 							{
 								Jackpot = 0;
 								fighting = false;
+								tmpRev = 0;
 							}
 						}
 						// Don't remove team if new monster selected
