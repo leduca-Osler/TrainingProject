@@ -450,6 +450,8 @@ namespace TrainingProject
 		[JsonProperty]
 		private int ShopStock;
 		[JsonProperty]
+		private int ShopBays;
+		[JsonProperty]
 		private long ShopStockCost;
 		[JsonProperty]
 		private int ShopMaxStat;
@@ -849,6 +851,7 @@ namespace TrainingProject
 			ShopLvlCostBase = ShopLvlCostBaseIncrement;
 			ShopLvlMaint = 1;
 			ShopStock = 1;
+			ShopBays = 1;
 			ShopStockCost = 100;
 			ShopMaxStat = 5;
 			ShopMaxDurability = 100;
@@ -1173,6 +1176,11 @@ namespace TrainingProject
 			{
 				ShopStock++;
 				msg += string.Format("\n  Stock +1");
+			}
+			if (RndVal.Next(100) > ((85 + (ShopBays * 10)) - ShopLvl))
+			{
+				ShopBays++;
+				msg += string.Format("\n  Bays +1");
 			}
 			int tmpDurability = ShopMaxDurability;
 			int tmpStat = ShopMaxStat;
@@ -1914,7 +1922,9 @@ namespace TrainingProject
 				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}", getShopLvl, getShopLvlCost, getShopLvlMaint) };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				Label lblShopStock = new Label { AutoSize = true, Text = String.Format("  {0,-10}{1," + RowTwoLength[0] + "} {2,-6}{3," + RowTwoLength[1] + ":n0} {4,-7}{5," + RowTwoLength[2] + ":n0} {6,-5}{7," + RowTwoLength[3] + ":n0} {8,-4}{9," + RowTwoLength[4] + ":n0}", "Max Stock",string.Format("{0}/{1}", storeEquipment.Count, getShopStock), "Dur", getShopMaxDurability, "Stat", getShopMaxStat, "Cost", getShopStockCost, "Up", getShopUpgradeValue) };
+				Label lblShopStock = new Label { AutoSize = true, Text = String.Format("  {0,-10}{1," + RowTwoLength[0] + "} {2,-6}{3," + RowTwoLength[1] + ":n0} {4,-7}{5," + RowTwoLength[2] + ":n0} {6,-5}{7," + RowTwoLength[3] + ":n0} {8,-4}{9," + RowTwoLength[4] + ":n0} {10,-4} {11:n0}",  
+																						"Max Stock",string.Format("{0}/{1}", storeEquipment.Count, getShopStock), 
+																						"Dur", getShopMaxDurability, "Stat", getShopMaxStat, "Cost", getShopStockCost, "Up", getShopUpgradeValue, "Bays", ShopBays) };
 				pnlEquipment.Controls.Add(lblShopStock);
 				RowThreeLength = new int[] { 8, 3, 1, 3 };
 				foreach (Equipment eEquipment in storeEquipment)
@@ -2601,7 +2611,10 @@ namespace TrainingProject
 
 		public void equip()
 		{
-			equip(GameTeams[RndVal.Next(GameTeams.Count)], false);
+			for (int i = 0; i < ShopBays; i++)
+			{
+				equip(GameTeams[RndVal.Next(GameTeams.Count)], false);
+			}
 		}
 		public int IncreaseJackpot()
 		{
