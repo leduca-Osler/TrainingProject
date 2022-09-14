@@ -1290,10 +1290,70 @@ namespace TrainingProject
 			addLifetimeTeam();
 			return TeamName;
 		}
+		public void resetPartialScore()
+		{
+			// team with top score has chance to loose robots
+			Team rebuild = new Team(1, 1, 1);
+			foreach (Team eTeam in GameTeams)
+			{
+				if (eTeam.getScore > rebuild.getScore)
+					rebuild = eTeam;
+			}
+			rebuild.getDifficulty = 0;
+			rebuild.Win++;
+			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
+			int winGoal = rebuild.Win;
+			int scouted = rebuild.Win * 10;
+			int bonusScore = rebuild.getScore / GameTeams.Count;
+			IList<int> scoutingTeams = new List<int> { };
+			// teams for scouting
+			for (int i = 0; i < GameTeams.Count; i++)
+			{
+				for (int j = 0; j <= i; j++)
+				{ scoutingTeams.Add(j); }
+			}
+			for (int i = 0; i < rebuild.MyTeam.Count; i++)
+			{
+				if (RndVal.Next(100) < scouted && rebuild.MyTeam.Count > 1)
+				{
+					Team scoutingTeam = GameTeams[scoutingTeams[RndVal.Next(scoutingTeams.Count)]];
+					string strScouter = " another arena";
+					if (!scoutingTeam.getName.Equals(rebuild.getName))
+					{
+						scoutingTeam.MyTeam.Add(rebuild.MyTeam[i]);
+						strScouter = scoutingTeam.getName;
+					}
+					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!\n", rebuild.MyTeam[i].getName, strScouter);
+					rebuild.MyTeam.RemoveAt(i);
+					scouted /= 2;
+				}
+			}
+			//rebuild.getScore = 0;
+			rebuild.HealScore = 0;
+			int diviser = 10 - rebuild.Win;
+			if (diviser < 1) diviser = 1;
+			foreach (Team eTeam in GameTeams)
+			{
+				if (eTeam.Win < winGoal)
+				{
+					long iWinnings = getArenaLvl * 1000 * (winGoal + 1);
+					foreach (Robot eRobo in eTeam.MyTeam)
+						eRobo.rebuildBonus++;
+					const string Format = "\n*!* {0} won {1:n0} credits during partial reset!";
+					getWarningLog = getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName, iWinnings);
+					eTeam.getCurrency += iWinnings;
+					eTeam.getScore += rebuild.getScore / (diviser);
+					rebuild.getScore -= rebuild.getScore / (diviser);
+				}
+			}
+			// reset jackpot
+			CurrentJackpot = 0;
+			IncreaseJackpot();
+		}
 		public void resetScore()
 		{
-			getGameCurrency += MaxTeams * getArenaLvl * 1000;
-			GameCurrencyLogMisc += TeamCost;
+			//getGameCurrency += MaxTeams * getArenaLvl * 1000;
+			//GameCurrencyLogMisc += TeamCost;
 			// team with top score has chance to loose robots
 			Team rebuild = new Team(1,1,1);
 			foreach (Team eTeam in GameTeams)
@@ -1458,7 +1518,7 @@ namespace TrainingProject
 				bossFight = false;
 				GameTeam2.Add(Bosses);
 				Jackpot = BossReward;
-				getFightLog = Environment.NewLine + " Boss Fight! ";
+				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
 			}
 			// Game difficulty fight
 			else
@@ -1468,7 +1528,7 @@ namespace TrainingProject
 				Monsters.getName = "Game Diff " + gameDifficulty.ToString();
 				GameTeam2.Add(Monsters);
 				Jackpot = gameDifficulty * getArenaLvl * 1000;
-				getFightLog = Environment.NewLine + " Game Difficulty Fight! ";
+				getWarningLog = getFightLog = Environment.NewLine + " Game Difficulty Fight! ";
 			}
 		}
 		public void sortSkills()
@@ -2350,9 +2410,14 @@ namespace TrainingProject
 									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
 									GoalGameScoreBase += GoalGameScoreBaseIncrement;
 									resetScore();
-									GameTeam1[0].healRobos(false);
-									equip(GameTeam1[0], true);
 								}
+								else if (getScore() > (GoalGameScore * 0.1))
+								{
+									resetPartialScore();
+									GameDifficultyFight = false;
+								}
+								GameTeam1[0].healRobos(false);
+								equip(GameTeam1[0], true);
 							}
 							// Boss Fight
 							else
@@ -2875,6 +2940,8 @@ namespace TrainingProject
 			getFightLog = string.Format("\n\n$!! Payroll processed - cost {0:c0} employees {1:n0}", MaintCost, employees);
 			// randomly start boss fight
 			if (RndVal.Next(GoalGameScore * 20) < getScore()) bossFight = true;
+			// If divisible by 1000 start difficulty Fight
+			if (getScore() % 1000 == 0) GameDifficultyFight = true;
 		}
 		public void buildingMaintenance()
 		{
