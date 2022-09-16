@@ -19,6 +19,7 @@ namespace TrainingProject
 		public static readonly Random RndVal = new Random();
 		public static string WarningLog;
 		public static string FightLog;
+		public static string ImagePath = "Resources\\";
 		//public Random RndVal = new Random();
 		[JsonIgnore]
 		public string[] RoboImages = {
@@ -79,18 +80,18 @@ namespace TrainingProject
 		public static string field = "ForceField.png"; // 
 		[JsonIgnore]
 		public static Skill[] AllSkills = {
-			new Skill("Attack", "Enemy", 0, "Single attack", 0, strike, '*'),
-			new Skill("Pound", "Enemy", 10, "Single attack", 2, pound, '#'),
-			new Skill("Shrapnel", "Enemy", 1, "Multiple attack", 3, shrapnel, '%'),
-			new Skill("Electrode", "Enemy", 10, "Single tech", 2, Electrode, '@'),
-			new Skill("Laser", "Enemy", 1, "Multiple tech", 3, Laser, '^')
+			new Skill("Attack", "Enemy", 0, "Single attack", 0, ImagePath + strike, '*'),
+			new Skill("Pound", "Enemy", 10, "Single attack", 2, ImagePath + pound, '#'),
+			new Skill("Shrapnel", "Enemy", 1, "Multiple attack", 3, ImagePath + shrapnel, '%'),
+			new Skill("Electrode", "Enemy", 10, "Single tech", 2, ImagePath + Electrode, '@'),
+			new Skill("Laser", "Enemy", 1, "Multiple tech", 3, ImagePath + Laser, '^')
 		};
 		public static Skill[] MonsterSkills = {
-			new Skill("Attack", "Enemy", 0, "Single attack", 0, strike, '*'),
-			new Skill("Scratch", "Enemy", 10, "Single attack", 2, scratch, '#'),
-			new Skill("Slash", "Enemy", 1, "Multiple attack", 3, slash, '%'),
-			new Skill("Elements", "Enemy", 10, "Single tech", 2, elements, '@'),
-			new Skill("Corosion", "Enemy", 1, "Multiple tech", 3, corosion, '^')
+			new Skill("Attack", "Enemy", 0, "Single attack", 0, ImagePath + strike, '*'),
+			new Skill("Scratch", "Enemy", 10, "Single attack", 2, ImagePath + scratch, '#'),
+			new Skill("Slash", "Enemy", 1, "Multiple attack", 3, ImagePath + slash, '%'),
+			new Skill("Elements", "Enemy", 10, "Single tech", 2, ImagePath + elements, '@'),
+			new Skill("Corosion", "Enemy", 1, "Multiple tech", 3, ImagePath + corosion, '^')
 		};
 		[JsonIgnore]
 		public string[] name1 = { "Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
@@ -2090,6 +2091,8 @@ namespace TrainingProject
 			// Add for each team
 			foreach (Team eTeam in GameTeams)
 			{
+				int TotalRobos = 0;
+				int totalMonsters = 0;
 				FlowLayoutPanel TeamPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblTeamInfo = new Label { AutoSize = true, Text = String.Format("\n{0,-20}", eTeam.getName) };
 				MainPanel.Controls.Add(lblTeamInfo);
@@ -2110,9 +2113,12 @@ namespace TrainingProject
 				Array.Sort(tmpRobotsDestroyed, tmpRobotsDestroyedKey);
 				for (int i = 0; i < 9; i++)
 				{
+					TotalRobos += eTeam.RobotDestroyed[tmpRobotsDestroyedKey[i]];
 					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[tmpRobotsDestroyedKey[i]], eTeam.RobotDestroyed[tmpRobotsDestroyedKey[i]], eTeam.RobotDestroyedGoal[tmpRobotsDestroyedKey[i]]) };
 					RobotPanel.Controls.Add(lblRobot);
 				}
+				Label lblTotalRobots = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + (TeamRowLength[0] + TeamRowLength[1] +  1) + ":n0}", "Total Robo", TotalRobos) };
+				RobotPanel.Controls.Add(lblTotalRobots);
 				FlowLayoutPanel MonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				Label lblMonsterList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Monsters Dest.") };
 				MonsterPanel.Controls.Add(lblMonsterList);
@@ -2122,9 +2128,12 @@ namespace TrainingProject
 				Array.Sort(tmpMonstersDestroyed, tmpMonstersDestroyedKey);
 				for (int i = 0; i < eTeam.MonsterDestroyed.Length; i++)
 				{
+					totalMonsters += eTeam.MonsterDestroyed[tmpMonstersDestroyedKey[i]];
 					Label lblMonster = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", MonsterName[tmpMonstersDestroyedKey[i]], eTeam.MonsterDestroyed[tmpMonstersDestroyedKey[i]], eTeam.MonsterDestroyedGoal[tmpMonstersDestroyedKey[i]]) };
 					MonsterPanel.Controls.Add(lblMonster);
 				}
+				Label lblTotalMonsters = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + (TeamRowLength[0] + TeamRowLength[1] + 1) + ":n0}", "Total Mon", totalMonsters) };
+				MonsterPanel.Controls.Add(lblTotalMonsters);
 				MainPanel.Controls.Add(TeamPanel);
 				MainPanel.Controls.Add(RobotPanel);
 				MainPanel.Controls.Add(MonsterPanel);
@@ -2404,17 +2413,15 @@ namespace TrainingProject
 								GameCurrencyLogMisc += Jackpot;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + " +++ Arena defeated monsters difficulty increased ";
 								Jackpot = 0;
-								GameDifficultyFight = true;
 								if (getScore() > (GoalGameScore * 0.9))
 								{
 									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
 									GoalGameScoreBase += GoalGameScoreBaseIncrement;
 									resetScore();
 								}
-								else if (getScore() > (GoalGameScore * 0.1))
+								else if (getScore() > 900)
 								{
 									resetPartialScore();
-									GameDifficultyFight = false;
 								}
 								GameTeam1[0].healRobos(false);
 								equip(GameTeam1[0], true);
@@ -4619,6 +4626,10 @@ namespace TrainingProject
 					tmp = tmpImage;
 					tmpImage = "";
 				}
+				if ( !tmp.Substring(0,3).Equals(ImagePath.Substring(0,3)) )
+				{
+					tmp = ImagePath + tmp;
+				}
 				return tmp;
 			}
 			set { Image = value; }
@@ -4730,14 +4741,14 @@ namespace TrainingProject
 			type = imageIndex;
 			if (isMonster)
 			{
-				Image = MonsterImages[imageIndex];
+				Image = ImagePath + MonsterImages[imageIndex];
 				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Highest", "HP") };
 				bIsMonster = true;
 				RoboRebuildCost = 0;
 			}
 			else
 			{
-				Image = RoboImages[imageIndex];
+				Image = ImagePath + RoboImages[imageIndex];
 				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Current", "Level") };
 				RoboRebuildCost = 2000;
 				long RoboRebuildCostBase = 1000;

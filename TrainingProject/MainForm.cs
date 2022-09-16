@@ -168,7 +168,7 @@ namespace TrainingApp
 		{
 			Boolean addTeam = false;
 			// background image
-			Image addTeamImage = new Bitmap(@"AddTeam.png");
+			Image addTeamImage = new Bitmap(@"Resources\AddTeam.png");
 			Boolean addRobo = false;
 			Boolean arenaLvl = false;
 			Boolean monsterLvl = false;
