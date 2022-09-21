@@ -97,7 +97,7 @@
             this.btnAutomatic});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(493, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(493, 38);
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -112,42 +112,42 @@
 			this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
 			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnExport.Name = "btnExport";
-			this.btnExport.Size = new System.Drawing.Size(36, 24);
+			this.btnExport.Size = new System.Drawing.Size(41, 33);
 			this.btnExport.Text = "Export / Import";
 			this.btnExport.ButtonClick += new System.EventHandler(this.btnExport_ButtonClick);
 			// 
 			// mnuExport
 			// 
 			this.mnuExport.Name = "mnuExport";
-			this.mnuExport.Size = new System.Drawing.Size(155, 22);
+			this.mnuExport.Size = new System.Drawing.Size(235, 34);
 			this.mnuExport.Text = "Export";
 			this.mnuExport.Click += new System.EventHandler(this.mnuExport_Click);
 			// 
 			// mnuImport
 			// 
 			this.mnuImport.Name = "mnuImport";
-			this.mnuImport.Size = new System.Drawing.Size(155, 22);
+			this.mnuImport.Size = new System.Drawing.Size(235, 34);
 			this.mnuImport.Text = "Import";
 			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
 			// 
 			// countdownToolStripMenuItem
 			// 
 			this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
-			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(235, 34);
 			this.countdownToolStripMenuItem.Text = "Countdown";
 			this.countdownToolStripMenuItem.Click += new System.EventHandler(this.countdownToolStripMenuItem_Click);
 			// 
 			// BreakTimersOff
 			// 
 			this.BreakTimersOff.Name = "BreakTimersOff";
-			this.BreakTimersOff.Size = new System.Drawing.Size(155, 22);
+			this.BreakTimersOff.Size = new System.Drawing.Size(235, 34);
 			this.BreakTimersOff.Text = "Break Timer On";
 			this.BreakTimersOff.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
 			// 
 			// cbTeamSelect
 			// 
 			this.cbTeamSelect.Name = "cbTeamSelect";
-			this.cbTeamSelect.Size = new System.Drawing.Size(140, 27);
+			this.cbTeamSelect.Size = new System.Drawing.Size(140, 33);
 			this.cbTeamSelect.DropDownClosed += new System.EventHandler(this.cbTeamSelect_Change);
 			this.cbTeamSelect.Leave += new System.EventHandler(this.cbTeamSelect_Change);
 			this.cbTeamSelect.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
@@ -155,7 +155,7 @@
 			// toolStripLabel1
 			// 
 			this.toolStripLabel1.Name = "toolStripLabel1";
-			this.toolStripLabel1.Size = new System.Drawing.Size(17, 24);
+			this.toolStripLabel1.Size = new System.Drawing.Size(26, 28);
 			this.toolStripLabel1.Text = "--";
 			// 
 			// btnAddTeam
@@ -164,7 +164,7 @@
 			this.btnAddTeam.Image = ((System.Drawing.Image)(resources.GetObject("btnAddTeam.Image")));
 			this.btnAddTeam.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnAddTeam.Name = "btnAddTeam";
-			this.btnAddTeam.Size = new System.Drawing.Size(24, 24);
+			this.btnAddTeam.Size = new System.Drawing.Size(34, 28);
 			this.btnAddTeam.Text = "Add Team";
 			this.btnAddTeam.Click += new System.EventHandler(this.btnAddTeam_Click);
 			// 
@@ -174,7 +174,7 @@
 			this.btnAddRobo.Image = ((System.Drawing.Image)(resources.GetObject("btnAddRobo.Image")));
 			this.btnAddRobo.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnAddRobo.Name = "btnAddRobo";
-			this.btnAddRobo.Size = new System.Drawing.Size(24, 24);
+			this.btnAddRobo.Size = new System.Drawing.Size(34, 28);
 			this.btnAddRobo.Text = "Add Robo";
 			this.btnAddRobo.Click += new System.EventHandler(this.btnAddRobo_Click);
 			// 
@@ -184,7 +184,7 @@
 			this.btnArenaLvl.Image = ((System.Drawing.Image)(resources.GetObject("btnArenaLvl.Image")));
 			this.btnArenaLvl.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnArenaLvl.Name = "btnArenaLvl";
-			this.btnArenaLvl.Size = new System.Drawing.Size(24, 24);
+			this.btnArenaLvl.Size = new System.Drawing.Size(34, 28);
 			this.btnArenaLvl.Text = "Arena Level";
 			this.btnArenaLvl.Click += new System.EventHandler(this.btnArenaLvl_Click);
 			// 
@@ -201,21 +201,21 @@
 			this.btnShop.Image = global::TrainingProject.Properties.Resources.Shop1;
 			this.btnShop.ImageTransparentColor = System.Drawing.Color.White;
 			this.btnShop.Name = "btnShop";
-			this.btnShop.Size = new System.Drawing.Size(36, 24);
+			this.btnShop.Size = new System.Drawing.Size(41, 28);
 			this.btnShop.Text = "Shop";
 			this.btnShop.ButtonClick += new System.EventHandler(this.btnShop_ButtonClick);
 			// 
 			// mnuShopLevelUp
 			// 
 			this.mnuShopLevelUp.Name = "mnuShopLevelUp";
-			this.mnuShopLevelUp.Size = new System.Drawing.Size(119, 22);
+			this.mnuShopLevelUp.Size = new System.Drawing.Size(181, 34);
 			this.mnuShopLevelUp.Text = "Level Up";
 			this.mnuShopLevelUp.Click += new System.EventHandler(this.levelUpToolStripMenuItem_Click);
 			// 
 			// mnuRestockShop
 			// 
 			this.mnuRestockShop.Name = "mnuRestockShop";
-			this.mnuRestockShop.Size = new System.Drawing.Size(119, 22);
+			this.mnuRestockShop.Size = new System.Drawing.Size(181, 34);
 			this.mnuRestockShop.Text = "Restock";
 			this.mnuRestockShop.Click += new System.EventHandler(this.mnuRestockShop_Click);
 			// 
@@ -225,7 +225,7 @@
 			this.btnResearchDev.Image = global::TrainingProject.Properties.Resources.Repair;
 			this.btnResearchDev.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnResearchDev.Name = "btnResearchDev";
-			this.btnResearchDev.Size = new System.Drawing.Size(24, 24);
+			this.btnResearchDev.Size = new System.Drawing.Size(34, 28);
 			this.btnResearchDev.Text = "Research and Development";
 			this.btnResearchDev.Click += new System.EventHandler(this.btnResearchDev_Click);
 			// 
@@ -235,14 +235,14 @@
 			this.btnMonsterDen.Image = ((System.Drawing.Image)(resources.GetObject("btnMonsterDen.Image")));
 			this.btnMonsterDen.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnMonsterDen.Name = "btnMonsterDen";
-			this.btnMonsterDen.Size = new System.Drawing.Size(24, 24);
+			this.btnMonsterDen.Size = new System.Drawing.Size(34, 28);
 			this.btnMonsterDen.Text = "Monster Den";
 			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 33);
 			// 
 			// btnFight
 			// 
@@ -256,22 +256,23 @@
 			this.btnFight.Image = ((System.Drawing.Image)(resources.GetObject("btnFight.Image")));
 			this.btnFight.ImageTransparentColor = System.Drawing.Color.White;
 			this.btnFight.Name = "btnFight";
-			this.btnFight.Size = new System.Drawing.Size(36, 24);
+			this.btnFight.Size = new System.Drawing.Size(41, 24);
 			this.btnFight.Text = "Fight";
 			this.btnFight.Click += new System.EventHandler(this.btnFight_Click);
 			// 
 			// mnuBossFight
 			// 
 			this.mnuBossFight.Name = "mnuBossFight";
-			this.mnuBossFight.Size = new System.Drawing.Size(152, 22);
+			this.mnuBossFight.Size = new System.Drawing.Size(270, 34);
 			this.mnuBossFight.Text = "Boss";
 			this.mnuBossFight.Click += new System.EventHandler(this.mnuBossFight_Click);
 			// 
 			// difficultyFightToolStripMenuItem
 			// 
 			this.difficultyFightToolStripMenuItem.Name = "difficultyFightToolStripMenuItem";
-			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.difficultyFightToolStripMenuItem.Text = "Difficulty Fight";
+			this.difficultyFightToolStripMenuItem.Visible = false;
 			this.difficultyFightToolStripMenuItem.Click += new System.EventHandler(this.difficultyFightToolStripMenuItem_Click);
 			// 
 			// btnAutomatic
@@ -297,7 +298,7 @@
 			this.btnAutomatic.Image = global::TrainingProject.Properties.Resources.Auto;
 			this.btnAutomatic.ImageTransparentColor = System.Drawing.Color.White;
 			this.btnAutomatic.Name = "btnAutomatic";
-			this.btnAutomatic.Size = new System.Drawing.Size(36, 24);
+			this.btnAutomatic.Size = new System.Drawing.Size(41, 24);
 			this.btnAutomatic.Text = "Auto Battle";
 			this.btnAutomatic.ButtonClick += new System.EventHandler(this.btnAutomatic_ButtonClick);
 			// 
@@ -307,49 +308,49 @@
             this.resetToolStripMenuItem,
             this.showToolStripMenuItem});
 			this.mnuAutobattle.Name = "mnuAutobattle";
-			this.mnuAutobattle.Size = new System.Drawing.Size(181, 22);
+			this.mnuAutobattle.Size = new System.Drawing.Size(270, 34);
 			this.mnuAutobattle.Text = "Stats";
 			this.mnuAutobattle.Click += new System.EventHandler(this.mnuAutobattle_Click);
 			// 
 			// resetToolStripMenuItem
 			// 
 			this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-			this.resetToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.resetToolStripMenuItem.Size = new System.Drawing.Size(158, 34);
 			this.resetToolStripMenuItem.Text = "Reset";
 			this.resetToolStripMenuItem.Click += new System.EventHandler(this.mnuResetAuto_Click);
 			// 
 			// showToolStripMenuItem
 			// 
 			this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-			this.showToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.showToolStripMenuItem.Size = new System.Drawing.Size(158, 34);
 			this.showToolStripMenuItem.Text = "Show";
 			this.showToolStripMenuItem.Click += new System.EventHandler(this.mnuShowStats_Click);
 			// 
 			// pauseResumeToolStripMenuItem
 			// 
 			this.pauseResumeToolStripMenuItem.Name = "pauseResumeToolStripMenuItem";
-			this.pauseResumeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.pauseResumeToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.pauseResumeToolStripMenuItem.Text = "Pause / Resume";
 			this.pauseResumeToolStripMenuItem.Click += new System.EventHandler(this.pauseResumeToolStripMenuItem_Click);
 			// 
 			// btnPurchaseManager
 			// 
 			this.btnPurchaseManager.Name = "btnPurchaseManager";
-			this.btnPurchaseManager.Size = new System.Drawing.Size(181, 22);
+			this.btnPurchaseManager.Size = new System.Drawing.Size(270, 34);
 			this.btnPurchaseManager.Text = "Purchase Manager";
 			this.btnPurchaseManager.Click += new System.EventHandler(this.btnPurchaseManager_Click);
 			// 
 			// mnuLongBattle
 			// 
 			this.mnuLongBattle.Name = "mnuLongBattle";
-			this.mnuLongBattle.Size = new System.Drawing.Size(181, 22);
+			this.mnuLongBattle.Size = new System.Drawing.Size(270, 34);
 			this.mnuLongBattle.Text = "Long Battle";
 			this.mnuLongBattle.Click += new System.EventHandler(this.mnuLongBattle_Click);
 			// 
 			// fastForwardToolStripMenuItem
 			// 
 			this.fastForwardToolStripMenuItem.Name = "fastForwardToolStripMenuItem";
-			this.fastForwardToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.fastForwardToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.fastForwardToolStripMenuItem.Text = "Fast Forward";
 			this.fastForwardToolStripMenuItem.Click += new System.EventHandler(this.fastForwardToolStripMenuItem_Click);
 			// 
@@ -357,7 +358,7 @@
 			// 
 			this.repairEquipAtToolStripMenuItem.Enabled = false;
 			this.repairEquipAtToolStripMenuItem.Name = "repairEquipAtToolStripMenuItem";
-			this.repairEquipAtToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.repairEquipAtToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.repairEquipAtToolStripMenuItem.Text = "Repair equip at %";
 			// 
 			// cboRepairPercent
@@ -374,7 +375,7 @@
             "0.9",
             "1"});
 			this.cboRepairPercent.Name = "cboRepairPercent";
-			this.cboRepairPercent.Size = new System.Drawing.Size(121, 23);
+			this.cboRepairPercent.Size = new System.Drawing.Size(121, 33);
 			this.cboRepairPercent.ToolTipText = "Durability Percent to repair equipment";
 			this.cboRepairPercent.SelectedIndexChanged += new System.EventHandler(this.cboRepairPercent_SelectedIndexChanged);
 			// 
@@ -382,7 +383,7 @@
 			// 
 			this.purchaseUpgradeToolStripMenuItem.Enabled = false;
 			this.purchaseUpgradeToolStripMenuItem.Name = "purchaseUpgradeToolStripMenuItem";
-			this.purchaseUpgradeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.purchaseUpgradeToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.purchaseUpgradeToolStripMenuItem.Text = "Purchase / Upgrade";
 			// 
 			// cboSaveCredits
@@ -391,7 +392,7 @@
             "Yes",
             "No"});
 			this.cboSaveCredits.Name = "cboSaveCredits";
-			this.cboSaveCredits.Size = new System.Drawing.Size(121, 23);
+			this.cboSaveCredits.Size = new System.Drawing.Size(121, 33);
 			this.cboSaveCredits.ToolTipText = "Purchase / upgrade equipment";
 			this.cboSaveCredits.SelectedIndexChanged += new System.EventHandler(this.cboSaveCredits_SelectedIndexChanged);
 			// 
@@ -401,7 +402,7 @@
             "Prioritize Equipment",
             "Prioritize Robot"});
 			this.mnuPriority.Name = "mnuPriority";
-			this.mnuPriority.Size = new System.Drawing.Size(121, 23);
+			this.mnuPriority.Size = new System.Drawing.Size(121, 33);
 			this.mnuPriority.SelectedIndexChanged += new System.EventHandler(this.mnuPriority_SelectedIndexChanged);
 			this.mnuPriority.Click += new System.EventHandler(this.mnuPriority_Click);
 			// 
@@ -409,13 +410,13 @@
 			// 
 			this.maxHoursToolStripMenuItem.Enabled = false;
 			this.maxHoursToolStripMenuItem.Name = "maxHoursToolStripMenuItem";
-			this.maxHoursToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+			this.maxHoursToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.maxHoursToolStripMenuItem.Text = "Max Hours";
 			// 
 			// txtMaxManagerHrs
 			// 
 			this.txtMaxManagerHrs.Name = "txtMaxManagerHrs";
-			this.txtMaxManagerHrs.Size = new System.Drawing.Size(100, 23);
+			this.txtMaxManagerHrs.Size = new System.Drawing.Size(100, 31);
 			this.txtMaxManagerHrs.Text = "10";
 			this.txtMaxManagerHrs.TextChanged += new System.EventHandler(this.txtMaxManagerHrs_TextChanged);
 			// 
@@ -429,34 +430,34 @@
             this.minLevelToolStripMenuItem,
             this.MinJackpotLevel});
 			this.mnuDisplayJackpot.Name = "mnuDisplayJackpot";
-			this.mnuDisplayJackpot.Size = new System.Drawing.Size(181, 22);
+			this.mnuDisplayJackpot.Size = new System.Drawing.Size(270, 34);
 			this.mnuDisplayJackpot.Text = "3";
 			// 
 			// increaseJackpotToolStripMenuItem
 			// 
 			this.increaseJackpotToolStripMenuItem.Name = "increaseJackpotToolStripMenuItem";
-			this.increaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.increaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
 			this.increaseJackpotToolStripMenuItem.Text = "Increase Jackpot";
 			this.increaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpotToolStripMenuItem_Click);
 			// 
 			// increaseJackpot10ToolStripMenuItem
 			// 
 			this.increaseJackpot10ToolStripMenuItem.Name = "increaseJackpot10ToolStripMenuItem";
-			this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.increaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
 			this.increaseJackpot10ToolStripMenuItem.Text = "Increase Jackpot 10";
 			this.increaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.increaseJackpot10ToolStripMenuItem_Click);
 			// 
 			// decreaseJackpotToolStripMenuItem
 			// 
 			this.decreaseJackpotToolStripMenuItem.Name = "decreaseJackpotToolStripMenuItem";
-			this.decreaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.decreaseJackpotToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
 			this.decreaseJackpotToolStripMenuItem.Text = "Decrease Jackpot";
 			this.decreaseJackpotToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpotToolStripMenuItem_Click);
 			// 
 			// decreaseJackpot10ToolStripMenuItem
 			// 
 			this.decreaseJackpot10ToolStripMenuItem.Name = "decreaseJackpot10ToolStripMenuItem";
-			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.decreaseJackpot10ToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
 			this.decreaseJackpot10ToolStripMenuItem.Text = "Decrease Jackpot 10";
 			this.decreaseJackpot10ToolStripMenuItem.Click += new System.EventHandler(this.decreaseJackpot10ToolStripMenuItem_Click);
 			// 
@@ -464,20 +465,20 @@
 			// 
 			this.minLevelToolStripMenuItem.Enabled = false;
 			this.minLevelToolStripMenuItem.Name = "minLevelToolStripMenuItem";
-			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.minLevelToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
 			this.minLevelToolStripMenuItem.Text = "Min Value";
 			// 
 			// MinJackpotLevel
 			// 
 			this.MinJackpotLevel.Name = "MinJackpotLevel";
-			this.MinJackpotLevel.Size = new System.Drawing.Size(100, 23);
+			this.MinJackpotLevel.Size = new System.Drawing.Size(100, 31);
 			this.MinJackpotLevel.Text = "1";
 			this.MinJackpotLevel.TextChanged += new System.EventHandler(this.MinJackpotLevel_TextChanged);
 			// 
 			// mnuComunityOutreach
 			// 
 			this.mnuComunityOutreach.Name = "mnuComunityOutreach";
-			this.mnuComunityOutreach.Size = new System.Drawing.Size(181, 22);
+			this.mnuComunityOutreach.Size = new System.Drawing.Size(270, 34);
 			this.mnuComunityOutreach.Text = "Comunity Outreach";
 			this.mnuComunityOutreach.Click += new System.EventHandler(this.mnuComunityOutreach_Click);
 			// 
@@ -506,7 +507,7 @@
 			// 
 			// MainForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoScroll = true;
 			this.ClientSize = new System.Drawing.Size(493, 510);

@@ -1331,8 +1331,6 @@ namespace TrainingProject
 			}
 			//rebuild.getScore = 0;
 			rebuild.HealScore = 0;
-			int diviser = 10 - rebuild.Win;
-			if (diviser < 1) diviser = 1;
 			foreach (Team eTeam in GameTeams)
 			{
 				if (eTeam.Win < winGoal)
@@ -1343,8 +1341,6 @@ namespace TrainingProject
 					const string Format = "\n*!* {0} won {1:n0} credits during partial reset!";
 					getWarningLog = getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName, iWinnings);
 					eTeam.getCurrency += iWinnings;
-					eTeam.getScore += rebuild.getScore / (diviser);
-					rebuild.getScore -= rebuild.getScore / (diviser);
 				}
 			}
 			// reset jackpot
@@ -2413,13 +2409,13 @@ namespace TrainingProject
 								GameCurrencyLogMisc += Jackpot;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + " +++ Arena defeated monsters difficulty increased ";
 								Jackpot = 0;
-								if (getScore() > (GoalGameScore * 0.9))
+								if (getScore() >= GoalGameScore)
 								{
 									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
 									GoalGameScoreBase += GoalGameScoreBaseIncrement;
 									resetScore();
 								}
-								else if (getScore() > 900)
+								else
 								{
 									resetPartialScore();
 								}
