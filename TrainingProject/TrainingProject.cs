@@ -2944,7 +2944,7 @@ namespace TrainingProject
 			// randomly start boss fight
 			if (RndVal.Next(GoalGameScore * 20) < getScore()) bossFight = true;
 			// If divisible by 1000 start difficulty Fight
-			if (getScore() % 1000 == 0) GameDifficultyFight = true;
+			if (getScore() % 1000 == 0 && getScore() < (GoalGameScore-2000)) GameDifficultyFight = true;
 		}
 		public void buildingMaintenance()
 		{
