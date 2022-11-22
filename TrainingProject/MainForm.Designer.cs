@@ -119,28 +119,28 @@
 			// mnuExport
 			// 
 			this.mnuExport.Name = "mnuExport";
-			this.mnuExport.Size = new System.Drawing.Size(235, 34);
+			this.mnuExport.Size = new System.Drawing.Size(270, 34);
 			this.mnuExport.Text = "Export";
 			this.mnuExport.Click += new System.EventHandler(this.mnuExport_Click);
 			// 
 			// mnuImport
 			// 
 			this.mnuImport.Name = "mnuImport";
-			this.mnuImport.Size = new System.Drawing.Size(235, 34);
+			this.mnuImport.Size = new System.Drawing.Size(270, 34);
 			this.mnuImport.Text = "Import";
 			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
 			// 
 			// countdownToolStripMenuItem
 			// 
 			this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
-			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(235, 34);
+			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.countdownToolStripMenuItem.Text = "Countdown";
 			this.countdownToolStripMenuItem.Click += new System.EventHandler(this.countdownToolStripMenuItem_Click);
 			// 
 			// BreakTimersOff
 			// 
 			this.BreakTimersOff.Name = "BreakTimersOff";
-			this.BreakTimersOff.Size = new System.Drawing.Size(235, 34);
+			this.BreakTimersOff.Size = new System.Drawing.Size(270, 34);
 			this.BreakTimersOff.Text = "Break Timer On";
 			this.BreakTimersOff.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
 			// 
@@ -263,14 +263,14 @@
 			// mnuBossFight
 			// 
 			this.mnuBossFight.Name = "mnuBossFight";
-			this.mnuBossFight.Size = new System.Drawing.Size(270, 34);
+			this.mnuBossFight.Size = new System.Drawing.Size(229, 34);
 			this.mnuBossFight.Text = "Boss";
 			this.mnuBossFight.Click += new System.EventHandler(this.mnuBossFight_Click);
 			// 
 			// difficultyFightToolStripMenuItem
 			// 
 			this.difficultyFightToolStripMenuItem.Name = "difficultyFightToolStripMenuItem";
-			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(229, 34);
 			this.difficultyFightToolStripMenuItem.Text = "Difficulty Fight";
 			this.difficultyFightToolStripMenuItem.Visible = false;
 			this.difficultyFightToolStripMenuItem.Click += new System.EventHandler(this.difficultyFightToolStripMenuItem_Click);

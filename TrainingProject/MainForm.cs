@@ -23,6 +23,7 @@ namespace TrainingApp
 		private int maxCount = 1000;
 		private int tickRate = 1000;
 		private int counter;
+		private int PauseTimer;
 		private Boolean breakTimerOn = true;
 		private DateTime saveTime;
 		public MainForm()
@@ -595,6 +596,8 @@ namespace TrainingApp
 		private void mnuAutobattle_Click(object sender, EventArgs e)
 		{
 			pause();
+			PauseTimer = 0;
+			MyGame.GameDifficultyFightPaused = false;
 		}
 
 		private void mnuResetAuto_Click(object sender, EventArgs e)
@@ -666,6 +669,9 @@ namespace TrainingApp
 				BreakTimer.Interval = 50; ; //speed up for testing
 			#endif
 			pause();
+			// Ensure we don't automatically pause again
+			PauseTimer = 0;
+			MyGame.GameDifficultyFightPaused = false;
 			saveGame(true);
 			cbTeamSelect.Items.Clear();
 			cbTeamSelect.Items.Add("Stats");
@@ -813,6 +819,21 @@ namespace TrainingApp
 			if (tmp.Next(100) > 90 && DateTime.Now > MyGame.SafeTime)
 			{
 				MyGame.continueFight(false);
+			}
+			// check if difficulty fight has begun and needs to be paused
+			if (MyGame.GameDifficultyFightPaused)
+			{
+				// pause for 10000 cycles
+				if (!MyGame.paused) { pause(); }
+				PauseTimer++;
+				// after 10000 cycles, continue
+				if (PauseTimer > 10000) 
+				{
+					// Unpause
+					pause();
+					PauseTimer = 0;
+					MyGame.GameDifficultyFightPaused = false;
+				}
 			}
 			saveGame();
 		}

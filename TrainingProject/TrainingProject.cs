@@ -537,6 +537,7 @@ namespace TrainingProject
 		public int roundCount;
 		public bool bossFight;
 		public bool GameDifficultyFight;
+		public bool GameDifficultyFightPaused;
 		public int WinCount;
 		public int FastForwardCount;
 		public bool FastForward;
@@ -1526,6 +1527,8 @@ namespace TrainingProject
 				GameTeam2.Add(Monsters);
 				Jackpot = gameDifficulty * getArenaLvl * 1000;
 				getWarningLog = getFightLog = Environment.NewLine + " Game Difficulty Fight! ";
+				// Pause Game
+				GameDifficultyFightPaused = true;
 			}
 		}
 		public void sortSkills()
@@ -2323,7 +2326,7 @@ namespace TrainingProject
 					if (display)
 					{
 						char goalScore = ' ';
-						if (getScore() > (GoalGameScore * 0.9)) goalScore = '!';
+						if (getScore() > (GoalGameScore * 0.8)) goalScore = '!';
 
 						string strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
 						if (roundCount < 20 && GameTeam1[0].getName != "Arena" && !GameTeam2[0].isMonster)
@@ -2621,7 +2624,7 @@ namespace TrainingProject
 					MainPanel.Controls.Add(new Label { AutoSize = true, Text = "" });
 					foreach (Team eTeam in GameTeams)
 					{
-						if (!isFighting(eTeam.getName))
+						//if (!isFighting(eTeam.getName))
 						{
 							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount) };
 							if (getGameCurrency > 0)
@@ -2944,7 +2947,7 @@ namespace TrainingProject
 			// randomly start boss fight
 			if (RndVal.Next(GoalGameScore * 20) < getScore()) bossFight = true;
 			// If divisible by 1000 start difficulty Fight
-			if (getScore() % 1000 == 0 && getScore() < (GoalGameScore-2000)) GameDifficultyFight = true;
+			if (getScore() % 1000 == 0 && getScore() < (GoalGameScore*0.8)) GameDifficultyFight = true;
 		}
 		public void buildingMaintenance()
 		{
