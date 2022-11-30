@@ -156,6 +156,8 @@ namespace TrainingApp
 				#if DEBUG
 					timer1.Interval = 50; //speed up for testing
 				#endif
+				// Make sure the computer doesn't go to sleep
+				SetThreadExecutionState( EXECUTION_STATE.ES_CONTINUOUS);
 			}
 			else
 			{
@@ -163,7 +165,6 @@ namespace TrainingApp
 				btnAutomatic.BackColor = Color.Red;
 			}
 			cbTeamSelect.Focus();
-			SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
 		}
 		public void update()
 		{
@@ -864,7 +865,9 @@ namespace TrainingApp
 					}
 					else
 					{
-						WriteJSON();
+						string name = DateTime.Now.ToString("yyyyMMdd") + "_TrainingProject.bin";
+						BinarySerialization.WriteToBinaryFile<Game>("data\\" + name, MyGame);
+						this.Text = "Training Program - " + name;
 					}
 				}
 				catch { MyGame.getWarningLog = "\nSave Failed!!!!"; }
@@ -1025,6 +1028,11 @@ namespace TrainingApp
 		{
 			MyGame.getGameCurrency -= MyGame.getArenaLvlCost;
 			MyGame.arenaComunityOutreach();
+		}
+
+		private void fixToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MyGame.fixTech();
 		}
 	}
 	public static class BinarySerialization

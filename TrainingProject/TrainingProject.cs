@@ -444,8 +444,8 @@ namespace TrainingProject
 		[JsonProperty]
 		private long ShopLvlCost;
 		[JsonProperty]
-		public long ShopLvlCostBase;
-		public long ShopLvlCostBaseIncrement = 1000;
+		public long MainLvlCostBase;
+		public long MainLvlCostBaseIncrement = 1000;
 		[JsonProperty]
 		private long ShopLvlMaint;
 		[JsonProperty]
@@ -465,9 +465,6 @@ namespace TrainingProject
 		[JsonProperty]
 		private long ArenaLvlCost;
 		[JsonProperty]
-		public long ArenaLvlCostBase;
-		public long ArenaLvlCostBaseIncrement = 1000;
-		[JsonProperty]
 		private long ArenaLvlMaint;
 		[JsonProperty]
 		private long ArenaComunityReach;
@@ -475,9 +472,6 @@ namespace TrainingProject
 		public int MonsterDenLvl;
 		[JsonProperty]
 		private long MonsterDenLvlCost;
-		[JsonProperty]
-		public long MonsterDenLvlCostBase;
-		public long MonsterDenLvlCostBaseIncrement = 1000;
 		[JsonProperty]
 		private long MonsterDenLvlMaint;
 		[JsonProperty]
@@ -491,9 +485,6 @@ namespace TrainingProject
 		private int ResearchDevLvl;
 		[JsonProperty]
 		private long ResearchDevLvlCost;
-		[JsonProperty]
-		public long ResearchDevLvlCostBase;
-		public long ResearchDevLvlCostBaseIncrement = 1000;
 		[JsonProperty]
 		private long ResearchDevMaint;
 		[JsonProperty]
@@ -748,7 +739,7 @@ namespace TrainingProject
 			auto = true;
 			ShopLvl = pShopLvl;
 			ShopLvlCost = pShopLvlCost;
-			ShopLvlCostBase = pShopLvlCostBase;
+			MainLvlCostBase = pShopLvlCostBase;
 			ShopLvlMaint = pShopLvlMaint;
 			ShopStock = pShopStock;
 			ShopStockCost = pShopStockCost;
@@ -760,7 +751,6 @@ namespace TrainingProject
 			PurchaseUpgrade = false;
 			ArenaLvl = pArenaLvl;
 			ArenaLvlCost = pArenaLvlCost;
-			ArenaLvlCostBase = pArenaLvlCostBase;
 			ArenaLvlMaint = pArenaLvlMaint;
 			ArenaComunityReach = pArenaComunityReach;
 			MonsterDenLvl = pMonsterDenLvl;
@@ -771,7 +761,6 @@ namespace TrainingProject
 			MonsterDenRepairsBase = pMonsterDenRepairBase;
 			ResearchDevLvl = pResearchDevLvl;
 			ResearchDevLvlCost = pResearchDevLvlCost;
-			ResearchDevLvlCostBase = pResearchDevLvlCostBase;
 			ResearchDevMaint = pResearchDevMaint;
 			ResearchDevHealValue = pResearchDevHealValue;
 			ResearchDevHealValueSum = 0;
@@ -850,7 +839,7 @@ namespace TrainingProject
 			getFightLog = "";
 			ShopLvl = 1;
 			ShopLvlCost = 2000;
-			ShopLvlCostBase = ShopLvlCostBaseIncrement;
+			MainLvlCostBase = MainLvlCostBaseIncrement;
 			ShopLvlMaint = 1;
 			ShopStock = 1;
 			ShopBays = 1;
@@ -863,19 +852,16 @@ namespace TrainingProject
 			PurchaseUpgrade = false;
 			ArenaLvl = 1;
 			ArenaLvlCost = 2000;
-			ArenaLvlCostBase = ArenaLvlCostBaseIncrement;
 			ArenaLvlMaint = 1;
 			ArenaComunityReach = 2000;
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 2000;
-			MonsterDenLvlCostBase = MonsterDenLvlCostBaseIncrement;
 			MonsterDenLvlMaint = 1;
 			MonsterDenBonus = 5;
 			MonsterDenRepairs = 200;
 			MonsterDenRepairsBase = MonsterDenRepairsBaseIncrement;
 			ResearchDevLvl = 1;
 			ResearchDevLvlCost = 2000;
-			ResearchDevLvlCostBase = ResearchDevLvlCostBaseIncrement;
 			ResearchDevMaint = 1;
 			ResearchDevHealValue = 2;
 			ResearchDevHealValueSum = 0;
@@ -1007,7 +993,6 @@ namespace TrainingProject
 		}
 		public void fixTech()
 		{
-			bossLevelUp();
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
 		}
 
@@ -1087,9 +1072,9 @@ namespace TrainingProject
 			GameCurrencyLogUp -= ArenaLvlCost;
 			ArenaLvlMaint += ArenaLvlCost/2;
 			ArenaLvl++;
-			ArenaLvlCost = roundValue(ArenaLvlCost, ArenaLvlCostBase, "up");
-			ArenaComunityReach = roundValue(ArenaComunityReach, ArenaLvlCostBase, "up");
-			ArenaLvlCostBase += ArenaLvlCostBaseIncrement;
+			ArenaLvlCost = roundValue(ArenaLvlCost, MainLvlCostBase, "up");
+			ArenaComunityReach = roundValue(ArenaComunityReach, MainLvlCostBase, "up");
+			MainLvlCostBase += MainLvlCostBaseIncrement;
 			int lastPrice = 0;
 			int totalLev = 0;
 			foreach (ArenaSeating eSeating in Seating)
@@ -1157,8 +1142,8 @@ namespace TrainingProject
 			GameCurrencyLogUp -= MonsterDenLvlCost;
 			MonsterDenLvlMaint += MonsterDenLvlCost / 2;
 			MonsterDenLvl++;
-			MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MonsterDenLvlCostBase, "up");
-			MonsterDenLvlCostBase += MonsterDenLvlCostBaseIncrement;
+			MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MainLvlCostBase, "up");
+			MainLvlCostBase += MainLvlCostBaseIncrement;
 			MonsterDenBonus += RndVal.Next(MonsterDenLvl);
 			MonsterDenRepairs = roundValue(MonsterDenRepairs, MonsterDenRepairsBase, "up");
 			MonsterDenRepairsBase += MonsterDenRepairsBaseIncrement;
@@ -1172,8 +1157,8 @@ namespace TrainingProject
 			GameCurrencyLogUp -= ShopLvlCost;
 			ShopLvlMaint += ShopLvlCost / 2;
 			ShopLvl++;
-			ShopLvlCost = roundValue(ShopLvlCost, ShopLvlCostBase, "up");
-			ShopLvlCostBase += ShopLvlCostBaseIncrement;
+			ShopLvlCost = roundValue(ShopLvlCost, MainLvlCostBase, "up");
+			MainLvlCostBase += MainLvlCostBaseIncrement;
 			if (RndVal.Next(100) > ((75 + (ShopStock * 10)) - ShopLvl))
 			{
 				ShopStock++;
@@ -1243,14 +1228,14 @@ namespace TrainingProject
 			GameCurrencyLogUp -= ResearchDevLvlCost;
 			ResearchDevMaint += ResearchDevLvlCost / 2;
 			ResearchDevLvl++;
-			ResearchDevLvlCost = roundValue(ResearchDevLvlCost, ResearchDevLvlCostBase, "up");
-			ResearchDevLvlCostBase += ResearchDevLvlCostBaseIncrement;
+			ResearchDevLvlCost = roundValue(ResearchDevLvlCost, MainLvlCostBase, "up");
+			MainLvlCostBase += MainLvlCostBaseIncrement;
 			ResearchDevHealValue = roundValue(ResearchDevHealValue, ResearchDevHealValueBase, "up");
 			ResearchDevHealValueBase += ResearchDevHealValueBaseIncrement;
 			ResearchDevRebuild = roundValue(ResearchDevRebuild, ResearchDevRebuildBase, "up");
 			ResearchDevRebuildBase += ResearchDevRebuildBaseIncrement;
 			msg += string.Format("\n  Heal +{0:n0} Rebuild +{1:n0}", ResearchDevHealValue - tmpResearchDevHealValue, ResearchDevRebuild - tmpResearchDevRebuild);
-			// chance to add a new healing baynic
+			// chance to add a new healing bay
 			if (RndVal.Next(100 + GameTeams.Count) > (95 + ResearchDevHealBays))
 			{
 				ResearchDevHealBays++;
@@ -1678,7 +1663,7 @@ namespace TrainingProject
 				if (getGameCurrency <= 0) tmpMonsterDenBonus = 0;
 				if (GameTeam1.Count == 1) PotScore += tmpMonsterDenBonus;
 				// small chance to reduce the outreach percentage 
-				if (RndVal.Next(1000) < ArenaLvl) ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCostBase / 100), "down");
+				if (RndVal.Next(1000) < ArenaLvl) ArenaComunityReach = roundValue(ArenaComunityReach, (MainLvlCostBase / 100), "down");
 				int tmpTotalScore = (int)(PotScore * getArenaOutreach());
 				if (tmpTotalScore < 0) tmpTotalScore = 0;
 				if (GameTeam1.Count == 1)
@@ -2969,7 +2954,7 @@ namespace TrainingProject
 						MaintCost += Math.Abs(getArenaLvlMaint);
 						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > 1000)
 						{
-							getArenaLvlCost = roundValue(getArenaLvlCost, ArenaLvlCostBase, "down");
+							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
 							if (getArenaLvlCost < 1000) getArenaLvlCost = 1000;
 							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
@@ -3035,7 +3020,7 @@ namespace TrainingProject
 						// if maintenace is more than half the cost to upgrade / rebuild
 						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
 						{
-							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
+							getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
 							if (getShopLvlCost < 1000) getShopLvlCost = 1000;
 							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
@@ -3095,7 +3080,7 @@ namespace TrainingProject
 						MaintCost += Math.Abs(getShopLvlMaint / 100);
 						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
 						{
-							getShopLvlCost = roundValue(getShopLvlCost, ShopLvlCostBase, "down");
+							getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
 							if (getShopLvlCost < 1000) getShopLvlCost = 1000;
 							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
@@ -3117,7 +3102,7 @@ namespace TrainingProject
 						MaintCost = Math.Abs(getResearchDevMaint);
 						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > 1000)
 						{
-							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, ResearchDevLvlCostBase, "down");
+							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
 							if (getResearchDevLvlCost < 1000) getResearchDevLvlCost = 1000;
 							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
@@ -3175,7 +3160,7 @@ namespace TrainingProject
 						MaintCost += Math.Abs(ResearchDevMaint / 100);
 						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > 1000)
 						{
-							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, ResearchDevLvlCostBase, "down");
+							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
 							if (getResearchDevLvlCost < 1000) getResearchDevLvlCost = 1000;
 							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
@@ -3203,7 +3188,7 @@ namespace TrainingProject
 						MaintCost += Math.Abs(MonsterDenLvlMaint);
 						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
 						{
-							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MonsterDenLvlCostBase, "down");
+							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MainLvlCostBase, "down");
 							if (getMonsterDenLvlCost < 1000) getMonsterDenLvlCost = 1000;
 							MonsterDenLvlMaint = getMonsterDenLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
@@ -3297,10 +3282,10 @@ namespace TrainingProject
 				case 55:
 					// Tax
 					long tmpMaint = (long)((ArenaLvlMaint * 0.1) + (MonsterDenLvlMaint * 0.1) + (ShopLvlMaint * 0.1) + (ResearchDevMaint * 0.1));
-					ArenaLvlMaint -=		(ArenaLvlCostBase / 100);
-					MonsterDenLvlMaint -=	(MonsterDenLvlCostBase / 100);
-					ShopLvlMaint -=			(ShopLvlCostBase / 100);
-					ResearchDevMaint -=		(ResearchDevLvlCostBase / 100);
+					ArenaLvlMaint -=		(MainLvlCostBase / 100);
+					MonsterDenLvlMaint -=	(MainLvlCostBase / 100);
+					ShopLvlMaint -=			(MainLvlCostBase / 100);
+					ResearchDevMaint -=		(MainLvlCostBase / 100);
 					if (tmpMaint > 0)
 						MaintCost = roundValue(tmpMaint);
 					else
@@ -3329,7 +3314,7 @@ namespace TrainingProject
 					}
 					break;
 				case 100:
-					ArenaComunityReach = roundValue(ArenaComunityReach, (RndVal.Next((int)ArenaLvlCostBase) / 2), "down");
+					ArenaComunityReach = roundValue(ArenaComunityReach, (RndVal.Next((int)MainLvlCostBase) / 2), "down");
 					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to " + String.Format("{0:p2}", getArenaOutreach() - 1);
 					break;
 				case 203:
@@ -3351,7 +3336,7 @@ namespace TrainingProject
 						MaintCost += Math.Abs(getArenaLvlMaint / 100);
 						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > 1000)
 						{
-							getArenaLvlCost = roundValue(getArenaLvlCost, ArenaLvlCostBase, "down");
+							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
 							if (getArenaLvlCost < 1000) getArenaLvlCost = 1000;
 							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
@@ -3382,7 +3367,7 @@ namespace TrainingProject
 						MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
 						{
-							MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MonsterDenLvlCostBase, "down");
+							MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MainLvlCostBase, "down");
 							if (MonsterDenLvlCost < 1000) MonsterDenLvlCost = 1000;
 							MonsterDenLvlMaint = MonsterDenLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
@@ -3396,51 +3381,51 @@ namespace TrainingProject
 					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
 					break;
 				case 211:
-					if (getArenaOutreach() < 0.05) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.05) MaintCost += (MainLvlCostBase / 10);
 					goto case 212;
 				case 212:
-					if (getArenaOutreach() < 0.1) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.1) MaintCost += (MainLvlCostBase / 10);
 					goto case 213;
 				case 213:
-					if (getArenaOutreach() < 0.15) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.15) MaintCost += (MainLvlCostBase / 10);
 					goto case 214;
 				case 214:
-					if (getArenaOutreach() < 0.2) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.2) MaintCost += (MainLvlCostBase / 10);
 					goto case 215;
 				case 215:
-					if (getArenaOutreach() < 0.25) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.25) MaintCost += (MainLvlCostBase / 10);
 					goto case 216;
 				case 216:
-					if (getArenaOutreach() < 0.3) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.3) MaintCost += (MainLvlCostBase / 10);
 					goto case 217;
 				case 217:
-					if (getArenaOutreach() < 0.35) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.35) MaintCost += (MainLvlCostBase / 10);
 					goto case 218;
 				case 218:
-					if (getArenaOutreach() < 0.4) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.4) MaintCost += (MainLvlCostBase / 10);
 					goto case 219;
 				case 219:
-					if (getArenaOutreach() < 0.45) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.45) MaintCost += (MainLvlCostBase / 10);
 					goto case 220;
 				case 220:
-					if (getArenaOutreach() < 0.5) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.5) MaintCost += (MainLvlCostBase / 10);
 					goto case 221;
 				case 221:
-					if (getArenaOutreach() < 0.55) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.55) MaintCost += (MainLvlCostBase / 10);
 					goto case 222;
 				case 222:
-					if (getArenaOutreach() < 0.6) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.6) MaintCost += (MainLvlCostBase / 10);
 					goto case 223;
 				case 223:
-					if (getArenaOutreach() < 0.65) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.65) MaintCost += (MainLvlCostBase / 10);
 					goto case 224;
 				case 224:
-					if (getArenaOutreach() < 0.7) MaintCost += (ArenaLvlCostBase / 10);
+					if (getArenaOutreach() < 0.7) MaintCost += (MainLvlCostBase / 10);
 					goto case 225;
 				case 225:
 					if (getArenaOutreach() < 0.75)
 					{
-						MaintCost += (ArenaLvlCostBase / 10);
+						MaintCost += (MainLvlCostBase / 10);
 						ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
 						if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach " + String.Format("{0:p2}!", getArenaOutreach()-1);
 					}

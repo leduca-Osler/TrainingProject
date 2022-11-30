@@ -76,6 +76,7 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
+			this.fixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -97,7 +98,7 @@
             this.btnAutomatic});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(493, 38);
+			this.toolStrip1.Size = new System.Drawing.Size(493, 33);
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -108,11 +109,12 @@
             this.mnuExport,
             this.mnuImport,
             this.countdownToolStripMenuItem,
-            this.BreakTimersOff});
+            this.BreakTimersOff,
+            this.fixToolStripMenuItem});
 			this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
 			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnExport.Name = "btnExport";
-			this.btnExport.Size = new System.Drawing.Size(41, 33);
+			this.btnExport.Size = new System.Drawing.Size(41, 28);
 			this.btnExport.Text = "Export / Import";
 			this.btnExport.ButtonClick += new System.EventHandler(this.btnExport_ButtonClick);
 			// 
@@ -415,6 +417,7 @@
 			// 
 			// txtMaxManagerHrs
 			// 
+			this.txtMaxManagerHrs.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.txtMaxManagerHrs.Name = "txtMaxManagerHrs";
 			this.txtMaxManagerHrs.Size = new System.Drawing.Size(100, 31);
 			this.txtMaxManagerHrs.Text = "10";
@@ -470,6 +473,7 @@
 			// 
 			// MinJackpotLevel
 			// 
+			this.MinJackpotLevel.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.MinJackpotLevel.Name = "MinJackpotLevel";
 			this.MinJackpotLevel.Size = new System.Drawing.Size(100, 31);
 			this.MinJackpotLevel.Text = "1";
@@ -504,6 +508,13 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
+			// 
+			// fixToolStripMenuItem
+			// 
+			this.fixToolStripMenuItem.Name = "fixToolStripMenuItem";
+			this.fixToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+			this.fixToolStripMenuItem.Text = "Fix";
+			this.fixToolStripMenuItem.Click += new System.EventHandler(this.fixToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -573,6 +584,7 @@
 		private System.Windows.Forms.ToolStripMenuItem fastForwardToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem mnuComunityOutreach;
 		private System.Windows.Forms.ToolStripComboBox mnuPriority;
+		private System.Windows.Forms.ToolStripMenuItem fixToolStripMenuItem;
 	}
 }
 
