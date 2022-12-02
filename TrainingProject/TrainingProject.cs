@@ -379,9 +379,11 @@ namespace TrainingProject
 		public String warningLogSave;
 		private int RoboNumeral;
 		private int maxRoboNumeral;
+		private char RoboNumeralChar;
 		private int findMonster;
 		private int Numeral;
 		private int maxNumeral;
+		private char NumeralChar;
 		public int fightPercent;
 		public int fightPercentMax;
 		private int fightCount;
@@ -667,7 +669,6 @@ namespace TrainingProject
 		{
 			get
 			{
-				if (getScore() > GoalGameScore) resetScore();
 				return MaxTeams - GameTeams.Count;
 			}
 			set { MaxTeams = value; }
@@ -677,10 +678,12 @@ namespace TrainingProject
 			get { return Numeral; }
 			set
 			{
+				if (NumeralChar == null) { NumeralChar = '.'; }
 				if (Numeral > maxNumeral)
 				{
 					Numeral = 1;
 					maxNumeral += (int)(maxNumeral * .1);
+					NumeralChar++;
 				}
 				else
 					Numeral = value;
@@ -691,10 +694,12 @@ namespace TrainingProject
 			get { return RoboNumeral; }
 			set
 			{
+				if (RoboNumeralChar == null) { RoboNumeralChar = '.'; }
 				if (RoboNumeral > maxRoboNumeral)
 				{
 					RoboNumeral = 1;
 					maxRoboNumeral += (int)(maxRoboNumeral * .1);
+					RoboNumeral++;
 				}
 				else
 					RoboNumeral = value;
@@ -974,13 +979,13 @@ namespace TrainingProject
 			string name = "";
 			int RoboType = RndVal.Next(index);
 			if (RoboType < 20)
-				name = string.Format("{0} {1}", RoboName[index], ToRoman(getRoboNumeral++)); // Roman Numeral
+				name = string.Format("{0}{2}{1}", RoboName[index], ToRoman(getRoboNumeral++), RoboNumeralChar); // Roman Numeral
 			else if (RoboType < 100)
-				name = string.Format("{0} {1:N0}", RoboName[index], getRoboNumeral++); // base 10
+				name = string.Format("{0}{2}{1:N0}", RoboName[index], getRoboNumeral++, RoboNumeralChar); // base 10
 			else if (RoboType < 250)
-				name = string.Format("{0} #{1:X}", RoboName[index], getRoboNumeral++); // Hex
+				name = string.Format("{0}{2}#{1:X}", RoboName[index], getRoboNumeral++, RoboNumeralChar); // Hex
 			else
-				name = string.Format("{0} ~{1}", RoboName[index], ToAlphaNumeric(getRoboNumeral++)); // Alphanumberic
+				name = string.Format("{0}{2}~{1}", RoboName[index], ToAlphaNumeric(getRoboNumeral++), RoboNumeralChar); // Alphanumberic
 			return name;
 		}
 		public int maxWins()
@@ -994,6 +999,8 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+			RoboNumeralChar = '.';
+			NumeralChar = '.';
 		}
 
 		public void resetShowDefeated()
@@ -1315,7 +1322,6 @@ namespace TrainingProject
 					scouted /= 2;
 				}
 			}
-			//rebuild.getScore = 0;
 			rebuild.HealScore = 0;
 			foreach (Team eTeam in GameTeams)
 			{
@@ -1869,7 +1875,7 @@ namespace TrainingProject
 			if (TeamSelect > 0)
 			{
 				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-				Label lblNextNumeral	= new Label { AutoSize = true, Text = String.Format("Next Numbr: {0}/{1:n0}/#{1:X}/`{2}", ToRoman(getRoboNumeral), getRoboNumeral, ToAlphaNumeric(getRoboNumeral)) };
+				Label lblNextNumeral	= new Label { AutoSize = true, Text = String.Format("Next Numbr:{3}{0}/{3}{1:n0}/{3}#{1:X}/{3}`{2}", ToRoman(getRoboNumeral), getRoboNumeral, ToAlphaNumeric(getRoboNumeral), RoboNumeralChar) };
 				Label lblTeamName		= new Label { AutoSize = true, Text = String.Format("\nTeam Name:  {0}", GameTeams[TeamSelect - 1].getName) };
 				//Label lblTeamName = new Label { AutoSize = true, Text = "Team Name:  " + GameTeams[TeamSelect - 1].getName };
 				lblTeamName.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].rename(InputBox("Enter Name ", "Enter Name")));
@@ -2146,7 +2152,7 @@ namespace TrainingProject
 			FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 			FlowLayoutPanel MyMonsterPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 			 FlowLayoutPanel MyButtonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
-			Label lblTeamName = new Label { AutoSize = true, Text = String.Format("\n\nTeam Name:  {0}       {1:c0}  ({2}-{3})\nNext Numbr: {4}/{5:n0}/#{5:X}/`{6}", displayTeam.getName,displayTeam.getCurrency,type, StartingCount, ToRoman(getNumeral), getNumeral, ToAlphaNumeric(getNumeral)) };
+			Label lblTeamName = new Label { AutoSize = true, Text = String.Format("\n\nTeam Name:  {0}       {1:c0}  ({2}-{3})\nNext Numbr:{7}{4}/{7}{5:n0}/{7}#{5:X}/{7}`{6}", displayTeam.getName,displayTeam.getCurrency,type, StartingCount, ToRoman(getNumeral), getNumeral, ToAlphaNumeric(getNumeral), NumeralChar) };
 			Label lblRobots = new Label { AutoSize = true, Text = "Monsters:   " + displayTeam.MyTeam.Count };
 			MainPanel.Controls.Add(lblTeamName);
 			MainPanel.Controls.Add(lblRobots);
@@ -2648,13 +2654,13 @@ namespace TrainingProject
 						{
 							int type = RndVal.Next(getNumeral);
 							if (type < 30)
-								eMonster.getName += "." + ToRoman(getNumeral++);
+								eMonster.getName += NumeralChar + ToRoman(getNumeral++);
 							else if (type < 100)
-								eMonster.getName += string.Format(".{0:N0}", getNumeral++);
+								eMonster.getName += string.Format("{0}{1:N0}", NumeralChar, getNumeral++);
 							else if (type < 250)
-								eMonster.getName += string.Format(".#{0:X}", getNumeral++);
+								eMonster.getName += string.Format("{0}#{0:X}", NumeralChar, getNumeral++);
 							else
-								eMonster.getName += ".~" + ToAlphaNumeric(getNumeral++);
+								eMonster.getName += NumeralChar + "~" + ToAlphaNumeric(getNumeral++);
 							eMonster.bMonster = true;
 						}
 						for (int i = 100; i < RndVal.Next(findMonster); i += 100)
