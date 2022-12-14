@@ -1197,13 +1197,13 @@ namespace TrainingProject
 				getGameCurrency -= ShopStockCost;
 				GameCurrencyLogMisc -= ShopStockCost;
 				Equipment tmp = new Equipment(AddArmour(), RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, 100);
-				int upgradeVal = 100;
+				int upgradeVal = 20;
 				while (RndVal.Next(upgradeVal) < getShopLvl)
 				{
 					long cost = tmp.eUpgradeCost;
 					tmp.upgrade(ShopUpgradeValue, RndVal);
 					tmp.ePrice += (long)(cost * .75);
-					upgradeVal += 10;
+					upgradeVal += 5;
 				}
 				storeEquipment.Add(tmp);
 				addLifetimeEquipmentForged();
@@ -1276,7 +1276,7 @@ namespace TrainingProject
 				GameCurrencyLogUp -= TeamCost;
 				TeamCost = roundValue(TeamCost, TeamCostBase, "up");
 				TeamCostBase += TeamCostBaseIncrement;
-				Team tmp = new Team(RndVal.Next(GameTeams.Count, GameTeams.Count * 3), this);
+				Team tmp = new Team(GameTeams.Count, this);
 				TeamName = tmp.getName;
 				GameTeams.Add(tmp);
 				getWarningLog = getFightLog = tmp.getTeamLog = string.Format("\n!*!*! new team {0} was added!", tmp.getName);
@@ -1623,7 +1623,7 @@ namespace TrainingProject
 					ArenaOpponent2++;
 					if (getGameCurrency > 0)
 					{
-						if (fightCount >= 3)
+						if (fightCount >= 2)
 							fightPercent++;
 						else
 							fightPercent--;
@@ -2658,7 +2658,7 @@ namespace TrainingProject
 							else if (type < 100)
 								eMonster.getName += string.Format("{0}{1:N0}", NumeralChar, getNumeral++);
 							else if (type < 250)
-								eMonster.getName += string.Format("{0}#{0:X}", NumeralChar, getNumeral++);
+								eMonster.getName += string.Format("{0}#{1:X}", NumeralChar, getNumeral++);
 							else
 								eMonster.getName += NumeralChar + "~" + ToAlphaNumeric(getNumeral++);
 							eMonster.bMonster = true;
