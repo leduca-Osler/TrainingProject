@@ -1341,8 +1341,6 @@ namespace TrainingProject
 		}
 		public void resetScore()
 		{
-			//getGameCurrency += MaxTeams * getArenaLvl * 1000;
-			//GameCurrencyLogMisc += TeamCost;
 			// team with top score has chance to loose robots
 			Team rebuild = new Team(1,1,1);
 			foreach (Team eTeam in GameTeams)
@@ -1707,6 +1705,11 @@ namespace TrainingProject
 							unseated++;
 						}
 					}
+				}
+				if (GameTeam1.Count > 1)
+				{
+					// If no seats available exit function (unless it is first team added)
+					if (attendees == unseated) return;
 				}
 				// total attendance
 				int countChars = 10 + tmpTotalScore.ToString().Length;
@@ -2405,8 +2408,7 @@ namespace TrainingProject
 								Jackpot = 0;
 								if (getScore() >= GoalGameScore)
 								{
-									GoalGameScore = (int)roundValue(GoalGameScore, GoalGameScoreBase, "up");
-									GoalGameScoreBase += GoalGameScoreBaseIncrement;
+									GoalGameScore = (int)roundValue(GoalGameScore, (100*gameDifficulty), "up");
 									resetScore();
 								}
 								else
@@ -2439,8 +2441,8 @@ namespace TrainingProject
 								Jackpot = 0;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters ";
 								if (getScore() > (GoalGameScore * 0.9))
-								{
-									GoalGameScore += RndVal.Next(GoalGameScoreBase);
+								{ 
+									GoalGameScore = (int)roundValue(GoalGameScore, (100 * gameDifficulty), "up");
 									resetScore();
 								}
 							}
