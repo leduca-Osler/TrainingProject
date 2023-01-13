@@ -1709,7 +1709,7 @@ namespace TrainingProject
 				if (GameTeam1.Count > 1)
 				{
 					// If no seats available exit function (unless it is first team added)
-					if (attendees == unseated) return;
+					if (attendees == unseated && tmpTotalScore > 10) return;
 				}
 				// total attendance
 				int countChars = 10 + tmpTotalScore.ToString().Length;
@@ -2960,10 +2960,14 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getArenaLvlMaint);
-						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > 1000)
+						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > MainLvlCostBase)
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
-							if (getArenaLvlCost < 1000) getArenaLvlCost = 1000;
+							if (getArenaLvlCost < MainLvlCostBase)
+							{
+								getArenaLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
@@ -3026,10 +3030,14 @@ namespace TrainingProject
 					{
 						MaintCost = Math.Abs(getShopLvlMaint);
 						// if maintenace is more than half the cost to upgrade / rebuild
-						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
+						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > MainLvlCostBase)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
-							if (getShopLvlCost < 1000) getShopLvlCost = 1000;
+							if (getShopLvlCost < MainLvlCostBase)
+							{
+								getShopLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
@@ -3086,10 +3094,14 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getShopLvlMaint / 100);
-						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > 1000)
+						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > MainLvlCostBase)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
-							if (getShopLvlCost < 1000) getShopLvlCost = 1000;
+							if (getShopLvlCost < MainLvlCostBase)
+							{
+								getShopLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
@@ -3108,10 +3120,14 @@ namespace TrainingProject
 					else
 					{
 						MaintCost = Math.Abs(getResearchDevMaint);
-						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > 1000)
+						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > MainLvlCostBase)
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
-							if (getResearchDevLvlCost < 1000) getResearchDevLvlCost = 1000;
+							if (getResearchDevLvlCost < MainLvlCostBase)
+							{
+								getResearchDevLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
@@ -3166,10 +3182,14 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(ResearchDevMaint / 100);
-						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > 1000)
+						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > MainLvlCostBase)
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
-							if (getResearchDevLvlCost < 1000) getResearchDevLvlCost = 1000;
+							if (getResearchDevLvlCost < MainLvlCostBase)
+							{
+								getResearchDevLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
@@ -3194,10 +3214,14 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(MonsterDenLvlMaint);
-						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
+						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > MainLvlCostBase)
 						{
 							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MainLvlCostBase, "down");
-							if (getMonsterDenLvlCost < 1000) getMonsterDenLvlCost = 1000;
+							if (getMonsterDenLvlCost < MainLvlCostBase)
+							{
+								getMonsterDenLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							MonsterDenLvlMaint = getMonsterDenLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
@@ -3342,10 +3366,14 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getArenaLvlMaint / 100);
-						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > 1000)
+						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > MainLvlCostBase)
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
-							if (getArenaLvlCost < 1000) getArenaLvlCost = 1000;
+							if (getArenaLvlCost < MainLvlCostBase)
+							{
+								getArenaLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
@@ -3373,10 +3401,14 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
-						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > 1000)
+						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > MainLvlCostBase)
 						{
 							MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MainLvlCostBase, "down");
-							if (MonsterDenLvlCost < 1000) MonsterDenLvlCost = 1000;
+							if (MonsterDenLvlCost < MainLvlCostBase)
+							{
+								MonsterDenLvlCost = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
 							MonsterDenLvlMaint = MonsterDenLvlCost + MonsterDenRepairs;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
@@ -3389,37 +3421,37 @@ namespace TrainingProject
 					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
 					break;
 				case 211:
-					if (getArenaOutreach() < 0.05) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.05) MaintCost += (MainLvlCostBase / 3);
 					goto case 212;
 				case 212:
-					if (getArenaOutreach() < 0.1) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.1) MaintCost += (MainLvlCostBase / 4);
 					goto case 213;
 				case 213:
-					if (getArenaOutreach() < 0.15) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.15) MaintCost += (MainLvlCostBase / 5);
 					goto case 214;
 				case 214:
-					if (getArenaOutreach() < 0.2) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.2) MaintCost += (MainLvlCostBase / 6);
 					goto case 215;
 				case 215:
-					if (getArenaOutreach() < 0.25) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.25) MaintCost += (MainLvlCostBase / 6);
 					goto case 216;
 				case 216:
-					if (getArenaOutreach() < 0.3) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.3) MaintCost += (MainLvlCostBase / 7);
 					goto case 217;
 				case 217:
-					if (getArenaOutreach() < 0.35) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.35) MaintCost += (MainLvlCostBase / 7);
 					goto case 218;
 				case 218:
-					if (getArenaOutreach() < 0.4) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.4) MaintCost += (MainLvlCostBase / 8);
 					goto case 219;
 				case 219:
-					if (getArenaOutreach() < 0.45) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.45) MaintCost += (MainLvlCostBase / 8);
 					goto case 220;
 				case 220:
-					if (getArenaOutreach() < 0.5) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.5) MaintCost += (MainLvlCostBase / 9);
 					goto case 221;
 				case 221:
-					if (getArenaOutreach() < 0.55) MaintCost += (MainLvlCostBase / 10);
+					if (getArenaOutreach() < 0.55) MaintCost += (MainLvlCostBase / 9);
 					goto case 222;
 				case 222:
 					if (getArenaOutreach() < 0.6) MaintCost += (MainLvlCostBase / 10);
