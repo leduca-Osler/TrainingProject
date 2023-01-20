@@ -999,8 +999,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-			RoboNumeralChar = '.';
-			NumeralChar = '.';
 		}
 
 		public void resetShowDefeated()
@@ -1088,7 +1086,7 @@ namespace TrainingProject
 			{
 				int lstAmt = eSeating.Amount;
 				eSeating.Amount = (int)roundValue(eSeating.Amount, eSeating.AmountBase, "up");
-				eSeating.AmountBase++;
+				eSeating.AmountBase += 10;
 				if (eSeating.Amount > 5000) eSeating.Amount = 5000;
 				if (RndVal.Next(100) > 98 || lastPrice >= eSeating.Price)
 				{
@@ -1100,7 +1098,7 @@ namespace TrainingProject
 				totalLev += eSeating.Level;
 			}
 			// chance to add a new level of seating
-			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl)) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 5, 1));
+			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl)) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 20, 10));
 
 			getFightLog = getWarningLog = msg; 
 		}
