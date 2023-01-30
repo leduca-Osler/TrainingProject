@@ -678,12 +678,14 @@ namespace TrainingProject
 			get { return Numeral; }
 			set
 			{
-				if (NumeralChar == null) { NumeralChar = '.'; }
 				if (Numeral > maxNumeral)
 				{
 					Numeral = 1;
 					maxNumeral += (int)(maxNumeral * .1);
-					NumeralChar++;
+					if (NumeralChar.Equals('.')) 
+						NumeralChar = ':';
+					else
+						NumeralChar = '.';
 				}
 				else
 					Numeral = value;
@@ -694,12 +696,14 @@ namespace TrainingProject
 			get { return RoboNumeral; }
 			set
 			{
-				if (RoboNumeralChar == null) { RoboNumeralChar = '.'; }
 				if (RoboNumeral > maxRoboNumeral)
 				{
 					RoboNumeral = 1;
 					maxRoboNumeral += (int)(maxRoboNumeral * .1);
-					RoboNumeral++;
+					if (RoboNumeral.Equals('.'))
+						RoboNumeral = ':';
+					else
+						RoboNumeral = '.';
 				}
 				else
 					RoboNumeral = value;
