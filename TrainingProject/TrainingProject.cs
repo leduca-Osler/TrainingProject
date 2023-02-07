@@ -700,10 +700,10 @@ namespace TrainingProject
 				{
 					RoboNumeral = 1;
 					maxRoboNumeral += (int)(maxRoboNumeral * .1);
-					if (RoboNumeral.Equals('.'))
-						RoboNumeral = ':';
+					if (RoboNumeralChar.Equals('.'))
+						RoboNumeralChar = ':';
 					else
-						RoboNumeral = '.';
+						RoboNumeralChar = '.';
 				}
 				else
 					RoboNumeral = value;
@@ -720,6 +720,8 @@ namespace TrainingProject
 		{
 			getRoboNumeral = 1;
 			maxRoboNumeral = 1000;
+			RoboNumeralChar = '.';
+			NumeralChar = '.';
 			GameTeams = new List<Team> { };
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
@@ -819,6 +821,8 @@ namespace TrainingProject
 		{
 			getRoboNumeral = 1;
 			maxRoboNumeral = 1000;
+			RoboNumeralChar = '.';
+			NumeralChar = '.';
 			GameTeams = new List<Team> { new Team(0, this), new Team(0, this) };
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
@@ -1508,6 +1512,8 @@ namespace TrainingProject
 				GameTeam2.Add(Bosses);
 				Jackpot = BossReward;
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
+				// Pause Game
+				GameDifficultyFightPaused = true;
 			}
 			// Game difficulty fight
 			else
@@ -2408,15 +2414,7 @@ namespace TrainingProject
 								GameCurrencyLogMisc += Jackpot;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + " +++ Arena defeated monsters difficulty increased ";
 								Jackpot = 0;
-								if (getScore() >= GoalGameScore)
-								{
-									GoalGameScore = (int)roundValue(GoalGameScore, (100*gameDifficulty), "up");
-									resetScore();
-								}
-								else
-								{
-									resetPartialScore();
-								}
+								resetPartialScore();
 								GameTeam1[0].healRobos(false);
 								equip(GameTeam1[0], true);
 							}
@@ -2425,6 +2423,11 @@ namespace TrainingProject
 							{
 								lblWinner.Text = getWarningLog = bossLevelUp();
 								MaxTeams++;
+								if (getScore() >= GoalGameScore)
+								{
+									GoalGameScore = (int)roundValue(GoalGameScore, (100 * gameDifficulty), "up");
+									resetScore();
+								}
 							}
 						}
 						else
@@ -2442,16 +2445,16 @@ namespace TrainingProject
 							{
 								Jackpot = 0;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters ";
-								if (getScore() > (GoalGameScore * 0.9))
-								{ 
-									GoalGameScore = (int)roundValue(GoalGameScore, (100 * gameDifficulty), "up");
-									resetScore();
-								}
 							}
 							else
 							{
 								string tmp = getWarningLog = getFightLog = Environment.NewLine + "Arena suffered a loss against the boss monsters! ";
 								lblWinner.Text = tmp;
+								if (getScore() >= GoalGameScore)
+								{
+									GoalGameScore = (int)roundValue(GoalGameScore, (10 * gameDifficulty), "up");
+									resetScore();
+								}
 							}
 						}
 						GameTeam1.Clear();
@@ -2506,8 +2509,8 @@ namespace TrainingProject
 									GameTeam1[i].getScore++;
 									addLifetimeScore();
 									// Try difficulty fight 
-									if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) 
-										GameDifficultyFight = true;
+									if (getScore() >= GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) 
+										bossFight = true;
 									// pay team 2 remaining;
 									GameTeam2[i].getCurrency += Jackpot;
 									//msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
@@ -2522,7 +2525,7 @@ namespace TrainingProject
 								lblWinner.Text = GameTeam2[i].getName + " winns!";
 								GameTeam2[i].getScore++;
 								// Try difficulty fight 
-								if (getScore() == GoalGameScore && !GameTeam2[0].getName.Equals("Game Diff " + gameDifficulty.ToString())) GameDifficultyFight = true;
+								if  (getScore() >= GoalGameScore && !GameTeam2[0].getName.Equals("Arena")) bossFight = true;
 								if (RndVal.Next(100) > 90)
 								{
 									GameTeam1[i].getScore--;
@@ -2939,10 +2942,8 @@ namespace TrainingProject
 			getGameCurrency -= MaintCost;
 			GameCurrencyLogMaint -= MaintCost;
 			getFightLog = string.Format("\n\n$!! Payroll processed - cost {0:c0} employees {1:n0}", MaintCost, employees);
-			// randomly start boss fight
-			if (RndVal.Next(GoalGameScore * 20) < getScore()) bossFight = true;
 			// If divisible by 1000 start difficulty Fight
-			if (getScore() % 1000 == 0 && getScore() < (GoalGameScore*0.8)) GameDifficultyFight = true;
+			if (getScore() % 1000 == 0 || (GoalGameScore < 1000 && getScore() != GoalGameScore)) GameDifficultyFight = true;
 		}
 		public void buildingMaintenance()
 		{
@@ -3316,10 +3317,10 @@ namespace TrainingProject
 				case 55:
 					// Tax
 					long tmpMaint = (long)((ArenaLvlMaint * 0.1) + (MonsterDenLvlMaint * 0.1) + (ShopLvlMaint * 0.1) + (ResearchDevMaint * 0.1));
-					ArenaLvlMaint -=		(MainLvlCostBase / 100);
-					MonsterDenLvlMaint -=	(MainLvlCostBase / 100);
-					ShopLvlMaint -=			(MainLvlCostBase / 100);
-					ResearchDevMaint -=		(MainLvlCostBase / 100);
+					ArenaLvlMaint -=		RndVal.Next((int)(MainLvlCostBase / 100));
+					MonsterDenLvlMaint -=	RndVal.Next((int)(MainLvlCostBase / 100));
+					ShopLvlMaint -=			RndVal.Next((int)(MainLvlCostBase / 100));
+					ResearchDevMaint -=		RndVal.Next((int)(MainLvlCostBase / 100));
 					if (tmpMaint > 0)
 						MaintCost = roundValue(tmpMaint);
 					else
@@ -4771,6 +4772,7 @@ namespace TrainingProject
 				RoboStrategy = new List<Strategy> { new Strategy(ListSkills[0], "Num Enemies", "Greater than", 0, "Highest", "HP") };
 				bIsMonster = true;
 				RoboRebuildCost = 0;
+				iBasePoints += imageIndex;
 			}
 			else
 			{

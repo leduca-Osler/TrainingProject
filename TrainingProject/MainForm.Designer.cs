@@ -36,6 +36,7 @@
 			this.mnuImport = new System.Windows.Forms.ToolStripMenuItem();
 			this.countdownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.BreakTimersOff = new System.Windows.Forms.ToolStripMenuItem();
+			this.fixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
@@ -76,7 +77,6 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
-			this.fixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -98,7 +98,7 @@
             this.btnAutomatic});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(493, 33);
+			this.toolStrip1.Size = new System.Drawing.Size(493, 38);
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -114,40 +114,48 @@
 			this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
 			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnExport.Name = "btnExport";
-			this.btnExport.Size = new System.Drawing.Size(41, 28);
+			this.btnExport.Size = new System.Drawing.Size(41, 33);
 			this.btnExport.Text = "Export / Import";
 			this.btnExport.ButtonClick += new System.EventHandler(this.btnExport_ButtonClick);
 			// 
 			// mnuExport
 			// 
 			this.mnuExport.Name = "mnuExport";
-			this.mnuExport.Size = new System.Drawing.Size(270, 34);
+			this.mnuExport.Size = new System.Drawing.Size(235, 34);
 			this.mnuExport.Text = "Export";
 			this.mnuExport.Click += new System.EventHandler(this.mnuExport_Click);
 			// 
 			// mnuImport
 			// 
 			this.mnuImport.Name = "mnuImport";
-			this.mnuImport.Size = new System.Drawing.Size(270, 34);
+			this.mnuImport.Size = new System.Drawing.Size(235, 34);
 			this.mnuImport.Text = "Import";
 			this.mnuImport.Click += new System.EventHandler(this.mnuImport_Click);
 			// 
 			// countdownToolStripMenuItem
 			// 
 			this.countdownToolStripMenuItem.Name = "countdownToolStripMenuItem";
-			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+			this.countdownToolStripMenuItem.Size = new System.Drawing.Size(235, 34);
 			this.countdownToolStripMenuItem.Text = "Countdown";
 			this.countdownToolStripMenuItem.Click += new System.EventHandler(this.countdownToolStripMenuItem_Click);
 			// 
 			// BreakTimersOff
 			// 
 			this.BreakTimersOff.Name = "BreakTimersOff";
-			this.BreakTimersOff.Size = new System.Drawing.Size(270, 34);
+			this.BreakTimersOff.Size = new System.Drawing.Size(235, 34);
 			this.BreakTimersOff.Text = "Break Timer On";
 			this.BreakTimersOff.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
 			// 
+			// fixToolStripMenuItem
+			// 
+			this.fixToolStripMenuItem.Name = "fixToolStripMenuItem";
+			this.fixToolStripMenuItem.Size = new System.Drawing.Size(235, 34);
+			this.fixToolStripMenuItem.Text = "Fix";
+			this.fixToolStripMenuItem.Click += new System.EventHandler(this.fixToolStripMenuItem_Click);
+			// 
 			// cbTeamSelect
 			// 
+			this.cbTeamSelect.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.cbTeamSelect.Name = "cbTeamSelect";
 			this.cbTeamSelect.Size = new System.Drawing.Size(140, 33);
 			this.cbTeamSelect.DropDownClosed += new System.EventHandler(this.cbTeamSelect_Change);
@@ -264,15 +272,18 @@
 			// 
 			// mnuBossFight
 			// 
+			this.mnuBossFight.Enabled = false;
 			this.mnuBossFight.Name = "mnuBossFight";
-			this.mnuBossFight.Size = new System.Drawing.Size(229, 34);
+			this.mnuBossFight.Size = new System.Drawing.Size(270, 34);
 			this.mnuBossFight.Text = "Boss";
+			this.mnuBossFight.Visible = false;
 			this.mnuBossFight.Click += new System.EventHandler(this.mnuBossFight_Click);
 			// 
 			// difficultyFightToolStripMenuItem
 			// 
+			this.difficultyFightToolStripMenuItem.Enabled = false;
 			this.difficultyFightToolStripMenuItem.Name = "difficultyFightToolStripMenuItem";
-			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(229, 34);
+			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
 			this.difficultyFightToolStripMenuItem.Text = "Difficulty Fight";
 			this.difficultyFightToolStripMenuItem.Visible = false;
 			this.difficultyFightToolStripMenuItem.Click += new System.EventHandler(this.difficultyFightToolStripMenuItem_Click);
@@ -365,6 +376,7 @@
 			// 
 			// cboRepairPercent
 			// 
+			this.cboRepairPercent.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.cboRepairPercent.Items.AddRange(new object[] {
             "0.1",
             "0.2",
@@ -390,6 +402,7 @@
 			// 
 			// cboSaveCredits
 			// 
+			this.cboSaveCredits.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.cboSaveCredits.Items.AddRange(new object[] {
             "Yes",
             "No"});
@@ -400,6 +413,7 @@
 			// 
 			// mnuPriority
 			// 
+			this.mnuPriority.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.mnuPriority.Items.AddRange(new object[] {
             "Prioritize Equipment",
             "Prioritize Robot"});
@@ -508,13 +522,6 @@
 			this.BreakTimer.Enabled = true;
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
-			// 
-			// fixToolStripMenuItem
-			// 
-			this.fixToolStripMenuItem.Name = "fixToolStripMenuItem";
-			this.fixToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
-			this.fixToolStripMenuItem.Text = "Fix";
-			this.fixToolStripMenuItem.Click += new System.EventHandler(this.fixToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
