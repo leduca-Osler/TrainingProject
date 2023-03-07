@@ -1106,7 +1106,11 @@ namespace TrainingProject
 				totalLev += eSeating.Level;
 			}
 			// chance to add a new level of seating
-			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl)) Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count-1].Price + Seating.Count, 20, 10));
+			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl))
+			{
+				Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price + Seating.Count, 20, 10));
+				msg += string.Format("\n  Added level {0} seating", Seating.Count);
+			}
 
 			getFightLog = getWarningLog = msg; 
 		}
@@ -1771,7 +1775,7 @@ namespace TrainingProject
 					msg += displaySeating("R", thisRev, -1, ref countChars);
 					addLifetimeRevenue(thisRev);
 					tmpRev += thisRev;
-					msg += String.Format("\n    Comunity Bonus: {0:P2}\n", (getArenaOutreach()-1.00)); 
+					msg += String.Format("\n        Attendance: {0:P2}\n", (getArenaOutreach())); 
 					if (ResearchDevHealValueSum > 0)
 					{
 						// add message with income from repairs
@@ -2526,7 +2530,7 @@ namespace TrainingProject
 								GameTeam2[i].getScore++;
 								// Try difficulty fight 
 								if  (getScore() >= GoalGameScore && !GameTeam2[0].getName.Equals("Arena")) bossFight = true;
-								if (RndVal.Next(100) > 90)
+								if (RndVal.Next(100) > 90 && !GameTeam2[i].isMonster)
 								{
 									GameTeam1[i].getScore--;
 									GameTeam2[i].getScore++;
@@ -2624,7 +2628,7 @@ namespace TrainingProject
 					{
 						//if (!isFighting(eTeam.getName))
 						{
-							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount) };
+							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, false, false) };
 							if (getGameCurrency > 0)
 								lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true, this));
 							MainPanel.Controls.Add(lblTeamstats);
@@ -3350,7 +3354,7 @@ namespace TrainingProject
 					break;
 				case 100:
 					ArenaComunityReach = roundValue(ArenaComunityReach, (RndVal.Next((int)MainLvlCostBase) / 2), "down");
-					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Bonus down to " + String.Format("{0:p2}", getArenaOutreach() - 1);
+					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Attendance down to " + String.Format("{0:p2}", getArenaOutreach());
 					break;
 				case 203:
 					if (ArenaLvlMaint > 0) MaintCost += (getArenaLvlMaint / 200);
@@ -3470,7 +3474,7 @@ namespace TrainingProject
 					{
 						MaintCost += (MainLvlCostBase / 10);
 						ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
-						if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach " + String.Format("{0:p2}!", getArenaOutreach()-1);
+						if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach: Atttendance " + String.Format("{0:p2}!", getArenaOutreach());
 					}
 					break;
 				case 249:
@@ -4219,7 +4223,7 @@ namespace TrainingProject
 			foreach (Robot eRobo in MyTeam) { eRobo.resetLog(); }
 		}
 
-		public string getTeamStats(int[] PadRight, int[] maxLength, long rebuildSavings, int KOCount, Game myGame, int roundCount = 0, Boolean showAll = false)
+		public string getTeamStats(int[] PadRight, int[] maxLength, long rebuildSavings, int KOCount, Game myGame, int roundCount = 0, Boolean showAll = false, Boolean ClearDmg = true)
 		{
 			string strStats = ""; 
 			// If this team is not in Team1 or Team1 list
@@ -4249,7 +4253,7 @@ namespace TrainingProject
 				// Add different robots...  
 				if (counter < maxRobos && counter >= startCounter)
 				{
-					strStats += eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes, roundCount);
+					strStats += eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes, roundCount, ClearDmg);
 					if (eRobo.getKO <= KOCount)
 					{
 						counter++;
@@ -4261,7 +4265,7 @@ namespace TrainingProject
 				{
 					char tmpSkill = '.';
 					if (eRobo.cSkill != ' ') tmpSkill = eRobo.cSkill;
-					eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes, roundCount);
+					eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes, roundCount, ClearDmg);
 					if (eRobo.getKO <= KOCount)
 					{
 						if (shownCounter == 0)
@@ -4282,7 +4286,8 @@ namespace TrainingProject
 				
 		public void fixTech()
 		{
-			foreach (Robot eRobo in MyTeam) eRobo.fixTech();			
+			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
+			getScore--;
 		}
 		public void Rebuild(bool pay, Game myGame)
 		{
@@ -4966,7 +4971,7 @@ namespace TrainingProject
 			AnalysisLog = 0;
 		}
 
-		public string getRoboStats(int[] PadRight, Game myGame, Team myTeam, long rebuildSavings, List<int> Runes, int roundCount)
+		public string getRoboStats(int[] PadRight, Game myGame, Team myTeam, long rebuildSavings, List<int> Runes, int roundCount, Boolean ClearDmg = true)
 		{
 			char cRebuild = ' ';
 			string strStats = "";
@@ -4987,7 +4992,7 @@ namespace TrainingProject
 			{
 				strMsg = string.Format(" {0:n0} dmg", dmg);
 				if (crit) strMsg += "!";
-				dmg = 0;
+				if (ClearDmg) dmg = 0;
 				crit = false;
 			}
 			if (getKO <= 3)
