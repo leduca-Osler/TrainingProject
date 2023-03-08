@@ -1310,10 +1310,10 @@ namespace TrainingProject
 			int scouted = rebuild.Win * 10;
 			int bonusScore = rebuild.getScore / GameTeams.Count;
 			IList<int> scoutingTeams = new List<int> { };
-			// teams for scouting
-			for (int i = 0; i < GameTeams.Count; i++)
+			// team indexes for scouting
+			for (int i = GameTeams.Count; i > 0; i--)
 			{
-				for (int j = 0; j <= i; j++)
+				for (int j = i; j <= GameTeams.Count; j++)
 				{ scoutingTeams.Add(j); }
 			}
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
