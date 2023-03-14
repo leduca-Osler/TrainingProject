@@ -1310,11 +1310,16 @@ namespace TrainingProject
 			int scouted = rebuild.Win * 10;
 			int bonusScore = rebuild.getScore / GameTeams.Count;
 			IList<int> scoutingTeams = new List<int> { };
+			// Ensure at least one team is in the list
+			scoutingTeams.Add(GameTeams.Count-1);
 			// team indexes for scouting
-			for (int i = GameTeams.Count; i > 0; i--)
+			for (int i = GameTeams.Count-1; i >= 0; i--)
 			{
-				for (int j = i; j <= GameTeams.Count; j++)
-				{ scoutingTeams.Add(j); }
+				for (int j = i; j < GameTeams.Count; j++)
+				{ 
+					// More wins the team has lowers their chance of scouting another team.
+					if (RndVal.Next(100) > GameTeams[j].Win) scoutingTeams.Add(j); 
+				}
 			}
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 			{
@@ -1322,6 +1327,7 @@ namespace TrainingProject
 				{
 					Team scoutingTeam = GameTeams[scoutingTeams[RndVal.Next(scoutingTeams.Count)]];
 					string strScouter = " another arena";
+					// if scouting team is not the team they are already part of
 					if (!scoutingTeam.getName.Equals(rebuild.getName))
 					{
 						scoutingTeam.MyTeam.Add(rebuild.MyTeam[i]);
