@@ -4298,7 +4298,10 @@ namespace TrainingProject
 
 				}
 			}
-			if (aliveCount > 10) strStats += string.Format(" T:{0:n0}", aliveCount);
+			int Spacing = shownCounter + shownCounter / 5;
+			if (Spacing == 0) Spacing = 35;
+			else if (shownCounter % 5 == 0) Spacing--;
+			strStats += String.Format("{0," + (40-(Spacing)) + ":n0}", string.Format("{0:n0}/{1:n0}", aliveCount, MyTeam.Count));
 			return strStats;
 		}
 				
