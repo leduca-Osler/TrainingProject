@@ -4055,8 +4055,10 @@ namespace TrainingProject
 				if (MonsterDestroyedGoal[type] == 0) MonsterDestroyedGoal[type] = 100;
 				if (MonsterDestroyed[type] >= MonsterDestroyedGoal[type])
 				{
-					getCurrency += MonsterDestroyedGoal[type] * 100;
-					getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * 100, getName);
+					getCurrency += MonsterDestroyedGoal[type] * (25 * type);
+					string MSG = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * (25 * type), getName);
+					if (!Automated) getWarningLog = MSG;
+					getTeamLog = getFightLog = MSG;
 					MonsterDestroyedGoal[type] = (int)roundValue(MonsterDestroyedGoal[type] * 2, 1);
 				}
 			}
@@ -4086,8 +4088,10 @@ namespace TrainingProject
 				if (RobotDestroyedGoal[type] == 0) RobotDestroyedGoal[type] = 100;
 				if (RobotDestroyed[type] >= RobotDestroyedGoal[type])
 				{
-					getCurrency += RobotDestroyedGoal[type] * 100;
-					getFightLog = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * 100, getName);
+					getCurrency += RobotDestroyedGoal[type] * (100);
+					string MSG = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", RobotDestroyedGoal[type], RoboName[type], RobotDestroyedGoal[type] * (100), getName);
+					if (!Automated) getWarningLog = MSG;
+					getTeamLog = getFightLog = MSG;
 					RobotDestroyedGoal[type] = (int)roundValue(RobotDestroyedGoal[type] * 2, 1);
 				}
 			}
@@ -4099,7 +4103,9 @@ namespace TrainingProject
 			if (LifetimeRobotsCreated >= GoalLifetimeRobotsCreated)
 			{
 				getCurrency += GoalLifetimeRobotsCreated * 10000;
-				getFightLog = string.Format("\n!*!*! {2} created {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsCreated, GoalLifetimeRobotsCreated * 10000, getName);
+				string msg = string.Format("\n!*!*! {2} created {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsCreated, GoalLifetimeRobotsCreated * 10000, getName);
+				if (!Automated) getWarningLog = msg;
+				getTeamLog = getFightLog = msg; 
 				GoalLifetimeRobotsCreated = (int)roundValue(GoalLifetimeRobotsCreated * 2, 1);
 			}
 		}
@@ -4110,7 +4116,9 @@ namespace TrainingProject
 			if (LifetimeRobotsRebuilt >= GoalLifetimeRobotsRebuilt)
 			{
 				getCurrency += GoalLifetimeRobotsRebuilt * 10000;
-				getFightLog = string.Format("\n!*!*! {2} rebuilt {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt * 10000, getName);
+				string msg = string.Format("\n!*!*! {2} rebuilt {0:n0} robots and was awarded {1:c0}", GoalLifetimeRobotsRebuilt, GoalLifetimeRobotsRebuilt * 10000, getName);
+				if (!Automated) getWarningLog = msg;
+				getTeamLog = getFightLog = msg;
 				GoalLifetimeRobotsRebuilt = (int)roundValue(GoalLifetimeRobotsRebuilt * 2, 1);
 			}
 		}
@@ -4121,7 +4129,9 @@ namespace TrainingProject
 			if (LifetimeEquipmentPurchased >= GoalLifetimeEquipmentPurchased)
 			{
 				getCurrency += GoalLifetimeEquipmentPurchased * 1000;
-				getFightLog = string.Format("\n!*!*! {2} purchased {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentPurchased, GoalLifetimeEquipmentPurchased * 1000, getName);
+				string msg = string.Format("\n!*!*! {2} purchased {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentPurchased, GoalLifetimeEquipmentPurchased * 1000, getName);
+				if (!Automated) getWarningLog = msg;
+				getTeamLog = getFightLog = msg;
 				GoalLifetimeEquipmentPurchased = (int)roundValue(GoalLifetimeEquipmentPurchased * 2, 1);
 			}
 		}
@@ -4132,7 +4142,9 @@ namespace TrainingProject
 			if (LifetimeEquipmentUpgraded >= GoalLifetimeEquipmentUpgraded)
 			{
 				getCurrency += GoalLifetimeEquipmentUpgraded * 1000;
-				getFightLog = string.Format("\n!*!*! {2} upgraded {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentUpgraded, GoalLifetimeEquipmentUpgraded * 1000, getName);
+				string msg = string.Format("\n!*!*! {2} upgraded {0:n0} pieces of equipment and was awarded {1:c0}", GoalLifetimeEquipmentUpgraded, GoalLifetimeEquipmentUpgraded * 1000, getName);
+				if (!Automated) getWarningLog = msg;
+				getTeamLog = getFightLog = msg;
 				GoalLifetimeEquipmentUpgraded = (int)roundValue(GoalLifetimeEquipmentUpgraded *2, 1); 
 			}
 		}
@@ -4286,7 +4298,7 @@ namespace TrainingProject
 
 				}
 			}
-			if (aliveCount > 30) strStats += string.Format(" T:{0:n0}", aliveCount);
+			if (aliveCount > 10) strStats += string.Format(" T:{0:n0}", aliveCount);
 			return strStats;
 		}
 				
