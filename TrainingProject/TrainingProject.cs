@@ -1211,7 +1211,7 @@ namespace TrainingProject
 				while (RndVal.Next(upgradeVal) < getShopLvl)
 				{
 					long cost = tmp.eUpgradeCost;
-					tmp.upgrade(ShopUpgradeValue, RndVal);
+					tmp.upgrade(ShopUpgradeValue, RndVal, true);
 					tmp.ePrice += (long)(cost * .75);
 					upgradeVal += 5;
 				}
@@ -2338,7 +2338,8 @@ namespace TrainingProject
 					if (display)
 					{
 						char goalScore = ' ';
-						if (getScore() > (GoalGameScore * 0.8)) goalScore = '!';
+						// Display if teams will leave the arena
+						if (getScore() > (getGoalGameScore / 3) && getGameCurrency < 0) goalScore = '!';
 
 						string strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
 						if (roundCount < 20 && GameTeam1[0].getName != "Arena" && !GameTeam2[0].isMonster)
@@ -4251,6 +4252,7 @@ namespace TrainingProject
 			int startCounter = 0;
 			int maxRobos = 50;
 			int aliveCount = 0;
+			int HPCount = 0;
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
 			{
 				int maxStartCounter = MyTeam.Count - 10;
@@ -4295,13 +4297,13 @@ namespace TrainingProject
 						aliveCount++;
 					}
 					counter++;
-
 				}
+				if (eRobo.HP > 0) HPCount++;
 			}
 			int Spacing = shownCounter + shownCounter / 5;
 			if (Spacing == 0) Spacing = 35;
 			else if (shownCounter % 5 == 0) Spacing--;
-			strStats += String.Format("{0," + (40-(Spacing)) + ":n0}", string.Format("{0:n0}/{1:n0}", aliveCount, MyTeam.Count));
+			strStats += String.Format("{0," + (40-(Spacing)) + ":n0}", string.Format("{0:n0}/{1:n0}", HPCount, MyTeam.Count));
 			return strStats;
 		}
 				
@@ -5662,7 +5664,7 @@ namespace TrainingProject
 			eUpgradeCostBaseIncrement = pUpgradeCostBaseIncrement;
 			eUpgrade = pUpgrade;
 		}
-		public string upgrade(int value, Random RndVal)
+		public string upgrade(int value, Random RndVal, bool max = false)
 		{
 			int Type = RndVal.Next(1, 9);
 			string strUpgrade = "";
@@ -5671,7 +5673,7 @@ namespace TrainingProject
 				
 			eMaxDurability += value;
 			eDurability = eMaxDurability;
-			value = RndVal.Next(1, value);
+			if (!max) value = RndVal.Next(1, value);
 			switch (Type)
 			{
 				case 1:
