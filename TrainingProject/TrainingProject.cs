@@ -2974,7 +2974,7 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getArenaLvlMaint);
-						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(getArenaLvlCost) && getArenaLvlCost > MainLvlCostBase)
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
 							if (getArenaLvlCost < MainLvlCostBase)
@@ -3044,7 +3044,7 @@ namespace TrainingProject
 					{
 						MaintCost = Math.Abs(getShopLvlMaint);
 						// if maintenace is more than half the cost to upgrade / rebuild
-						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(getShopLvlCost) && getShopLvlCost > MainLvlCostBase)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
 							if (getShopLvlCost < MainLvlCostBase)
@@ -3108,7 +3108,7 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getShopLvlMaint / 100);
-						if (MaintCost > getShopLvlCost / 2 && getShopLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(getShopLvlCost) && getShopLvlCost > MainLvlCostBase)
 						{
 							getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
 							if (getShopLvlCost < MainLvlCostBase)
@@ -3134,7 +3134,7 @@ namespace TrainingProject
 					else
 					{
 						MaintCost = Math.Abs(getResearchDevMaint);
-						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(getResearchDevLvlCost) && getResearchDevLvlCost > MainLvlCostBase)
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
 							if (getResearchDevLvlCost < MainLvlCostBase)
@@ -3196,7 +3196,7 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(ResearchDevMaint / 100);
-						if (MaintCost > getResearchDevLvlCost / 2 && getResearchDevLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(getResearchDevLvlCost) && getResearchDevLvlCost > MainLvlCostBase)
 						{
 							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
 							if (getResearchDevLvlCost < MainLvlCostBase)
@@ -3228,7 +3228,7 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(MonsterDenLvlMaint);
-						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(MonsterDenLvlCost) && MonsterDenLvlCost > MainLvlCostBase)
 						{
 							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MainLvlCostBase, "down");
 							if (getMonsterDenLvlCost < MainLvlCostBase)
@@ -3380,7 +3380,7 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getArenaLvlMaint / 100);
-						if (MaintCost > getArenaLvlCost / 2 && getArenaLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(getArenaLvlCost) && getArenaLvlCost > MainLvlCostBase)
 						{
 							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
 							if (getArenaLvlCost < MainLvlCostBase)
@@ -3415,7 +3415,7 @@ namespace TrainingProject
 					else
 					{
 						MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
-						if (MaintCost > MonsterDenLvlCost / 2 && MonsterDenLvlCost > MainLvlCostBase)
+						if (MaintCost > longRandom(MonsterDenLvlCost) && MonsterDenLvlCost > MainLvlCostBase)
 						{
 							MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MainLvlCostBase, "down");
 							if (MonsterDenLvlCost < MainLvlCostBase)
