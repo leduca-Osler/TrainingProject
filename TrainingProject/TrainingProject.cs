@@ -2219,7 +2219,7 @@ namespace TrainingProject
 				MainFormPanel.Controls.Add(MainPanel);
 			}
 		}
-		public int[] maxNameLength(bool tmpFighting)
+		public int[] maxNameLength(bool tmpFighting, bool includeKO = false)
 		{
 			int[] maxLength = 
 				{ 10 // Name 
@@ -2233,18 +2233,18 @@ namespace TrainingProject
 			{
 				foreach (Team eTeam in GameTeam1)
 					foreach (Robot eRobo in eTeam.MyTeam)
-						if (eRobo.getKO <= 3)
+						if (eRobo.getKO <= 3 || includeKO)
 							maxLength = checkLength(maxLength, eRobo);
 				foreach (Team eTeam in GameTeam2)
 					foreach (Robot eRobo in eTeam.MyTeam)
-						if (eRobo.getKO <= 3)
+						if (eRobo.getKO <= 3 || includeKO)
 							maxLength = checkLength(maxLength, eRobo);
 			}
 			else
 			{
 				foreach (Team eTeam in GameTeams)
 					foreach (Robot eRobo in eTeam.MyTeam)
-						if (eRobo.getKO <= 3)
+						if (eRobo.getKO <= 3 || includeKO)
 							maxLength = checkLength(maxLength, eRobo);
 			}
 			return maxLength;
@@ -2335,12 +2335,12 @@ namespace TrainingProject
 				if (GameTeam1[i].getNumRobos(true, KOCount) > 0 && GameTeam2[i].getNumRobos(true, KOCount) > 0)
 				{
 					getNext(i);
+					bool includeKO = roundCount < 20;
 					if (display)
 					{
 						char goalScore = ' ';
 						// Display if teams will leave the arena
 						if (getScore() > (getGoalGameScore / 3) && getGameCurrency < 0) goalScore = '!';
-
 						string strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
 						if (roundCount < 20 && GameTeam1[0].getName != "Arena" && !GameTeam2[0].isMonster)
 							strFormat = "TS:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
@@ -2360,10 +2360,10 @@ namespace TrainingProject
 							Color background = Color.Transparent;
 							if (i % 2 == 1)
 								background = Color.LightGray;
-							Label lblTeam1stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam1[i].getTeamStats(maxNameLength(true), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, true) };
+							Label lblTeam1stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam1[i].getTeamStats(maxNameLength(true, includeKO), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, true) };
 							int tmpI = i;
 							MainPanel.Controls.Add(lblTeam1stats);
-							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, true) };
+							Label lblTeam2stats = new Label { AutoSize = true, BackColor = background, Text = GameTeam2[i].getTeamStats(maxNameLength(true, includeKO), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, true) };
 							MainPanel.Controls.Add(lblTeam2stats);
 						}
 						else
@@ -2399,8 +2399,8 @@ namespace TrainingProject
 					{
 						if (DateTime.Now > BreakTime)
 						{
-							GameTeam1[i].getTeamStats(maxNameLength(true), maxTeamLengths, ResearchDevRebuild, KOCount, this);
-							GameTeam2[i].getTeamStats(maxNameLength(true), maxTeamLengths, ResearchDevRebuild, KOCount, this);
+							GameTeam1[i].getTeamStats(maxNameLength(true, includeKO), maxTeamLengths, ResearchDevRebuild, KOCount, this);
+							GameTeam2[i].getTeamStats(maxNameLength(true, includeKO), maxTeamLengths, ResearchDevRebuild, KOCount, this);
 						}
 					}
 				}
@@ -2635,7 +2635,7 @@ namespace TrainingProject
 					{
 						//if (!isFighting(eTeam.getName))
 						{
-							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, false, false) };
+							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false, roundCount < 20), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, false, false) };
 							if (getGameCurrency > 0)
 								lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true, this));
 							MainPanel.Controls.Add(lblTeamstats);
