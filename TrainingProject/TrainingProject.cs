@@ -1742,8 +1742,13 @@ namespace TrainingProject
 				}
 				if (GameTeam1.Count > 1)
 				{
-					// If no seats available exit function (unless it is first team added)
-					if (attendees == unseated && tmpTotalScore > 10) return;
+					// If no seats available remove the teams that were added and exit function, unless total score is less than 10
+					if (attendees == unseated && tmpTotalScore > 10)
+					{
+						GameTeam1.RemoveAt(GameTeam1.Count - 1);
+						GameTeam2.RemoveAt(GameTeam1.Count - 1);
+						return;
+					}
 				}
 				// total attendance
 				int countChars = 10 + tmpTotalScore.ToString().Length;
