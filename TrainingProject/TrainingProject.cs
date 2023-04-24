@@ -1524,6 +1524,7 @@ namespace TrainingProject
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
 				// Pause Game
 				GameDifficultyFightPaused = true;
+				returnToWork();
 			}
 			// Game difficulty fight
 			else
@@ -1536,7 +1537,22 @@ namespace TrainingProject
 				getWarningLog = getFightLog = Environment.NewLine + " Game Difficulty Fight! ";
 				// Pause Game
 				GameDifficultyFightPaused = true;
+				returnToWork();
 			}
+		}
+		public void returnToWork()
+		{
+			// recover unused hours
+			int hrs = (int)(SafeTime - DateTime.Now).TotalHours;
+			while (hrs > 0)
+			{
+				ManagerHrs++;
+				ManagerCost = roundValue(ManagerCost, ManagerCostBase, "up");
+				ManagerCostBase = ManagerCostBase + ManagerCostBaseIncrement;
+				hrs--;
+			}
+			SafeTime = DateTime.Now.AddMinutes(5);
+			BreakTime = DateTime.Now.AddMinutes(55);
 		}
 		public void sortSkills()
 		{
