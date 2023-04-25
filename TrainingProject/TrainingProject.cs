@@ -1523,7 +1523,7 @@ namespace TrainingProject
 				Jackpot = BossReward;
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
 				// Pause Game
-				GameDifficultyFightPaused = true;
+				// GameDifficultyFightPaused = true;
 				returnToWork();
 			}
 			// Game difficulty fight
@@ -1537,7 +1537,7 @@ namespace TrainingProject
 				getWarningLog = getFightLog = Environment.NewLine + " Game Difficulty Fight! ";
 				// Pause Game
 				GameDifficultyFightPaused = true;
-				returnToWork();
+				//returnToWork();
 			}
 		}
 		public void returnToWork()

@@ -828,7 +828,7 @@ namespace TrainingApp
 				if (!MyGame.paused) { pause(); }
 				PauseTimer++;
 				// after 10000 cycles, continue
-				if (PauseTimer > 10000) 
+				if (PauseTimer > 15000) 
 				{
 					// Unpause
 					pause();
