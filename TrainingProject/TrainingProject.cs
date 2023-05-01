@@ -1335,7 +1335,7 @@ namespace TrainingProject
 					}
 					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!\n", rebuild.MyTeam[i].getName, strScouter);
 					rebuild.MyTeam.RemoveAt(i);
-					scouted /= 2;
+					scouted -= 25;
 				}
 			}
 			rebuild.HealScore = 0;
@@ -1873,8 +1873,20 @@ namespace TrainingProject
 		public string showInterval()
 		{
 			string retval = "";
+			// Current Interval
 			int tmpInterval = CurrentInterval;
 			int Minutes = 0;
+			// Seconds
+			if (tmpInterval > 1000)
+			{
+				Minutes = (int)(tmpInterval / 1000);
+				tmpInterval -= Minutes * 1000;
+				retval += Minutes + "s ";
+			}
+			retval += tmpInterval + "ms / ";
+			// Max Interval
+			tmpInterval = MaxInterval;
+			Minutes = 0;
 			// Seconds
 			if (tmpInterval > 1000)
 			{
@@ -2336,7 +2348,7 @@ namespace TrainingProject
 			}
 			if (FastForward) strFlags += string.Format(" Fast Forward {0:n0}!", FastForwardCount);
 			if (getGameCurrency < MaxMaintenance()) strFlags += " !Maintenance NSF!";
-			Label lblTeamName = new Label { AutoSize = true, Text = "Fight (" + showInterval() + ")" + strFlags };
+			Label lblTeamName = new Label { AutoSize = true, Text = "Fight " + showInterval() + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
 			// S:{3:n0}{4}<{5:n0}> {1:c0}<{2:c0}> W:{8:n0} D:{6:n0}<{7:n0}>" 0, Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
@@ -4077,8 +4089,8 @@ namespace TrainingProject
 				if (MonsterDestroyedGoal[type] == 0) MonsterDestroyedGoal[type] = 100;
 				if (MonsterDestroyed[type] >= MonsterDestroyedGoal[type])
 				{
-					getCurrency += MonsterDestroyedGoal[type] * (25 * type);
-					string MSG = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * (25 * type), getName);
+					getCurrency += MonsterDestroyedGoal[type] * (25 * (type+1));
+					string MSG = string.Format("\n!*!*! {3} Destroyed {0:n0} {1}s   {2:c0}", MonsterDestroyedGoal[type], MonsterName[type], MonsterDestroyedGoal[type] * (25 * (type + 1)), getName);
 					if (!Automated) getWarningLog = MSG;
 					getTeamLog = getFightLog = MSG;
 					MonsterDestroyedGoal[type] = (int)roundValue(MonsterDestroyedGoal[type] * 2, 1);
