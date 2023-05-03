@@ -1875,26 +1875,29 @@ namespace TrainingProject
 			string retval = "";
 			// Current Interval
 			int tmpInterval = CurrentInterval;
-			int Minutes = 0;
+			double Minutes = 0;
 			// Seconds
 			if (tmpInterval > 1000)
 			{
-				Minutes = (int)(tmpInterval / 1000);
-				tmpInterval -= Minutes * 1000;
-				retval += Minutes + "s ";
+				Minutes = ((double)tmpInterval / 1000);
+				retval += string.Format("{0:0.###}s/", Minutes);
 			}
-			retval += tmpInterval + "ms / ";
+			else
+			{
+				retval += string.Format("{0:n0}ms/", tmpInterval);
+			}
 			// Max Interval
 			tmpInterval = MaxInterval;
-			Minutes = 0;
 			// Seconds
 			if (tmpInterval > 1000)
 			{
-				Minutes = (int)(tmpInterval / 1000);
-				tmpInterval -= Minutes * 1000;
-				retval += Minutes + "s ";
+				Minutes = ((double)tmpInterval / 1000);
+				retval += string.Format("{0:0.###}s", Minutes);
 			}
-			retval += tmpInterval + "ms";
+			else
+			{
+				retval += string.Format("{0:n0}ms", tmpInterval);
+			}
 			return retval;
 		}
 
