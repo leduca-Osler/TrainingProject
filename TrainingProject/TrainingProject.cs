@@ -4412,14 +4412,14 @@ namespace TrainingProject
 					MyTeam[robo].getEquipArmour = armour;
 					if (!MyTeam[robo].bIsMonster)
 					{
-						string strFormat = "\n +++ {0} : {1} has been rebuilt! Rank {2:n1} (+{3}B/{4}R)";
+						string strFormat = "\n +++ {0}:{1} has been rebuilt! Rank {2:n1} (+{3}B/{4}R)";
 						if (Cost > 0) strFormat += " ic:{6:c0}";
 						getTeamLog = getFightLog = getWarningLog = string.Format(strFormat, getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), baseIncreased, runesUsed, DateTime.Now.ToString(), Cost);
 						AddRobotRebuilt();
 					}
 					else
 					{
-						string strFormat = "\n [M] {0} : {1} has ranked up! Rank {2:n1} (+{3}B) ";
+						string strFormat = "\n [M] {0}:{1} has ranked up! Rank {2:n1} (+{3}B) ";
 						getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, (MyTeam[robo].getBaseStats() / 2.0), baseIncreased, DateTime.Now.ToString());
 					}
 				}
@@ -4429,14 +4429,14 @@ namespace TrainingProject
 					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
 					if (!MyTeam[robo].bIsMonster)
 					{
-						string strFormat = "\n--- {0} : {1} failed the rebuild (+{2}A/{3}R)";
+						string strFormat = "\n--- {0}:{1} failed the rebuild (+{2}A/{3}R)";
 						if (Cost > 0) strFormat += " ic:{5:c0}";
 						getTeamLog = getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Cost);
 						MyTeam[robo].RebuildPercent += runesUsed;
 					}
 					else
 					{
-						string strFormat = "\n [M] {0} : {1} failed to ranked up... Rank (+{2}A)";
+						string strFormat = "\n [M] {0}:{1} failed to ranked up... Rank (+{2}A)";
 						getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis, DateTime.Now.ToString());
 					}
 				}
