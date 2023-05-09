@@ -1743,10 +1743,10 @@ namespace TrainingProject
 				if (GameTeam1.Count > 1)
 				{
 					// If no seats available remove the teams that were added and exit function, unless total score is less than 10 or fighting a monster team
-					if (attendees == unseated && tmpTotalScore > 10 && !GameTeam2[0].isMonster)
+					 if (attendees == unseated && tmpTotalScore > 10 && !GameTeam2[0].isMonster)
 					{
 						GameTeam1.RemoveAt(GameTeam1.Count - 1);
-						GameTeam2.RemoveAt(GameTeam1.Count - 1);
+						GameTeam2.RemoveAt(GameTeam2.Count - 1);
 						return;
 					}
 				}
