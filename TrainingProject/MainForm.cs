@@ -251,7 +251,7 @@ namespace TrainingApp
 			else
 			{
 				// five percent chance to start a new fight 
-				if (Game.RndVal.Next(100) > MyGame.FightBreak)
+				if (MyGame.FightBreakCount >= MyGame.FightBreak)
 				{
 					MyGame.startFight();
 					shownCount = maxCount; 
@@ -259,6 +259,7 @@ namespace TrainingApp
 				}
 				else
 				{
+					MyGame.FightBreakCount++;
 					if (shownCount++ > 5)
 					{
 						foreach (Control eControl in MainPannel.Controls)

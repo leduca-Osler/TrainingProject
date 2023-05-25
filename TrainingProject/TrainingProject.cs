@@ -396,6 +396,7 @@ namespace TrainingProject
 		public int CurrentInterval;
 		public int MaxInterval;
 		public int FightBreak;
+		public int FightBreakCount;
 		public DateTime SafeTime;
 		public DateTime BreakTime;
 		public double repairPercent;
@@ -806,7 +807,7 @@ namespace TrainingProject
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
 			maxNumeral = 1000;
-			FightBreak = 80;
+			FightBreak = 7;
 			roundCount = 0;
 			bossFight = false;
 			GameDifficultyFight = false;
@@ -903,7 +904,7 @@ namespace TrainingProject
 			ArenaOpponent2 = 0;
 			getNumeral = 1;
 			maxNumeral = 1000;
-			FightBreak = 80;
+			FightBreak = 7;
 			roundCount = 0;
 			BossLvl = 5;
 			BossLvlBase = BossLvlBaseIncrement;
@@ -1551,8 +1552,8 @@ namespace TrainingProject
 				ManagerCostBase = ManagerCostBase + ManagerCostBaseIncrement;
 				hrs--;
 			}
-			SafeTime = DateTime.Now.AddMinutes(5);
-			BreakTime = DateTime.Now.AddMinutes(55);
+			SafeTime = DateTime.Now;
+			BreakTime = DateTime.Now;
 		}
 		public void sortSkills()
 		{
@@ -1598,9 +1599,16 @@ namespace TrainingProject
 			}
 			return TeamIndex;
 		}
+		public int fightBreakAmount()
+		{
+			int retVal = 5;
+			if (GameTeams != null) retVal += GameTeams.Count;
+			if (GameTeams[0] != null) retVal += GameTeams[0].MyTeam.Count;
+			return retVal;
+		}
 		public void incrementArenaOpponent()
 		{
-			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; }
+			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; FightBreak = fightBreakAmount(); FightBreakCount = 0; }
 			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
 		}
 		public long MaxMaintenance()
@@ -2519,7 +2527,8 @@ namespace TrainingProject
 							Label lblWinner = new Label { AutoSize = true };
 							if (GameTeam1[i].getNumRobos(false) > 0)
 							{
-								FightBreak -= 5;
+								FightBreak -= GameTeams.Count;
+								FightBreakCount = 0;
 								lblWinner.Text = GameTeam1[i].getName + " wins!";
 								long tmp = (long)(Jackpot - MinWage );
 								GameTeam1[i].getCurrency += tmp;
@@ -2547,7 +2556,7 @@ namespace TrainingProject
 									}
 									else
 									{
-										msg = string.Format("\n{0} Won against {1} TR:{2:c0} {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
+										msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
 									}
 								}
 								else
@@ -2561,14 +2570,15 @@ namespace TrainingProject
 									// pay team 2 remaining;
 									GameTeam2[i].getCurrency += Jackpot;
 									//msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
-									msg = string.Format("\n{0} Won against {1} TR:{2:c0} {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
+									msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
 									Jackpot = 0;
 									//msg = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
 								}
 							}
 							else
 							{
-								FightBreak = 95;
+								FightBreak = fightBreakAmount();
+								FightBreakCount = 0;
 								lblWinner.Text = GameTeam2[i].getName + " winns!";
 								GameTeam2[i].getScore++;
 								// Try difficulty fight 
@@ -2586,7 +2596,7 @@ namespace TrainingProject
 									getGameCurrency += tmp;
 									GameTeam1[i].getCurrency += MinWage;
 									Jackpot = 0;
-									msg = string.Format("\n{1} Won against {0} TR:{2:c0} Win:{3:n0} {4}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, WinCount, msg);
+									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- Win:{3:n0} {4}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, WinCount, msg);
 									//msg += String.Format("\n Win:{0}", WinCount);
 									int lastRobo = GameTeam1[i].MyTeam.Count - 1;
 									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
@@ -2622,7 +2632,7 @@ namespace TrainingProject
 									Jackpot -= tmp;
 									// team lost gets remaining
 									GameTeam1[i].getCurrency += Jackpot;
-									msg = string.Format("\n{1} Won against {0} TR:{2:c0} {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
+									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- {3}", GameTeam1[i].getName, GameTeam2[i].getName, tmpRev, msg);
 									Jackpot = 0;
 									//msg = Environment.NewLine + GameTeam2[i].getName + " Won against " + GameTeam1[i].getName + msg;
 								}
