@@ -1254,7 +1254,7 @@ namespace TrainingProject
 			ResearchDevRebuildBase += ResearchDevRebuildBaseIncrement;
 			msg += string.Format("\n  Heal +{0:n0} Rebuild +{1:n0}", ResearchDevHealValue - tmpResearchDevHealValue, ResearchDevRebuild - tmpResearchDevRebuild);
 			// chance to add a new healing bay
-			if (RndVal.Next(100 + GameTeams.Count) > (95 + ResearchDevHealBays))
+			if (RndVal.Next(GameTeams.Count + MaxRobo) > (ResearchDevHealBays))
 			{
 				ResearchDevHealBays++;
 				msg += string.Format("\n  Heal Bays +1");
@@ -1569,7 +1569,7 @@ namespace TrainingProject
 			int Team1Score = 99999999;
 			int TeamIndex = -1;
 			int tmpScore = 0;
-			if (RndVal.Next(100) > 90 && allowRandom)
+			if (RndVal.Next(100) > 75 && allowRandom)
 			{
 				TeamIndex = RndVal.Next(GameTeams.Count);
 			}
@@ -1599,16 +1599,9 @@ namespace TrainingProject
 			}
 			return TeamIndex;
 		}
-		public int fightBreakAmount()
-		{
-			int retVal = 5;
-			if (GameTeams != null) retVal += GameTeams.Count;
-			if (GameTeams[0] != null) retVal += GameTeams[0].MyTeam.Count;
-			return retVal;
-		}
 		public void incrementArenaOpponent()
 		{
-			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; FightBreak = fightBreakAmount(); FightBreakCount = 0; }
+			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; FightBreak = 7; FightBreakCount = 0; }
 			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
 		}
 		public long MaxMaintenance()
@@ -2164,12 +2157,18 @@ namespace TrainingProject
 				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
 				RobotPanel.Controls.Add(lblRobotList);
 				int[] tmpRobotsDestroyed = (int[])eTeam.RobotDestroyed.Clone();
-				int[] tmpRobotsDestroyedKey = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+				int[] tmpRobotsDestroyedKey = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8};
 				Array.Sort(tmpRobotsDestroyed, tmpRobotsDestroyedKey);
 				for (int i = 0; i < 9; i++)
 				{
 					TotalRobos += eTeam.RobotDestroyed[tmpRobotsDestroyedKey[i]];
-					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", RoboName[tmpRobotsDestroyedKey[i]], eTeam.RobotDestroyed[tmpRobotsDestroyedKey[i]], eTeam.RobotDestroyedGoal[tmpRobotsDestroyedKey[i]]) };
+					string tmp = RoboName[tmpRobotsDestroyedKey[i]];
+					int tmp2 = eTeam.RobotDestroyed[tmpRobotsDestroyedKey[i]];
+					tmp2 = eTeam.RobotDestroyedGoal[tmpRobotsDestroyedKey[i]];
+					Label lblRobot = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + TeamRowLength[0] + ":n0}/{2," + TeamRowLength[1] + ":n0}", 
+																						RoboName[tmpRobotsDestroyedKey[i]], 
+																						eTeam.RobotDestroyed[tmpRobotsDestroyedKey[i]], 
+																						eTeam.RobotDestroyedGoal[tmpRobotsDestroyedKey[i]]) };
 					RobotPanel.Controls.Add(lblRobot);
 				}
 				Label lblTotalRobots = new Label { AutoSize = true, Text = String.Format("  {0,-10} {1," + (TeamRowLength[0] + TeamRowLength[1] +  1) + ":n0}", "Total Robo", TotalRobos) };
@@ -2577,7 +2576,7 @@ namespace TrainingProject
 							}
 							else
 							{
-								FightBreak = fightBreakAmount();
+								FightBreak = 7;
 								FightBreakCount = 0;
 								lblWinner.Text = GameTeam2[i].getName + " winns!";
 								GameTeam2[i].getScore++;
@@ -4116,21 +4115,21 @@ namespace TrainingProject
 					RobotDestroyed = new int[1];
 					RobotDestroyedGoal = new int[1];
 				}
-				if (RobotDestroyed.Length <= type)
-				{
-					int[] tmp = new int[type+1];
-					int[] Goaltmp = new int[type+1];
-					for (int i = 0; i < type; i++)
-					{
-						if (i < RobotDestroyed.Length)
-						{
-							tmp[i] = RobotDestroyed[i];
-							Goaltmp[i] = RobotDestroyedGoal[i];
-						}
-					}
-					RobotDestroyed = tmp;
-					RobotDestroyedGoal = Goaltmp;
-				}
+				//if (RobotDestroyed.Length <= type)
+				//{
+				//	int[] tmp = new int[type+1];
+				//	int[] Goaltmp = new int[type+1];
+				//	for (int i = 0; i < type; i++)
+				//	{
+				//		if (i < RobotDestroyed.Length)
+				//		{
+				//			tmp[i] = RobotDestroyed[i];
+				//			Goaltmp[i] = RobotDestroyedGoal[i];
+				//		}
+				//	}
+				//	RobotDestroyed = tmp;
+				//	RobotDestroyedGoal = Goaltmp;
+				//}
 				RobotDestroyed[type]++;
 				if (RobotDestroyedGoal[type] == 0) RobotDestroyedGoal[type] = 100;
 				if (RobotDestroyed[type] >= RobotDestroyedGoal[type])
@@ -4356,7 +4355,24 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
-			getScore--;
+			
+			// Fix achievements 
+			/*
+			if (RobotDestroyed.Length >= 10)
+			{
+				int[] tmp = new int[9];
+				int[] Goaltmp = new int[9];
+				for (int i = 0; i < 9; i++)
+				{
+					if (i < RobotDestroyed.Length)
+					{
+						tmp[i] = RobotDestroyed[i];
+						Goaltmp[i] = RobotDestroyedGoal[i];
+					}
+				}
+				RobotDestroyed = tmp;
+				RobotDestroyedGoal = Goaltmp;
+			}*/
 		}
 		public void Rebuild(bool pay, Game myGame)
 		{
