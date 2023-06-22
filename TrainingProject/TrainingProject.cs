@@ -1644,6 +1644,11 @@ namespace TrainingProject
 							JackpotMovement--;
 							IncreaseJackpot();
 						}
+						else if (CurrentJackpot/2 == MinWage)
+						{
+							JackpotMovement++;
+							IncreaseJackpot();
+						}
 					}
 					CheckMinJackpot();
 					if (ArenaOpponent1 == ArenaOpponent2)
@@ -4614,10 +4619,10 @@ namespace TrainingProject
 		public bool bIsMonster = false;
 		public String getNameRank(Boolean includeName = true)
 		{
-			double rank = getBaseStats() / 2;
+			double rank = getBaseStats() / 2.0;
 			string tmpName = "";
 			if (includeName) tmpName = RobotName; 
-			return String.Format("{0}.{1}",tmpName, rank);
+			return String.Format("{0}_{1}",tmpName, rank);
 		}
 		public String getName
 		{

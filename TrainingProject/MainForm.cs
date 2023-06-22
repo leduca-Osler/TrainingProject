@@ -288,8 +288,11 @@ namespace TrainingApp
 		{
 			// only check the first teams in the list
 			int total = 0;
-			total += MyGame.GameTeam1[0].getNumRobos(false);
-			total += MyGame.GameTeam2[0].getNumRobos(false);
+			if (MyGame.GameTeam1.Count > 0)
+			{
+				total += MyGame.GameTeam1[0].getNumRobos(false);
+				total += MyGame.GameTeam2[0].getNumRobos(false);
+			}
 			if (total > 20) total = 20;
 			return total;
 		}
