@@ -648,6 +648,7 @@ namespace TrainingApp
 				MyGame.ManagerHrs++;
 				MyGame.ManagerCost = MyGame.roundValue(MyGame.ManagerCost, MyGame.ManagerCostBase, "up");
 			}
+			StandbyCountdown = 0; // reset standby timer
 		}
 		private void levelUpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -686,7 +687,6 @@ namespace TrainingApp
 				cbTeamSelect.Items.Add(eTeam.getName);
 			}
 			cbTeamSelect.SelectedIndex = 0;
-			StandbyCountdown = 0; // reset standby timer
 		}
 
 		private void mnuShowStats_Click(object sender, EventArgs e)

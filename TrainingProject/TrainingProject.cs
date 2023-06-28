@@ -2340,7 +2340,6 @@ namespace TrainingProject
 		}
 		public FlowLayoutPanel continueFight(bool display)
 		{
-			PauseForBoss();
 			// restore fight log if blank.
 			if (FightLog == null || FightLog.Length == 0)
 			{
