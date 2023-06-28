@@ -77,6 +77,7 @@
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
+			this.DialogTimer = new System.Windows.Forms.Timer(this.components);
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -519,6 +520,10 @@
 			this.BreakTimer.Interval = 1000;
 			this.BreakTimer.Tick += new System.EventHandler(this.BreakTimer_Tick);
 			// 
+			// DialogTimer
+			// 
+			this.DialogTimer.Interval = 30000;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -588,6 +593,7 @@
 		private System.Windows.Forms.ToolStripMenuItem mnuComunityOutreach;
 		private System.Windows.Forms.ToolStripComboBox mnuPriority;
 		private System.Windows.Forms.ToolStripMenuItem fixToolStripMenuItem;
+		public System.Windows.Forms.Timer DialogTimer;
 	}
 }
 

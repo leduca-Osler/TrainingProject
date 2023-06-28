@@ -26,6 +26,7 @@ namespace TrainingApp
 		private int PauseTimer;
 		private Boolean breakTimerOn = true;
 		private DateTime saveTime;
+		private int StandbyCountdown = 0;
 		public MainForm()
 		{
 			try
@@ -685,6 +686,7 @@ namespace TrainingApp
 				cbTeamSelect.Items.Add(eTeam.getName);
 			}
 			cbTeamSelect.SelectedIndex = 0;
+			StandbyCountdown = 0; // reset standby timer
 		}
 
 		private void mnuShowStats_Click(object sender, EventArgs e)
@@ -808,6 +810,7 @@ namespace TrainingApp
 				MainPannel.Controls.Add(MyGame.showCountdown());
 			}
 
+
 			MyGame.equip();
 
 			// don't heal if Arena fight is on
@@ -824,6 +827,11 @@ namespace TrainingApp
 			if (tmp.Next(100) > 90 && DateTime.Now > MyGame.SafeTime)
 			{
 				MyGame.continueFight(false);
+				if (StandbyCountdown++ > 150)
+				{
+					Application.SetSuspendState(PowerState.Suspend, true, false);// Standby
+					StandbyCountdown = 0;
+				}
 			}
 			// check if difficulty fight has begun and needs to be paused
 			if (MyGame.GameDifficultyFightPaused)

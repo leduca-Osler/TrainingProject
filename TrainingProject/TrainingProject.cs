@@ -1525,7 +1525,7 @@ namespace TrainingProject
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
 				// Pause Game
 				// GameDifficultyFightPaused = true;
-				returnToWork();
+				PauseForBoss();
 			}
 			// Game difficulty fight
 			else
@@ -1537,11 +1537,11 @@ namespace TrainingProject
 				Jackpot = gameDifficulty * getArenaLvl * 1000;
 				getWarningLog = getFightLog = Environment.NewLine + " Game Difficulty Fight! ";
 				// Pause Game
-				GameDifficultyFightPaused = true;
-				//returnToWork();
+				// GameDifficultyFightPaused = true;
+				PauseForBoss();
 			}
 		}
-		public void returnToWork()
+		public void PauseForBoss()
 		{
 			// recover unused hours
 			int hrs = (int)(SafeTime - DateTime.Now).TotalHours;
@@ -2340,6 +2340,7 @@ namespace TrainingProject
 		}
 		public FlowLayoutPanel continueFight(bool display)
 		{
+			PauseForBoss();
 			// restore fight log if blank.
 			if (FightLog == null || FightLog.Length == 0)
 			{
