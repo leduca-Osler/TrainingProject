@@ -826,6 +826,10 @@ namespace TrainingApp
 			}
 			if (tmp.Next(100) > 90 && DateTime.Now > MyGame.SafeTime)
 			{
+
+#if DEBUG
+				StandbyCountdown = 0; // do not suspend in debug mode
+#endif
 				MyGame.continueFight(false);
 				if (StandbyCountdown++ > 150)
 				{

@@ -96,7 +96,18 @@ namespace TrainingProject
 		[JsonIgnore]
 		public string[] name1 = { "Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
 			"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny", 
-			"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic"};
+			"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic", "Attractive", "Bald", "Beautiful", "Chubby", "Clean", 
+			"Dazzling", "Drab", "Elegant", "Fancy", "Fit", "Flabby", "Glamorous", "Gorgeous", "Handsome", "Long", "Magnificent",
+			"Muscular", "Plain", "Plump", "Quaint", "Scruffy", "Shapely", "Short", "Skinny", "Stocky", "Ugly", "Unkempt", 
+			"Unsightly", "Ashy", "Black", "Blue", "Gray", "Green", "Icy", "Lemon", "Mango","Orange", "Purple", "Red","Salmon",
+			"White","Yellow","Alive","Better","Careful","Clever","Dead","Easy","Famous","Gifted","Hallowed","Helpful","Important",
+			"Inexpensive","Mealy","Mushy","Odd","Poor","Powerful","Rich","Shy","Tender","Unimportant","Uninterested","Vast","Wrong",
+			"Aggressive","Agreeable","Ambitious","Brave","Calm","Delightful","Eager","Faithful","Gentle","Happy","Jolly","Kind",
+			"Lively","Nice","Obedient","Polite","Proud","Silly","Thankful","Victorious","Witty","Wonderful","Zealous","Angry",
+			"Bewildered","Clumsy","Defeated","Embarrassed","Fierce","Grumpy","Helpless","Itchy","Jealous","Lazy","Mysterious",
+			"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
+			"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
+			"Wide"};
 		[JsonIgnore]
 		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", "Tigers", "Hyenas", "Vulturs" };
 		[JsonIgnore]
@@ -987,14 +998,16 @@ namespace TrainingProject
 		{
 			string name = "";
 			int RoboType = RndVal.Next(index);
-			if (RoboType < 20)
+			if (RoboType < 10)
 				name = string.Format("{0}{2}{1}", RoboName[index], ToRoman(getRoboNumeral++), RoboNumeralChar); // Roman Numeral
-			else if (RoboType < 100)
+			else if (RoboType < 20)
 				name = string.Format("{0}{2}{1:N0}", RoboName[index], getRoboNumeral++, RoboNumeralChar); // base 10
-			else if (RoboType < 250)
+			else if (RoboType < 30)
 				name = string.Format("{0}{2}#{1:X}", RoboName[index], getRoboNumeral++, RoboNumeralChar); // Hex
-			else
+			else if (RoboType < 40)
 				name = string.Format("{0}{2}~{1}", RoboName[index], ToAlphaNumeric(getRoboNumeral++), RoboNumeralChar); // Alphanumberic
+			else 
+				name = string.Format("{1} {0}", RoboName[index], name1[RndVal.Next(name1.Length)]); // Alphanumberic
 			return name;
 		}
 		public int maxWins()
@@ -1008,6 +1021,21 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+			name1 = new string[] {
+				"Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
+			"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny", 
+			"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic", "Attractive", "Bald", "Beautiful", "Chubby", "Clean", 
+			"Dazzling", "Drab", "Elegant", "Fancy", "Fit", "Flabby", "Glamorous", "Gorgeous", "Handsome", "Long", "Magnificent",
+			"Muscular", "Plain", "Plump", "Quaint", "Scruffy", "Shapely", "Short", "Skinny", "Stocky", "Ugly", "Unkempt", 
+			"Unsightly", "Ashy", "Black", "Blue", "Gray", "Green", "Icy", "Lemon", "Mango","Orange", "Purple", "Red","Salmon",
+			"White","Yellow","Alive","Better","Careful","Clever","Dead","Easy","Famous","Gifted","Hallowed","Helpful","Important",
+			"Inexpensive","Mealy","Mushy","Odd","Poor","Powerful","Rich","Shy","Tender","Unimportant","Uninterested","Vast","Wrong",
+			"Aggressive","Agreeable","Ambitious","Brave","Calm","Delightful","Eager","Faithful","Gentle","Happy","Jolly","Kind",
+			"Lively","Nice","Obedient","Polite","Proud","Silly","Thankful","Victorious","Witty","Wonderful","Zealous","Angry",
+			"Bewildered","Clumsy","Defeated","Embarrassed","Fierce","Grumpy","Helpless","Itchy","Jealous","Lazy","Mysterious",
+			"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
+			"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
+			"Wide"};
 		}
 
 		public void resetShowDefeated()
@@ -1639,14 +1667,14 @@ namespace TrainingProject
                         {
 							IncreaseJackpot();
                         }
+						else if (CurrentJackpot/2 == MinWage && getGameCurrency > 0)
+						{
+							JackpotMovement++;
+							IncreaseJackpot();
+						}
 						else if ((getGameCurrency < MaxMaintenance()))
                         {
 							JackpotMovement--;
-							IncreaseJackpot();
-						}
-						else if (CurrentJackpot/2 == MinWage)
-						{
-							JackpotMovement++;
 							IncreaseJackpot();
 						}
 					}
@@ -2721,14 +2749,16 @@ namespace TrainingProject
 						if (!eMonster.bMonster)
 						{
 							int type = RndVal.Next(getNumeral);
-							if (type < 30)
+							if (type < 10)
 								eMonster.getName += NumeralChar + ToRoman(getNumeral++);
-							else if (type < 100)
+							else if (type < 20)
 								eMonster.getName += string.Format("{0}{1:N0}", NumeralChar, getNumeral++);
-							else if (type < 250)
+							else if (type < 30)
 								eMonster.getName += string.Format("{0}#{1:X}", NumeralChar, getNumeral++);
-							else
+							else if (type < 40)
 								eMonster.getName += NumeralChar + "~" + ToAlphaNumeric(getNumeral++);
+							else
+								eMonster.getName = string.Format("{0} {1}", name1[RndVal.Next(name1.Length)], eMonster.getName);
 							eMonster.bMonster = true;
 						}
 						for (int i = 100; i < RndVal.Next(findMonster); i += 100)
@@ -3032,7 +3062,7 @@ namespace TrainingProject
 								getArenaLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
+							getArenaLvlMaint = getArenaLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
 					}
@@ -3102,7 +3132,7 @@ namespace TrainingProject
 								getShopLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
+							getShopLvlMaint = getShopLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -3166,7 +3196,7 @@ namespace TrainingProject
 								getShopLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							getShopLvlMaint = getShopLvlCost + MonsterDenRepairs;
+							getShopLvlMaint = getShopLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -3192,7 +3222,7 @@ namespace TrainingProject
 								getResearchDevLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
+							ResearchDevMaint = getResearchDevLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
@@ -3254,7 +3284,7 @@ namespace TrainingProject
 								getResearchDevLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							ResearchDevMaint = getResearchDevLvlCost + MonsterDenRepairs;
+							ResearchDevMaint = getResearchDevLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
@@ -3286,7 +3316,7 @@ namespace TrainingProject
 								getMonsterDenLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							MonsterDenLvlMaint = getMonsterDenLvlCost + MonsterDenRepairs;
+							MonsterDenLvlMaint = getMonsterDenLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
@@ -3438,7 +3468,7 @@ namespace TrainingProject
 								getArenaLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							getArenaLvlMaint = getArenaLvlCost + MonsterDenRepairs;
+							getArenaLvlMaint = getArenaLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
 					}
@@ -3473,7 +3503,7 @@ namespace TrainingProject
 								MonsterDenLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							MonsterDenLvlMaint = MonsterDenLvlCost + MonsterDenRepairs;
+							MonsterDenLvlMaint = MonsterDenLvlCost;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
@@ -3527,12 +3557,9 @@ namespace TrainingProject
 					if (getArenaOutreach() < 0.7) MaintCost += (MainLvlCostBase / 10);
 					goto case 225;
 				case 225:
-					if (getArenaOutreach() < 0.75)
-					{
-						MaintCost += (MainLvlCostBase / 10);
-						ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
-						if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach: Atttendance " + String.Format("{0:p2}!", getArenaOutreach());
-					}
+					if (getArenaOutreach() < 0.75) MaintCost += (MainLvlCostBase / 10);
+					ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
+					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach: Attendance " + String.Format("{0:p2}!", getArenaOutreach());
 					break;
 				case 249:
 					int leavingTeam = RndVal.Next(2,(50+CurrentJackpotLvl));
@@ -4336,7 +4363,7 @@ namespace TrainingProject
 					char tmpSkill = '.';
 					if (eRobo.cSkill != ' ') tmpSkill = eRobo.cSkill;
 					eRobo.getRoboStats(PadRight, myGame, this, rebuildSavings, Runes, roundCount, ClearDmg);
-					if (eRobo.getKO <= KOCount)
+					if (eRobo.getKO == 0)
 					{
 						if (shownCounter == 0)
 							strStats += Environment.NewLine + "->";
