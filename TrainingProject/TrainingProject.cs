@@ -94,20 +94,21 @@ namespace TrainingProject
 			new Skill("Corosion", "Enemy", 1, "Multiple tech", 3, ImagePath + corosion, '^')
 		};
 		[JsonIgnore]
-		public string[] name1 = { "Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
-			"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny", 
-			"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic", "Attractive", "Bald", "Beautiful", "Chubby", "Clean", 
-			"Dazzling", "Drab", "Elegant", "Fancy", "Fit", "Flabby", "Glamorous", "Gorgeous", "Handsome", "Long", "Magnificent",
-			"Muscular", "Plain", "Plump", "Quaint", "Scruffy", "Shapely", "Short", "Skinny", "Stocky", "Ugly", "Unkempt", 
-			"Unsightly", "Ashy", "Black", "Blue", "Gray", "Green", "Icy", "Lemon", "Mango","Orange", "Purple", "Red","Salmon",
-			"White","Yellow","Alive","Better","Careful","Clever","Dead","Easy","Famous","Gifted","Hallowed","Helpful","Important",
-			"Inexpensive","Mealy","Mushy","Odd","Poor","Powerful","Rich","Shy","Tender","Unimportant","Uninterested","Vast","Wrong",
-			"Aggressive","Agreeable","Ambitious","Brave","Calm","Delightful","Eager","Faithful","Gentle","Happy","Jolly","Kind",
-			"Lively","Nice","Obedient","Polite","Proud","Silly","Thankful","Victorious","Witty","Wonderful","Zealous","Angry",
-			"Bewildered","Clumsy","Defeated","Embarrassed","Fierce","Grumpy","Helpless","Itchy","Jealous","Lazy","Mysterious",
-			"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
-			"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
-			"Wide"};
+		public string[] name1 = {
+				"Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
+				"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny",
+				"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic", "Bald", "Beaut", "Chubby", "Clean",
+				"Dazzling", "Drab", "Elegant", "Fancy", "Fit", "Flabby", "Glam", "Gorg", "Handsome", "Long", "Magnif",
+				"Muscular", "Plain", "Plump", "Quaint", "Scruffy", "Shapely", "Short", "Skinny", "Stocky", "Ugly", "Unkempt",
+				"Unsightly", "Ashy", "Black", "Blue", "Gray", "Green", "Icy", "Lemon", "Mango","Orange", "Purple", "Red","Salmon",
+				"White","Yellow","Alive","Better","Careful","Clever","Dead","Easy","Famous","Gifted","Hallowed","Helpful","Important",
+				"Mealy","Mushy","Odd","Poor","Powerful","Rich","Shy","Tender","Vast","Wrong",
+				"Agreeable","Ambitious","Brave","Calm","Delightful","Eager","Faithful","Gentle","Happy","Jolly","Kind",
+				"Lively","Nice","Obedient","Polite","Proud","Silly","Thankful","Victorious","Witty","Wonderful","Zealous","Angry",
+				"Bewildered","Clumsy","Fierce","Grumpy","Helpless","Itchy","Jealous","Lazy","Mysterious",
+				"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
+				"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
+				"Wide"};
 		[JsonIgnore]
 		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", "Tigers", "Hyenas", "Vulturs" };
 		[JsonIgnore]
@@ -547,6 +548,8 @@ namespace TrainingProject
 		public int FastForwardCount;
 		public bool FastForward;
 		public int tmpRev;
+		public int DiffLosses;
+		public int bossLosses;
 		public int getMonsterDenBonus
 		{
 			get { return MonsterDenBonus; }
@@ -997,14 +1000,14 @@ namespace TrainingProject
 		public string setRoboName(int index)
 		{
 			string name = "";
-			int RoboType = RndVal.Next(index);
-			if (RoboType < 10)
+			int NameType = RndVal.Next(100);
+			if (NameType < 15)
 				name = string.Format("{0}{2}{1}", RoboName[index], ToRoman(getRoboNumeral++), RoboNumeralChar); // Roman Numeral
-			else if (RoboType < 20)
+			else if (NameType < 25)
 				name = string.Format("{0}{2}{1:N0}", RoboName[index], getRoboNumeral++, RoboNumeralChar); // base 10
-			else if (RoboType < 30)
+			else if (NameType < 35)
 				name = string.Format("{0}{2}#{1:X}", RoboName[index], getRoboNumeral++, RoboNumeralChar); // Hex
-			else if (RoboType < 40)
+			else if (NameType < 50)
 				name = string.Format("{0}{2}~{1}", RoboName[index], ToAlphaNumeric(getRoboNumeral++), RoboNumeralChar); // Alphanumberic
 			else 
 				name = string.Format("{1} {0}", RoboName[index], name1[RndVal.Next(name1.Length)]); // Alphanumberic
@@ -1023,19 +1026,19 @@ namespace TrainingProject
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
 			name1 = new string[] {
 				"Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
-			"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny", 
-			"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic", "Attractive", "Bald", "Beautiful", "Chubby", "Clean", 
-			"Dazzling", "Drab", "Elegant", "Fancy", "Fit", "Flabby", "Glamorous", "Gorgeous", "Handsome", "Long", "Magnificent",
-			"Muscular", "Plain", "Plump", "Quaint", "Scruffy", "Shapely", "Short", "Skinny", "Stocky", "Ugly", "Unkempt", 
-			"Unsightly", "Ashy", "Black", "Blue", "Gray", "Green", "Icy", "Lemon", "Mango","Orange", "Purple", "Red","Salmon",
-			"White","Yellow","Alive","Better","Careful","Clever","Dead","Easy","Famous","Gifted","Hallowed","Helpful","Important",
-			"Inexpensive","Mealy","Mushy","Odd","Poor","Powerful","Rich","Shy","Tender","Unimportant","Uninterested","Vast","Wrong",
-			"Aggressive","Agreeable","Ambitious","Brave","Calm","Delightful","Eager","Faithful","Gentle","Happy","Jolly","Kind",
-			"Lively","Nice","Obedient","Polite","Proud","Silly","Thankful","Victorious","Witty","Wonderful","Zealous","Angry",
-			"Bewildered","Clumsy","Defeated","Embarrassed","Fierce","Grumpy","Helpless","Itchy","Jealous","Lazy","Mysterious",
-			"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
-			"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
-			"Wide"};
+				"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny", 
+				"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic", "Bald", "Beaut", "Chubby", "Clean", 
+				"Dazzling", "Drab", "Elegant", "Fancy", "Fit", "Flabby", "Glam", "Gorg", "Handsome", "Long", "Magnif",
+				"Muscular", "Plain", "Plump", "Quaint", "Scruffy", "Shapely", "Short", "Skinny", "Stocky", "Ugly", "Unkempt", 
+				"Unsightly", "Ashy", "Black", "Blue", "Gray", "Green", "Icy", "Lemon", "Mango","Orange", "Purple", "Red","Salmon",
+				"White","Yellow","Alive","Better","Careful","Clever","Dead","Easy","Famous","Gifted","Hallowed","Helpful","Important",
+				"Mealy","Mushy","Odd","Poor","Powerful","Rich","Shy","Tender","Vast","Wrong",
+				"Agreeable","Ambitious","Brave","Calm","Delightful","Eager","Faithful","Gentle","Happy","Jolly","Kind",
+				"Lively","Nice","Obedient","Polite","Proud","Silly","Thankful","Victorious","Witty","Wonderful","Zealous","Angry",
+				"Bewildered","Clumsy","Fierce","Grumpy","Helpless","Itchy","Jealous","Lazy","Mysterious",
+				"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
+				"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
+				"Wide"};
 		}
 
 		public void resetShowDefeated()
@@ -1176,6 +1179,19 @@ namespace TrainingProject
 				Bosses.MyTeam[i].getEquipWeapon = new Equipment(true, BossLvl + Bosses.MyTeam[i].type, 10000, RndVal, true);
 				Bosses.MyTeam[i].getEquipArmour = new Equipment(false, BossLvl + Bosses.MyTeam[i].type, 10000, RndVal, true);
 			}
+			Bosses.resetLogs();
+			return retVal;
+		}
+		public string bossLevelDown()
+		{
+			string retVal = "";
+			BossLvl = BossLvl--;
+			BossCount--;
+			BossDifficulty--;
+			retVal = getFightLog = String.Format("\nBoss Level Decreased ({0}) ", DateTime.Now.ToString());
+			BossReward = BossLvl * BossDifficulty * BossCount * getArenaLvl;
+			// Remove random boss Robot / monster
+			Bosses.MyTeam.RemoveAt(RndVal.Next(Bosses.MyTeam.Count));
 			Bosses.resetLogs();
 			return retVal;
 		}
@@ -2526,17 +2542,29 @@ namespace TrainingProject
 								findMonster = 5;
 								getGameCurrency -= Jackpot;
 								GameCurrencyLogMaint -= Jackpot;
-								// addMonsters(GameTeam2[0]);
 							}
 							else if (GameTeam2[i].getName.Equals("Game Diff " + gameDifficulty.ToString()))
 							{
 								Jackpot = 0;
 								getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Arena lost to monsters ";
+								// Decrease difficulty after many losses
+								if (RndVal.Next(100) < DiffLosses++)
+								{
+									gameDifficulty--;
+									getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Difficulty decreased ";
+									DiffLosses = 0;
+								}
 							}
 							else
 							{
 								string tmp = getWarningLog = getFightLog = Environment.NewLine + "Arena suffered a loss against the boss monsters! ";
 								lblWinner.Text = tmp;
+								// Decrease boss level after many losses
+								if (RndVal.Next(100) < bossLosses++)
+								{
+									getWarningLog = lblWinner.Text = getFightLog = bossLevelDown(); 
+									DiffLosses = 0;
+								}
 								if (getScore() >= GoalGameScore)
 								{
 									GoalGameScore = (int)roundValue(GoalGameScore, (10 * gameDifficulty), "up");
@@ -2748,14 +2776,14 @@ namespace TrainingProject
 					{
 						if (!eMonster.bMonster)
 						{
-							int type = RndVal.Next(getNumeral);
-							if (type < 10)
+							int type = RndVal.Next(100);
+							if (type < 15)
 								eMonster.getName += NumeralChar + ToRoman(getNumeral++);
-							else if (type < 20)
+							else if (type < 25)
 								eMonster.getName += string.Format("{0}{1:N0}", NumeralChar, getNumeral++);
-							else if (type < 30)
+							else if (type < 35)
 								eMonster.getName += string.Format("{0}#{1:X}", NumeralChar, getNumeral++);
-							else if (type < 40)
+							else if (type < 50)
 								eMonster.getName += NumeralChar + "~" + ToAlphaNumeric(getNumeral++);
 							else
 								eMonster.getName = string.Format("{0} {1}", name1[RndVal.Next(name1.Length)], eMonster.getName);
@@ -3515,50 +3543,109 @@ namespace TrainingProject
 					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
 					break;
 				case 211:
-					if (getArenaOutreach() < 0.05) MaintCost += (MainLvlCostBase / 3);
-					goto case 212;
+					if (getArenaOutreach() < 0.05)
+					{
+						MaintCost += (MainLvlCostBase / 3);
+						goto case 212;
+					}
+					break;
 				case 212:
-					if (getArenaOutreach() < 0.1) MaintCost += (MainLvlCostBase / 4);
-					goto case 213;
+					if (getArenaOutreach() < 0.1)
+					{
+						MaintCost += (MainLvlCostBase / 4);
+						goto case 213;
+					}
+					break;
 				case 213:
-					if (getArenaOutreach() < 0.15) MaintCost += (MainLvlCostBase / 5);
-					goto case 214;
+					if (getArenaOutreach() < 0.15)
+					{
+						MaintCost += (MainLvlCostBase / 5);
+						goto case 214;
+					}
+					break;
 				case 214:
-					if (getArenaOutreach() < 0.2) MaintCost += (MainLvlCostBase / 6);
-					goto case 215;
+					if (getArenaOutreach() < 0.2)
+					{
+						MaintCost += (MainLvlCostBase / 6);
+						goto case 215;
+					}
+					break;
 				case 215:
-					if (getArenaOutreach() < 0.25) MaintCost += (MainLvlCostBase / 6);
-					goto case 216;
+					if (getArenaOutreach() < 0.25)
+					{
+						MaintCost += (MainLvlCostBase / 6);
+						goto case 216;
+					}
+					break;
 				case 216:
-					if (getArenaOutreach() < 0.3) MaintCost += (MainLvlCostBase / 7);
-					goto case 217;
+					if (getArenaOutreach() < 0.3)
+					{
+						MaintCost += (MainLvlCostBase / 7);
+						goto case 217;
+					}
+					break;
 				case 217:
-					if (getArenaOutreach() < 0.35) MaintCost += (MainLvlCostBase / 7);
-					goto case 218;
+					if (getArenaOutreach() < 0.35)
+					{
+						MaintCost += (MainLvlCostBase / 7);
+						goto case 218;
+					}
+					break;
 				case 218:
-					if (getArenaOutreach() < 0.4) MaintCost += (MainLvlCostBase / 8);
-					goto case 219;
+					if (getArenaOutreach() < 0.4)
+					{
+						MaintCost += (MainLvlCostBase / 8);
+						goto case 219;
+					}
+					break;
 				case 219:
-					if (getArenaOutreach() < 0.45) MaintCost += (MainLvlCostBase / 8);
-					goto case 220;
+					if (getArenaOutreach() < 0.45)
+					{
+						MaintCost += (MainLvlCostBase / 8);
+						goto case 220;
+					}
+					break;
 				case 220:
-					if (getArenaOutreach() < 0.5) MaintCost += (MainLvlCostBase / 9);
-					goto case 221;
+					if (getArenaOutreach() < 0.5)
+					{
+						MaintCost += (MainLvlCostBase / 9);
+						goto case 221;
+					}
+					break;
 				case 221:
-					if (getArenaOutreach() < 0.55) MaintCost += (MainLvlCostBase / 9);
-					goto case 222;
+					if (getArenaOutreach() < 0.55)
+					{
+						MaintCost += (MainLvlCostBase / 9);
+						goto case 222;
+					}
+					break;
 				case 222:
-					if (getArenaOutreach() < 0.6) MaintCost += (MainLvlCostBase / 10);
-					goto case 223;
+					if (getArenaOutreach() < 0.6)
+					{
+						MaintCost += (MainLvlCostBase / 10);
+						goto case 223;
+					}
+					break;
 				case 223:
-					if (getArenaOutreach() < 0.65) MaintCost += (MainLvlCostBase / 10);
-					goto case 224;
+					if (getArenaOutreach() < 0.65)
+					{
+						MaintCost += (MainLvlCostBase / 10);
+						goto case 224;
+					}
+					break;
 				case 224:
-					if (getArenaOutreach() < 0.7) MaintCost += (MainLvlCostBase / 10);
-					goto case 225;
+					if (getArenaOutreach() < 0.7)
+					{
+						MaintCost += (MainLvlCostBase / 10);
+						goto case 225;
+					}
+					break;
 				case 225:
-					if (getArenaOutreach() < 0.75) MaintCost += (MainLvlCostBase / 10);
-					ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
+					if (getArenaOutreach() < 0.75)
+					{
+						MaintCost += (MainLvlCostBase / 10);
+						ArenaComunityReach = roundValue(ArenaComunityReach, MaintCost, "up");
+					}
 					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach: Attendance " + String.Format("{0:p2}!", getArenaOutreach());
 					break;
 				case 249:
