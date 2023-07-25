@@ -1024,21 +1024,8 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-			name1 = new string[] {
-				"Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
-				"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny", 
-				"Ugly", "Vast", "Wise", "Xanthic", "Yellow", "Zoic", "Bald", "Beaut", "Chubby", "Clean", 
-				"Dazzling", "Drab", "Elegant", "Fancy", "Fit", "Flabby", "Glam", "Gorg", "Handsome", "Long", "Magnif",
-				"Muscular", "Plain", "Plump", "Quaint", "Scruffy", "Shapely", "Short", "Skinny", "Stocky", "Ugly", "Unkempt", 
-				"Unsightly", "Ashy", "Black", "Blue", "Gray", "Green", "Icy", "Lemon", "Mango","Orange", "Purple", "Red","Salmon",
-				"White","Yellow","Alive","Better","Careful","Clever","Dead","Easy","Famous","Gifted","Hallowed","Helpful","Important",
-				"Mealy","Mushy","Odd","Poor","Powerful","Rich","Shy","Tender","Vast","Wrong",
-				"Agreeable","Ambitious","Brave","Calm","Delightful","Eager","Faithful","Gentle","Happy","Jolly","Kind",
-				"Lively","Nice","Obedient","Polite","Proud","Silly","Thankful","Victorious","Witty","Wonderful","Zealous","Angry",
-				"Bewildered","Clumsy","Fierce","Grumpy","Helpless","Itchy","Jealous","Lazy","Mysterious",
-				"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
-				"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
-				"Wide"};
+			bossLosses = 10;
+			DiffLosses = 40;
 		}
 
 		public void resetShowDefeated()
@@ -2134,6 +2121,9 @@ namespace TrainingProject
 				Label lblManager = new Label { AutoSize = true, Text = String.Format("Manager:     {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\+#,###}", ManagerHrs, ManagerCost) };
 				lblManager.Click += new EventHandler((sender, e) => AddManagerHours());
 				MainPanel.Controls.Add(lblManager);
+				Label lblResetPercent = new Label { AutoSize = true, Text = String.Format("Lower Percent: Boss-{0}% Diff-{1}%",bossLosses, DiffLosses) };
+				lblResetPercent.Click += new EventHandler((sender, e) => displayAchievements());
+				MainPanel.Controls.Add(lblResetPercent);
 				Label lblAchievments = new Label { AutoSize = true, Text = String.Format("Achievments") };
 				lblAchievments.Click += new EventHandler((sender, e) => displayAchievements());
 				MainPanel.Controls.Add(lblAchievments);
@@ -2562,8 +2552,8 @@ namespace TrainingProject
 								// Decrease boss level after many losses
 								if (RndVal.Next(100) < bossLosses++)
 								{
-									getWarningLog = lblWinner.Text = getFightLog = bossLevelDown(); 
-									DiffLosses = 0;
+									getWarningLog = lblWinner.Text = getFightLog = bossLevelDown();
+									bossLosses = 0;
 								}
 								if (getScore() >= GoalGameScore)
 								{
