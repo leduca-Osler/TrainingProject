@@ -1555,8 +1555,8 @@ namespace TrainingProject
 				Jackpot = BossReward;
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
 				// Pause Game
-				// GameDifficultyFightPaused = true;
 				PauseForBoss();
+				GameDifficultyFightPaused = true;
 			}
 			// Game difficulty fight
 			else
@@ -1568,8 +1568,8 @@ namespace TrainingProject
 				Jackpot = gameDifficulty * getArenaLvl * 1000;
 				getWarningLog = getFightLog = Environment.NewLine + " Game Difficulty Fight! ";
 				// Pause Game
-				// GameDifficultyFightPaused = true;
 				PauseForBoss();
+				GameDifficultyFightPaused = true;
 			}
 		}
 		public void PauseForBoss()
@@ -2633,7 +2633,7 @@ namespace TrainingProject
 								GameTeam2[i].getScore++;
 								// Try difficulty fight 
 								if  (getScore() >= GoalGameScore && !GameTeam2[0].getName.Equals("Arena")) bossFight = true;
-								if (RndVal.Next(100) > 90 && !GameTeam2[i].isMonster)
+								if (GameTeam1[i].getScore > GameTeam2[i].getScore && !GameTeam2[i].isMonster)
 								{
 									GameTeam1[i].getScore--;
 									GameTeam2[i].getScore++;
@@ -3458,7 +3458,7 @@ namespace TrainingProject
 					}
 					break;
 				case 100:
-					ArenaComunityReach = roundValue(ArenaComunityReach, (RndVal.Next((int)MainLvlCostBase) / 2), "down");
+					ArenaComunityReach = roundValue(ArenaComunityReach, (RndVal.Next((int)MainLvlCostBase) / 5), "down");
 					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena Comunity Outreach disaster! Attendance down to " + String.Format("{0:p2}", getArenaOutreach());
 					break;
 				case 203:
