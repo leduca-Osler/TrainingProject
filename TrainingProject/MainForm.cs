@@ -830,7 +830,7 @@ namespace TrainingApp
 #if DEBUG
 				StandbyCountdown = 0; // do not suspend in debug mode
 #endif
-				MyGame.continueFight(false);
+				//MyGame.continueFight(false);
 				if (StandbyCountdown++ > 250 && !MyGame.FastForward)
 				{
 					Application.SetSuspendState(PowerState.Suspend, true, false);// Standby

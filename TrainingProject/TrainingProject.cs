@@ -1024,8 +1024,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-			bossLosses = 10;
-			DiffLosses = 40;
 		}
 
 		public void resetShowDefeated()
@@ -1285,7 +1283,7 @@ namespace TrainingProject
 			ResearchDevRebuildBase += ResearchDevRebuildBaseIncrement;
 			msg += string.Format("\n  Heal +{0:n0} Rebuild +{1:n0}", ResearchDevHealValue - tmpResearchDevHealValue, ResearchDevRebuild - tmpResearchDevRebuild);
 			// chance to add a new healing bay
-			if (RndVal.Next(GameTeams.Count + MaxRobo) > (ResearchDevHealBays))
+			if (RndVal.Next(ResearchDevLvl + MaxRobo) > (ResearchDevHealBays))
 			{
 				ResearchDevHealBays++;
 				msg += string.Format("\n  Heal Bays +1");
@@ -4611,7 +4609,7 @@ namespace TrainingProject
 					if (getCurrency < cost || beds == 0 || bedUsed || (MyTeam[robo].getTHealth() - MyTeam[robo].HP) < (value / 2))
 					{
 						cost = 0;
-						value = RndVal.Next(value / 2);
+						value = value / 2;
 					}
 					else
 					{
