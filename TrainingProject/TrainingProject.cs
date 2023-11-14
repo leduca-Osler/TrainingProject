@@ -1630,7 +1630,14 @@ namespace TrainingProject
 		}
 		public void incrementArenaOpponent()
 		{
-			if (ArenaOpponent2 >= GameTeams.Count) { ArenaOpponent2 = 0; ArenaOpponent1++; FightBreak = 7; FightBreakCount = 0; }
+			if (ArenaOpponent2 >= GameTeams.Count) 
+			{ 
+				ArenaOpponent2 = 0; 
+				ArenaOpponent1++; 
+				if (RndVal.Next(100) > 50) FightBreak = MaxRobo*10;
+				else FightBreak = MaxRobo; 
+				FightBreakCount = 0; 
+			}
 			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
 		}
 		public long MaxMaintenance()
