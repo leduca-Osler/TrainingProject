@@ -1537,6 +1537,7 @@ namespace TrainingProject
 		}
 		public void startBossFight()
 		{
+			FastForward = false;
 			fighting = true;
 			GameTeam1.Add(new Team(0, 0, 0, 0, 0, 0, 0, 0, 0, "Arena", false));
 			GameTeam1[GameTeam1.Count - 1].isMonster = true;
@@ -1633,9 +1634,11 @@ namespace TrainingProject
 			if (ArenaOpponent2 >= GameTeams.Count) 
 			{ 
 				ArenaOpponent2 = 0; 
-				ArenaOpponent1++; 
-				if (RndVal.Next(100) > 50) FightBreak = MaxRobo*10;
-				else FightBreak = MaxRobo; 
+				ArenaOpponent1++;
+				int tmp = RndVal.Next(100);
+				FightBreak = MaxRobo;
+				if (tmp > 90) FightBreak *= 10;
+				else if (tmp > 50) FightBreak *= 2;
 				FightBreakCount = 0; 
 			}
 			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
@@ -2057,17 +2060,21 @@ namespace TrainingProject
 					if (string.Format("{0:n0}", eSeating.Amount).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eSeating.Amount).Length;
 				}
 				int index = 0;
+				long potentialEarnings = 0;
 				foreach (ArenaSeating eSeating in Seating)
 				{
 					if (showAll || index <= 2)
 					{
 						string ending = "";
 						if (index == 2 && !showAll && Seating.Count > 3) ending = "...";
-						Label lblArenaSeating = new Label { AutoSize = true, Text = String.Format("    Level:{3," + RowThreeLength[0] + "} Price:{0," + RowThreeLength[1] + ":n0} Seats:{1," + RowThreeLength[2] + ":n0}{2}\n", eSeating.Price, eSeating.Amount, ending, eSeating.Level) };
+						Label lblArenaSeating = new Label { AutoSize = true, Text = String.Format("    Level:{3," + RowThreeLength[0] + "} Price:{0," + RowThreeLength[1] + ":c0} Seats:{1," + RowThreeLength[2] + ":n0}{2}\n", eSeating.Price, eSeating.Amount, ending, eSeating.Level) };
 						pnlSeating.Controls.Add(lblArenaSeating);
+						potentialEarnings += (eSeating.Price * eSeating.Amount);
 						index++;
 					}
 				}
+				Label lblPotentialEarnings = new Label { AutoSize = true, Text = String.Format("    Earing Potential:{0," + RowThreeLength[1] + ":c0}", potentialEarnings) };
+				pnlSeating.Controls.Add(lblPotentialEarnings);
 				MainPanel.Controls.Add(pnlSeating);
 				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}", getShopLvl, getShopLvlCost, getShopLvlMaint) };
 				MainPanel.Controls.Add(lblShopLvl);
@@ -3085,7 +3092,7 @@ namespace TrainingProject
 								getArenaLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							getArenaLvlMaint = getArenaLvlCost;
+							getArenaLvlMaint = getArenaLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
 						}
 					}
@@ -3155,7 +3162,7 @@ namespace TrainingProject
 								getShopLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							getShopLvlMaint = getShopLvlCost;
+							getShopLvlMaint = getShopLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -3219,7 +3226,7 @@ namespace TrainingProject
 								getShopLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							getShopLvlMaint = getShopLvlCost;
+							getShopLvlMaint = getShopLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
 						}
 					}
@@ -3245,7 +3252,7 @@ namespace TrainingProject
 								getResearchDevLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							ResearchDevMaint = getResearchDevLvlCost;
+							ResearchDevMaint = getResearchDevLvlCost/2;
 							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
@@ -3307,7 +3314,7 @@ namespace TrainingProject
 								getResearchDevLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							ResearchDevMaint = getResearchDevLvlCost;
+							ResearchDevMaint = getResearchDevLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** R&&D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
 						}
 					}
@@ -3339,7 +3346,7 @@ namespace TrainingProject
 								getMonsterDenLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							MonsterDenLvlMaint = getMonsterDenLvlCost;
+							MonsterDenLvlMaint = getMonsterDenLvlCost/2;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
@@ -3488,7 +3495,7 @@ namespace TrainingProject
 							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
 							if (getArenaLvlCost < MainLvlCostBase)
 							{
-								getArenaLvlCost = MainLvlCostBase;
+								getArenaLvlCost = MainLvlCostBase / 3;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
 							getArenaLvlMaint = getArenaLvlCost;
@@ -3526,7 +3533,7 @@ namespace TrainingProject
 								MonsterDenLvlCost = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							MonsterDenLvlMaint = MonsterDenLvlCost;
+							MonsterDenLvlMaint = MonsterDenLvlCost / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Monster Den Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
@@ -3645,7 +3652,7 @@ namespace TrainingProject
 					break;
 				case 249:
 					int leavingTeam = RndVal.Next(2,(50+CurrentJackpotLvl));
-					// team could leave if arena not doing well
+					// team could leave if arena not doing well 
 					if (GameTeams.Count > leavingTeam && getScore() > (getGoalGameScore / 3))
 					{
 						getWarningLog = Environment.NewLine + "??? " + GameTeams[leavingTeam].getName + " has left the arena!";
