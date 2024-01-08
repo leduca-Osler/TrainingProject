@@ -2320,8 +2320,10 @@ namespace TrainingProject
 				, 1 // Level
 				, 1 // LevelLog
 				, 1 // Annalysis
+				, 1 // Speed
 				, 1 // MP
 				, 1 // HP
+				, 8 // ShortName
 			};
 			if (tmpFighting)
 			{
@@ -2357,14 +2359,17 @@ namespace TrainingProject
 			// Annalysis
 			if (string.Format("{0:n0}", eRobo.getAnalysisLeft()).Length > maxLength[3])
 				maxLength[3] = string.Format("{0:n0}", eRobo.getAnalysisLeft()).Length;
+			// Speed
+			if (string.Format("{0:n0}", eRobo.getCurrentSpeed).Length > maxLength[4])
+				maxLength[4] = string.Format("{0:n0}", eRobo.getCurrentSpeed).Length;
 			// MP
-			if (string.Format("{0:n0}", eRobo.MP).Length > maxLength[4])
-				maxLength[4] = string.Format("{0:n0}", eRobo.MP).Length;
+			if (string.Format("{0:n0}", eRobo.MP).Length > maxLength[5])
+				maxLength[5] = string.Format("{0:n0}", eRobo.MP).Length;
 			// HP
-			if (string.Format("{0:n0}", eRobo.HP).Length > maxLength[5])
-				maxLength[5] = string.Format("{0:n0}", eRobo.HP).Length;
+			if (string.Format("{0:n0}", eRobo.HP).Length > maxLength[6])
+				maxLength[6] = string.Format("{0:n0}", eRobo.HP).Length;
 			return maxLength;
-		}
+		} 
 		public FlowLayoutPanel showCountdown()
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
@@ -2500,6 +2505,12 @@ namespace TrainingProject
 				}
 				else
 				{
+					// reset speed for all
+					foreach (Team eTeam in GameTeams)
+						foreach (Robot eRobot in eTeam.MyTeam)
+							eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getSpeed);
+					foreach (Robot eMonster in MonsterOutbreak.MyTeam)
+						eMonster.getCurrentSpeed = RndVal.Next(1, eMonster.getSpeed);
 					if (GameTeam1[i].getName.Equals("Arena"))
 					{
 						Label lblWinner = new Label { AutoSize = true };
@@ -5201,17 +5212,19 @@ namespace TrainingProject
 				if (ClearDmg) dmg = 0;
 				crit = false;
 			}
-			if (getKO <= 3)
-				strFormat = "\n{0}{1}{2} L:{3} A:{5} MP:{6} HP:{7}{8} ";
-				if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{3}->{4} A:{5} MP:{6} HP:{7}{8} ";
-				strStats = string.Format(strFormat, cRebuild, cSkill, 
-					getNameRank().PadRight(PadRight[0]),
-					String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
-					String.Format("{0:n0}", LevelLog).PadLeft(PadRight[2]),
-					String.Format("{0:n0}", getAnalysisLeft()).PadLeft(PadRight[3]),
-					String.Format("{0:n0}", MP).PadLeft(PadRight[4]), 
-					String.Format("{0:n0}", HP).PadLeft(PadRight[5]), 
-					strMsg);
+			int shortLength = 8;
+			if (getName.Length < 8) shortLength = getName.Length;
+			if (getKO <= 3) strFormat = "\n{0}{1}{3} L:{4} A:{6} S:{7} M:{8} H:{9}{10} ";
+			if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{4}->{5} A:{6} S:{7} M:{8} H:{9}{10} ";
+			strStats = string.Format(strFormat, cRebuild, cSkill, 
+				getNameRank().PadRight(PadRight[0]), getName.Substring(0, shortLength).PadRight(PadRight[7]),
+				String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
+				String.Format("{0:n0}", LevelLog).PadLeft(PadRight[2]),
+				String.Format("{0:n0}", getAnalysisLeft()).PadLeft(PadRight[3]),
+				String.Format("{0:n0}", getCurrentSpeed).PadLeft(PadRight[4]),
+				String.Format("{0:n0}", MP).PadLeft(PadRight[5]), 
+				String.Format("{0:n0}", HP).PadLeft(PadRight[6]), 
+				strMsg);
 
 			cSkill = ' ';
 			return strStats;
@@ -5271,7 +5284,7 @@ namespace TrainingProject
         {
 			if (CurrentSpeed >= 1)
 			{
-				CurrentSpeed = RndVal.Next(0, (CurrentSpeed / 2));
+				CurrentSpeed = RndVal.Next(0, (CurrentSpeed-1));
 			}
 		}
 		public void rename(string newName)
