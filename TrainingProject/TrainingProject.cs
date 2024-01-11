@@ -1550,6 +1550,8 @@ namespace TrainingProject
 			if (bossFight)
 			{
 				bossFight = false;
+				foreach (Robot eBoss in Bosses.MyTeam)
+					eBoss.getCurrentSpeed = RndVal.Next(eBoss.getSpeed);
 				GameTeam2.Add(Bosses);
 				Jackpot = BossReward;
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
@@ -4187,6 +4189,7 @@ namespace TrainingProject
 						MyTeam[i].levelUp(RndVal);
 						MyTeam[i].HP = MyTeam[i].getTHealth();
 						MyTeam[i].MP = MyTeam[i].getTEnergy();
+						MyTeam[i].getCurrentSpeed = RndVal.Next(MyTeam[i].getSpeed);
 					}
 				}
 			}
@@ -4487,7 +4490,10 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
-			
+
+			// reduce score
+			getScore--;
+
 			// Fix achievements 
 			/*
 			if (RobotDestroyed.Length >= 10)
