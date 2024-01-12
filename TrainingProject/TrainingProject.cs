@@ -1365,7 +1365,7 @@ namespace TrainingProject
 					}
 					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!\n", rebuild.MyTeam[i].getName, strScouter);
 					rebuild.MyTeam.RemoveAt(i);
-					scouted -= 25;
+					scouted -=  15;
 				}
 			}
 			rebuild.HealScore = 0;
@@ -5232,7 +5232,7 @@ namespace TrainingProject
 				String.Format("{0:n0}", HP).PadLeft(PadRight[6]), 
 				strMsg);
 
-			cSkill = ' ';
+			if (ClearDmg) cSkill = ' ';
 			return strStats;
 		}
 		public double rebuildSavings(List<int> runes)
