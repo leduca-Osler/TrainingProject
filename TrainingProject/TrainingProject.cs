@@ -406,6 +406,7 @@ namespace TrainingProject
 		public long ManagerCostBase;
 		public long ManagerCostBaseIncrement;
 		public int CurrentInterval;
+		public int ExtraInterval;
 		public int MaxInterval;
 		public int FightBreak;
 		public int FightBreakCount;
@@ -1053,15 +1054,21 @@ namespace TrainingProject
 
 		public void interval(Timer Timer1)
 		{
-			CurrentInterval++;
+			if (CurrentInterval > 1000 && ExtraInterval > 0 && RndVal.Next(100) < 75) ExtraInterval--;
+			else CurrentInterval++;
 			if (CurrentInterval > MaxInterval)
 			{
 				CurrentInterval = 1000 - (MaxInterval - 1000);
-				if (CurrentInterval < 1) CurrentInterval = 1;
+				if (CurrentInterval < 1)
+				{
+					ExtraInterval = Math.Abs(CurrentInterval);
+					CurrentInterval = 1;
+				}
 				MaxInterval++;
 				GameTeams.Sort();
 			}
 			else Timer1.Interval = CurrentInterval;
+			if (CurrentInterval % 1000 == 0) GameTeams.Sort();
 		}
 
 		public void lowestLevelUp()
@@ -1719,6 +1726,7 @@ namespace TrainingProject
 					// if index is still -1 no available teams exit function
 					if (Team1Index == -1 || getGameCurrency <= 0) return;
 				}
+				GameTeams[Team1Index].resetSpeed();
 				GameTeam1.Add(GameTeams[Team1Index]);
 				PotScore = GameTeam1[GameTeam1.Count - 1].getScore;
 
@@ -1740,6 +1748,7 @@ namespace TrainingProject
 				else
 				{
 					// Robo Team
+					GameTeams[Team2Index].resetSpeed();
 					GameTeam2.Add(GameTeams[Team2Index]);
 					PotScore += GameTeam2[GameTeam2.Count - 1].getScore;
 				}
@@ -1964,7 +1973,7 @@ namespace TrainingProject
 			HeaderPanel.Controls.Add(Progress);
 			string SafeFormat = "HH:mm";
 			if (SafeTime.Day > DateTime.Now.Day) SafeFormat = "MM-dd HH:mm";
-			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount) };
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0} Ex:{6:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount, ExtraInterval) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
@@ -2419,7 +2428,6 @@ namespace TrainingProject
 			Label lblTeamName = new Label { AutoSize = true, Text = "Fight " + showInterval() + strFlags };
 			MainPanel.Controls.Add(lblTeamName);
 			int KOCount = 3;
-			// S:{3:n0}{4}<{5:n0}> {1:c0}<{2:c0}> W:{8:n0} D:{6:n0}<{7:n0}>" 0, Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
 			int[] maxTeamLengths = new int[7];
 			foreach (Team eTeam in GameTeams)
 			{
@@ -2442,15 +2450,15 @@ namespace TrainingProject
 						char goalScore = ' ';
 						// Display if teams will leave the arena
 						if (getScore() > (getGoalGameScore / 3) && getGameCurrency < 0) goalScore = '!';
-						string strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
+						string strFormat = "TP:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
 						if (roundCount < 20 && GameTeam1[0].getName != "Arena" && !GameTeam2[0].isMonster)
-							strFormat = "TS:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
+							strFormat = "TP:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{4:n0} L:{5:n0}";
 						else if (roundCount < 20 && GameTeam1[0].getName == "Arena")
-							strFormat = "TS:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{6:n0}";
+							strFormat = "TP:{1:n0}{7}->{2:n0} {0:c0} D:{3:n0} J:{6:n0}";
 						else if (GameTeam1[0].getName == "Arena")
-							strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{6:n0}";
+							strFormat = "TP:{1:n0}{7} {0:c0} D:{3:n0} J:{6:n0}";
 						else if (GameTeam2[0].isMonster)
-							strFormat = "TS:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0}"; // Monster fight, only show winning jackpot
+							strFormat = "TP:{1:n0}{7} {0:c0} D:{3:n0} J:{4:n0}"; // Monster fight, only show winning jackpot
 						if (auto)
 						{
 							if (i == 0)
@@ -2479,9 +2487,9 @@ namespace TrainingProject
 								}
 							}
 							Label lblGameStats = new Label { AutoSize = true, Text = String.Format(strFormat, getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot - MinWage, MinWage, Jackpot, goalScore) };
-							if (GameTeam1[0].getName == "Arena") lblGameStats = new Label { AutoSize = true, Text = String.Format("TS:{1:n0}({2:n0}) {0:c0} D:{3:n0} J:{4:n0} ", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot) };
+							if (GameTeam1[0].getName == "Arena") lblGameStats = new Label { AutoSize = true, Text = String.Format("TP:{1:n0}({2:n0}) {0:c0} D:{3:n0} J:{4:n0} ", getGameCurrency, getScore(), getScoreLog(), gameDifficulty, Jackpot) };
 							MainPanel.Controls.Add(lblGameStats);
-							Label lblVS2 = new Label { AutoSize = true, Text = String.Format("{0} S:{1:n0} {2:c0} D:{3:n0}",GameTeam2[i].getName,GameTeam2[i].getScore,GameTeam2[i].getCurrency, GameTeam2[i].getDifficulty) };
+							Label lblVS2 = new Label { AutoSize = true, Text = String.Format("{0} P:{1:n0} {2:c0} D:{3:n0}",GameTeam2[i].getName,GameTeam2[i].getScore,GameTeam2[i].getCurrency, GameTeam2[i].getDifficulty) };
 							MainPanel.Controls.Add(lblVS2);
 							MainPanel.Controls.Add(Team2);
 							foreach (Robot eRobo in GameTeam1[i].MyTeam)
@@ -2491,7 +2499,7 @@ namespace TrainingProject
 									Team1.Controls.Add(getCharacterInfo(eRobo));
 								}
 							}
-							Label lblVS1 = new Label { AutoSize = true, Text = String.Format("{0} S:{1:n0} {2:c0} D:{3:n0}", GameTeam1[i].getName, GameTeam1[i].getScore, GameTeam1[i].getCurrency, GameTeam1[i].getDifficulty) };
+							Label lblVS1 = new Label { AutoSize = true, Text = String.Format("{0} P:{1:n0} {2:c0} D:{3:n0}", GameTeam1[i].getName, GameTeam1[i].getScore, GameTeam1[i].getCurrency, GameTeam1[i].getDifficulty) };
 							MainPanel.Controls.Add(lblVS1);
 							MainPanel.Controls.Add(Team1);
 						}
@@ -2507,10 +2515,7 @@ namespace TrainingProject
 				}
 				else
 				{
-					// reset speed for all
-					foreach (Team eTeam in GameTeams)
-						foreach (Robot eRobot in eTeam.MyTeam)
-							eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getSpeed);
+					// reset speed for monsters
 					foreach (Robot eMonster in MonsterOutbreak.MyTeam)
 						eMonster.getCurrentSpeed = RndVal.Next(1, eMonster.getSpeed);
 					if (GameTeam1[i].getName.Equals("Arena"))
@@ -4208,6 +4213,10 @@ namespace TrainingProject
 			Automated = true;
 			shownDefeated = false;
 		}
+		public void resetSpeed()
+		{
+			foreach (Robot eRobo in MyTeam) eRobo.getCurrentSpeed = RndVal.Next(eRobo.getSpeed);
+		}
 		public void AddRobotDestroyed(int type, bool isMonster)
 		{
 			if (isMonster)
@@ -4445,8 +4454,8 @@ namespace TrainingProject
 				maxRobos = (20) - roundCount;
 			if (getAvailableRobo > 0)
 				strBuild = "!";
-			string strFormat = "{0} S:{3," + maxLength[0] + ":n0}{4} {1," + maxLength[2] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0}";
-			if (roundCount < 20) strFormat = "{0} S:{3," + maxLength[0] + ":n0}{4}->{5," + maxLength[1] + ":n0} {1," + maxLength[2] + ":c0}->{2," + maxLength[3] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0}->{7," + maxLength[6] + ":n0}";
+			string strFormat = "{0} P:{3," + maxLength[0] + ":n0}{4} {1," + maxLength[2] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0}";
+			if (roundCount < 20) strFormat = "{0} P:{3," + maxLength[0] + ":n0}{4}->{5," + maxLength[1] + ":n0} {1," + maxLength[2] + ":c0}->{2," + maxLength[3] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0}->{7," + maxLength[6] + ":n0}";
 			strStats = String.Format(strFormat, getName.PadRight(18).Substring(0,18), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
 			foreach (Robot eRobo in MyTeam)
 			{
