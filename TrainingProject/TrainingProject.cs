@@ -1025,6 +1025,8 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+			// Reduce game difficulty fight
+			//gameDifficulty--;
 		}
 
 		public void resetShowDefeated()
@@ -1551,14 +1553,17 @@ namespace TrainingProject
 			foreach (Team eTeam in GameTeams)
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
+				{
+					GameTeam1[GameTeam1.Count - 1].resetSpeed();
 					GameTeam1[GameTeam1.Count - 1].MyTeam.Add(eRobo);
+				}
 			}
 			GameTeam1[GameTeam1.Count - 1].MyTeam.Sort();
 			if (bossFight)
 			{
 				bossFight = false;
 				foreach (Robot eBoss in Bosses.MyTeam)
-					eBoss.getCurrentSpeed = RndVal.Next(eBoss.getSpeed);
+					eBoss.getCurrentSpeed = RndVal.Next(1, eBoss.getSpeed);
 				GameTeam2.Add(Bosses);
 				Jackpot = BossReward;
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
@@ -4194,7 +4199,7 @@ namespace TrainingProject
 						MyTeam[i].levelUp(RndVal);
 						MyTeam[i].HP = MyTeam[i].getTHealth();
 						MyTeam[i].MP = MyTeam[i].getTEnergy();
-						MyTeam[i].getCurrentSpeed = RndVal.Next(MyTeam[i].getSpeed);
+						MyTeam[i].getCurrentSpeed = RndVal.Next(1, MyTeam[i].getSpeed);
 					}
 				}
 			}
@@ -4215,7 +4220,7 @@ namespace TrainingProject
 		}
 		public void resetSpeed()
 		{
-			foreach (Robot eRobo in MyTeam) eRobo.getCurrentSpeed = RndVal.Next(eRobo.getSpeed);
+			foreach (Robot eRobo in MyTeam) eRobo.getCurrentSpeed = RndVal.Next(1, eRobo.getSpeed);
 		}
 		public void AddRobotDestroyed(int type, bool isMonster)
 		{
@@ -4501,7 +4506,7 @@ namespace TrainingProject
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
 
 			// reduce score
-			getScore--;
+			// getScore--;
 
 			// Fix achievements 
 			/*
