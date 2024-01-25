@@ -38,16 +38,15 @@
 			this.BreakTimersOff = new System.Windows.Forms.ToolStripMenuItem();
 			this.fixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cbTeamSelect = new System.Windows.Forms.ToolStripComboBox();
-			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.btnAddTeam = new System.Windows.Forms.ToolStripButton();
 			this.btnAddRobo = new System.Windows.Forms.ToolStripButton();
+			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.btnArenaLvl = new System.Windows.Forms.ToolStripButton();
 			this.btnShop = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuShopLevelUp = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuRestockShop = new System.Windows.Forms.ToolStripMenuItem();
 			this.btnResearchDev = new System.Windows.Forms.ToolStripButton();
 			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnFight = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuBossFight = new System.Windows.Forms.ToolStripMenuItem();
 			this.difficultyFightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,6 +73,7 @@
 			this.minLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.MinJackpotLevel = new System.Windows.Forms.ToolStripTextBox();
 			this.mnuComunityOutreach = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
@@ -83,23 +83,26 @@
 			// 
 			// toolStrip1
 			// 
+			this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnExport,
             this.cbTeamSelect,
-            this.toolStripLabel1,
             this.btnAddTeam,
             this.btnAddRobo,
+            this.toolStripLabel1,
             this.btnArenaLvl,
             this.btnShop,
             this.btnResearchDev,
             this.btnMonsterDen,
-            this.toolStripSeparator1,
             this.btnFight,
-            this.btnAutomatic});
+            this.btnAutomatic,
+            this.toolStripSeparator1});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(493, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(472, 27);
+			this.toolStrip1.Stretch = true;
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -162,12 +165,6 @@
 			this.cbTeamSelect.Leave += new System.EventHandler(this.cbTeamSelect_Change);
 			this.cbTeamSelect.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			// 
-			// toolStripLabel1
-			// 
-			this.toolStripLabel1.Name = "toolStripLabel1";
-			this.toolStripLabel1.Size = new System.Drawing.Size(17, 24);
-			this.toolStripLabel1.Text = "--";
-			// 
 			// btnAddTeam
 			// 
 			this.btnAddTeam.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -187,6 +184,12 @@
 			this.btnAddRobo.Size = new System.Drawing.Size(24, 24);
 			this.btnAddRobo.Text = "Add Robo";
 			this.btnAddRobo.Click += new System.EventHandler(this.btnAddRobo_Click);
+			// 
+			// toolStripLabel1
+			// 
+			this.toolStripLabel1.Name = "toolStripLabel1";
+			this.toolStripLabel1.Size = new System.Drawing.Size(17, 24);
+			this.toolStripLabel1.Text = "--";
 			// 
 			// btnArenaLvl
 			// 
@@ -248,11 +251,6 @@
 			this.btnMonsterDen.Size = new System.Drawing.Size(24, 24);
 			this.btnMonsterDen.Text = "Monster Den";
 			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
 			// 
 			// btnFight
 			// 
@@ -496,6 +494,11 @@
 			this.mnuComunityOutreach.Size = new System.Drawing.Size(181, 22);
 			this.mnuComunityOutreach.Text = "Comunity Outreach";
 			this.mnuComunityOutreach.Click += new System.EventHandler(this.mnuComunityOutreach_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
 			// 
 			// timer1
 			// 

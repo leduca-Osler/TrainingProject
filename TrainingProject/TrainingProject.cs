@@ -1026,7 +1026,7 @@ namespace TrainingProject
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
 			// Reduce game difficulty fight
-			//gameDifficulty--;
+			// gameDifficulty--;
 		}
 
 		public void resetShowDefeated()
@@ -1554,9 +1554,9 @@ namespace TrainingProject
 			{
 				foreach (Robot eRobo in eTeam.MyTeam)
 				{
-					GameTeam1[GameTeam1.Count - 1].resetSpeed();
 					GameTeam1[GameTeam1.Count - 1].MyTeam.Add(eRobo);
 				}
+				GameTeam1[GameTeam1.Count - 1].resetSpeed();
 			}
 			GameTeam1[GameTeam1.Count - 1].MyTeam.Sort();
 			if (bossFight)
@@ -1747,6 +1747,9 @@ namespace TrainingProject
 						}
 						GameTeam1[0].healRobos(false);
 					}
+					// reset speed for monsters
+					foreach (Robot eMonster in MonsterOutbreak.MyTeam)
+						eMonster.getCurrentSpeed = RndVal.Next(1, eMonster.getSpeed);
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak));
 				}
@@ -2520,11 +2523,10 @@ namespace TrainingProject
 				}
 				else
 				{
-					// reset speed for monsters
-					foreach (Robot eMonster in MonsterOutbreak.MyTeam)
-						eMonster.getCurrentSpeed = RndVal.Next(1, eMonster.getSpeed);
 					if (GameTeam1[i].getName.Equals("Arena"))
 					{
+						// reset skill chars
+						resetSkillChars();
 						Label lblWinner = new Label { AutoSize = true };
 						if (GameTeam1[i].getNumRobos(false) > 0)
 						{
@@ -2608,6 +2610,8 @@ namespace TrainingProject
 						bool newMonster = false;
 						if (i == 0)
 						{
+							// Reset Skills char
+							resetSkillChars();
 							string msg = "";
 							Label lblWinner = new Label { AutoSize = true };
 							if (GameTeam1[i].getNumRobos(false) > 0)
@@ -2783,6 +2787,14 @@ namespace TrainingProject
 				}
 			}
 			return MainPanel;
+		}
+
+		public void resetSkillChars()
+		{
+			foreach (Team eTeam in GameTeams)
+			{
+				foreach (Robot eRobo in eTeam.MyTeam) eRobo.cSkill = ' ';
+			}
 		}
 
 		public void addMonsters(Team MonsterTeam)
@@ -4220,7 +4232,8 @@ namespace TrainingProject
 		}
 		public void resetSpeed()
 		{
-			foreach (Robot eRobo in MyTeam) eRobo.getCurrentSpeed = RndVal.Next(1, eRobo.getSpeed);
+			foreach (Robot eRobo in MyTeam)
+				eRobo.getCurrentSpeed = RndVal.Next(1, eRobo.getSpeed);
 		}
 		public void AddRobotDestroyed(int type, bool isMonster)
 		{
