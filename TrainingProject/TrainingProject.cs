@@ -464,6 +464,7 @@ namespace TrainingProject
 		public long MainLvlCostBaseIncrement = 1000;
 		[JsonProperty]
 		private long ShopLvlMaint;
+		private long ShopLvlMaintCondition;
 		[JsonProperty]
 		private int ShopStock;
 		[JsonProperty]
@@ -482,6 +483,7 @@ namespace TrainingProject
 		private long ArenaLvlCost;
 		[JsonProperty]
 		private long ArenaLvlMaint;
+		private long ArenaLvlMaintCondition;
 		[JsonProperty]
 		private long ArenaComunityReach;
 		[JsonProperty]
@@ -490,6 +492,7 @@ namespace TrainingProject
 		private long MonsterDenLvlCost;
 		[JsonProperty]
 		private long MonsterDenLvlMaint;
+		private long MonsterDenLvlMaintCondition;
 		[JsonProperty]
 		private int MonsterDenBonus;
 		[JsonProperty]
@@ -503,6 +506,7 @@ namespace TrainingProject
 		private long ResearchDevLvlCost;
 		[JsonProperty]
 		private long ResearchDevMaint;
+		private long ResearchDevLvlMaintCondition;
 		[JsonProperty]
 		private int ResearchDevHealValue;
 		private int ResearchDevHealValueSum;
@@ -1137,7 +1141,8 @@ namespace TrainingProject
 				Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price + Seating.Count, 20, 10));
 				msg += string.Format("\n  Added level {0} seating", Seating.Count);
 			}
-
+			// reset maintenance condition
+			ArenaLvlMaintCondition = 120;
 			getFightLog = getWarningLog = msg; 
 		}
 		public string bossLevelUp()
@@ -1204,6 +1209,8 @@ namespace TrainingProject
 			MonsterDenRepairs = roundValue(MonsterDenRepairs, MonsterDenRepairsBase, "up");
 			MonsterDenRepairsBase += MonsterDenRepairsBaseIncrement;
 			msg += string.Format("\n  Bonus +{0:n0} Repairs +{1:n0}", MonsterDenBonus - tmpMonsterDenBonus, MonsterDenRepairs - tmpMonsterDenRepairs);
+			// reset maintenance condition
+			MonsterDenLvlMaintCondition = 120;
 			getFightLog = getWarningLog = msg;
 		}
 		public void ShopLevelUp()
@@ -1232,6 +1239,8 @@ namespace TrainingProject
 			ShopUpgradeValue++;
 			ShopStockCost = ((ShopMaxStat * 10) + ShopMaxDurability) / 3;
 			msg += string.Format("\n  Durability +{0:n0} Stats +{1:n0} Upgrade +1", ShopMaxDurability - tmpDurability, ShopMaxStat - tmpStat);
+			// reset maintenance condition
+			ShopLvlMaintCondition = 120;
 			getFightLog = getWarningLog = msg;
 		}
 		public void AddStock()
@@ -1297,6 +1306,8 @@ namespace TrainingProject
 				ResearchDevHealBays++;
 				msg += string.Format("\n  Heal Bays +1");
 			}
+			// reset maintenance condition
+			ResearchDevLvlMaintCondition = 120;
 			getFightLog = getWarningLog = msg;
 		}
 		public void AddManagerHours()
@@ -2067,7 +2078,7 @@ namespace TrainingProject
 				//Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0} \n{2,-13}{3," + RowOneLength[0] + ":c0}\n{4,-13}{5," + RowOneLength[0] + ":c0}\n{6,-13}{7," + RowOneLength[0] + ":c0}\n{8,-13}{9," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency, "   Misc ",  GameCurrencyLogMisc, "   Maint -", 0 - GameCurrencyLogMaint, "   Upgr  -", 0 - GameCurrencyLogUp, "   Total =", GameCurrencyLogMisc + GameCurrencyLogMaint + GameCurrencyLogUp) };
 				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency)};
 				MainPanel.Controls.Add(lblCurrency);
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}", getArenaLvl, getArenaLvlCost, getArenaLvlMaint) };
+				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getArenaLvl, getArenaLvlCost, getArenaLvlMaint, ArenaLvlMaintCondition) };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				// get highest width for columns in seating.
@@ -2095,7 +2106,7 @@ namespace TrainingProject
 				Label lblPotentialEarnings = new Label { AutoSize = true, Text = String.Format("    Earing Potential:{0," + RowThreeLength[1] + ":c0}", potentialEarnings) };
 				pnlSeating.Controls.Add(lblPotentialEarnings);
 				MainPanel.Controls.Add(pnlSeating);
-				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}", getShopLvl, getShopLvlCost, getShopLvlMaint) };
+				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getShopLvl, getShopLvlCost, getShopLvlMaint, ShopLvlMaintCondition) };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				Label lblShopStock = new Label { AutoSize = true, Text = String.Format("  {0,-10}{1," + RowTwoLength[0] + "} {2,-6}{3," + RowTwoLength[1] + ":n0} {4,-7}{5," + RowTwoLength[2] + ":n0} {6,-5}{7," + RowTwoLength[3] + ":n0} {8,-4}{9," + RowTwoLength[4] + ":n0} {10,-4} {11:n0}",  
@@ -2141,9 +2152,9 @@ namespace TrainingProject
 					}
 				}
 				MainPanel.Controls.Add(pnlEquipment);
-				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild) };
+				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild, ResearchDevLvlMaintCondition) };
 				MainPanel.Controls.Add(lblResearchLvl);
-				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###}\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs) };
+				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs, MonsterDenLvlMaintCondition) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
 				MainPanel.Controls.Add(lblMonsterDen);
 				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":c0}", BossCount, BossReward) };
@@ -3113,28 +3124,38 @@ namespace TrainingProject
 			switch (maintValue)
 			{
 				case 1:
-					// Arena Maintenance
-					if (ArenaLvlMaint > 0)
-						MaintCost += roundValue(getArenaLvlMaint);
+					if (RndVal.Next(100) > ArenaLvlMaintCondition)
+					{
+						// Arena Maintenance
+						if (ArenaLvlMaint > 0)
+							MaintCost += roundValue(getArenaLvlMaint);
+						else
+						{
+							MaintCost += Math.Abs(getArenaLvlMaint);
+							if (MaintCost > longRandom(getArenaLvlCost) && getArenaLvlCost > MainLvlCostBase)
+							{
+								getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
+								if (getArenaLvlCost < MainLvlCostBase)
+								{
+									getArenaLvlCost = MainLvlCostBase;
+									MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+								}
+								getArenaLvlMaint = getArenaLvlCost / 2;
+								getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
+							}
+						}
+						getArenaLvlMaint = roundValue(ArenaLvlMaint, (int)((double)MaintCost * 0.1), "down");
+						getGameCurrency -= MaintCost;
+						GameCurrencyLogMaint -= MaintCost;
+						getFightLog = Environment.NewLine + "*** Arena: !boiler replaced - cost " + String.Format("{0:c0}/{1:c0}", MaintCost, getArenaLvlMaint);
+						// reset maintenance condition
+						ArenaLvlMaintCondition = 95;
+					}
 					else
 					{
-						MaintCost += Math.Abs(getArenaLvlMaint);
-						if (MaintCost > longRandom(getArenaLvlCost) && getArenaLvlCost > MainLvlCostBase)
-						{
-							getArenaLvlCost = roundValue(getArenaLvlCost, MainLvlCostBase, "down");
-							if (getArenaLvlCost < MainLvlCostBase)
-							{
-								getArenaLvlCost = MainLvlCostBase;
-								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
-							}
-							getArenaLvlMaint = getArenaLvlCost / 2;
-							getWarningLog = getFightLog = String.Format("\n*** Arena Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getArenaLvlCost, MaintCost, getArenaLvlMaint);
-						}
+						// increase chance for maintenance to be required
+						ArenaLvlMaintCondition -= 10;
 					}
-					getArenaLvlMaint = roundValue(ArenaLvlMaint, (int)((double)MaintCost * 0.1), "down");
-					getGameCurrency -= MaintCost;
-					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = Environment.NewLine + "*** Arena: !boiler replaced - cost " + String.Format("{0:c0}/{1:c0}", MaintCost, getArenaLvlMaint);
 					break;
 				case 2:
 					if (ArenaLvlMaint > 0) MaintCost += (getArenaLvlMaint / 100);
@@ -3182,29 +3203,39 @@ namespace TrainingProject
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					goto case 205;
 				case 11:
-					// Shop Maintenance
-					if (getShopLvlMaint > 0)
-						MaintCost = roundValue(getShopLvlMaint);
+					if (RndVal.Next(100) > ShopLvlMaintCondition)
+					{
+						// Shop Maintenance
+						if (getShopLvlMaint > 0)
+							MaintCost = roundValue(getShopLvlMaint);
+						else
+						{
+							MaintCost = Math.Abs(getShopLvlMaint);
+							// if maintenace is more than half the cost to upgrade / rebuild
+							if (MaintCost > longRandom(getShopLvlCost) && getShopLvlCost > MainLvlCostBase)
+							{
+								getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
+								if (getShopLvlCost < MainLvlCostBase)
+								{
+									getShopLvlCost = MainLvlCostBase;
+									MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+								}
+								getShopLvlMaint = getShopLvlCost / 2;
+								getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
+							}
+						}
+						getShopLvlMaint = roundValue(ShopLvlMaint, (int)((double)MaintCost * 0.1), "down");
+						getGameCurrency -= MaintCost;
+						GameCurrencyLogMaint -= MaintCost;
+						getFightLog = Environment.NewLine + "*** Shop: !forge replaced - cost " + string.Format("{0:c0}/{1:c0}", MaintCost, getShopLvlMaint);
+						// reset maintenance condition
+						ShopLvlMaintCondition = 95;
+					}
 					else
 					{
-						MaintCost = Math.Abs(getShopLvlMaint);
-						// if maintenace is more than half the cost to upgrade / rebuild
-						if (MaintCost > longRandom(getShopLvlCost) && getShopLvlCost > MainLvlCostBase)
-						{
-							getShopLvlCost = roundValue(getShopLvlCost, MainLvlCostBase, "down");
-							if (getShopLvlCost < MainLvlCostBase)
-							{
-								getShopLvlCost = MainLvlCostBase;
-								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
-							}
-							getShopLvlMaint = getShopLvlCost / 2;
-							getWarningLog = getFightLog = String.Format("\n*** Shop Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getShopLvlCost, MaintCost, getShopLvlMaint);
-						}
+						// increase chance for maintenance to be required
+						ShopLvlMaintCondition -= 10;
 					}
-					getShopLvlMaint = roundValue(ShopLvlMaint, (int)((double)MaintCost * 0.1), "down");
-					getGameCurrency -= MaintCost;
-					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = Environment.NewLine + "*** Shop: !forge replaced - cost " + string.Format("{0:c0}/{1:c0}", MaintCost, getShopLvlMaint);
 					break;
 				case 12:
 					if (getShopLvlMaint > 0) MaintCost += (getShopLvlMaint / 100);
@@ -3271,30 +3302,41 @@ namespace TrainingProject
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
 					getFightLog = String.Format("\n*** Shop: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getShopLvlMaint);
+					ShopLvlMaintCondition--;
 					break;
 				case 21:
-					// Research and Development Maintenance
-					if (ResearchDevMaint > 0)
-						MaintCost = roundValue((getResearchDevMaint));
+					if (RndVal.Next(100) > ResearchDevLvlMaintCondition)
+					{
+						// Research and Development Maintenance
+						if (ResearchDevMaint > 0)
+							MaintCost = roundValue((getResearchDevMaint));
+						else
+						{
+							MaintCost = Math.Abs(getResearchDevMaint);
+							if (MaintCost > longRandom(getResearchDevLvlCost) && getResearchDevLvlCost > MainLvlCostBase)
+							{
+								getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
+								if (getResearchDevLvlCost < MainLvlCostBase)
+								{
+									getResearchDevLvlCost = MainLvlCostBase;
+									MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+								}
+								ResearchDevMaint = getResearchDevLvlCost / 2;
+								getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
+							}
+						}
+						getResearchDevMaint = roundValue(ResearchDevMaint, (int)((double)MaintCost * 0.1), "down");
+						getGameCurrency -= MaintCost;
+						GameCurrencyLogMaint -= MaintCost;
+						getFightLog = Environment.NewLine + "*** R&&D: !experiment explosion - cost " + String.Format("{0:n0}/{1:c0}", MaintCost, getResearchDevMaint);
+						// reset maintenance condition
+						ResearchDevLvlMaintCondition = 95;						
+					}
 					else
 					{
-						MaintCost = Math.Abs(getResearchDevMaint);
-						if (MaintCost > longRandom(getResearchDevLvlCost) && getResearchDevLvlCost > MainLvlCostBase)
-						{
-							getResearchDevLvlCost = roundValue(getResearchDevLvlCost, MainLvlCostBase, "down");
-							if (getResearchDevLvlCost < MainLvlCostBase)
-							{
-								getResearchDevLvlCost = MainLvlCostBase;
-								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
-							}
-							ResearchDevMaint = getResearchDevLvlCost/2;
-							getWarningLog = getFightLog = String.Format("\n*** R and D Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getResearchDevLvlCost, MaintCost, getResearchDevMaint);
-						}
+						// increase chance for maintenance to be required
+						ResearchDevLvlMaintCondition -= 10;
 					}
-					getResearchDevMaint = roundValue(ResearchDevMaint, (int)((double)MaintCost * 0.1), "down");
-					getGameCurrency -= MaintCost;
-					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = Environment.NewLine + "*** R&&D: !experiment explosion - cost " + String.Format("{0:n0}/{1:c0}", MaintCost, getResearchDevMaint);
 					break;
 				case 22:
 					if (ResearchDevMaint > 0) MaintCost += (ResearchDevMaint / 100);
@@ -3359,6 +3401,8 @@ namespace TrainingProject
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
 					getFightLog = String.Format("\n*** R&&D: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getResearchDevMaint);
+					// increase chance for maintenance to be required
+					ResearchDevLvlMaintCondition--;
 					break;
 				case 31:
 					// Monster Den high Maintenance 
@@ -3367,33 +3411,43 @@ namespace TrainingProject
 					if (strMessage.Length == 0) strMessage = "!!Major Outbreak";
 					goto case 32;
 				case 32:
-					// Monster Den Maintenance
-					if (MonsterDenLvlMaint > 0)
-						MaintCost += (getMonsterDenLvlMaint);
+					if (RndVal.Next(100) > MonsterDenLvlMaintCondition)
+					{
+						// Monster Den Maintenance
+						if (MonsterDenLvlMaint > 0)
+							MaintCost += (getMonsterDenLvlMaint);
+						else
+						{
+							MaintCost += Math.Abs(MonsterDenLvlMaint);
+							if (MaintCost > longRandom(MonsterDenLvlCost) && MonsterDenLvlCost > MainLvlCostBase)
+							{
+								getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MainLvlCostBase, "down");
+								if (getMonsterDenLvlCost < MainLvlCostBase)
+								{
+									getMonsterDenLvlCost = MainLvlCostBase;
+									MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+								}
+								MonsterDenLvlMaint = getMonsterDenLvlCost / 2;
+								getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
+							}
+						}
+						// split value in two
+						long monsterOutbreakCost = roundValue(longRandom(MaintCost));
+						startMonsterOutbreak(monsterOutbreakCost);
+						MaintCost = roundValue(MaintCost - monsterOutbreakCost);
+						getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.1), "down");
+						getGameCurrency -= MaintCost;
+						GameCurrencyLogMaint -= MaintCost;
+						if (strMessage.Length == 0) strMessage = "!Outbreak";
+						getFightLog = String.Format("\nMonster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
+						// reset maintenance condition
+						MonsterDenLvlMaintCondition = 95;
+					}
 					else
 					{
-						MaintCost += Math.Abs(MonsterDenLvlMaint);
-						if (MaintCost > longRandom(MonsterDenLvlCost) && MonsterDenLvlCost > MainLvlCostBase)
-						{
-							getMonsterDenLvlCost = roundValue(getMonsterDenLvlCost, MainLvlCostBase, "down");
-							if (getMonsterDenLvlCost < MainLvlCostBase)
-							{
-								getMonsterDenLvlCost = MainLvlCostBase;
-								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
-							}
-							MonsterDenLvlMaint = getMonsterDenLvlCost/2;
-							getWarningLog = getFightLog = String.Format("\n*** Monster Den: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", getMonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
-						}
+						// increase chance for maintenance to be required
+						MonsterDenLvlMaintCondition -= 10;
 					}
-					// split value in two
-					long monsterOutbreakCost = roundValue(longRandom(MaintCost));
-					startMonsterOutbreak(monsterOutbreakCost);
-					MaintCost = roundValue(MaintCost - monsterOutbreakCost);
-					getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.1), "down");
-					getGameCurrency -= MaintCost;
-					GameCurrencyLogMaint -= MaintCost;
-					if (strMessage.Length == 0) strMessage = "!Outbreak";
-					getFightLog = String.Format("\nMonster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
 					break;
 				case 33:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 100);
@@ -3543,8 +3597,9 @@ namespace TrainingProject
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
 					getFightLog = String.Format("\n*** Arena: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getArenaLvlMaint);
+					// Increase chance for maintenance to be required
+					ArenaLvlMaintCondition--;
 					break;
-
 				case 208:
 					if (getMonsterDenLvlMaint > 0) MaintCost += (getMonsterDenLvlMaint / 200);
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
@@ -3578,6 +3633,8 @@ namespace TrainingProject
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
 					getFightLog = String.Format("\n*** Monster Den: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getMonsterDenLvlMaint);
+					// Increase chance for maintenance to be required
+					MonsterDenLvlMaintCondition--;
 					break;
 				case 211:
 					if (getArenaOutreach() < 0.05)
