@@ -2091,6 +2091,7 @@ namespace TrainingProject
 				}
 				int index = 0;
 				long potentialEarnings = 0;
+				long totalSeating = 0;
 				foreach (ArenaSeating eSeating in Seating)
 				{
 					if (showAll || index <= 2)
@@ -2100,10 +2101,11 @@ namespace TrainingProject
 						Label lblArenaSeating = new Label { AutoSize = true, Text = String.Format("    Level:{3," + RowThreeLength[0] + "} Price:{0," + RowThreeLength[1] + ":c0} Seats:{1," + RowThreeLength[2] + ":n0}{2}\n", eSeating.Price, eSeating.Amount, ending, eSeating.Level) };
 						pnlSeating.Controls.Add(lblArenaSeating);
 						potentialEarnings += (eSeating.Price * eSeating.Amount);
+						totalSeating += eSeating.Amount;
 						index++;
 					}
 				}
-				Label lblPotentialEarnings = new Label { AutoSize = true, Text = String.Format("    Earing Potential:{0," + RowThreeLength[1] + ":c0}", potentialEarnings) };
+				Label lblPotentialEarnings = new Label { AutoSize = true, Text = String.Format("    Earing Potential:{0," + RowThreeLength[1] + ":c0} Seats:{1," + RowThreeLength[1] + ":n0}", potentialEarnings, totalSeating) };
 				pnlSeating.Controls.Add(lblPotentialEarnings);
 				MainPanel.Controls.Add(pnlSeating);
 				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getShopLvl, getShopLvlCost, getShopLvlMaint, ShopLvlMaintCondition) };

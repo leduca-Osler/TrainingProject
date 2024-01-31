@@ -99,9 +99,9 @@
             this.btnFight,
             this.btnAutomatic,
             this.toolStripSeparator1});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip1.Location = new System.Drawing.Point(31, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(472, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(441, 27);
 			this.toolStrip1.Stretch = true;
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
