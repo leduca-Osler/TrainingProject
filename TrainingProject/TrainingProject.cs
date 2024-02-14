@@ -2356,7 +2356,7 @@ namespace TrainingProject
 				, 1 // Speed
 				, 1 // MP
 				, 1 // HP
-				, 8 // ShortName
+				, 12 // ShortName
 			};
 			if (tmpFighting)
 			{
@@ -2792,7 +2792,6 @@ namespace TrainingProject
 					MainPanel.Controls.Add(new Label { AutoSize = true, Text = "" });
 					foreach (Team eTeam in GameTeams)
 					{
-						//if (!isFighting(eTeam.getName))
 						{
 							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false, roundCount < 20), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, false, false) };
 							if (getGameCurrency > 0)
@@ -5315,8 +5314,8 @@ namespace TrainingProject
 				if (ClearDmg) dmg = 0;
 				crit = false;
 			}
-			int shortLength = 8;
-			if (getName.Length < 8) shortLength = getName.Length;
+			int shortLength = 12;
+			if (getName.Length < 12) shortLength = getName.Length;
 			if (getKO <= 3) strFormat = "\n{0}{1}{3} L:{4} A:{6} S:{7} M:{8} H:{9}{10} ";
 			if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{4}->{5} A:{6} S:{7} M:{8} H:{9}{10} ";
 			strStats = string.Format(strFormat, cRebuild, cSkill, 
