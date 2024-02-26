@@ -1493,7 +1493,8 @@ namespace TrainingProject
 			Boolean fullHP = true;
 			int beds = ResearchDevHealBays;
 			if (getGameCurrency <= 0) beds = 0;
-			for (int index = GameTeams.Count-1; index >= 0; index--) // Team eTeam in GameTeams)
+			// Loop through the teams in a random order
+			foreach (int index in Enumerable.Range(0, GameTeams.Count).OrderBy(x => RndVal.Next()))
 			{
 				Boolean tmpFullHP = true;
 				if (!isFighting(GameTeams[index].getName) && !isFighting("arena"))
@@ -1657,17 +1658,8 @@ namespace TrainingProject
 		}
 		public void incrementArenaOpponent()
 		{
-			if (ArenaOpponent2 >= GameTeams.Count) 
-			{ 
-				ArenaOpponent2 = 0; 
-				ArenaOpponent1++;
-				int tmp = RndVal.Next(100);
-				FightBreak = MaxRobo;
-				if (tmp > 90) FightBreak *= 10;
-				else if (tmp > 50) FightBreak *= 2;
-				FightBreakCount = 0; 
-			}
-			if (ArenaOpponent1 >= GameTeams.Count) { ArenaOpponent1 = 0; }
+			ArenaOpponent1 = RndVal.Next(GameTeams.Count);
+			ArenaOpponent2 = RndVal.Next(GameTeams.Count);
 		}
 		public long MaxMaintenance()
 		{
@@ -1717,13 +1709,22 @@ namespace TrainingProject
 					}
 					CheckMinJackpot();
 					if (ArenaOpponent1 == ArenaOpponent2)
-						Team1Index = Team2Index = monsterFight(true);
+					{
+						Team1Index = Team2Index = ArenaOpponent1;
+						//Team1Index = Team2Index = monsterFight(true);
+						Team tmpTeam = GameTeams[Team1Index];
+						if (((tmpTeam.getDifficulty - 1) * 4) + 1 > tmpTeam.MyTeam[tmpTeam.MyTeam.Count - 1].getLevel && RndVal.Next(100) > 95)
+						{
+							tmpTeam.getDifficulty--;
+							getFightLog = String.Format("\n!!! {0} difficulty decreased!", tmpTeam.getName);
+						}
+					}
 					else
 					{
 						Team1Index = ArenaOpponent1;
 						Team2Index = ArenaOpponent2;
 					}
-					ArenaOpponent2++;
+					//ArenaOpponent2++;
 					if (getGameCurrency > 0)
 					{
 						if (fightCount >= 2)
@@ -2630,7 +2631,6 @@ namespace TrainingProject
 							Label lblWinner = new Label { AutoSize = true };
 							if (GameTeam1[i].getNumRobos(false) > 0)
 							{
-								FightBreak -= GameTeams.Count;
 								FightBreakCount = 0;
 								lblWinner.Text = GameTeam1[i].getName + " wins!";
 								long tmp = (long)(Jackpot - MinWage );
@@ -2681,7 +2681,6 @@ namespace TrainingProject
 							}
 							else
 							{
-								FightBreak = 7;
 								FightBreakCount = 0;
 								lblWinner.Text = GameTeam2[i].getName + " winns!";
 								GameTeam2[i].getScore++;
@@ -4729,14 +4728,15 @@ namespace TrainingProject
 			Boolean fullHP = true;
 			Boolean bedUsed = false;
 			int cost = 0;
-			for (int robo = MyTeam.Count-1; robo >= 0; robo--)
+			// Randomly loop through the robot indexes in the MyTeam array
+			foreach (int robo in Enumerable.Range(0, MyTeam.Count).OrderBy(x => RndVal.Next()))
 			{
 				if (MyTeam[robo].HP < MyTeam[robo].getTHealth())
                 {
 					if (getCurrency < cost || beds == 0 || bedUsed || (MyTeam[robo].getTHealth() - MyTeam[robo].HP) < (value / 2))
 					{
 						cost = 0;
-						value = value / 2;
+						value = value / 10;
 					}
 					else
 					{
@@ -4748,12 +4748,15 @@ namespace TrainingProject
 						beds--;
 						bedUsed = true;
 					}
-					pay = cost;
+					// Pay for repair
+					pay += cost;
 					getCurrency -= cost;
 					CurrencyLog -= cost;
+					// ensure at least one Health is recovered
 					if (value == 0) value = 1;
 					MyTeam[robo].HP += value;
 					MyTeam[robo].MP += value;
+					// Reset KO counter
 					MyTeam[robo].getKO = 0;
                 }
                 else if (MyTeam[robo].MP < MyTeam[robo].getTEnergy())
