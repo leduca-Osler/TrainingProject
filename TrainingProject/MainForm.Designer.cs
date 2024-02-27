@@ -42,11 +42,7 @@
 			this.btnAddRobo = new System.Windows.Forms.ToolStripButton();
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.btnArenaLvl = new System.Windows.Forms.ToolStripButton();
-			this.btnShop = new System.Windows.Forms.ToolStripSplitButton();
-			this.mnuShopLevelUp = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuRestockShop = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnResearchDev = new System.Windows.Forms.ToolStripButton();
-			this.btnMonsterDen = new System.Windows.Forms.ToolStripButton();
+			this.btnShop = new System.Windows.Forms.ToolStripButton();
 			this.btnFight = new System.Windows.Forms.ToolStripSplitButton();
 			this.mnuBossFight = new System.Windows.Forms.ToolStripMenuItem();
 			this.difficultyFightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,14 +90,12 @@
             this.toolStripLabel1,
             this.btnArenaLvl,
             this.btnShop,
-            this.btnResearchDev,
-            this.btnMonsterDen,
             this.btnFight,
             this.btnAutomatic,
             this.toolStripSeparator1});
-			this.toolStrip1.Location = new System.Drawing.Point(31, 0);
+			this.toolStrip1.Location = new System.Drawing.Point(60, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(441, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(412, 27);
 			this.toolStrip1.Stretch = true;
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
@@ -203,54 +197,13 @@
 			// 
 			// btnShop
 			// 
-			this.btnShop.BackColor = System.Drawing.SystemColors.Control;
-			this.btnShop.BackgroundImage = global::TrainingProject.Properties.Resources.Shop1;
-			this.btnShop.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.btnShop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnShop.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuShopLevelUp,
-            this.mnuRestockShop});
-			this.btnShop.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.btnShop.Image = global::TrainingProject.Properties.Resources.Shop1;
-			this.btnShop.ImageTransparentColor = System.Drawing.Color.White;
+			this.btnShop.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnShop.Name = "btnShop";
-			this.btnShop.Size = new System.Drawing.Size(36, 24);
-			this.btnShop.Text = "Shop";
-			this.btnShop.ButtonClick += new System.EventHandler(this.btnShop_ButtonClick);
-			// 
-			// mnuShopLevelUp
-			// 
-			this.mnuShopLevelUp.Name = "mnuShopLevelUp";
-			this.mnuShopLevelUp.Size = new System.Drawing.Size(119, 22);
-			this.mnuShopLevelUp.Text = "Level Up";
-			this.mnuShopLevelUp.Click += new System.EventHandler(this.levelUpToolStripMenuItem_Click);
-			// 
-			// mnuRestockShop
-			// 
-			this.mnuRestockShop.Name = "mnuRestockShop";
-			this.mnuRestockShop.Size = new System.Drawing.Size(119, 22);
-			this.mnuRestockShop.Text = "Restock";
-			this.mnuRestockShop.Click += new System.EventHandler(this.mnuRestockShop_Click);
-			// 
-			// btnResearchDev
-			// 
-			this.btnResearchDev.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnResearchDev.Image = global::TrainingProject.Properties.Resources.Repair;
-			this.btnResearchDev.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnResearchDev.Name = "btnResearchDev";
-			this.btnResearchDev.Size = new System.Drawing.Size(24, 24);
-			this.btnResearchDev.Text = "Research and Development";
-			this.btnResearchDev.Click += new System.EventHandler(this.btnResearchDev_Click);
-			// 
-			// btnMonsterDen
-			// 
-			this.btnMonsterDen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnMonsterDen.Image = ((System.Drawing.Image)(resources.GetObject("btnMonsterDen.Image")));
-			this.btnMonsterDen.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnMonsterDen.Name = "btnMonsterDen";
-			this.btnMonsterDen.Size = new System.Drawing.Size(24, 24);
-			this.btnMonsterDen.Text = "Monster Den";
-			this.btnMonsterDen.Click += new System.EventHandler(this.btnMonsterDen_Click);
+			this.btnShop.Size = new System.Drawing.Size(24, 24);
+			this.btnShop.Text = "Monster Den";
+			this.btnShop.Click += new System.EventHandler(this.btnMonsterDen_Click);
 			// 
 			// btnFight
 			// 
@@ -272,7 +225,7 @@
 			// 
 			this.mnuBossFight.Enabled = false;
 			this.mnuBossFight.Name = "mnuBossFight";
-			this.mnuBossFight.Size = new System.Drawing.Size(152, 22);
+			this.mnuBossFight.Size = new System.Drawing.Size(180, 22);
 			this.mnuBossFight.Text = "Boss";
 			this.mnuBossFight.Visible = false;
 			this.mnuBossFight.Click += new System.EventHandler(this.mnuBossFight_Click);
@@ -281,7 +234,7 @@
 			// 
 			this.difficultyFightToolStripMenuItem.Enabled = false;
 			this.difficultyFightToolStripMenuItem.Name = "difficultyFightToolStripMenuItem";
-			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.difficultyFightToolStripMenuItem.Text = "Difficulty Fight";
 			this.difficultyFightToolStripMenuItem.Visible = false;
 			this.difficultyFightToolStripMenuItem.Click += new System.EventHandler(this.difficultyFightToolStripMenuItem_Click);
@@ -556,11 +509,8 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.FlowLayoutPanel MainPannel;
 		private System.Windows.Forms.ToolStripButton btnArenaLvl;
-		private System.Windows.Forms.ToolStripButton btnMonsterDen;
+		private System.Windows.Forms.ToolStripButton btnShop;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-		private System.Windows.Forms.ToolStripSplitButton btnShop;
-		private System.Windows.Forms.ToolStripMenuItem mnuShopLevelUp;
-		private System.Windows.Forms.ToolStripMenuItem mnuRestockShop;
 		private System.Windows.Forms.ToolStripSplitButton btnExport;
 		private System.Windows.Forms.ToolStripMenuItem mnuExport;
 		private System.Windows.Forms.ToolStripMenuItem mnuImport;
@@ -571,7 +521,6 @@
 		private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
 		private System.Windows.Forms.ToolStripComboBox cboRepairPercent;
 		private System.Windows.Forms.ToolStripComboBox cboSaveCredits;
-		private System.Windows.Forms.ToolStripButton btnResearchDev;
 		private System.Windows.Forms.ToolStripMenuItem mnuLongBattle;
 		private System.Windows.Forms.ToolStripMenuItem btnPurchaseManager;
 		private System.Windows.Forms.Timer BreakTimer;

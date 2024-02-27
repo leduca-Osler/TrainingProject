@@ -173,20 +173,20 @@ namespace TrainingApp
 			// background image
 			Image addTeamImage = new Bitmap(@"Resources\AddTeam.png");
 			Boolean addRobo = false;
-			Boolean arenaLvl = false;
-			Boolean monsterLvl = false;
-			Boolean shopLvl = false;
+			Boolean buildLvl = false;
 			Boolean shopRestock = false;
 			Boolean ComunityOutreach = false;
 			Color shopColour = Color.White;
-			Boolean researchLvl = false;
 			if (MyGame.getAvailableTeams > 0 && MyGame.getTeamCost < MyGame.getGameCurrency) 
 																						addTeam = true;
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
 					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost) 
 																						addRobo = true;
-			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						arenaLvl = true;
-			if (MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)					monsterLvl = true;
+			// if you have enough money to upgrade Arena, Shop, Research, or Monster Den
+			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost ||
+					MyGame.getGameCurrency >= MyGame.getShopLvlCost ||
+					MyGame.getGameCurrency >= MyGame.getResearchDevLvlCost ||
+					MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)				buildLvl = true;
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						ComunityOutreach = true;
 			if (MyGame.StartForge)														shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
@@ -195,19 +195,13 @@ namespace TrainingApp
 				shopRestock = true;
 				shopColour = Color.Green;
 			}
-			if (MyGame.getGameCurrency >= MyGame.getShopLvlCost)		shopLvl = true;
-			if (MyGame.getGameCurrency >= MyGame.getResearchDevLvlCost)	researchLvl = true;
 
 			btnAddTeam.Enabled = addTeam;
 			btnAddTeam.Image = addTeamImage;
 			btnAddRobo.Enabled = addRobo;
-			btnArenaLvl.Enabled = arenaLvl;
-			btnMonsterDen.Enabled = monsterLvl;
-			btnShop.Enabled = shopLvl || shopRestock;
+			btnArenaLvl.Enabled = buildLvl;
+			btnShop.Enabled = shopRestock;
 			btnShop.BackColor = shopColour;
-			mnuShopLevelUp.Enabled = shopLvl;
-			mnuRestockShop.Enabled = shopRestock;
-			btnResearchDev.Enabled = researchLvl;
 			mnuComunityOutreach.Enabled = ComunityOutreach;
 			if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
 				mnuLongBattle.Text = String.Format("Return to work");
@@ -299,13 +293,16 @@ namespace TrainingApp
 		}
 		private void btnArenaLvl_Click(object sender, EventArgs e)
 		{
-			MyGame.arenaLevelUp();
+			MyGame.lowestLevelUp();
 			update();
 		}
 
 		private void btnMonsterDen_Click(object sender, EventArgs e)
 		{
-			MyGame.MonsterDenLevelUp();
+			if (MyGame.getGameCurrency > MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
+			{
+				MyGame.AddStock();
+			}
 			update();
 		}
 
@@ -661,10 +658,6 @@ namespace TrainingApp
 			{
 				MyGame.AddStock();
 			}
-			else if (MyGame.getGameCurrency > MyGame.getShopLvlCost)
-			{
-				MyGame.ShopLevelUp();
-			}
 			update();
 		}
 
@@ -964,7 +957,7 @@ namespace TrainingApp
 			// Add Robo
 			else if (e.KeyCode == Keys.E) btnAddRobo.PerformClick();
 			// Shop restock
-			else if (e.KeyCode == Keys.R) mnuRestockShop.PerformClick();
+			else if (e.KeyCode == Keys.R) btnShop.PerformClick();
 			/*
 			// Arena
 			else if (e.KeyCode == Keys.A) btnArenaLvl.PerformClick();
