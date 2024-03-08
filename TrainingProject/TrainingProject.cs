@@ -1690,7 +1690,7 @@ namespace TrainingProject
 					}
 					WinCount = 0;
 					incrementArenaOpponent();
-					if (ArenaOpponent1 == ArenaOpponent2)
+					if (RndVal.Next(100) > 90)
 					{
 						if (JackpotUpDown)
                         {
