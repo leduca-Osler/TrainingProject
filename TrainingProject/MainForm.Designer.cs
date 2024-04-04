@@ -93,9 +93,9 @@
             this.btnFight,
             this.btnAutomatic,
             this.toolStripSeparator1});
-			this.toolStrip1.Location = new System.Drawing.Point(60, 0);
+			this.toolStrip1.Location = new System.Drawing.Point(91, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(412, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(381, 27);
 			this.toolStrip1.Stretch = true;
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
@@ -225,7 +225,7 @@
 			// 
 			this.mnuBossFight.Enabled = false;
 			this.mnuBossFight.Name = "mnuBossFight";
-			this.mnuBossFight.Size = new System.Drawing.Size(180, 22);
+			this.mnuBossFight.Size = new System.Drawing.Size(152, 22);
 			this.mnuBossFight.Text = "Boss";
 			this.mnuBossFight.Visible = false;
 			this.mnuBossFight.Click += new System.EventHandler(this.mnuBossFight_Click);
@@ -234,7 +234,7 @@
 			// 
 			this.difficultyFightToolStripMenuItem.Enabled = false;
 			this.difficultyFightToolStripMenuItem.Name = "difficultyFightToolStripMenuItem";
-			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.difficultyFightToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.difficultyFightToolStripMenuItem.Text = "Difficulty Fight";
 			this.difficultyFightToolStripMenuItem.Visible = false;
 			this.difficultyFightToolStripMenuItem.Click += new System.EventHandler(this.difficultyFightToolStripMenuItem_Click);

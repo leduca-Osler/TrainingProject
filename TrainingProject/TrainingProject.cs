@@ -2107,7 +2107,7 @@ namespace TrainingProject
 						index++;
 					}
 				}
-				Label lblPotentialEarnings = new Label { AutoSize = true, Text = String.Format("    Earing Potential:{0," + RowThreeLength[1] + ":c0} Seats:{1," + RowThreeLength[1] + ":n0}", potentialEarnings, totalSeating) };
+				Label lblPotentialEarnings = new Label { AutoSize = true, Text = String.Format("    Earning Potenial:{0," + RowThreeLength[1] + ":c0} Seats:{1," + RowThreeLength[1] + ":n0}", potentialEarnings, totalSeating) };
 				pnlSeating.Controls.Add(lblPotentialEarnings);
 				MainPanel.Controls.Add(pnlSeating);
 				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getShopLvl, getShopLvlCost, getShopLvlMaint, ShopLvlMaintCondition) };
@@ -2572,6 +2572,10 @@ namespace TrainingProject
 								{
 									GoalGameScore = (int)roundValue(GoalGameScore, (100 * gameDifficulty), "up");
 									resetScore();
+								}
+								else
+								{
+									resetPartialScore();
 								}
 							}
 						}
@@ -3120,8 +3124,10 @@ namespace TrainingProject
 			getGameCurrency -= MaintCost;
 			GameCurrencyLogMaint -= MaintCost;
 			getFightLog = string.Format("\n\n$!! Payroll processed - cost {0:c0} employees {1:n0}", MaintCost, employees);
+			// If divisible by 10000 start boss Fight
+			if		(getScore() % 10000 == 0) bossFight = true;
 			// If divisible by 1000 start difficulty Fight
-			if (getScore() % 1000 == 0 || (GoalGameScore < 1000 && getScore() != GoalGameScore)) GameDifficultyFight = true;
+			else if (getScore() % 1000 == 0 || (GoalGameScore < 1000 && getScore() != GoalGameScore)) GameDifficultyFight = true;
 		}
 		public void buildingMaintenance()
 		{
