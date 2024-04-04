@@ -1356,7 +1356,7 @@ namespace TrainingProject
 			}
 			rebuild.getDifficulty = 0;
 			rebuild.Win++;
-			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
+			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!", rebuild.getName);
 			int winGoal = rebuild.Win;
 			int scouted = rebuild.Win * 10;
 			int bonusScore = rebuild.getScore / GameTeams.Count;
@@ -1384,7 +1384,7 @@ namespace TrainingProject
 						scoutingTeam.MyTeam.Add(rebuild.MyTeam[i]);
 						strScouter = scoutingTeam.getName;
 					}
-					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!\n", rebuild.MyTeam[i].getName, strScouter);
+					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!", rebuild.MyTeam[i].getName, strScouter);
 					rebuild.MyTeam.RemoveAt(i);
 					scouted -=  15;
 				}
@@ -1417,7 +1417,7 @@ namespace TrainingProject
 			}
 			rebuild.getDifficulty = 0;
 			rebuild.Win++;
-			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!\n", rebuild.getName);
+			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!", rebuild.getName);
 			int winGoal = rebuild.Win;
 			int scouted = rebuild.Win * 10;
 			int bonusScore = rebuild.getScore / GameTeams.Count;
@@ -1439,7 +1439,7 @@ namespace TrainingProject
 						scoutingTeam.MyTeam.Add(rebuild.MyTeam[i]);
 						strScouter = scoutingTeam.getName;
 					}
-					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!\n", rebuild.MyTeam[i].getName, strScouter);
+					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!", rebuild.MyTeam[i].getName, strScouter);
 					rebuild.MyTeam.RemoveAt(i);
 					scouted /= 2;
 				}
@@ -2568,15 +2568,9 @@ namespace TrainingProject
 							{
 								lblWinner.Text = getWarningLog = bossLevelUp();
 								MaxTeams++;
-								if (getScore() >= GoalGameScore)
-								{
-									GoalGameScore = (int)roundValue(GoalGameScore, (100 * gameDifficulty), "up");
-									resetScore();
-								}
-								else
-								{
-									resetPartialScore();
-								}
+								GoalGameScore = (int)roundValue(GoalGameScore, (100 * gameDifficulty), "up");
+								if (getScore() >= GoalGameScore)	resetScore();
+								else								resetPartialScore();
 							}
 						}
 						else
