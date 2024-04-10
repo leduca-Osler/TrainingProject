@@ -4995,7 +4995,11 @@ namespace TrainingProject
 		}
 		public int getCurrentSpeed
 		{
-			get { return CurrentSpeed; }
+			get 
+			{
+				if (HP > 0)	return CurrentSpeed;
+				else		return 0;
+			}
 			set { CurrentSpeed = value; }
 		}
 		public int getLevel
