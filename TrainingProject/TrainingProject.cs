@@ -19,6 +19,7 @@ namespace TrainingProject
 		public static readonly Random RndVal = new Random();
 		public static string WarningLog;
 		public static string FightLog;
+		public static string WinLog;
 		public static string ImagePath = "Resources\\";
 		//public Random RndVal = new Random();
 		[JsonIgnore]
@@ -117,6 +118,19 @@ namespace TrainingProject
 		public string[] RoboName = { "Cyborg", "Repair", "Guard", "Golem", "Droid", "Tank", "Gundam", "ATV", "Concept" };
 		[JsonIgnore]
 		public string[] BossName = { "Great", "Estemed", "Grand", "Large", "Strong", "Fast", "Tyrant"};
+		public string getWinLog
+		{
+			set
+			{
+				if (WinLog == null) WinLog = "";
+				WinLog = value;
+			}
+			get
+			{
+				if (WinLog == null) WinLog = "";
+				return WinLog;
+			}
+		}
 		public string getWarningLog
 		{
 			set
@@ -152,6 +166,10 @@ namespace TrainingProject
 		public void clearWarnings()
 		{
 			WarningLog = "";
+		}
+		public void clearWinns()
+		{
+			WinLog = "";
 		}
 		public int SkipFour(int value) { return (int)SkipFour((long)value); }
 		public long SkipFour(long value)
@@ -371,7 +389,6 @@ namespace TrainingProject
 	class Game : Common
 	{
 		[NonSerialized]
-		[JsonIgnore]
 		public System.Windows.Forms.FlowLayoutPanel MainFormPanel;
 		[JsonProperty]
 		public List<Team> GameTeams;
@@ -388,7 +405,8 @@ namespace TrainingProject
 		public Team Bosses;
 		[JsonIgnore]
 		public string fightLogSave;
-		public String warningLogSave;
+		public string warningLogSave;
+		public string winLogSave;
 		private int RoboNumeral;
 		private int maxRoboNumeral;
 		private char RoboNumeralChar;
@@ -833,6 +851,7 @@ namespace TrainingProject
 			GameDifficultyFight = false;
 			getWarningLog = "";
 			getFightLog = "";
+			getWinLog = "";
 			fightPercent = 95;
 			fightPercentMax = 100;
 			fightCount = 0;
@@ -935,6 +954,7 @@ namespace TrainingProject
 			bossFight = false;
 			GameDifficultyFight = false;
 			getWarningLog = "";
+			getWinLog = "";
 			fightPercent = 95;
 			fightPercentMax = 100;
 			fightCount = 0;
@@ -1670,6 +1690,7 @@ namespace TrainingProject
 			// Save logs
 			fightLogSave = FightLog;
 			warningLogSave = WarningLog;
+			winLogSave = WinLog;
 			if ((bossFight || GameDifficultyFight) && !fighting)
 			{
 				startBossFight();
@@ -2179,6 +2200,12 @@ namespace TrainingProject
 					lblWarningLog.Click += new EventHandler((sender, e) => clearWarnings());
 					MainPanel.Controls.Add(lblWarningLog);
 				}
+				if (getWinLog.Length > 0)
+				{
+					Label lblWinLog = new Label { AutoSize = true, Font = new Font(new FontFamily("Courier New"), 12, FontStyle.Underline, GraphicsUnit.Pixel), Text = Environment.NewLine + getWinLog };
+					lblWinLog.Click += new EventHandler((sender, e) => clearWinns());
+					MainPanel.Controls.Add(lblWinLog);
+				}
 				Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + getFightLog };
 				MainPanel.Controls.Add(lblFightLog);
 			}
@@ -2430,6 +2457,7 @@ namespace TrainingProject
 			{
 				getFightLog = fightLogSave; 
 				getWarningLog = warningLogSave;
+				getWinLog = winLogSave;
 			}
 			roundCount++;
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
@@ -2615,6 +2643,7 @@ namespace TrainingProject
 						GameTeam1.Clear();
 						GameTeam2.Clear();
 						Jackpot = 0;
+						getWinLog = lblWinner.Text;
 						MainPanel.Controls.Add(lblWinner);
 						fighting = false;
 					}
@@ -2738,6 +2767,7 @@ namespace TrainingProject
 								}
 							}
 							getFightLog = Environment.NewLine + msg;
+							getWinLog = lblWinner.Text;
 							MainPanel.Controls.Add(lblWinner);
 							if (!newMonster)
 							{
@@ -2801,6 +2831,12 @@ namespace TrainingProject
 						Label lblWarningLog = new Label { AutoSize = true, Font = new Font(new FontFamily("Courier New"), 12, FontStyle.Bold, GraphicsUnit.Pixel), Text = Environment.NewLine + "Warnings:" + getWarningLog };
 						lblWarningLog.Click += new EventHandler((sender, e) => clearWarnings());
 						MainPanel.Controls.Add(lblWarningLog);
+					}
+					if (getWinLog.Length > 0)
+					{
+						Label lblWinLog = new Label { AutoSize = true, Font = new Font(new FontFamily("Courier New"), 12, FontStyle.Underline, GraphicsUnit.Pixel), Text = Environment.NewLine + getWinLog };
+						lblWinLog.Click += new EventHandler((sender, e) => clearWarnings());
+						MainPanel.Controls.Add(lblWinLog);
 					}
 					Label lblFightLog = new Label { AutoSize = true, Text = Environment.NewLine + "Fight Log:" + Environment.NewLine + getFightLog };
 					MainPanel.Controls.Add(lblFightLog);
