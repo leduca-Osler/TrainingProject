@@ -228,12 +228,23 @@ namespace TrainingApp
 						bool bContinue = true;
 						while (MyGame.FastForwardCount > 0 && bContinue)
 						{
-							bool show = false;
-							if (Game.RndVal.Next(100) > 90) show = true;
-							MyGame.continueFight(show);
-							MyGame.FastForwardCount--;
-							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) <= 1 || MyGame.GameTeam2[0].getNumRobos(false) <= 1) 
+							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) <= 1 || MyGame.GameTeam2[0].getNumRobos(false) <= 1)
+							{
 								bContinue = false;
+								foreach (Control eControl in MainPannel.Controls)
+									eControl.Dispose();
+								MainPannel.Controls.Clear();
+								MainPannel.Controls.Add(MyGame.continueFight(true));
+								shownCount = 0;
+								MyGame.resetShowDefeated();
+							}
+							else
+							{
+								bool show = false;
+								if (Game.RndVal.Next(100) > 90) show = true;
+								MyGame.continueFight(show);
+								MyGame.FastForwardCount--;
+							}
 						}
 						if (MyGame.FastForwardCount == 0) MyGame.FastForward = false;
 					}
