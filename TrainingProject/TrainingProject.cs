@@ -3083,7 +3083,6 @@ namespace TrainingProject
 						if (RndVal.Next(1000 + (monster.getEquipWeapon.eUpgrade * 1000)) < MonsterDenLvl)
 						{
 							string strUpgrade = monster.getEquipWeapon.upgrade(monster.getLevel + monster.type, RndVal);
-							//getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " claws strengthened " + Environment.NewLine + "  " + monster.getEquipWeapon.ToString(orig);
 							getFightLog = string.Format("\n [M] Monsert:{0} claws strengthened {1}", monster.getName, strUpgrade);
 						}
 						else if (monster.getEquipWeapon.eDurability < monster.getEquipWeapon.eMaxDurability * .5 )
@@ -3107,8 +3106,7 @@ namespace TrainingProject
 						if (RndVal.Next(1000 + (monster.getEquipWeapon.eUpgrade * 1000)) < MonsterDenLvl)
 						{
 							string strUpgrade = monster.getEquipArmour.upgrade(monster.getLevel + monster.type, RndVal);
-							// getFightLog = Environment.NewLine + " [M] Monster:" + monster.getName + " hide strengthened " + Environment.NewLine + "  " + monster.getEquipArmour.ToString(orig);
-							eTeam.getTeamLog = getFightLog = string.Format("\n [M] Monster:{0} hide strengthened {1}", monster.getName, strUpgrade);
+							getFightLog = string.Format("\n [M] Monster:{0} hide strengthened {1}", monster.getName, strUpgrade);
 						}
 						else if (monster.getEquipArmour.eDurability < monster.getEquipArmour.eMaxDurability * .5)
 						{
