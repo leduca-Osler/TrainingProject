@@ -1378,7 +1378,7 @@ namespace TrainingProject
 			rebuild.Win++;
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!", rebuild.getName);
 			int winGoal = rebuild.Win;
-			int scouted = rebuild.Win * 10;
+			int scouted = rebuild.Win * 25;
 			int bonusScore = rebuild.getScore / GameTeams.Count;
 			IList<int> scoutingTeams = new List<int> { };
 			// Ensure at least one team is in the list
@@ -1439,7 +1439,7 @@ namespace TrainingProject
 			rebuild.Win++;
 			getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n\n!*!*! {0} won with top score!", rebuild.getName);
 			int winGoal = rebuild.Win;
-			int scouted = rebuild.Win * 10;
+			int scouted = rebuild.Win * 25;
 			int bonusScore = rebuild.getScore / GameTeams.Count;
 			IList<int> scoutingTeams = new List<int> { };
 			// teams for scouting
@@ -1461,7 +1461,7 @@ namespace TrainingProject
 					}
 					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!", rebuild.MyTeam[i].getName, strScouter);
 					rebuild.MyTeam.RemoveAt(i);
-					scouted /= 2;
+					scouted -= 15;
 				}
 			}
 			foreach (Team eTeam in GameTeams)
