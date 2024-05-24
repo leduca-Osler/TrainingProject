@@ -2040,7 +2040,11 @@ namespace TrainingProject
 				Label lblRobots = new Label { AutoSize = true, Text = "Robots:     " + GameTeams[TeamSelect - 1].MyTeam.Count + "/" + GameTeams[TeamSelect - 1].getMaxRobos + " (" + String.Format("{0:n0}", GameTeams[TeamSelect - 1].getRoboCost) + ")" };
 				Label lblRunes = new Label { AutoSize = true, Text = "Runes:     " + GameTeams[TeamSelect - 1].getRunes() };
 				Label lblDifficulty = new Label { AutoSize = true, Text =     "Difficulty: " + GameTeams[TeamSelect - 1].getDifficulty };
-				Label lblAutomatic = new Label { AutoSize = true, Text =    "Automated:  " + GameTeams[TeamSelect - 1].Automated };
+				string strAutomated = "";
+				if (GameTeams[TeamSelect - 1].Automated) strAutomated = "Automated Upgrade";
+				else if (GameTeams[TeamSelect - 1].Manual_Equipment) strAutomated = "Manual Upgrade Equipment";
+				else strAutomated = "Manual Upgrade Robot";
+				Label lblAutomatic = new Label { AutoSize = true, Text = strAutomated };
 				lblAutomatic.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].changeAutomated());
 				MainPanel.Controls.Add(lblNextNumeral);
 				MainPanel.Controls.Add(lblTeamName);
@@ -2944,6 +2948,7 @@ namespace TrainingProject
 			{
 				shopper = eTeam.MyTeam[RndVal.Next(0, eTeam.MyTeam.Count)];
 				bool bAutomated = eTeam.Automated;
+				bool bManualEquipment = eTeam.Manual_Equipment;
 				// Automated teams automatically build new robots and rebuild robots
 				if ( PurchaseUpgrade || bAutomated )
 				{
@@ -2976,6 +2981,7 @@ namespace TrainingProject
 					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost 
 						&& (	(PurchaseUpgrade && !RobotPriority)
 								|| bAutomated 
+								|| (!bAutomated && bManualEquipment)
 								|| shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent
 							) 
 						&& shopper.getEquipWeapon.eMaxDurability > 50 + (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 2)) 
@@ -3027,7 +3033,7 @@ namespace TrainingProject
 					int orig = shopper.getEquipArmour.eDurability;
 					// upgrade
 					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost 
-						&& ((PurchaseUpgrade && !RobotPriority) || bAutomated || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 + (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 2)) 
+						&& ((PurchaseUpgrade && !RobotPriority) || bAutomated || (!bAutomated && bManualEquipment) || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 + (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 2)) 
 						&& getGameCurrency > 0)
 					{
 						long tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
@@ -4035,6 +4041,7 @@ namespace TrainingProject
 		public Boolean isMonster;
 		[JsonProperty]
 		public Boolean Automated;
+		public Boolean Manual_Equipment;
 		[JsonIgnore]
 		private string TeamLog;
 		public bool shownDefeated;
@@ -4200,6 +4207,7 @@ namespace TrainingProject
 			isMonster = false;
 			TeamLog = "";
 			Automated = true;
+			Manual_Equipment = true;
 			Win = 0;
 			TeamName = name1[RndVal.Next(name1.Length)] + " " + name3[RndVal.Next(name3.Length)];
 			shownDefeated = false;
@@ -4248,6 +4256,7 @@ namespace TrainingProject
 			Win = 0;
 			TeamName = BossName[RndVal.Next(BossName.Length)] + " " + name2[RndVal.Next(name2.Length)];
 			Automated = true;
+			Manual_Equipment = false;
 			shownDefeated = false;
 		}
 		// Monster team
@@ -4330,6 +4339,7 @@ namespace TrainingProject
 			TeamLog = "";
 			TeamName = string.Format("M_{0} {1}",name1[RndVal.Next(name1.Length)], name2[RndVal.Next(name2.Length)]);
 			Automated = true;
+			Manual_Equipment = false;
 			shownDefeated = false;
 		}
 		public void resetSpeed()
@@ -4536,7 +4546,16 @@ namespace TrainingProject
 		}
 		public void changeAutomated()
 		{
-			Automated = !Automated;
+			// Automated
+			if (Automated) Automated = !Automated;
+			// Not automated
+			else
+			{
+				// if not automated and equipment is prioitized, automate the upgrades
+				if (Manual_Equipment)  Automated = !Automated;
+				// cycle prioritization
+				Manual_Equipment = !Manual_Equipment;
+			}
 		}
 		public void rename(string newName)
 		{
