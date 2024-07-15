@@ -1668,7 +1668,7 @@ namespace TrainingProject
 			{
 				// if selected team's min level is lower than the lowest level of monster decrease diff
 				Team tmpTeam = GameTeams[TeamIndex];
-				if (((tmpTeam.getDifficulty - 1) * 4) + 1 > tmpTeam.MyTeam[tmpTeam.MyTeam.Count - 1].getLevel && RndVal.Next(100) > 95)
+				if (((tmpTeam.getDifficulty - 1) * 4) + 1 > tmpTeam.MyTeam[tmpTeam.MyTeam.Count - 1].getLevel && RndVal.Next(100) > 99)
 				{
 					tmpTeam.getDifficulty--;
 					getFightLog = String.Format("\n!!! {0} difficulty decreased!", tmpTeam.getName);
@@ -2622,7 +2622,7 @@ namespace TrainingProject
 								// Decrease difficulty after many losses
 								if (RndVal.Next(100) < DiffLosses++)
 								{
-									gameDifficulty--;
+									gameDifficulty = RndVal.Next(gameDifficulty);
 									getWarningLog = lblWinner.Text = getFightLog = Environment.NewLine + "--- Difficulty decreased ";
 									DiffLosses = 0;
 								}
