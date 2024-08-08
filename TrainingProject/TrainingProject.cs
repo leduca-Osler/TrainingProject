@@ -2691,7 +2691,10 @@ namespace TrainingProject
 									}
 									else
 									{
-										msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg);
+										// calculate Seating available
+										int SeatsAvaial = 0;
+										foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
+										msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}\n    Seating Available:{4:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg, SeatsAvaial);
 									}
 								}
 								else
@@ -2704,10 +2707,11 @@ namespace TrainingProject
 										bossFight = true;
 									// pay team 2 remaining;
 									GameTeam2[i].getCurrency += Jackpot;
-									//msg += " (" + String.Format("{0:n0}", Jackpot) + ")";
-									msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg);
+									// calculate Seating available
+									int SeatsAvaial = 0;
+									foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
+									msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}\n    Seating Available:{4:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg, SeatsAvaial);
 									Jackpot = 0;
-									//msg = Environment.NewLine + GameTeam1[i].getName + " Won against " + GameTeam2[i].getName + msg;
 								}
 							}
 							else
@@ -2730,7 +2734,10 @@ namespace TrainingProject
 									getGameCurrency += tmp;
 									GameTeam1[i].getCurrency += MinWage;
 									Jackpot = 0;
-									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- Win:{3:n0} {4}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, WinCount, msg);
+									// calculate Seating available
+									int SeatsAvaial = 0;
+									foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
+									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- Win:{3:n0} {4}\n    Seating Available:{5:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, WinCount, msg, SeatsAvaial);
 									//msg += String.Format("\n Win:{0}", WinCount);
 									int lastRobo = GameTeam1[i].MyTeam.Count - 1;
 									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
@@ -2766,7 +2773,10 @@ namespace TrainingProject
 									Jackpot -= tmp;
 									// team lost gets remaining
 									GameTeam1[i].getCurrency += Jackpot;
-									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- {3}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg);
+									// calculate Seating available
+									int SeatsAvaial = 0;
+									foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
+									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- {3}\n    Seating Available:{4:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg, SeatsAvaial);
 									Jackpot = 0;
 								}
 							}
