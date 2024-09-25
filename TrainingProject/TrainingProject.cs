@@ -1389,7 +1389,7 @@ namespace TrainingProject
 				for (int j = i; j < GameTeams.Count; j++)
 				{ 
 					// More wins the team has lowers their chance of scouting another team.
-					if (RndVal.Next(100) > GameTeams[j].Win) scoutingTeams.Add(j); 
+					if (RndVal.Next(100) > GameTeams[j].Win && !GameTeams[j].getName.Equals(rebuild.getName)) scoutingTeams.Add(j); 
 				}
 			}
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
@@ -4515,10 +4515,13 @@ namespace TrainingProject
 					{
 						Runes[index] = 0;
 						addRune(level + 10, true);
-						// Add bonus rebuild
-						Robot tmpRobot = MyTeam[RndVal.Next(MyTeam.Count)]; 
-						tmpRobot.rebuildBonus++;
-						getFightLog = String.Format("\n ^@^{0}-{1} received a bonus rebuild! ", getName, tmpRobot.getName);
+						if (RndVal.Next(100) > 90) // 10% chance to add bonus Rebuild
+						{
+							// Add bonus rebuild
+							Robot tmpRobot = MyTeam[RndVal.Next(MyTeam.Count)];
+							tmpRobot.rebuildBonus++;
+							getFightLog = String.Format("\n ^@^{0}-{1} received a bonus rebuild! ", getName, tmpRobot.getName);
+						}
 					}
 					else
 					{
