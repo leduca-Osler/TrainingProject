@@ -1127,7 +1127,17 @@ namespace TrainingProject
 		}
 		public void arenaComunityOutreach()
 		{
-			ArenaComunityReach = roundValue(ArenaComunityReach, (ArenaLvlCost), "up");
+			int tmp = RndVal.Next(100);
+			if (tmp > 90)
+			{
+				ArenaComunityReach = roundValue(ArenaComunityReach, RndVal.Next((int)(ArenaLvlCost*25)), "up");
+				getWarningLog = getFightLog = string.Format("\n++ Huge comunity outreach up to {0:p}", ArenaComunityReach);
+			}
+			else
+			{
+				ArenaComunityReach = roundValue(ArenaComunityReach, RndVal.Next((int)(ArenaLvlCost*2)), "up");
+				getWarningLog = getFightLog = string.Format("\n++ comunity outreach up to {0:p}", ArenaComunityReach);
+			}
 		}
 		public void arenaLevelUp()
 		{
@@ -1408,6 +1418,17 @@ namespace TrainingProject
 					rebuild.MyTeam.RemoveAt(i);
 					scouted -=  15;
 				}
+				// if there is only one robot in the team rebuild team add a new robot to the scouting team
+				if (rebuild.MyTeam.Count == 1 && RndVal.Next(100) < scouted)
+				{
+					Team scoutingTeam = GameTeams[scoutingTeams[RndVal.Next(scoutingTeams.Count)]];
+					// add new robot
+					int roboType = RndVal.Next(RoboName.Length);
+					Robot tmp = new Robot(0, setRoboName(roboType), roboType, false);
+					scoutingTeam.MyTeam.Add(tmp);
+					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} received a bonus robot!", scoutingTeam.getName);
+					scouted -= 15;
+				}
 			}
 			rebuild.HealScore = 0;
 			foreach (Team eTeam in GameTeams)
@@ -1446,7 +1467,10 @@ namespace TrainingProject
 			for (int i = 0; i < GameTeams.Count; i++)
 			{
 				for (int j = 0; j <= i; j++)
-				{ scoutingTeams.Add(j); }
+				{
+					// More wins the team has lowers their chance of scouting another team.
+					if (RndVal.Next(100) > GameTeams[j].Win && !GameTeams[j].getName.Equals(rebuild.getName)) scoutingTeams.Add(j);
+				}
 			}
 			for (int i = 0; i < rebuild.MyTeam.Count; i++)
 			{
@@ -1461,6 +1485,17 @@ namespace TrainingProject
 					}
 					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} has been scouted by {1}!", rebuild.MyTeam[i].getName, strScouter);
 					rebuild.MyTeam.RemoveAt(i);
+					scouted -= 15;
+				}
+				// if there is only one robot in the team rebuild team add a new robot to the scouting team
+				if (rebuild.MyTeam.Count == 1 && RndVal.Next(100) < scouted)
+				{
+					Team scoutingTeam = GameTeams[scoutingTeams[RndVal.Next(scoutingTeams.Count)]];
+					// add new robot
+					int roboType = RndVal.Next(RoboName.Length);
+					Robot tmp = new Robot(0, setRoboName(roboType), roboType, false);
+					scoutingTeam.MyTeam.Add(tmp);
+					getWarningLog = getFightLog = rebuild.getTeamLog = string.Format("\n!*!*! {0} received a bonus robot!", scoutingTeam.getName);
 					scouted -= 15;
 				}
 			}

@@ -158,7 +158,7 @@ namespace TrainingApp
 					timer1.Interval = 50; //speed up for testing
 				#endif
 				// Make sure the computer doesn't go to sleep
-				SetThreadExecutionState( EXECUTION_STATE.ES_CONTINUOUS);
+				//SetThreadExecutionState( EXECUTION_STATE.ES_CONTINUOUS);
 			}
 			else
 			{
@@ -837,7 +837,7 @@ namespace TrainingApp
 				//MyGame.continueFight(false);
 				if (StandbyCountdown++ > 250 && !MyGame.FastForward)
 				{
-					Application.SetSuspendState(PowerState.Suspend, true, false);// Standby
+					// Application.SetSuspendState(PowerState.Suspend, true, false);// Standby
 					StandbyCountdown = 0;
 				}
 			}
