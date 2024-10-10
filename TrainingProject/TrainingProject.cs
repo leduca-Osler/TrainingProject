@@ -1131,12 +1131,12 @@ namespace TrainingProject
 			if (tmp > 90)
 			{
 				ArenaComunityReach = roundValue(ArenaComunityReach, RndVal.Next((int)(ArenaLvlCost*25)), "up");
-				getWarningLog = getFightLog = string.Format("\n++ Huge comunity outreach up to {0:p}", ArenaComunityReach);
+				getWarningLog = getFightLog = string.Format("\n++ Huge comunity outreach up to {0:P2}", getArenaOutreach());
 			}
 			else
 			{
 				ArenaComunityReach = roundValue(ArenaComunityReach, RndVal.Next((int)(ArenaLvlCost*2)), "up");
-				getWarningLog = getFightLog = string.Format("\n++ comunity outreach up to {0:p}", ArenaComunityReach);
+				getWarningLog = getFightLog = string.Format("\n++ comunity outreach up to {0:P2}", getArenaOutreach());
 			}
 		}
 		public void arenaLevelUp()
@@ -2046,7 +2046,8 @@ namespace TrainingProject
 			else if (CurrentInterval < 4000) myColour = Brushes.Green;
 			else if (CurrentInterval < 5000) myColour = Brushes.Blue;
 			else if (CurrentInterval < 6000) myColour = Brushes.Red;
-			AlsProgressBar Progress = new AlsProgressBar(myColour) { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = 450, Height = 10 };
+			//AlsProgressBar Progress = new AlsProgressBar(myColour) { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = 450, Height = 10 };
+			AlsProgressBar Progress = new AlsProgressBar(myColour) { Maximum = MaxInterval, Value = CurrentInterval, Minimum = 1, Width = MainFormPanel.Width-40, Height = 10 };
 			HeaderPanel.Controls.Add(Progress);
 			string SafeFormat = "HH:mm";
 			if (SafeTime.Day > DateTime.Now.Day) SafeFormat = "MM-dd HH:mm";
@@ -2098,13 +2099,13 @@ namespace TrainingProject
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
 					long ActualRebuildCost = eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes);
-					string strFormat = "Rebuild {0:c0}\nSave {1:c0} {2:n0}%";
-					if (ActualRebuildCost == 100) strFormat = "Reset $100";
+					string strFormat = "Rebuild {0:c0}\nSave {1:c0} {2:n0}% +{3:n0}";
+					if (ActualRebuildCost == 100) strFormat = "Reset $100 +{3:n0}";
 					int stats = (eRobo.getBaseStats());
 					if (GameTeams[TeamSelect - 1].Runes.Count < (stats / 2)) GameTeams[TeamSelect - 1].addRune((int)(stats / 2) * 10);
 					int tmpRunes = 0;
 					if (GameTeams[TeamSelect - 1].Runes.Count > stats / 2) tmpRunes = GameTeams[TeamSelect - 1].Runes[stats / 2];
-					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), tmpRunes) };
+					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), tmpRunes, eRobo.rebuildBonus) };
 					int innerIndex = index++;
 					if (getGameCurrency > 0)
 						btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, this));
@@ -5216,6 +5217,7 @@ namespace TrainingProject
 				{
 					RoboRebuildCost = roundValue(RoboRebuildCost, RoboRebuildCostBase, "up");
 					RoboRebuildCostBase += 1000;
+					if (i % 5 == 0) RoboRebuildCostBase *= 2;
 				}
 			}
 			tmpImage = "";
