@@ -2034,11 +2034,14 @@ namespace TrainingProject
 			return retval;
 		}
 
-		public FlowLayoutPanel showHeader()
+		public FlowLayoutPanel showHeader(bool includeBlank = true)
 		{
 			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
-			HeaderPanel.Controls.Add(lblBlank);
+			if (includeBlank)
+			{
+				Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
+				HeaderPanel.Controls.Add(lblBlank);
+			}
 			Brush myColour = Brushes.Black;
 			if (CurrentInterval < 1000) myColour = Brushes.Gray;
 			else if (CurrentInterval < 2000) myColour = Brushes.White;
@@ -2062,7 +2065,7 @@ namespace TrainingProject
 		public FlowLayoutPanel showSelectedTeam(int TeamSelect, bool showAll)
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			MainPanel.Controls.Add(showHeader());
+			MainPanel.Controls.Add(showHeader(true));
 			if (TeamSelect > 0)
 			{
 				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
@@ -2099,19 +2102,23 @@ namespace TrainingProject
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
 					Label Everything = new Label { AutoSize = true, Text = eRobo.ToString() };
 					long ActualRebuildCost = eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes);
-					string strFormat = "Rebuild {0:c0}\nSave {1:c0} {2:n0}% +{3:n0}";
-					if (ActualRebuildCost == 100) strFormat = "Reset $100 +{3:n0}";
+					long ProposedRebuildCost = eRobo.rebuildCost(ResearchDevRebuild, GameTeams[TeamSelect - 1].Runes, true);
+					string strFormat = "Rebuild {0:c0}";
+					if (ActualRebuildCost == 100) strFormat = "Reset $100";
+					string strFormatFullRebuildCost = "{3:c0} - {0:c0} ({1:n0}%) b{2:n0}";
 					int stats = (eRobo.getBaseStats());
 					if (GameTeams[TeamSelect - 1].Runes.Count < (stats / 2)) GameTeams[TeamSelect - 1].addRune((int)(stats / 2) * 10);
 					int tmpRunes = 0;
 					if (GameTeams[TeamSelect - 1].Runes.Count > stats / 2) tmpRunes = GameTeams[TeamSelect - 1].Runes[stats / 2];
-					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost, (eRobo.RoboRebuildCost - ActualRebuildCost), tmpRunes, eRobo.rebuildBonus) };
+					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost) };
+					Label rebuildCost = new Label { AutoSize = true, Text = String.Format(strFormatFullRebuildCost, (eRobo.RoboRebuildCost - ProposedRebuildCost), tmpRunes, eRobo.rebuildBonus, eRobo.RoboRebuildCost) };
 					int innerIndex = index++;
 					if (getGameCurrency > 0)
 						btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, this));
 					MyPanel.Controls.Add(RoboName);
 					MyPanel.Controls.Add(Everything);
 					MyPanel.Controls.Add(btnRebuild);
+					MyPanel.Controls.Add(rebuildCost);
 					TopLevelPanel.Controls.Add(MyPanel);
 				}
 				MainPanel.Controls.Add(TopLevelPanel);
@@ -2474,7 +2481,7 @@ namespace TrainingProject
 		public FlowLayoutPanel showCountdown()
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			MainPanel.Controls.Add(showHeader());
+			MainPanel.Controls.Add(showHeader(true));
 				List<KeyValuePair<String, DateTime>> beforeToday = new List<KeyValuePair<String, DateTime>>();
 			string Countdown = "";
 			foreach (KeyValuePair<String, DateTime> eDate in countdown)
@@ -2501,7 +2508,7 @@ namespace TrainingProject
 			}
 			roundCount++;
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			MainPanel.Controls.Add(showHeader());
+			MainPanel.Controls.Add(showHeader(!isFighting()));
 			// Flags to display to user
 			String strFlags = "";
 			if ((SafeTime - DateTime.Now).TotalHours > 1) strFlags += " (Long Battle)";
@@ -5448,12 +5455,12 @@ namespace TrainingProject
 			if (runes.Count > stats / 2) percent -= runes[stats / 2];
 			return percent/100.0;
 		}
-		public long rebuildCost(long ResearchDevRebuild, List<int> runes)
+		public long rebuildCost(long ResearchDevRebuild, List<int> runes, bool proposedCost = false)
 		{
 			long cost = 100;
 			int stats = (Dexterity + Strength + Agility + Tech + Accuracy);
 			// if base stats will go up add cost
-			if (Level / 5 > stats )
+			if (Level / 5 > stats || proposedCost)
 			{
 				if (rebuildBonus > 0)
 					cost = 200;

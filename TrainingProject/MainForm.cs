@@ -217,6 +217,9 @@ namespace TrainingApp
 					foreach (Control eControl in MainPannel.Controls)
 						eControl.Dispose();
 					MainPannel.Controls.Clear();
+					FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+					Label lblBlank = new Label { AutoSize = true, Text = string.Format("{1:n2}\n\n", shownCount, (getNumRobos() / 2)) };
+					MainPannel.Controls.Add(lblBlank);
 					MainPannel.Controls.Add(MyGame.continueFight(true));
 					shownCount = 0;
 					MyGame.resetShowDefeated();
@@ -234,6 +237,9 @@ namespace TrainingApp
 								foreach (Control eControl in MainPannel.Controls)
 									eControl.Dispose();
 								MainPannel.Controls.Clear();
+								FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+								Label lblBlank = new Label { AutoSize = true, Text = string.Format("{1:n2}\n\n", shownCount, (getNumRobos() / 2)) };
+								MainPannel.Controls.Add(lblBlank);
 								MainPannel.Controls.Add(MyGame.continueFight(true));
 								shownCount = 0;
 								MyGame.resetShowDefeated();
@@ -241,7 +247,13 @@ namespace TrainingApp
 							else
 							{
 								bool show = false;
-								if (Game.RndVal.Next(100) > 90) show = true;
+								if (Game.RndVal.Next(100) > 90)
+								{
+									show = true;
+									FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+									Label lblBlank = new Label { AutoSize = true, Text = string.Format("{1:n2}\n\n", shownCount, (getNumRobos() / 2)) };
+									MainPannel.Controls.Add(lblBlank);
+								}
 								MyGame.continueFight(show);
 								MyGame.FastForwardCount--;
 							}
@@ -290,16 +302,17 @@ namespace TrainingApp
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUpgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
 		}
-		private int getNumRobos()
+		private double getNumRobos()
 		{
 			// only check the first teams in the list
-			int total = 0;
+			double total = 0;
 			if (MyGame.GameTeam1.Count > 0)
 			{
 				total += MyGame.GameTeam1[0].getNumRobos(false);
 				total += MyGame.GameTeam2[0].getNumRobos(false);
 			}
 			if (total > 20) total = 20;
+			total = total / (MyGame.CurrentInterval / 1000.0);
 			return total;
 		}
 		private void btnArenaLvl_Click(object sender, EventArgs e)
@@ -834,7 +847,6 @@ namespace TrainingApp
 #if DEBUG
 				StandbyCountdown = 0; // do not suspend in debug mode
 #endif
-				//MyGame.continueFight(false);
 				if (StandbyCountdown++ > 250 && !MyGame.FastForward)
 				{
 					// Application.SetSuspendState(PowerState.Suspend, true, false);// Standby
