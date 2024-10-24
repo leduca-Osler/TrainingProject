@@ -74,6 +74,7 @@
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
 			this.DialogTimer = new System.Windows.Forms.Timer(this.components);
+			this.btnAdvertising = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -90,12 +91,13 @@
             this.toolStripLabel1,
             this.btnArenaLvl,
             this.btnShop,
+            this.btnAdvertising,
             this.btnFight,
             this.btnAutomatic,
             this.toolStripSeparator1});
-			this.toolStrip1.Location = new System.Drawing.Point(91, 0);
+			this.toolStrip1.Location = new System.Drawing.Point(36, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(381, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(436, 27);
 			this.toolStrip1.Stretch = true;
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
@@ -379,7 +381,6 @@
 			// 
 			// txtMaxManagerHrs
 			// 
-			this.txtMaxManagerHrs.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.txtMaxManagerHrs.Name = "txtMaxManagerHrs";
 			this.txtMaxManagerHrs.Size = new System.Drawing.Size(100, 23);
 			this.txtMaxManagerHrs.Text = "10";
@@ -435,7 +436,6 @@
 			// 
 			// MinJackpotLevel
 			// 
-			this.MinJackpotLevel.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.MinJackpotLevel.Name = "MinJackpotLevel";
 			this.MinJackpotLevel.Size = new System.Drawing.Size(100, 23);
 			this.MinJackpotLevel.Text = "1";
@@ -479,6 +479,16 @@
 			// DialogTimer
 			// 
 			this.DialogTimer.Interval = 30000;
+			// 
+			// btnAdvertising
+			// 
+			this.btnAdvertising.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnAdvertising.Image = ((System.Drawing.Image)(resources.GetObject("btnAdvertising.Image")));
+			this.btnAdvertising.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnAdvertising.Name = "btnAdvertising";
+			this.btnAdvertising.Size = new System.Drawing.Size(24, 24);
+			this.btnAdvertising.Text = "Advertising";
+			this.btnAdvertising.Click += new System.EventHandler(this.btnAdvertising_Click);
 			// 
 			// MainForm
 			// 
@@ -546,6 +556,7 @@
 		private System.Windows.Forms.ToolStripComboBox mnuPriority;
 		private System.Windows.Forms.ToolStripMenuItem fixToolStripMenuItem;
 		public System.Windows.Forms.Timer DialogTimer;
+		private System.Windows.Forms.ToolStripButton btnAdvertising;
 	}
 }
 

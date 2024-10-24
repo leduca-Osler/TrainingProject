@@ -6598,6 +6598,18 @@
         RK5CYII=
 </value>
   </data>
+  <data name="btnAdvertising.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFPSURBVDhPndKxK4VRGMfxN5kMBkmSZJLJ4C+QSZJkkCRJ
+        MsggSZKUwV8gGU0GGWQyyGCQZDBIBkkyGCTJIEl8v+e9h9d7KdevPnXOufeee57nnOQfaUQXysKsxDTj
+        Di9YcqGU1OISB+iEm7j2p9ThFO8YcIFcYDwd/h7r7MMtPPobqmBWsOmgAiOYKpjGAtZwjSfMY6IwjxnD
+        mYNteLQrWN9RYb6FUVTDU8zCuk8wBPvwiPAPDipRjhq4gVe1jj3Y8UW4rlf04Blhg/hBVguyyW/Qi7BB
+        LCFvBzNogrEEf3CMQVjCA0IThzEJm+iP5rAM67XzdtsT3CDGJnq1nznHPXbD7CutsLlu5MlsqlnFRjpM
+        Y8P8gk3Lx+bGz/tdIL7Kbw/JMvyCV9XmQi5uso9DdKPoKTuJx/TIP6UevkhvwZ4UpR0+kvwVZtOAjnSY
+        JB/BGmBUcuMarwAAAABJRU5ErkJggg==
+</value>
+  </data>
   <data name="btnFight.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAYAAAA+s9J6AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8

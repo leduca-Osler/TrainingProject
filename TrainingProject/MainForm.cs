@@ -177,6 +177,7 @@ namespace TrainingApp
 			Boolean shopRestock = false;
 			Boolean ComunityOutreach = false;
 			Color shopColour = Color.White;
+			Color advertColour = Color.White;
 			if (MyGame.getAvailableTeams > 0 && MyGame.getTeamCost < MyGame.getGameCurrency) 
 																						addTeam = true;
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
@@ -195,6 +196,11 @@ namespace TrainingApp
 				shopRestock = true;
 				shopColour = Color.Green;
 			}
+			// if seats available 3 battles in a row we need advertising
+			if (MyGame.NeedAdvertising > 3)
+			{
+				advertColour = Color.Magenta;
+			}
 
 			btnAddTeam.Enabled = addTeam;
 			btnAddTeam.Image = addTeamImage;
@@ -203,6 +209,8 @@ namespace TrainingApp
 			btnShop.Enabled = shopRestock;
 			btnShop.BackColor = shopColour;
 			mnuComunityOutreach.Enabled = ComunityOutreach;
+			btnAdvertising.Enabled = ComunityOutreach;
+			btnAdvertising.BackColor = advertColour;
 			if ((MyGame.SafeTime - DateTime.Now).TotalHours >= 1)
 				mnuLongBattle.Text = String.Format("Return to work");
 			else
@@ -212,14 +220,12 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if ((shownCount++ >= (getNumRobos() / 2) || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
+				if ((shownCount++ >= (getNumRounds()) || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
 				{
 					foreach (Control eControl in MainPannel.Controls)
 						eControl.Dispose();
 					MainPannel.Controls.Clear();
 					FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-					Label lblBlank = new Label { AutoSize = true, Text = string.Format("{1:n2}\n\n", shownCount, (getNumRobos() / 2)) };
-					MainPannel.Controls.Add(lblBlank);
 					MainPannel.Controls.Add(MyGame.continueFight(true));
 					shownCount = 0;
 					MyGame.resetShowDefeated();
@@ -238,8 +244,6 @@ namespace TrainingApp
 									eControl.Dispose();
 								MainPannel.Controls.Clear();
 								FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-								Label lblBlank = new Label { AutoSize = true, Text = string.Format("{1:n2}\n\n", shownCount, (getNumRobos() / 2)) };
-								MainPannel.Controls.Add(lblBlank);
 								MainPannel.Controls.Add(MyGame.continueFight(true));
 								shownCount = 0;
 								MyGame.resetShowDefeated();
@@ -250,9 +254,6 @@ namespace TrainingApp
 								if (Game.RndVal.Next(100) > 90)
 								{
 									show = true;
-									FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-									Label lblBlank = new Label { AutoSize = true, Text = string.Format("{1:n2}\n\n", shownCount, (getNumRobos() / 2)) };
-									MainPannel.Controls.Add(lblBlank);
 								}
 								MyGame.continueFight(show);
 								MyGame.FastForwardCount--;
@@ -302,7 +303,7 @@ namespace TrainingApp
 			cboSaveCredits.SelectedItem = MyGame.PurchaseUpgrade;
 			txtMaxManagerHrs.Text = MyGame.maxManagerHours.ToString();
 		}
-		private double getNumRobos()
+		private double getNumRounds()
 		{
 			// only check the first teams in the list
 			double total = 0;
@@ -1065,6 +1066,12 @@ namespace TrainingApp
 		private void fixToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			MyGame.fixTech();
+		}
+
+		private void btnAdvertising_Click(object sender, EventArgs e)
+		{
+			MyGame.getGameCurrency -= MyGame.getArenaLvlCost;
+			MyGame.arenaComunityOutreach();
 		}
 	}
 	public static class BinarySerialization

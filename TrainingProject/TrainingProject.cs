@@ -574,6 +574,7 @@ namespace TrainingProject
 		public int totalRevCount;
 		public int DiffLosses;
 		public int bossLosses;
+		public int NeedAdvertising; 
 		public int getMonsterDenBonus
 		{
 			get { return MonsterDenBonus; }
@@ -2034,14 +2035,11 @@ namespace TrainingProject
 			return retval;
 		}
 
-		public FlowLayoutPanel showHeader(bool includeBlank = true)
+		public FlowLayoutPanel showHeader()
 		{
 			FlowLayoutPanel HeaderPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			if (includeBlank)
-			{
-				Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
-				HeaderPanel.Controls.Add(lblBlank);
-			}
+			Label lblBlank = new Label { AutoSize = true, Text = Environment.NewLine + Environment.NewLine };
+			HeaderPanel.Controls.Add(lblBlank);
 			Brush myColour = Brushes.Black;
 			if (CurrentInterval < 1000) myColour = Brushes.Gray;
 			else if (CurrentInterval < 2000) myColour = Brushes.White;
@@ -2065,7 +2063,7 @@ namespace TrainingProject
 		public FlowLayoutPanel showSelectedTeam(int TeamSelect, bool showAll)
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			MainPanel.Controls.Add(showHeader(true));
+			MainPanel.Controls.Add(showHeader());
 			if (TeamSelect > 0)
 			{
 				FlowLayoutPanel TopLevelPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
@@ -2481,7 +2479,7 @@ namespace TrainingProject
 		public FlowLayoutPanel showCountdown()
 		{
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			MainPanel.Controls.Add(showHeader(true));
+			MainPanel.Controls.Add(showHeader());
 				List<KeyValuePair<String, DateTime>> beforeToday = new List<KeyValuePair<String, DateTime>>();
 			string Countdown = "";
 			foreach (KeyValuePair<String, DateTime> eDate in countdown)
@@ -2508,7 +2506,7 @@ namespace TrainingProject
 			}
 			roundCount++;
 			FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-			MainPanel.Controls.Add(showHeader(!isFighting()));
+			MainPanel.Controls.Add(showHeader());
 			// Flags to display to user
 			String strFlags = "";
 			if ((SafeTime - DateTime.Now).TotalHours > 1) strFlags += " (Long Battle)";
@@ -2738,6 +2736,10 @@ namespace TrainingProject
 										int SeatsAvaial = 0;
 										foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
 										msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}\n    Seating Available:{4:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg, SeatsAvaial);
+										if (SeatsAvaial > 0)
+											NeedAdvertising++;
+										else
+											NeedAdvertising = 0;
 									}
 								}
 								else
@@ -2755,6 +2757,10 @@ namespace TrainingProject
 									foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
 									msg = string.Format("\n{0} Won against {1} TR:--->{2:c0}<--- {3}\n    Seating Available:{4:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg, SeatsAvaial);
 									Jackpot = 0;
+									if (SeatsAvaial > 0)
+										NeedAdvertising++;
+									else
+										NeedAdvertising = 0;
 								}
 							}
 							else
@@ -2781,6 +2787,10 @@ namespace TrainingProject
 									int SeatsAvaial = 0;
 									foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
 									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- Win:{3:n0} {4}\n    Seating Available:{5:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, WinCount, msg, SeatsAvaial);
+									if (SeatsAvaial > 0)
+										NeedAdvertising++;
+									else
+										NeedAdvertising = 0;
 									//msg += String.Format("\n Win:{0}", WinCount);
 									int lastRobo = GameTeam1[i].MyTeam.Count - 1;
 									// if team looses against difficulty where highest level is lower than the lowest level of robot on team, low chance to add new robo to the team. 
@@ -2821,6 +2831,10 @@ namespace TrainingProject
 									foreach (ArenaSeating eSeating in CurrentSeating) { SeatsAvaial += eSeating.Amount - eSeating.Attendees; }
 									msg = string.Format("\n{1} Won against {0} TR:--->{2:c0}<--- {3}\n    Seating Available:{4:n0}", GameTeam1[i].getName, GameTeam2[i].getName, totalRev, msg, SeatsAvaial);
 									Jackpot = 0;
+									if (SeatsAvaial > 0)
+										NeedAdvertising++;
+									else
+										NeedAdvertising = 0;
 								}
 							}
 							getFightLog = Environment.NewLine + msg;
