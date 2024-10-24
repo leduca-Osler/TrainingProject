@@ -4838,6 +4838,17 @@ namespace TrainingProject
 			}
 			return num;
 		}
+		public double getHealthPercent()
+		{
+			double MaxHP = 0;
+			double CurrentHP = 0;
+			foreach (Robot robo in MyTeam)
+			{
+				MaxHP += robo.getTHealth();
+				CurrentHP += robo.HP;
+			}
+			return CurrentHP / MaxHP;
+		}
 		public Boolean healRobos(bool isBoss)
 		{
 			int beds = 0;

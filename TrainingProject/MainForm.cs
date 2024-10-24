@@ -237,7 +237,8 @@ namespace TrainingApp
 						bool bContinue = true;
 						while (MyGame.FastForwardCount > 0 && bContinue)
 						{
-							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getNumRobos(false) <= 1 || MyGame.GameTeam2[0].getNumRobos(false) <= 1)
+							// if less than 10% health show
+							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getHealthPercent() <= .1 || MyGame.GameTeam2[0].getHealthPercent() <= .1)
 							{
 								bContinue = false;
 								foreach (Control eControl in MainPannel.Controls)
@@ -309,12 +310,13 @@ namespace TrainingApp
 			double total = 0;
 			if (MyGame.GameTeam1.Count > 0)
 			{
-				total += MyGame.GameTeam1[0].getNumRobos(false);
-				total += MyGame.GameTeam2[0].getNumRobos(false);
+				// which team has the lowest number of robots
+				total = Math.Min(MyGame.GameTeam1[0].getNumRobos(false), MyGame.GameTeam2[0].getNumRobos(false));
 			}
 			if (total > 20) total = 20;
 			total = total / (MyGame.CurrentInterval / 1000.0);
-			return total;
+			if (total == 0) total = 1;
+			return total; 
 		}
 		private void btnArenaLvl_Click(object sender, EventArgs e)
 		{
