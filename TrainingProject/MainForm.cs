@@ -852,7 +852,7 @@ namespace TrainingApp
 #endif
 				if (StandbyCountdown++ > 250 && !MyGame.FastForward)
 				{
-					// Application.SetSuspendState(PowerState.Suspend, true, false);// Standby
+					Application.SetSuspendState(PowerState.Suspend, true, false);// Standby
 					StandbyCountdown = 0;
 				}
 			}
