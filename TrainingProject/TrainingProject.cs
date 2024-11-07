@@ -2430,6 +2430,7 @@ namespace TrainingProject
 				, 1 // MP
 				, 1 // HP
 				, 12 // ShortName
+				, 1 // Rank
 			};
 			if (tmpFighting)
 			{
@@ -2454,8 +2455,8 @@ namespace TrainingProject
 		public int[] checkLength(int[] maxLength, Robot eRobo)
 		{
 			// Name
-			if (eRobo.getNameRank().Length > maxLength[0])
-				maxLength[0] = eRobo.getNameRank().Length;
+			if (eRobo.getName.Length > maxLength[0])
+				maxLength[0] = eRobo.getName.Length;
 			// Level
 			if (string.Format("{0:n0}", eRobo.getLevel).Length > maxLength[1])
 				maxLength[1] = string.Format("{0:n0}", eRobo.getLevel).Length;
@@ -2474,6 +2475,9 @@ namespace TrainingProject
 			// HP
 			if (string.Format("{0:n0}", eRobo.HP).Length > maxLength[6])
 				maxLength[6] = string.Format("{0:n0}", eRobo.HP).Length;
+			// Rank
+			if (string.Format("{0:n0}", eRobo.getBaseStats()).Length > maxLength[8])
+				maxLength[8] = string.Format("{0:n0}", eRobo.getBaseStats()).Length;
 			return maxLength;
 		} 
 		public FlowLayoutPanel showCountdown()
@@ -4653,11 +4657,11 @@ namespace TrainingProject
 			int HPCount = 0;
 			if (getName.Equals("Arena") || getName.Equals("Monster Outbreak") || getName.Contains("Game Diff"))
 			{
-				int maxStartCounter = MyTeam.Count - 10;
+				int maxStartCounter = MyTeam.Count - 15;
 				if (maxStartCounter < 0) maxStartCounter = 0;
 				startCounter = RndVal.Next(maxStartCounter);
 				if (MyTeam[startCounter].getKO > KOCount) startCounter = 0;
-				maxRobos = 10 + startCounter;
+				maxRobos = 15 + startCounter;
 			}
 			else if (roundCount > 0 && !showAll)
 				maxRobos = (20) - roundCount;
@@ -5458,16 +5462,17 @@ namespace TrainingProject
 			}
 			int shortLength = 12;
 			if (getName.Length < 12) shortLength = getName.Length;
-			if (getKO <= 3) strFormat = "\n{0}{1}{3} L:{4} A:{6} S:{7} M:{8} H:{9}{10} ";
-			if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{4}->{5} A:{6} S:{7} M:{8} H:{9}{10} ";
-			strStats = string.Format(strFormat, cRebuild, cSkill, 
-				getNameRank().PadRight(PadRight[0]), getName.Substring(0, shortLength).PadRight(PadRight[7]),
+			if (getKO <= 3) strFormat = "\n{0}{1}{3} L:{10} {4} A:{6} S:{7} M:{8} H:{9}{11} ";
+			if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{10} {4}->{5} A:{6} S:{7} M:{8} H:{9}{11} ";
+			strStats = string.Format(strFormat, cRebuild, cSkill,
+				getName.PadRight(PadRight[0]), getName.Substring(0, shortLength).PadRight(PadRight[7]),
 				String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
 				String.Format("{0:n0}", LevelLog).PadLeft(PadRight[2]),
 				String.Format("{0:n0}", getAnalysisLeft()).PadLeft(PadRight[3]),
 				String.Format("{0:n0}", getCurrentSpeed).PadLeft(PadRight[4]),
 				String.Format("{0:n0}", MP).PadLeft(PadRight[5]), 
-				String.Format("{0:n0}", HP).PadLeft(PadRight[6]), 
+				String.Format("{0:n0}", HP).PadLeft(PadRight[6]),
+				String.Format("{0:n0}", getBaseStats()).PadLeft(PadRight[8]),
 				strMsg);
 
 			if (ClearDmg) cSkill = ' ';
@@ -5733,7 +5738,7 @@ namespace TrainingProject
 				dmg += tmpDmg;
 				message += " " + tmpDmg.ToString() + " dmg" + strCrit;
 				// don't bring down durability all the time for multiple tech and multiple attack
-				if (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Single tech") || RndVal.Next(100) > 70)
+				if (currSkill.type.Equals("Single attack") || currSkill.type.Equals("Single tech") || RndVal.Next(100) > 50)
 				{
 					if (EquipArmour != null)
 					{

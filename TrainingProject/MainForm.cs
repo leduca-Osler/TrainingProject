@@ -263,7 +263,14 @@ namespace TrainingApp
 						if (MyGame.FastForwardCount == 0) MyGame.FastForward = false;
 					}
 					else
-						MyGame.continueFight(false);
+					{
+						Random rnd = new Random();
+						do
+						{
+							MyGame.continueFight(false);
+							shownCount++;
+						} while (rnd.Next(shownCount) < MyGame.GameTeams[0].getMaxRobos && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() > .05 && MyGame.GameTeam2[0].getHealthPercent() > .05);
+					}
 				}
 				if (!MyGame.isFighting())
 					shownCount = maxCount;
