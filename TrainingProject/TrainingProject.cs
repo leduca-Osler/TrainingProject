@@ -5462,8 +5462,8 @@ namespace TrainingProject
 			}
 			int shortLength = 12;
 			if (getName.Length < 12) shortLength = getName.Length;
-			if (getKO <= 3) strFormat = "\n{0}{1}{3} L:{10} {4} A:{6} S:{7} M:{8} H:{9}{11} ";
-			if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{10} {4}->{5} A:{6} S:{7} M:{8} H:{9}{11} ";
+			if (getKO <= 3) strFormat = "\n{0}{1}{3} L:{4} R:{10} A:{6} S:{7} M:{8} H:{9}{11} ";
+			if (roundCount < 20) strFormat = "\n{0}{1}{2} L:{4}->{5} R:{10} A:{6} S:{7} M:{8} H:{9}{11} ";
 			strStats = string.Format(strFormat, cRebuild, cSkill,
 				getName.PadRight(PadRight[0]), getName.Substring(0, shortLength).PadRight(PadRight[7]),
 				String.Format("{0:n0}", getLevel).PadLeft(PadRight[1]),
