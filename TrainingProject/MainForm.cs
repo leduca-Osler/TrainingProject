@@ -220,7 +220,7 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if ((shownCount++ >= (getNumRounds()) || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
+				if ((shownCount++ >= getNumRounds() || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
 				{
 					foreach (Control eControl in MainPannel.Controls)
 						eControl.Dispose();
@@ -237,30 +237,25 @@ namespace TrainingApp
 						bool bContinue = true;
 						while (MyGame.FastForwardCount > 0 && bContinue)
 						{
-							// if less than 10% health show
-							if (MyGame.GameTeam1.Count == 0 || MyGame.GameTeam1[0].getHealthPercent() <= .1 || MyGame.GameTeam2[0].getHealthPercent() <= .1)
+							Random rnd = new Random();
+							// do not show the first few rounds
+							while (rnd.Next(shownCount) < getNumRounds() && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .05 && MyGame.GameTeam2[0].getHealthPercent() >= .05)
 							{
-								bContinue = false;
-								foreach (Control eControl in MainPannel.Controls)
-									eControl.Dispose();
-								MainPannel.Controls.Clear();
-								FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-								MainPannel.Controls.Add(MyGame.continueFight(true));
-								shownCount = 0;
-								MyGame.resetShowDefeated();
-							}
-							else
-							{
-								bool show = false;
-								if (Game.RndVal.Next(100) > 90)
-								{
-									show = true;
-								}
-								MyGame.continueFight(show);
+								MyGame.continueFight(false);
+								shownCount++;
 								MyGame.FastForwardCount--;
 							}
+							// show the next round
+							bContinue = false;
+							foreach (Control eControl in MainPannel.Controls)
+								eControl.Dispose();
+							MainPannel.Controls.Clear();
+							FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+							MainPannel.Controls.Add(MyGame.continueFight(true));
+							shownCount = 0;
+							MyGame.resetShowDefeated();
 						}
-						if (MyGame.FastForwardCount == 0) MyGame.FastForward = false;
+						if (MyGame.FastForwardCount <= 0) { MyGame.FastForward = false; MyGame.FastForwardCount = 0; }
 					}
 					else
 					{
@@ -318,9 +313,9 @@ namespace TrainingApp
 			if (MyGame.GameTeam1.Count > 0)
 			{
 				// which team has the lowest number of robots
-				total = Math.Min(MyGame.GameTeam1[0].getNumRobos(false), MyGame.GameTeam2[0].getNumRobos(false));
+				total = Math.Min(MyGame.GameTeam1[0].getNumRobos(false), MyGame.GameTeam2[0].getNumRobos(false)) * MyGame.GameTeams[0].getMaxRobos;
 			}
-			if (total > 20) total = 20;
+			// if (total > 20) total = 20;
 			total = total / (MyGame.CurrentInterval / 1000.0);
 			if (total == 0) total = 1;
 			return total; 
