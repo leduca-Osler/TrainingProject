@@ -243,7 +243,7 @@ namespace TrainingApp
 							{
 								MyGame.continueFight(false);
 								shownCount++;
-								MyGame.FastForwardCount--;
+								MyGame.FastForwardCount--; 
 							}
 							// show the next round
 							bContinue = false;

@@ -5442,7 +5442,7 @@ namespace TrainingProject
 			string strStats = "";
 			string strMsg = "";
 			string strFormat = "";
-			if (HP == 0)
+			if (HP == 0 && ClearDmg)
 				getKO++;
 			if (rebuildCost(rebuildSavings, Runes) != 100 && !bIsMonster)
 			{
@@ -5472,7 +5472,7 @@ namespace TrainingProject
 				String.Format("{0:n0}", getCurrentSpeed).PadLeft(PadRight[4]),
 				String.Format("{0:n0}", MP).PadLeft(PadRight[5]), 
 				String.Format("{0:n0}", HP).PadLeft(PadRight[6]),
-				String.Format("{0:n0}", getBaseStats()).PadLeft(PadRight[8]),
+				String.Format("{0:n0}", getBaseStats()/2.0).PadLeft(PadRight[8]),
 				strMsg);
 
 			if (ClearDmg) cSkill = ' ';
