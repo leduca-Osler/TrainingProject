@@ -430,6 +430,7 @@ namespace TrainingProject
 		public int FightBreakCount;
 		public DateTime SafeTime;
 		public DateTime BreakTime;
+		public DateTime DisplayTime;
 		public double repairPercent;
 		public int maxManagerHours;
 		public bool PurchaseUpgrade;
@@ -1051,8 +1052,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-			// Reduce game difficulty fight
-			// gameDifficulty--;
 		}
 
 		public void resetShowDefeated()
@@ -1727,6 +1726,7 @@ namespace TrainingProject
 			fightLogSave = FightLog;
 			warningLogSave = WarningLog;
 			winLogSave = WinLog;
+			DisplayTime = DateTime.Now;
 			if ((bossFight || GameDifficultyFight) && !fighting)
 			{
 				startBossFight();
@@ -4712,27 +4712,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
-
-			// reduce score
-			// getScore--;
-
-			// Fix achievements 
-			/*
-			if (RobotDestroyed.Length >= 10)
-			{
-				int[] tmp = new int[9];
-				int[] Goaltmp = new int[9];
-				for (int i = 0; i < 9; i++)
-				{
-					if (i < RobotDestroyed.Length)
-					{
-						tmp[i] = RobotDestroyed[i];
-						Goaltmp[i] = RobotDestroyedGoal[i];
-					}
-				}
-				RobotDestroyed = tmp;
-				RobotDestroyedGoal = Goaltmp;
-			}*/
 		}
 		public void Rebuild(bool pay, Game myGame)
 		{

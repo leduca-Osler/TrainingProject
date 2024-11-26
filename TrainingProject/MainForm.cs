@@ -220,14 +220,16 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				if ((shownCount++ >= getNumRounds() || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) && (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
+				//MessageBox.Show(DateTime.Now + " > " + MyGame.DisplayTime);
+				if ((DateTime.Now > MyGame.DisplayTime || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) 
+						&& (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
 				{
 					foreach (Control eControl in MainPannel.Controls)
 						eControl.Dispose();
 					MainPannel.Controls.Clear();
 					FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
 					MainPannel.Controls.Add(MyGame.continueFight(true));
-					shownCount = 0;
+					MyGame.DisplayTime = DateTime.Now.AddSeconds(5);
 					MyGame.resetShowDefeated();
 				}
 				else
@@ -237,23 +239,25 @@ namespace TrainingApp
 						bool bContinue = true;
 						while (MyGame.FastForwardCount > 0 && bContinue)
 						{
-							Random rnd = new Random();
-							// do not show the first few rounds
-							while (rnd.Next(shownCount) < getNumRounds() && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .05 && MyGame.GameTeam2[0].getHealthPercent() >= .05)
+							if (DateTime.Now > MyGame.DisplayTime)
+							{ 
+								// show the next round
+								bContinue = false;
+								foreach (Control eControl in MainPannel.Controls)
+									eControl.Dispose();
+								MainPannel.Controls.Clear();
+								FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
+								MainPannel.Controls.Add(MyGame.continueFight(true));
+								shownCount = 0;
+								MyGame.resetShowDefeated();
+								MyGame.DisplayTime = DateTime.Now.AddSeconds(5);
+							}
+							else
 							{
 								MyGame.continueFight(false);
-								shownCount++;
-								MyGame.FastForwardCount--; 
+								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .05 && MyGame.GameTeam2[0].getHealthPercent() >= .05) MyGame.FastForwardCount--;
+								else bContinue = false;
 							}
-							// show the next round
-							bContinue = false;
-							foreach (Control eControl in MainPannel.Controls)
-								eControl.Dispose();
-							MainPannel.Controls.Clear();
-							FlowLayoutPanel MainPanel = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown };
-							MainPannel.Controls.Add(MyGame.continueFight(true));
-							shownCount = 0;
-							MyGame.resetShowDefeated();
 						}
 						if (MyGame.FastForwardCount <= 0) { MyGame.FastForward = false; MyGame.FastForwardCount = 0; }
 					}
@@ -261,10 +265,7 @@ namespace TrainingApp
 					{
 						Random rnd = new Random();
 						do
-						{
-							MyGame.continueFight(false);
-							shownCount++;
-						} while (rnd.Next(shownCount) < MyGame.GameTeams[0].getMaxRobos && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() > .05 && MyGame.GameTeam2[0].getHealthPercent() > .05);
+						{	MyGame.continueFight(false); } while (rnd.Next(shownCount) < MyGame.GameTeams[0].getMaxRobos && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() > .05 && MyGame.GameTeam2[0].getHealthPercent() > .05);
 					}
 				}
 				if (!MyGame.isFighting())
