@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using TrainingProject;
 using System.Runtime.InteropServices;
 
+
 namespace TrainingApp
 {
 	public partial class MainForm : Form
@@ -23,10 +24,13 @@ namespace TrainingApp
 		private int maxCount = 1000;
 		private int tickRate = 1000;
 		private int counter;
+		private int mouseButton = 0;
 		private int PauseTimer;
 		private Boolean breakTimerOn = true;
 		private DateTime saveTime;
 		private int StandbyCountdown = 0;
+		[DllImport("user32.dll")]
+		public static extern Int32 SwapMouseButton(Int32 bSwap);
 		public MainForm()
 		{
 			try
@@ -1005,7 +1009,11 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
 			// Clear Messages
 			else if (e.KeyCode == Keys.C) MyGame.resetAll();
-			else if (e.KeyCode == Keys.M) MyGame.fixTech();
+			else if (e.KeyCode == Keys.M)
+			{
+				SwapMouseButton(mouseButton++);
+				if (mouseButton > 1) mouseButton = 0;
+			}
 			// show message box with available shortcuts if not a windows special key
 			else if (e.KeyCode == Keys.OemQuestion || e.KeyCode == Keys.OemBackslash)
 				MessageBox.Show("Shortcuts " + e.KeyCode +

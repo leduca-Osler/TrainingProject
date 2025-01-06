@@ -6090,7 +6090,9 @@ namespace TrainingProject
 		}
 		public string upgrade(int value, Random RndVal, bool max = false)
 		{
-			int Type = RndVal.Next(1, 9);
+			int Type = 0; // = RndVal.Next(1, 9);
+			if (eType == "Weapon") Type = RndVal.Next(1, 5);
+			if (eType == "Armour") Type = RndVal.Next(5, 9);
 			string strUpgrade = "";
 			long tmpDurability = eDurability,
 				tmpUpgradeCost = eUpgradeCost;
@@ -6100,33 +6102,34 @@ namespace TrainingProject
 			if (!max) value = RndVal.Next(1, value);
 			switch (Type)
 			{
+			
 				case 1:
-					eHealth += value * 3;
-					strUpgrade = string.Format(" Health+{0:n0}", value * 3);
-					break;
-				case 2:
-					eEnergy += value * 2;
-					strUpgrade = string.Format(" Energy+{0:n0}", value * 2);
-					break;
-				case 3:
 					eDamage += value;
 					strUpgrade = string.Format(" Damage+{0:n0}", value);
 					break;
-				case 4:
+				case 2:
 					eHit += value;
 					strUpgrade = string.Format(" Hit+{0:n0}", value);
 					break;
-				case 5:
+				case 3:
 					eMentalStrength += value;
 					strUpgrade = string.Format(" Mental Str+{0:n0}", value);
-					break;
-				case 6:
-					eArmour += value;
-					strUpgrade = string.Format(" Armour+{0:n0}", value);
-					break;
-				case 7:
+					break;	
+				case 4:
 					eSpeed += value;
 					strUpgrade = string.Format(" Speed+{0:n0}", value);
+					break;
+				case 5:
+					eHealth += value * 3;
+					strUpgrade = string.Format(" Health+{0:n0}", value * 3);
+					break;
+				case 6:
+					eEnergy += value * 2;
+					strUpgrade = string.Format(" Energy+{0:n0}", value * 2);
+					break;
+				case 7:
+					eArmour += value;
+					strUpgrade = string.Format(" Armour+{0:n0}", value);
 					break;
 				case 8:
 					eMentalDefense += value;
