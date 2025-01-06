@@ -75,6 +75,7 @@
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
 			this.DialogTimer = new System.Windows.Forms.Timer(this.components);
+			this.lblMouse = new System.Windows.Forms.ToolStripLabel();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -94,10 +95,11 @@
             this.btnAdvertising,
             this.btnFight,
             this.btnAutomatic,
-            this.toolStripSeparator1});
-			this.toolStrip1.Location = new System.Drawing.Point(54, 0);
+            this.toolStripSeparator1,
+            this.lblMouse});
+			this.toolStrip1.Location = new System.Drawing.Point(-93, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(324, 22);
+			this.toolStrip1.Size = new System.Drawing.Size(471, 27);
 			this.toolStrip1.Stretch = true;
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
@@ -114,7 +116,7 @@
 			this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
 			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnExport.Name = "btnExport";
-			this.btnExport.Size = new System.Drawing.Size(36, 19);
+			this.btnExport.Size = new System.Drawing.Size(36, 24);
 			this.btnExport.Text = "Export / Import";
 			this.btnExport.ButtonClick += new System.EventHandler(this.btnExport_ButtonClick);
 			// 
@@ -156,7 +158,7 @@
 			// cbTeamSelect
 			// 
 			this.cbTeamSelect.Name = "cbTeamSelect";
-			this.cbTeamSelect.Size = new System.Drawing.Size(140, 22);
+			this.cbTeamSelect.Size = new System.Drawing.Size(140, 27);
 			this.cbTeamSelect.DropDownClosed += new System.EventHandler(this.cbTeamSelect_Change);
 			this.cbTeamSelect.Leave += new System.EventHandler(this.cbTeamSelect_Change);
 			this.cbTeamSelect.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
@@ -167,7 +169,7 @@
 			this.btnAddTeam.Image = ((System.Drawing.Image)(resources.GetObject("btnAddTeam.Image")));
 			this.btnAddTeam.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnAddTeam.Name = "btnAddTeam";
-			this.btnAddTeam.Size = new System.Drawing.Size(24, 19);
+			this.btnAddTeam.Size = new System.Drawing.Size(24, 24);
 			this.btnAddTeam.Text = "Add Team";
 			this.btnAddTeam.Click += new System.EventHandler(this.btnAddTeam_Click);
 			// 
@@ -177,14 +179,14 @@
 			this.btnAddRobo.Image = ((System.Drawing.Image)(resources.GetObject("btnAddRobo.Image")));
 			this.btnAddRobo.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnAddRobo.Name = "btnAddRobo";
-			this.btnAddRobo.Size = new System.Drawing.Size(24, 19);
+			this.btnAddRobo.Size = new System.Drawing.Size(24, 24);
 			this.btnAddRobo.Text = "Add Robo";
 			this.btnAddRobo.Click += new System.EventHandler(this.btnAddRobo_Click);
 			// 
 			// toolStripLabel1
 			// 
 			this.toolStripLabel1.Name = "toolStripLabel1";
-			this.toolStripLabel1.Size = new System.Drawing.Size(17, 19);
+			this.toolStripLabel1.Size = new System.Drawing.Size(17, 24);
 			this.toolStripLabel1.Text = "--";
 			// 
 			// btnArenaLvl
@@ -193,7 +195,7 @@
 			this.btnArenaLvl.Image = ((System.Drawing.Image)(resources.GetObject("btnArenaLvl.Image")));
 			this.btnArenaLvl.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnArenaLvl.Name = "btnArenaLvl";
-			this.btnArenaLvl.Size = new System.Drawing.Size(24, 19);
+			this.btnArenaLvl.Size = new System.Drawing.Size(24, 24);
 			this.btnArenaLvl.Text = "Arena Level";
 			this.btnArenaLvl.Click += new System.EventHandler(this.btnArenaLvl_Click);
 			// 
@@ -203,7 +205,7 @@
 			this.btnShop.Image = global::TrainingProject.Properties.Resources.Shop1;
 			this.btnShop.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnShop.Name = "btnShop";
-			this.btnShop.Size = new System.Drawing.Size(24, 19);
+			this.btnShop.Size = new System.Drawing.Size(24, 24);
 			this.btnShop.Text = "Monster Den";
 			this.btnShop.Click += new System.EventHandler(this.btnMonsterDen_Click);
 			// 
@@ -213,7 +215,7 @@
 			this.btnAdvertising.Image = ((System.Drawing.Image)(resources.GetObject("btnAdvertising.Image")));
 			this.btnAdvertising.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnAdvertising.Name = "btnAdvertising";
-			this.btnAdvertising.Size = new System.Drawing.Size(24, 30);
+			this.btnAdvertising.Size = new System.Drawing.Size(24, 24);
 			this.btnAdvertising.Text = "Advertising";
 			this.btnAdvertising.Click += new System.EventHandler(this.btnAdvertising_Click);
 			// 
@@ -229,7 +231,7 @@
 			this.btnFight.Image = ((System.Drawing.Image)(resources.GetObject("btnFight.Image")));
 			this.btnFight.ImageTransparentColor = System.Drawing.Color.White;
 			this.btnFight.Name = "btnFight";
-			this.btnFight.Size = new System.Drawing.Size(36, 30);
+			this.btnFight.Size = new System.Drawing.Size(36, 24);
 			this.btnFight.Text = "Fight";
 			this.btnFight.Click += new System.EventHandler(this.btnFight_Click);
 			// 
@@ -274,7 +276,7 @@
 			this.btnAutomatic.Image = global::TrainingProject.Properties.Resources.Auto;
 			this.btnAutomatic.ImageTransparentColor = System.Drawing.Color.White;
 			this.btnAutomatic.Name = "btnAutomatic";
-			this.btnAutomatic.Size = new System.Drawing.Size(36, 30);
+			this.btnAutomatic.Size = new System.Drawing.Size(36, 24);
 			this.btnAutomatic.Text = "Auto Battle";
 			this.btnAutomatic.ButtonClick += new System.EventHandler(this.btnAutomatic_ButtonClick);
 			// 
@@ -463,7 +465,7 @@
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 33);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
 			// 
 			// timer1
 			// 
@@ -478,7 +480,7 @@
 			this.MainPannel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPannel.Location = new System.Drawing.Point(0, 0);
 			this.MainPannel.Name = "MainPannel";
-			this.MainPannel.Size = new System.Drawing.Size(394, 408);
+			this.MainPannel.Size = new System.Drawing.Size(493, 510);
 			this.MainPannel.TabIndex = 2;
 			this.MainPannel.WrapContents = false;
 			// 
@@ -491,6 +493,13 @@
 			// DialogTimer
 			// 
 			this.DialogTimer.Interval = 30000;
+			// 
+			// lblMouse
+			// 
+			this.lblMouse.Name = "lblMouse";
+			this.lblMouse.Size = new System.Drawing.Size(35, 24);
+			this.lblMouse.Text = "Right";
+			this.lblMouse.Click += new System.EventHandler(this.toolStripLabel2_Click);
 			// 
 			// MainForm
 			// 
@@ -559,6 +568,7 @@
 		private System.Windows.Forms.ToolStripMenuItem fixToolStripMenuItem;
 		public System.Windows.Forms.Timer DialogTimer;
 		private System.Windows.Forms.ToolStripButton btnAdvertising;
+		private System.Windows.Forms.ToolStripLabel lblMouse;
 	}
 }
 

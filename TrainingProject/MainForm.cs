@@ -1009,11 +1009,7 @@ namespace TrainingApp
 			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
 			// Clear Messages
 			else if (e.KeyCode == Keys.C) MyGame.resetAll();
-			else if (e.KeyCode == Keys.M)
-			{
-				SwapMouseButton(mouseButton++);
-				if (mouseButton > 1) mouseButton = 0;
-			}
+			else if (e.KeyCode == Keys.M) mouseButtons();
 			// show message box with available shortcuts if not a windows special key
 			else if (e.KeyCode == Keys.OemQuestion || e.KeyCode == Keys.OemBackslash)
 				MessageBox.Show("Shortcuts " + e.KeyCode +
@@ -1085,6 +1081,21 @@ namespace TrainingApp
 		{
 			MyGame.getGameCurrency -= MyGame.getArenaLvlCost;
 			MyGame.arenaComunityOutreach();
+		}
+
+		private void toolStripLabel2_Click(object sender, EventArgs e)
+		{
+			mouseButtons();
+		}
+		public void mouseButtons()
+		{
+			SwapMouseButton(mouseButton++);
+			lblMouse.Text = "Right";
+			if (mouseButton > 1)
+			{
+				mouseButton = 0;
+				lblMouse.Text = "Left";
+			}
 		}
 	}
 	public static class BinarySerialization
