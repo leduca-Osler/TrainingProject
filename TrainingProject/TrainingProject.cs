@@ -425,6 +425,7 @@ namespace TrainingProject
 		public long ManagerCostBaseIncrement;
 		public int CurrentInterval;
 		public int ExtraInterval;
+		public int ExtraIntervalPercent;
 		public int MaxInterval;
 		public int FightBreak;
 		public int FightBreakCount;
@@ -1081,13 +1082,19 @@ namespace TrainingProject
 
 		public void interval(Timer Timer1)
 		{
-			if (CurrentInterval > 1000 && ExtraInterval > 0 && RndVal.Next(100) < 75) ExtraInterval--;
+			if (ExtraIntervalPercent == 0) ExtraIntervalPercent = 75;
+			if (ExtraInterval > 0 && RndVal.Next(100) < ExtraIntervalPercent)
+			{
+				ExtraInterval--;
+				if (ExtraInterval == 0) ExtraIntervalPercent--;
+			}
 			else CurrentInterval++;
 			if (CurrentInterval > MaxInterval)
 			{
-				CurrentInterval = 1000 - (MaxInterval - 1000);
+				CurrentInterval = 2000 - MaxInterval;
 				if (CurrentInterval < 1)
 				{
+					if (ExtraInterval > 0) ExtraIntervalPercent++;
 					ExtraInterval = Math.Abs(CurrentInterval);
 					CurrentInterval = 1;
 				}
@@ -2052,7 +2059,7 @@ namespace TrainingProject
 			HeaderPanel.Controls.Add(Progress);
 			string SafeFormat = "HH:mm";
 			if (SafeTime.Day > DateTime.Now.Day) SafeFormat = "MM-dd HH:mm";
-			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0} Ex:{6:n0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount, ExtraInterval) };
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0} Ex:{6:n0} {7:p0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount, ExtraInterval, ExtraIntervalPercent/100.0) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
@@ -5843,11 +5850,11 @@ namespace TrainingProject
 			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Health", HP, getTHealth(), Health, wHealth, aHealth);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Energy", MP, getTEnergy(), Energy, wEnergy, aEnergy);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Armour", getTArmour(), Armour, wArmour, aArmour);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalDef", getTMentalDefense(), MentalDefense, wMentalDef, aMentalDef);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Damage", getTDamage(), Damage, wDamage, aDamage);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalStr", getTMentalStrength(), MentalStrength, wMentalStr, aMentalStr);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Hit", getTHit(), Hit, wHit, aHit);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Speed", getTSpeed(), Speed, wSpeed, aSpeed);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalStr", getTMentalStrength(), MentalStrength, wMentalStr, aMentalStr);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalDef", getTMentalDefense(), MentalDefense, wMentalDef, aMentalDef);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "Analysis", getAnalysisLeft());
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "Rebuild %", RebuildPercent);
 			tmp += "-----\n";

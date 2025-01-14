@@ -81,8 +81,6 @@
 			// 
 			// toolStrip1
 			// 
-			this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
 			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnExport,
@@ -97,9 +95,9 @@
             this.btnAutomatic,
             this.toolStripSeparator1,
             this.lblMouse});
-			this.toolStrip1.Location = new System.Drawing.Point(-93, 0);
+			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(471, 27);
+			this.toolStrip1.Size = new System.Drawing.Size(493, 27);
 			this.toolStrip1.Stretch = true;
 			this.toolStrip1.TabIndex = 0;
 			this.toolStrip1.Text = "toolStrip1";
