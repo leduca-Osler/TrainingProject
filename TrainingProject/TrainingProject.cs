@@ -426,6 +426,7 @@ namespace TrainingProject
 		public int CurrentInterval;
 		public int ExtraInterval;
 		public int ExtraIntervalPercent;
+		public int MaxExtraIntervalPercent;
 		public int MaxInterval;
 		public int FightBreak;
 		public int FightBreakCount;
@@ -1053,6 +1054,7 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
+			CurrentInterval = 2000;
 		}
 
 		public void resetShowDefeated()
@@ -1082,11 +1084,19 @@ namespace TrainingProject
 
 		public void interval(Timer Timer1)
 		{
-			if (ExtraIntervalPercent == 0) ExtraIntervalPercent = 75;
-			if (ExtraInterval > 0 && RndVal.Next(100) < ExtraIntervalPercent)
+			if (ExtraIntervalPercent == 0)
+			{
+				if (MaxExtraIntervalPercent == 0) MaxExtraIntervalPercent = 100;
+				else MaxExtraIntervalPercent += 10;
+				ExtraIntervalPercent = MaxExtraIntervalPercent;
+			}
+			if (ExtraInterval > 0 && RndVal.Next(MaxExtraIntervalPercent) < ExtraIntervalPercent)
 			{
 				ExtraInterval--;
-				if (ExtraInterval == 0) ExtraIntervalPercent--;
+				// if Extra Intervals have been used up before we are half way to the max interval reduce the chance the extra round will be used. 
+				if (ExtraInterval == 0 && 
+					(MaxInterval - CurrentInterval > CurrentInterval || RndVal.Next(100) < 5)) 
+					ExtraIntervalPercent--;
 			}
 			else CurrentInterval++;
 			if (CurrentInterval > MaxInterval)
@@ -1094,7 +1104,12 @@ namespace TrainingProject
 				CurrentInterval = 2000 - MaxInterval;
 				if (CurrentInterval < 1)
 				{
-					if (ExtraInterval > 0) ExtraIntervalPercent++;
+					// if Extra Intervals were not all used, reset to 100%
+					if (ExtraInterval > 0)
+					{
+						MaxExtraIntervalPercent += 10;
+						ExtraIntervalPercent = MaxExtraIntervalPercent;
+					}
 					ExtraInterval = Math.Abs(CurrentInterval);
 					CurrentInterval = 1;
 				}
@@ -2059,7 +2074,7 @@ namespace TrainingProject
 			HeaderPanel.Controls.Add(Progress);
 			string SafeFormat = "HH:mm";
 			if (SafeTime.Day > DateTime.Now.Day) SafeFormat = "MM-dd HH:mm";
-			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0} Ex:{6:n0} {7:p0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount, ExtraInterval, ExtraIntervalPercent/100.0) };
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0} Ex:{6:n0} {7:p0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount, ExtraInterval, ((double)ExtraIntervalPercent/(double)MaxExtraIntervalPercent)) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}

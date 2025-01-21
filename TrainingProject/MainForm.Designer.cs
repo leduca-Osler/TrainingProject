@@ -71,11 +71,11 @@
 			this.MinJackpotLevel = new System.Windows.Forms.ToolStripTextBox();
 			this.mnuComunityOutreach = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.lblMouse = new System.Windows.Forms.ToolStripLabel();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.MainPannel = new System.Windows.Forms.FlowLayoutPanel();
 			this.BreakTimer = new System.Windows.Forms.Timer(this.components);
 			this.DialogTimer = new System.Windows.Forms.Timer(this.components);
-			this.lblMouse = new System.Windows.Forms.ToolStripLabel();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -465,6 +465,13 @@
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
 			// 
+			// lblMouse
+			// 
+			this.lblMouse.Name = "lblMouse";
+			this.lblMouse.Size = new System.Drawing.Size(35, 24);
+			this.lblMouse.Text = "Right";
+			this.lblMouse.Click += new System.EventHandler(this.toolStripLabel2_Click);
+			// 
 			// timer1
 			// 
 			this.timer1.Enabled = true;
@@ -491,13 +498,6 @@
 			// DialogTimer
 			// 
 			this.DialogTimer.Interval = 30000;
-			// 
-			// lblMouse
-			// 
-			this.lblMouse.Name = "lblMouse";
-			this.lblMouse.Size = new System.Drawing.Size(35, 24);
-			this.lblMouse.Text = "Right";
-			this.lblMouse.Click += new System.EventHandler(this.toolStripLabel2_Click);
 			// 
 			// MainForm
 			// 
