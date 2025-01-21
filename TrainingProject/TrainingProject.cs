@@ -1054,7 +1054,6 @@ namespace TrainingProject
 		public void fixTech()
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
-			CurrentInterval = 2000;
 		}
 
 		public void resetShowDefeated()
@@ -2074,7 +2073,7 @@ namespace TrainingProject
 			HeaderPanel.Controls.Add(Progress);
 			string SafeFormat = "HH:mm";
 			if (SafeTime.Day > DateTime.Now.Day) SafeFormat = "MM-dd HH:mm";
-			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0} Ex:{6:n0} {7:p0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount, ExtraInterval, ((double)ExtraIntervalPercent/(double)MaxExtraIntervalPercent)) };
+			Label lblTime = new Label { AutoSize = true, Text = String.Format("Time: {0} Safe: {1} Break: {2} Rmng Min:{3:n0} Hrs:{4:n1} - Rnds:{5:n0} Ex:{6:n0} {7:p0}", DateTime.Now.ToString("HH:mm"), SafeTime.ToString(SafeFormat), BreakTime.ToString("HH:mm"), (DateTime.Today.AddHours(16) - DateTime.Now).TotalMinutes, (DateTime.Today.AddHours(16) - DateTime.Now).TotalHours, roundCount, ExtraInterval, ((double)ExtraIntervalPercent/(double)MaxExtraIntervalPercent), ExtraIntervalPercent, MaxExtraIntervalPercent) };
 			HeaderPanel.Controls.Add(lblTime);
 			return HeaderPanel;
 		}
