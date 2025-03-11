@@ -4690,9 +4690,9 @@ namespace TrainingProject
 				maxRobos = (20) - roundCount;
 			if (getAvailableRobo > 0)
 				strBuild = "!";
-			string strFormat = "{0} P:{3," + maxLength[0] + ":n0}{4} {1," + maxLength[2] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0}";
-			if (roundCount < 20) strFormat = "{0} P:{3," + maxLength[0] + ":n0}{4}->{5," + maxLength[1] + ":n0} {1," + maxLength[2] + ":c0}->{2," + maxLength[3] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0}->{7," + maxLength[6] + ":n0}";
-			strStats = String.Format(strFormat, getName.PadRight(18).Substring(0,18), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win);
+			string strFormat = "{0} P:{3," + maxLength[0] + ":n0}{4} {1," + maxLength[2] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0} {9," + maxLength[4] + ":p0}";
+			if (roundCount < 20) strFormat = "{0} P:{3," + maxLength[0] + ":n0}{4}->{5," + maxLength[1] + ":n0} {1," + maxLength[2] + ":c0}->{2," + maxLength[3] + ":c0} W:{8," + maxLength[4] + ":n0} D:{6," + maxLength[5] + ":n0}->{7," + maxLength[6] + ":n0} {9," + maxLength[4] + ":p0}";
+			strStats = String.Format(strFormat, getName.PadRight(18).Substring(0,18), Currency, CurrencyLog, Score, strBuild, ScoreLog, Difficulty, DifficultyLog, Win, getHealthPercent());
 			foreach (Robot eRobo in MyTeam)
 			{
 				// Add different robots...  
