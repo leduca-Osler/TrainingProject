@@ -224,10 +224,11 @@ namespace TrainingApp
 			if (MyGame.isFighting())
 			{
 				btnFight.BackColor = Color.Red;
-				//MessageBox.Show(DateTime.Now + " > " + MyGame.DisplayTime);
-				if ((DateTime.Now > MyGame.DisplayTime || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) 
+				// If we are not fast forwarding, and it is time to display again
+				if (!MyGame.FastForward && (DateTime.Now > MyGame.DisplayTime || !MyGame.isAuto() || MyGame.GameTeam1[0].shownDefeated) 
 						&& (DateTime.Now < MyGame.BreakTime || !breakTimerOn))
 				{
+					//if (MyGame.GameTeam1.Count > 0) MyGame.debugMsg = "\n(" + DateTime.Now + " > " + MyGame.DisplayTime + " || " + !MyGame.isAuto() + " || " + !MyGame.FastForward + " || " + MyGame.GameTeam1[0].shownDefeated + ") && (" + DateTime.Now + " < " + MyGame.BreakTime + " || " + !breakTimerOn + ")";
 					foreach (Control eControl in MainPannel.Controls)
 						eControl.Dispose();
 					MainPannel.Controls.Clear();
@@ -236,17 +237,20 @@ namespace TrainingApp
 					MyGame.DisplayTime = DateTime.Now.AddSeconds(5);
 					MyGame.resetShowDefeated();
 				}
+				// fast forward or don't show the next round. 
 				else
 				{
+
+					//if (MyGame.GameTeam1.Count > 0) MyGame.debugMsg = "\n" + MyGame.FastForwardCount.ToString("n0") + " > 0 && " + MyGame.GameTeam1.Count.ToString() + " > 0 && " + MyGame.GameTeam1[0].getHealthPercent().ToString("n2") + " >= .25 && " + MyGame.GameTeam2[0].getHealthPercent().ToString("n2") + " >= .25";
 					if (MyGame.FastForward)
 					{
 						bool bContinue = true;
 						while (MyGame.FastForwardCount > 0 && bContinue)
 						{
+							// Display every 5 seconds
 							if (DateTime.Now > MyGame.DisplayTime)
 							{ 
 								// show the next round
-								bContinue = false;
 								foreach (Control eControl in MainPannel.Controls)
 									eControl.Dispose();
 								MainPannel.Controls.Clear();
@@ -254,12 +258,16 @@ namespace TrainingApp
 								MainPannel.Controls.Add(MyGame.continueFight(true));
 								shownCount = 0;
 								MyGame.resetShowDefeated();
+								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .25 && MyGame.GameTeam2[0].getHealthPercent() >= .25) MyGame.FastForwardCount--;
+								else bContinue = false;
 								MyGame.DisplayTime = DateTime.Now.AddSeconds(5);
 							}
+							// Not displaying
 							else
 							{
 								MyGame.continueFight(false);
-								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .05 && MyGame.GameTeam2[0].getHealthPercent() >= .05) MyGame.FastForwardCount--;
+								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .25 && MyGame.GameTeam2[0].getHealthPercent() >= .25) MyGame.FastForwardCount--;
+								// if we run out of Fast Forwards or the health of one of the teams is below 5% stop fast forwarding
 								else bContinue = false;
 							}
 						}
