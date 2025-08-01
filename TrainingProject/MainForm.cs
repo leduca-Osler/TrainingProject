@@ -258,7 +258,7 @@ namespace TrainingApp
 								MainPannel.Controls.Add(MyGame.continueFight(true));
 								shownCount = 0;
 								MyGame.resetShowDefeated();
-								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .25 && MyGame.GameTeam2[0].getHealthPercent() >= .25) MyGame.FastForwardCount--;
+								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .1 && MyGame.GameTeam2[0].getHealthPercent() >= .1) MyGame.FastForwardCount--;
 								else bContinue = false;
 								MyGame.DisplayTime = DateTime.Now.AddSeconds(5);
 							}
@@ -266,7 +266,7 @@ namespace TrainingApp
 							else
 							{
 								MyGame.continueFight(false);
-								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .25 && MyGame.GameTeam2[0].getHealthPercent() >= .25) MyGame.FastForwardCount--;
+								if (MyGame.FastForwardCount > 0 && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() >= .1 && MyGame.GameTeam2[0].getHealthPercent() >= .1) MyGame.FastForwardCount--;
 								// if we run out of Fast Forwards or the health of one of the teams is below 5% stop fast forwarding
 								else bContinue = false;
 							}
@@ -277,7 +277,7 @@ namespace TrainingApp
 					{
 						Random rnd = new Random();
 						do
-						{	MyGame.continueFight(false); } while (rnd.Next(shownCount) < MyGame.GameTeams[0].getMaxRobos && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() > .05 && MyGame.GameTeam2[0].getHealthPercent() > .05);
+						{	MyGame.continueFight(false); } while (rnd.Next(shownCount) < MyGame.GameTeams[0].getMaxRobos && MyGame.GameTeam1.Count > 0 && MyGame.GameTeam1[0].getHealthPercent() > .1 && MyGame.GameTeam2[0].getHealthPercent() > .1);
 					}
 				}
 				if (!MyGame.isFighting())

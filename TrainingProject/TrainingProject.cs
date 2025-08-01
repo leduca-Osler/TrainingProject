@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Xml;
 using Newtonsoft.Json;
 using System.Runtime;
+using System.Runtime.Remoting.Contexts;
 
 namespace TrainingProject
 {
@@ -51,6 +52,7 @@ namespace TrainingProject
 			"Devil 5", "Alien 5", "Slither 5", "Blob 5", "Bat 5", "Titan 5", "Chomp 5", "Element 5", "HandEye 5", // Rank 5
 			"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
 		};
+		public string[] ConcessionName = { "Hotdog", "Hamburger", "Pretzel", "Donut", "Juice", "Coffee", "Boba", "Taco", "Ice Cream" };
 		[JsonIgnore]
 		public static string strike = "Strike.jpg";
 		[JsonIgnore]
@@ -390,20 +392,17 @@ namespace TrainingProject
 	{
 		[NonSerialized]
 		public System.Windows.Forms.FlowLayoutPanel MainFormPanel;
-		[JsonProperty]
 		public List<Team> GameTeams;
-		[JsonProperty]
 		public IList<ArenaSeating> Seating;
 		public IList<ArenaSeating> CurrentSeating;
 		public IList<int> seatingAvailable;
-		[JsonProperty]
 		public IList<Equipment> storeEquipment;
 		public IList<Team> GameTeam1;
 		public IList<Team> GameTeam2;
+		public IList<Concession> ConcessionStands;
 		public List<KeyValuePair<String, DateTime>> countdown;
 		public Team MonsterOutbreak;
 		public Team Bosses;
-		[JsonIgnore]
 		public string fightLogSave;
 		public string warningLogSave;
 		public string winLogSave;
@@ -437,114 +436,73 @@ namespace TrainingProject
 		public int maxManagerHours;
 		public bool PurchaseUpgrade;
 		public string debugMsg;
-		[JsonProperty]
 		private int GoalGameScore;
-		[JsonProperty]
 		private int MaxRobo;
-		[JsonProperty]
 		private long LifetimeGameScore;
-		[JsonProperty]
 		private long GoalLifetimeGameScore;
-		[JsonProperty]
 		private long LifetimeTeams;
-		[JsonProperty]
 		private long GoalLifetimeTeams;
-		[JsonProperty]
 		private long LifetimeRevenue;
-		[JsonProperty]
 		private long GoalLifetimeRevenue;
-		[JsonProperty]
 		private long LifetimeEquipmentForged;
-		[JsonProperty]
 		private long GoalLifetimeEquipmentForged;
-		[JsonProperty]
 		private int GoalGameScoreBase;
 		private int GoalGameScoreBaseIncrement = 100;
-		[JsonProperty]
 		public int gameDifficulty;
-		[JsonProperty]
 		private int MaxTeams;
-		[JsonProperty]
 		private long TeamCost;
-		[JsonProperty]
 		private long TeamCostBase;
 		private long TeamCostBaseIncrement = 1000;
 		private long Jackpot; // holds the credits to be divied out after a fight
-		[JsonProperty]
 		private long GameCurrency;
 		public long GameCurrencyLogMaint;
 		public long GameCurrencyLogUp;
 		public long GameCurrencyLogMisc;
 		private Boolean fighting;
 		private Boolean auto;
-		[JsonProperty]
 		private int ShopLvl;
-		[JsonProperty]
 		private long ShopLvlCost;
-		[JsonProperty]
 		public long MainLvlCostBase;
 		public long MainLvlCostBaseIncrement = 1000;
-		[JsonProperty]
 		private long ShopLvlMaint;
 		private long ShopLvlMaintCondition;
-		[JsonProperty]
 		private int ShopStock;
-		[JsonProperty]
 		private int ShopBays;
-		[JsonProperty]
 		private long ShopStockCost;
-		[JsonProperty]
 		private int ShopMaxStat;
-		[JsonProperty]
 		private int ShopMaxDurability;
-		[JsonProperty]
 		private int ShopUpgradeValue;
-		[JsonProperty]
 		private int ArenaLvl;
-		[JsonProperty]
 		private long ArenaLvlCost;
-		[JsonProperty]
 		private long ArenaLvlMaint;
 		private long ArenaLvlMaintCondition;
-		[JsonProperty]
 		private long ArenaComunityReach;
-		[JsonProperty]
+		private int ConcessionLvl;
+		private long ConcessionLvlCost;
+		private long ConcessionLvlMaint;
+		private long ConcessionLvlMaintCondition;
+		private double ConcessionMarkup;
 		public int MonsterDenLvl;
-		[JsonProperty]
 		private long MonsterDenLvlCost;
-		[JsonProperty]
 		private long MonsterDenLvlMaint;
 		private long MonsterDenLvlMaintCondition;
-		[JsonProperty]
 		private int MonsterDenBonus;
-		[JsonProperty]
 		public long MonsterDenRepairs;
-		[JsonProperty]
 		public long MonsterDenRepairsBase;
 		public long MonsterDenRepairsBaseIncrement = 100;
-		[JsonProperty]
 		private int ResearchDevLvl;
-		[JsonProperty]
 		private long ResearchDevLvlCost;
-		[JsonProperty]
 		private long ResearchDevMaint;
 		private long ResearchDevLvlMaintCondition;
-		[JsonProperty]
 		private int ResearchDevHealValue;
 		private int ResearchDevHealValueSum;
-		[JsonProperty]
 		public int ResearchDevHealValueBase;
 		public int ResearchDevHealValueBaseIncrement = 1;
-		[JsonProperty]
 		private int ResearchDevHealBays;
-		[JsonProperty]
 		public long ResearchDevRebuild;
-		[JsonProperty]
 		public long ResearchDevRebuildBase;
 		public long ResearchDevRebuildBaseIncrement = 25;
-		[JsonProperty]
 		private int BossLvl;
-		[JsonProperty]
 		public long BossLvlBase;
 		public long BossLvlBaseIncrement = 5;
 		[JsonProperty]
@@ -872,6 +830,7 @@ namespace TrainingProject
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
 			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 25) };
+			ConcessionStands = new List<Concession> { new Concession(.1) };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
 			MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
@@ -912,6 +871,10 @@ namespace TrainingProject
 			ArenaLvlCost = 2000;
 			ArenaLvlMaint = 1;
 			ArenaComunityReach = 2000;
+			ConcessionLvl = 1;
+			ConcessionLvlCost = 2000;
+			ConcessionLvlMaint = 1;
+			ConcessionMarkup = 0.1; // ten percent markup
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 2000;
 			MonsterDenLvlMaint = 1;
@@ -1056,6 +1019,10 @@ namespace TrainingProject
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
 			debugMsg = "";
+
+			ConcessionLvl = 1;
+			ConcessionLvlCost = 2000;
+			ConcessionLvlMaint = 1;
 		}
 
 		public void resetShowDefeated()
@@ -1096,7 +1063,7 @@ namespace TrainingProject
 				ExtraInterval--;
 				// if Extra Intervals have been used up before we reach 1 second reduce the chance the extra round will be used. 
 				if (ExtraInterval == 0 && 
-					(CurrentInterval <= 1000 || RndVal.Next(100) < 5)) 
+					(CurrentInterval <= 1000 || RndVal.Next(MaxInterval) < CurrentInterval)) 
 					ExtraIntervalPercent--;
 			}
 			else CurrentInterval++;
@@ -1135,6 +1102,7 @@ namespace TrainingProject
 			if (getShopLvlCost == lowestLvl) levelUpList.Add("Shop");
 			if (getResearchDevLvlCost == lowestLvl) levelUpList.Add("RD");
 			if (getMonsterDenLvlCost == lowestLvl) levelUpList.Add("Den");
+			if (ConcessionLvlCost == lowestLvl) levelUpList.Add("Conc");
 			// randomly choose one of the lowest level utilities
 			string choise = levelUpList[RndVal.Next(levelUpList.Count)];
 			// level up
@@ -1142,6 +1110,7 @@ namespace TrainingProject
 			if (choise == "Shop" && getGameCurrency >= getShopLvlCost) ShopLevelUp();
 			if (choise == "RD" && getGameCurrency >= getResearchDevLvlCost) ResearchDevLevelUp();
 			if (choise == "Den" && getGameCurrency >= getMonsterDenLvlCost) MonsterDenLevelUp();
+			if (choise == "Conc" && getGameCurrency >= ConcessionLvlCost) ConcessionLevelUp();
 		}
 		public void arenaComunityOutreach(int recursions)
 		{
@@ -1198,6 +1167,33 @@ namespace TrainingProject
 			// reset maintenance condition
 			ArenaLvlMaintCondition = 120;
 			getFightLog = getWarningLog = msg; 
+		}
+
+		public void ConcessionLevelUp()
+		{
+			string msg = "\nConcession upgraded!";
+			getGameCurrency -= ConcessionLvlCost;
+			GameCurrencyLogUp -= ConcessionLvlCost;
+			ConcessionLvlMaint += ConcessionLvlCost / 2;
+			ConcessionLvl++;
+			ConcessionLvlCost = roundValue(ConcessionLvlCost, MainLvlCostBase, "up");
+			MainLvlCostBase += MainLvlCostBaseIncrement;
+			ConcessionMarkup += .01; // increase markup by 1 percent
+			foreach (Concession eConcession in ConcessionStands)
+			{
+				eConcession.ConcessionLevelUp(ConcessionMarkup);
+			}
+			// continue here
+			// chance to add a new concession stand
+			if (RndVal.Next(100) <  10)
+			{
+				ConcessionStands.Add(new Concession(ConcessionMarkup));
+				msg += string.Format("\n  Added {0} concession stand", ConcessionStands[ConcessionStands.Count-1].name);
+			}
+			// reset maintenance condition
+			ConcessionLvlMaintCondition = 120;
+			getFightLog = getWarningLog = msg;
+
 		}
 		public string bossLevelUp()
 		{
@@ -5970,18 +5966,17 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
 	class ArenaSeating
 	{
 		[JsonProperty]
-		public int Level; //Seating Level
+		public int Level; // Seating Level
 		[JsonProperty]
 		public int Price; // Cost of customers for seat
 		[JsonProperty]
 		public int Amount; // Number of seats
 		[JsonProperty]
 		public int AmountBase; // Number of seats
-		public int Attendees; 
+		public int Attendees;
 		public ArenaSeating() { }
 		public ArenaSeating(int pLevel, int pPrice, int pAmount, int pAmountBase)
 		{
@@ -5993,7 +5988,54 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
+	class Concession : Common
+	{
+		public string name;
+		public int MaxStock; // Max concession Items it can stock
+		public int CurrentStock; // Current stock
+		public int SalePrice; // price per item
+		public long RestockCost; // Cost to re-stock the items
+		public int Demand; // demand for people to buy these items 100 would mean 1 in 100 people will order
+		Random rndVal = new Random(); // declare random variable
+		public Concession(double markup) 
+		{
+			name = ConcessionName[rndVal.Next(ConcessionName.Length)];
+			MaxStock = CurrentStock = 10;
+			SalePrice = 1;
+			RestockCost = (int)(SalePrice * MaxStock * (1 - markup));
+			Demand = 100;
+		}
+
+		public void ConcessionLevelUp(double markup)
+		{
+			MaxStock++;
+			SalePrice++;
+			CurrentStock = MaxStock;
+			RestockCost = (int)(SalePrice * MaxStock * (1 - markup));
+			if (rndVal.Next(100) > 90) Demand--;
+		}
+
+		public long purchase(int Customers)
+		{
+			// Random number of sales
+			int Sales = rndVal.Next(Customers/Demand);
+			if (Sales > CurrentStock) { Sales = CurrentStock; }
+			CurrentStock -= Sales;
+			FightLog += string.Format("/n $$$ {1} Sales: {0:c0)", Sales, name);
+			return Sales * SalePrice;
+		}
+		public long restock(long currency)
+		{
+			if (RestockCost > currency)
+				return 0;
+			else
+			{
+				CurrentStock = MaxStock;
+				return RestockCost;
+			}
+		}
+	}
+	[Serializable]
 	class Equipment : Common
 	{
 		[JsonProperty]
