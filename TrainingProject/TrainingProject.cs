@@ -685,10 +685,13 @@ namespace TrainingProject
 			get
 			{
 				long MaxStock = 0, CurrentStock = 0;
-				foreach (Concession eConcession in ConcessionStands)
+				if (ConcessionStands != null)
 				{
-					MaxStock += eConcession.MaxStock;
-					CurrentStock += eConcession.CurrentStock;
+					foreach (Concession eConcession in ConcessionStands)
+					{
+						MaxStock += eConcession.MaxStock;
+						CurrentStock += eConcession.CurrentStock;
+					}
 				}
 				return ((double)CurrentStock / (double)MaxStock);
 			}
@@ -1042,7 +1045,7 @@ namespace TrainingProject
 			ConcessionLvlCost = 2000;
 			ConcessionLvlMaint = 1;
 			ConcessionMarkup = .20;
-			ConcessionStands = new List<Concession> { new Concession(ConcessionMarkup)) };
+			ConcessionStands = new List<Concession> { new Concession(ConcessionMarkup) };
 		}
 
 		public void resetShowDefeated()
