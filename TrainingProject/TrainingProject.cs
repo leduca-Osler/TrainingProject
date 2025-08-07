@@ -6,24 +6,19 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Xml;
-using Newtonsoft.Json;
 using System.Runtime;
 using System.Runtime.Remoting.Contexts;
 
 namespace TrainingProject
 {
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
 	class Common
 	{
-		[JsonIgnore]
 		public static readonly Random RndVal = new Random();
 		public static string WarningLog;
 		public static string FightLog;
 		public static string WinLog;
 		public static string ImagePath = "Resources\\";
-		//public Random RndVal = new Random();
-		[JsonIgnore]
 		public string[] RoboImages = {
 			"Robo1.jpg",
 			"Robo2.jpg",
@@ -35,7 +30,6 @@ namespace TrainingProject
 			"Robo8.jpg",
 			"Robo9.jpg"
 		};
-		[JsonIgnore]
 		public string[] MonsterImages = {
 			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Rank 1
 			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Rank 2
@@ -43,7 +37,6 @@ namespace TrainingProject
 			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png", // Rank 4
 			"Monster1.png", "Monster2.png", "Monster3.png", "Monster4.png", "Monster5.png", "Monster6.png", "Monster7.png", "Monster8.png", "Monster9.png" // Rank 6
 		};
-		[JsonIgnore]
 		public string[] MonsterName = {
 			"Devil 1", "Alien 1", "Slither 1", "Blob 1", "Bat 1", "Titan 1", "Chomp 1", "Element 1", "HandEye 1", // Rank 1
 			"Devil 2", "Alien 2", "Slither 2", "Blob 2", "Bat 2", "Titan 2", "Chomp 2", "Element 2", "HandEye 2", // Rank 2
@@ -53,35 +46,20 @@ namespace TrainingProject
 			"Devil 6", "Alien 6", "Slither 6", "Blob 6", "Bat 6", "Titan 6", "Chomp 6", "Element 6", "HandEye 6" // Rank 6
 		};
 		public string[] ConcessionName = { "Hotdog", "Hamburger", "Pretzel", "Donut", "Juice", "Coffee", "Boba", "Taco", "Ice Cream" };
-		[JsonIgnore]
 		public static string strike = "Strike.jpg";
-		[JsonIgnore]
 		public static string pound = "Pound.jpg";
-		[JsonIgnore]
 		public static string scratch = "Pound.jpg"; 
-		[JsonIgnore]
 		public static string shrapnel = "Shrapnel.png";
-		[JsonIgnore]
-		public static string slash = "Pound.jpg"; // 
-		[JsonIgnore]
+		public static string slash = "Pound.jpg"; 
 		public static string Electrode = "Electrode.png"; //
-		[JsonIgnore]
 		public static string elements = "Pound.jpg"; // 
-		[JsonIgnore]
 		public static string Laser = "Laser.png"; // 
-		[JsonIgnore]
-		public static string corosion = "Pound.jpg"; // 
-		[JsonIgnore]
+		public static string corosion = "Pound.jpg"; 
 		public static string hurt = "Hurt.png";
-		[JsonIgnore]
 		public static string KO = "KO.jpg";
-		[JsonIgnore]
 		public static string miss = "dodge.png";
-		[JsonIgnore]
 		public static string blocked = "block.png";
-		[JsonIgnore]
 		public static string field = "ForceField.png"; // 
-		[JsonIgnore]
 		public static Skill[] AllSkills = {
 			new Skill("Attack", "Enemy", 0, "Single attack", 0, ImagePath + strike, '*'),
 			new Skill("Pound", "Enemy", 10, "Single attack", 2, ImagePath + pound, '#'),
@@ -96,7 +74,6 @@ namespace TrainingProject
 			new Skill("Elements", "Enemy", 10, "Single tech", 2, ImagePath + elements, '@'),
 			new Skill("Corosion", "Enemy", 1, "Multiple tech", 3, ImagePath + corosion, '^')
 		};
-		[JsonIgnore]
 		public string[] name1 = {
 				"Ageless", "Blue", "Chilly", "Dashing", "Electric", "Famous", "Great", "Huge", "Irate",
 				"Jesting","Keen", "Lethal", "Malefic", "Nasty", "Orange", "Pink", "Quirky", "Resourceful", "Strong", "Thorny",
@@ -112,13 +89,9 @@ namespace TrainingProject
 				"Nervous","Obnoxious","Panicky","Pitiful","Repulsive","Scary","Thoughtless","Uptight","Worried","Broad","Chubby","Crooked",
 				"Curved","Deep","Flat","High","Hollow","Low","Narrow","Refined","Round","Shallow","Skinny","Square","Steep","Straight",
 				"Wide"};
-		[JsonIgnore]
 		public string[] name2 = { "Sharks", "Octopuses", "Birds", "Foxes", "Wolfs", "Lions", "Rinos", "Tigers", "Hyenas", "Vulturs" };
-		[JsonIgnore]
 		public string[] name3 = { "Blade", "Arrow", "Spark", "Factory", "Sniper", "Calvary", "Spear", "War Cythe", "Nunchuku", "Riffle", "Pistol", "War Hammer", "Battle Axe", "Bludgeon", "Club", "Flail", "Mace", "Morning Star", "Quarterstaff", "Dagger", "Falchion", "Estoc", "Katana", "Longsword", "Rapier", "Saber", "Shortsword", "Glaive", "Halberd", "Lance", "Partisan", "Pike", "Voulge", "Longbow", "Recurve Bow", "Crossbow", "Musket", "Chakram", "Kunai", "Shuriken"};
-		[JsonIgnore]
 		public string[] RoboName = { "Cyborg", "Repair", "Guard", "Golem", "Droid", "Tank", "Gundam", "ATV", "Concept" };
-		[JsonIgnore]
 		public string[] BossName = { "Great", "Estemed", "Grand", "Large", "Strong", "Fast", "Tyrant"};
 		public string getWinLog
 		{
@@ -387,7 +360,6 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
 	class Game : Common
 	{
 		[NonSerialized]
@@ -505,14 +477,10 @@ namespace TrainingProject
 		private int BossLvl;
 		public long BossLvlBase;
 		public long BossLvlBaseIncrement = 5;
-		[JsonProperty]
 		private int BossCount;
-		[JsonProperty]
 		private int BossDifficulty;
-		[JsonProperty]
 		public int BossDifficultyBase;
 		public int BossDifficultyBaseIncrement = 2;
-		[JsonProperty]
 		public int CurrentJackpot;
 		public int CurrentJackpotLvl;
 		public int MinWage;
@@ -4253,67 +4221,66 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
 	class Team : Common, IComparable<Team>
 	{
-		[JsonProperty]
+		
 		public List<Robot> MyTeam;
-		[JsonProperty]
+		
 		public int[] RobotDestroyed;
-		[JsonProperty]
+		
 		public int[] RobotDestroyedGoal;
-		[JsonProperty]
+		
 		public int[] MonsterDestroyed;
-		[JsonProperty]
+		
 		public int[] MonsterDestroyedGoal;
-		[JsonProperty]
+		
 		public int LifetimeRobotsCreated;
-		[JsonProperty]
+		
 		public int GoalLifetimeRobotsCreated;
-		[JsonProperty]
+		
 		public int LifetimeRobotsRebuilt;
-		[JsonProperty]
+		
 		public int GoalLifetimeRobotsRebuilt;
-		[JsonProperty]
+		
 		public int LifetimeEquipmentPurchased;
-		[JsonProperty]
+		
 		public int GoalLifetimeEquipmentPurchased;
-		[JsonProperty]
+		
 		public int LifetimeEquipmentUpgraded;
-		[JsonProperty]
+		
 		public int GoalLifetimeEquipmentUpgraded;
-		[JsonProperty]
+		
 		public List<int> Runes;
-		[JsonProperty]
+		
 		private int Score;
 		private int ScoreLog;
-		[JsonProperty]
+		
 		public int Win;
-		[JsonProperty]
+		
 		private int GoalScore;
-		[JsonProperty]
+		
 		private int GoalScoreBase;
 		public int GoalScoreBaseIncrement = 25;
-		[JsonProperty]
+		
 		private long Currency;
 		public long CurrencyLog;
-		[JsonProperty]
+		
 		private int Difficulty;
 		public int DifficultyLog;
-		[JsonProperty]
+		
 		private int MaxRobo;
-		[JsonProperty]
+		
 		private long RoboCost;
-		[JsonProperty]
+		
 		private long RoboCostBase;
 		public long RoboCostBaseIncrement = 100;
-		[JsonProperty]
+		
 		private string TeamName;
 		public Boolean isMonster;
-		[JsonProperty]
+		
 		public Boolean Automated;
 		public Boolean Manual_Equipment;
-		[JsonIgnore]
+		
 		private string TeamLog;
 		public bool shownDefeated;
 		public int HealScore;
@@ -4798,7 +4765,7 @@ namespace TrainingProject
 		{
 			return this.getScore.CompareTo(team.getScore) * -1;
 		}
-		[JsonIgnore]
+		
 		public string getTeamLog
 		{
 			set
@@ -5095,71 +5062,71 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
+	
 	class Robot : Common, IComparable<Robot>
 	{
-		[JsonProperty]
+		
 		public List<Skill> ListSkills;
-		[JsonProperty]
+		
 		public List<Strategy> RoboStrategy;
-		[JsonProperty]
+		
 		private Equipment EquipWeapon;
-		[JsonProperty]
+		
 		private Equipment EquipArmour;
-		[JsonProperty]
+		
 		private string RobotName;
 		public string tmpMessage;
 		public int dmg;
 		public bool crit;
 		// Base stats
-		[JsonProperty]
+		
 		private int Dexterity;
-		[JsonProperty]
+		
 		private int Strength;
-		[JsonProperty]
+		
 		private int Agility;
-		[JsonProperty]
+		
 		private int Tech;
-		[JsonProperty]
+		
 		private int Accuracy;
 		// elevated stats (based on level, base stats, and equipment)
-		[JsonProperty]
+		
 		private int Health;
 		private int CurrentHealth;
 		private int CountKO;
-		[JsonProperty]
+		
 		private int Energy;
         private int CurrentEnergy;
-		[JsonProperty]
+		
 		private int Armour;
-		[JsonProperty]
+		
 		private int Damage;
-		[JsonProperty]
+		
 		private int Hit;
-		[JsonProperty]
+		
 		private int MentalStrength;
-		[JsonProperty]
+		
 		private int MentalDefense;
-		[JsonProperty]
+		
 		private string Image;
         private string tmpImage;
-		[JsonProperty]
+		
 		public int type;
-		[JsonProperty]
+		
 		private int Speed;
 		private int CurrentSpeed;
-		[JsonProperty]
+		
 		private int Level;
 		private int LevelLog;
-		[JsonProperty]
+		
 		public int rebuildBonus;
-		[JsonProperty]
+		
 		private int Analysis;
-		[JsonProperty]
+		
 		private int CurrentAnalysis;
-		[JsonProperty]
+		
 		public int RebuildPercent;
-		[JsonProperty]
+		
 		public long RoboRebuildCost;
 		private int AnalysisLog;
 		public string RobotLog;
@@ -6071,22 +6038,22 @@ namespace TrainingProject
         }
 	}
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
+	
 	class Skill
 	{
-		[JsonProperty]
+		
 		public string name;
-		[JsonProperty]
+		
 		public string target; // Enemy or Ally
-		[JsonProperty]
+		
 		public int strength; // int representing amount of damage / healing 
-		[JsonProperty]
+		
 		public string type; // damage single, or damage multiple
-		[JsonProperty]
+		
 		public int cost; // energy cost
-		[JsonProperty]
+		
 		public string img;
-		[JsonProperty]
+		
 		public char sChar;
 		public Skill() { }
         public Skill(string skillName, string skillTarget, int skillStrength, string skilltype, int pCost, string image, char pSChar)
@@ -6105,20 +6072,20 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
-	[JsonObject(MemberSerialization.OptIn)]
+	
 	class Strategy : IComparable<Strategy>
 	{
-		[JsonProperty]
+		
 		public Skill StrategicSkill; //skill to be used
-		[JsonProperty]
+		
 		public string FieldCondition; // HP, MP, number of target
-		[JsonProperty]
+		
 		public string Condition; // > or <
-		[JsonProperty]
+		
 		public int ConditionValue; // a percentage or value
-		[JsonProperty]
+		
 		public string Focus; // Lowest or Highest
-		[JsonProperty]
+		
 		public string Field; // HP, MP, Str, Spirit, Speed, etc
 		public Strategy() { }
 		public Strategy(Skill pSkill, string pFieldCondition, string pCondition, int pConditionValue, string pFocus, string pField)
@@ -6148,13 +6115,13 @@ namespace TrainingProject
 	[Serializable]
 	class ArenaSeating
 	{
-		[JsonProperty]
+		
 		public int Level; // Seating Level
-		[JsonProperty]
+		
 		public int Price; // Cost of customers for seat
-		[JsonProperty]
+		
 		public int Amount; // Number of seats
-		[JsonProperty]
+		
 		public int AmountBase; // Number of seats
 		public int Attendees;
 		public ArenaSeating() { }
@@ -6203,7 +6170,7 @@ namespace TrainingProject
 			{
 				if (Sales > CurrentStock) { Sales = CurrentStock; }
 				CurrentStock -= Sales;
-				FightLog = string.Format("\n $$$ {1} Sales: {0:c0}", Sales, name);
+				FightLog += string.Format("\n $$$ {1} Sales: {0:c0}", Sales, name);
 				return Sales * SalePrice;
 			}
 			else { return 0; }
@@ -6222,39 +6189,39 @@ namespace TrainingProject
 	[Serializable]
 	class Equipment : Common
 	{
-		[JsonProperty]
+		
 		public string eType = "";
-		[JsonProperty]
+		
 		public string eName = "";
-		[JsonProperty]
+		
 		public int eUpgrade = 0;
-		[JsonProperty]
+		
 		public int eHealth = 0;
-		[JsonProperty]
+		
 		public int eEnergy = 0;
-		[JsonProperty]
+		
 		public int eArmour = 0;
-		[JsonProperty]
+		
 		public int eDamage = 0;
-		[JsonProperty]
+		
 		public int eHit = 0;
-		[JsonProperty]
+		
 		public int eMentalStrength = 0;
-		[JsonProperty]
+		
 		public int eMentalDefense = 0;
-		[JsonProperty]
+		
 		public int eSpeed = 0;
-		[JsonProperty]
+		
 		public long ePrice = 0;
-		[JsonProperty]
+		
 		public int eDurability = 0;
-		[JsonProperty]
+		
 		public int eMaxDurability = 0;
-		[JsonProperty]
+		
 		public long eUpgradeCost = 0;
-		[JsonProperty]
+		
 		public long eUpgradeCostBase = 0;
-		[JsonProperty]
+		
 		public long eUpgradeCostBaseIncrement = 0;
 		public Equipment(bool addWeapon, int value, int durability, Random RndVal, Boolean isBoss = false, int upgradeCost = 100)
 		{
