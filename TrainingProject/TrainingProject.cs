@@ -597,6 +597,11 @@ namespace TrainingProject
 			get { return ArenaLvlCost; }
 			set { ArenaLvlCost = value; }
 		}
+		public long getConcessionLvlCost
+		{
+			get { return ConcessionLvlCost; }
+			set { ConcessionLvlCost = value; }
+		}
 		public long getArenaLvlMaint
 		{
 			get { return ArenaLvlMaint - MonsterDenRepairs; }
@@ -674,6 +679,19 @@ namespace TrainingProject
 				return MaxTeams - GameTeams.Count;
 			}
 			set { MaxTeams = value; }
+		}
+		public double getConcessionStock
+		{
+			get
+			{
+				long MaxStock = 0, CurrentStock = 0;
+				foreach (Concession eConcession in ConcessionStands)
+				{
+					MaxStock += eConcession.MaxStock;
+					CurrentStock += eConcession.CurrentStock;
+				}
+				return ((double)CurrentStock / (double)MaxStock);
+			}
 		}
 		public int getNumeral
 		{
@@ -874,7 +892,7 @@ namespace TrainingProject
 			ConcessionLvl = 1;
 			ConcessionLvlCost = 2000;
 			ConcessionLvlMaint = 1;
-			ConcessionMarkup = 0.1; // ten percent markup
+			ConcessionMarkup = 0.2; // twenty percent markup
 			MonsterDenLvl = 1;
 			MonsterDenLvlCost = 2000;
 			MonsterDenLvlMaint = 1;
@@ -1023,6 +1041,8 @@ namespace TrainingProject
 			ConcessionLvl = 1;
 			ConcessionLvlCost = 2000;
 			ConcessionLvlMaint = 1;
+			ConcessionMarkup = .20;
+			ConcessionStands = new List<Concession> { new Concession(ConcessionMarkup)) };
 		}
 
 		public void resetShowDefeated()
@@ -1097,6 +1117,7 @@ namespace TrainingProject
 			if (getShopLvlCost < lowestLvl) lowestLvl = getShopLvlCost;
 			if (getResearchDevLvlCost < lowestLvl) lowestLvl = getResearchDevLvlCost;
 			if (getMonsterDenLvlCost < lowestLvl) lowestLvl = getMonsterDenLvlCost;
+			if (getConcessionLvlCost < lowestLvl) lowestLvl = getConcessionLvlCost;
 			// Add all utilities that are the lowest level
 			if (getArenaLvlCost == lowestLvl) levelUpList.Add("Arena");
 			if (getShopLvlCost == lowestLvl) levelUpList.Add("Shop");
@@ -1178,7 +1199,7 @@ namespace TrainingProject
 			ConcessionLvl++;
 			ConcessionLvlCost = roundValue(ConcessionLvlCost, MainLvlCostBase, "up");
 			MainLvlCostBase += MainLvlCostBaseIncrement;
-			ConcessionMarkup += .01; // increase markup by 1 percent
+			if (ConcessionMarkup < .98 && RndVal.Next(100) > 90) ConcessionMarkup += .01; // increase markup by 1 percent 
 			foreach (Concession eConcession in ConcessionStands)
 			{
 				eConcession.ConcessionLevelUp(ConcessionMarkup);
@@ -1893,6 +1914,10 @@ namespace TrainingProject
 						}
 					}
 				}
+				foreach (Concession eConcession in ConcessionStands)
+				{
+					eConcession.purchase(attendees - unseated);
+				}
 				if (GameTeam1.Count > 1)
 				{
 					// If no seats available remove the teams that were added and exit function, unless total score is less than 10 or fighting a monster team
@@ -2199,9 +2224,13 @@ namespace TrainingProject
 				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getShopLvl, getShopLvlCost, getShopLvlMaint, ShopLvlMaintCondition) };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				Label lblShopStock = new Label { AutoSize = true, Text = String.Format("  {0,-10}{1," + RowTwoLength[0] + "} {2,-6}{3," + RowTwoLength[1] + ":n0} {4,-7}{5," + RowTwoLength[2] + ":n0} {6,-5}{7," + RowTwoLength[3] + ":n0} {8,-4}{9," + RowTwoLength[4] + ":n0} {10,-4} {11:n0}",  
-																						"Max Stock",string.Format("{0}/{1}", storeEquipment.Count, getShopStock), 
-																						"Dur", getShopMaxDurability, "Stat", getShopMaxStat, "Cost", getShopStockCost, "Up", getShopUpgradeValue, "Bays", ShopBays) };
+				Label lblShopStock = new Label
+				{
+					AutoSize = true,
+					Text = String.Format("  {0,-10}{1," + RowTwoLength[0] + "} {2,-6}{3," + RowTwoLength[1] + ":n0} {4,-7}{5," + RowTwoLength[2] + ":n0} {6,-5}{7," + RowTwoLength[3] + ":n0} {8,-4}{9," + RowTwoLength[4] + ":n0} {10,-4} {11:n0}",
+																						"Max Stock", string.Format("{0}/{1}", storeEquipment.Count, getShopStock),
+																						"Dur", getShopMaxDurability, "Stat", getShopMaxStat, "Cost", getShopStockCost, "Up", getShopUpgradeValue, "Bays", ShopBays)
+				};
 				pnlEquipment.Controls.Add(lblShopStock);
 				RowThreeLength = new int[] { 8, 3, 1, 3 };
 				foreach (Equipment eEquipment in storeEquipment)
@@ -2242,14 +2271,46 @@ namespace TrainingProject
 					}
 				}
 				MainPanel.Controls.Add(pnlEquipment);
+				// Concession Stands
+				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% - \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, ConcessionLvlMaint, ConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
+				MainPanel.Controls.Add(lblConcessionLvl);
+				FlowLayoutPanel pnlStands = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
+				RowThreeLength = new int[] { 8, 2, 2, 1, 1, 1 };
+				foreach (Concession eConcession in ConcessionStands)
+				{
+					if (string.Format("{0}", eConcession.name).Length > RowThreeLength[0]) RowThreeLength[0] = string.Format("{0}", eConcession.name).Length;
+					if (string.Format("{0:n0}", eConcession.CurrentStock).Length > RowThreeLength[1]) RowThreeLength[1] = string.Format("{0:n0}", eConcession.CurrentStock).Length;
+					if (string.Format("{0:n0}", eConcession.MaxStock).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eConcession.MaxStock).Length;
+					if (string.Format("{0:c0}", eConcession.SalePrice).Length > RowThreeLength[3]) RowThreeLength[3] = string.Format("{0:c0}", eConcession.SalePrice).Length;
+					if (string.Format("{0:c0}", eConcession.RestockCost).Length > RowThreeLength[4]) RowThreeLength[4] = string.Format("{0:c0}", eConcession.RestockCost).Length;
+					if (string.Format("{0:n0}", eConcession.Demand).Length > RowThreeLength[5]) RowThreeLength[5] = string.Format("{0:n0}", eConcession.Demand).Length;					
+				}
+				index = 0;
+				foreach (Concession eConcession in ConcessionStands)
+				{
+					if (showAll || index <= 2)
+					{
+						string ending = "";
+						if (index == 2 && !showAll && storeEquipment.Count > 3) ending = "...";
+						string tmp = string.Format("{0,-" + RowThreeLength[0] + "} {1:n0}/{2:n0} S:{3:c0} R:{4:c0} D:{5:n0}", eConcession.name, eConcession.CurrentStock, eConcession.MaxStock, eConcession.SalePrice, eConcession.RestockCost, eConcession.Demand);
+						Label lblStand = new Label { AutoSize = true, Text = string.Format("    {0}{1}\n", tmp, ending) };
+						pnlStands.Controls.Add(lblStand);
+						index++;
+					}
+				}
+				MainPanel.Controls.Add(pnlStands);
+				// Research
 				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild, ResearchDevLvlMaintCondition) };
 				MainPanel.Controls.Add(lblResearchLvl);
+				// Monster Den
 				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs, MonsterDenLvlMaintCondition) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
 				MainPanel.Controls.Add(lblMonsterDen);
+				// Boss Monsters
 				Label lblBossMonsters = new Label { AutoSize = true, Text = String.Format("BossMonsters:{0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":c0}", BossCount, BossReward) };
 				lblBossMonsters.Click += new EventHandler((sender, e) => displayMonsters("Boss Monsters"));
 				MainPanel.Controls.Add(lblBossMonsters); 
+				// Manager
 				Label lblManager = new Label { AutoSize = true, Text = String.Format("Manager:     {0," + RowOneLength[0] + ":n0} {1," + RowOneLength[1] + ":\\+#,###}", ManagerHrs, ManagerCost) };
 				lblManager.Click += new EventHandler((sender, e) => AddManagerHours());
 				MainPanel.Controls.Add(lblManager);
@@ -3261,8 +3322,8 @@ namespace TrainingProject
 			long maintValue = RndVal.Next(200);
 			// if arena is in debt, none of the benefits are available (Monster den bonus, Equipment upgrades, Repair bay, etc) so no maintenance required.
 			if (getGameCurrency <= 0)
-				maintValue = RndVal.Next(50, 250);
-			// maintValue = 220; //test 
+				maintValue = RndVal.Next(60, 260);
+			// maintValue = 51; //test 
 			switch (maintValue)
 			{
 				case 1:
@@ -3645,7 +3706,6 @@ namespace TrainingProject
 					}
 					break;
 				case 46:
-					// Fast Forward
 					MaintCost += RndVal.Next(gameDifficulty * 100);
 					goto case 47;
 				case 47:
@@ -3662,11 +3722,89 @@ namespace TrainingProject
 						getWarningLog = String.Format("\n!!! Fast Forward increased! +{0:n0} T:{1:n0}", MaintCost, FastForwardCount);
 					}
 					break;
+				// Concession Stands
+				case 50:
+					if (RndVal.Next(100) > ConcessionLvlMaintCondition)
+					{
+						// Monster Den Maintenance
+						if (ConcessionLvlMaint > 0)
+							MaintCost += (ConcessionLvlMaint);
+						else
+						{
+							MaintCost += Math.Abs(ConcessionLvlMaint);
+							if (MaintCost > longRandom(ConcessionLvlCost) && ConcessionLvlCost > MainLvlCostBase)
+							{
+								ConcessionLvlCost = roundValue(ConcessionLvlCost, MainLvlCostBase, "down");
+								if (ConcessionLvlCost < MainLvlCostBase)
+								{
+									ConcessionLvlCost = MainLvlCostBase;
+									MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+								}
+								ConcessionLvlMaint = ConcessionLvlCost / 2;
+								getWarningLog = getFightLog = String.Format("\n*** Concession Stands: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", ConcessionLvlCost, MaintCost, ConcessionLvlMaint);
+							}
+						}
+						// continue here
+						ConcessionLvlMaint = roundValue(ConcessionLvlMaint, (int)((double)MaintCost * 0.1), "down");
+						getGameCurrency -= MaintCost;
+						GameCurrencyLogMaint -= MaintCost;
+						if (strMessage.Length == 0) strMessage = "!Health Inspector";
+						getFightLog = String.Format("\nConcession Stand: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, ConcessionLvlMaint);
+						// reset maintenance condition
+						ConcessionLvlMaintCondition = 95;
+					}
+					else
+					{
+						// increase chance for maintenance to be required
+						ConcessionLvlMaintCondition -= 10;
+					}
+					break;
 				case 51:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "repair kiosk";
+					goto case 52;
 				case 52:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "ecoli";
+					goto case 53;
 				case 53:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "expired inventory";
+					goto case 54;
 				case 54:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "restock kitchen";
+					goto case 55;
 				case 55:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "restock front counter";
+					goto case 56;
+				case 56:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "rpdate menu";
+					goto case 57;
+				case 57:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "cleaning";
+					goto case 58;
+				case 58:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "cleaning";
+					goto case 232;
+
+				case 61:
+				case 62:
+				case 63:
+				case 64:
+				case 65:
 					// Tax
 					long tmpMaint = (long)((ArenaLvlMaint * 0.1) + (MonsterDenLvlMaint * 0.1) + (ShopLvlMaint * 0.1) + (ResearchDevMaint * 0.1));
 					ArenaLvlMaint -=		RndVal.Next((int)(MainLvlCostBase / 100));
@@ -3884,6 +4022,45 @@ namespace TrainingProject
 					}
 					if ((SafeTime - DateTime.Now).TotalHours <= 1) getWarningLog = Environment.NewLine + "% Arena did comunity outreach: Attendance " + String.Format("{0:p2}!", getArenaOutreach());
 					break;
+
+				// concession stands
+				case 230:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 200);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "cleaning";
+					goto case 231;
+				case 231:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 200);
+					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (strMessage.Length == 0) strMessage = "cleaning";
+					goto case 232;
+				case 232:
+					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					else
+					{
+						MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+						if (MaintCost > longRandom(ConcessionLvlMaint) && ConcessionLvlMaint > MainLvlCostBase)
+						{
+							ConcessionLvlMaint = roundValue(ConcessionLvlMaint, MainLvlCostBase, "down");
+							if (ConcessionLvlMaint < MainLvlCostBase)
+							{
+								ConcessionLvlMaint = MainLvlCostBase;
+								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
+							}
+							ConcessionLvlMaint = ConcessionLvlMaint / 2;
+							getWarningLog = getFightLog = String.Format("\n*** Concession Stand Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
+						}
+					}
+					if (strMessage.Length == 0) strMessage = "cleaning";
+					MaintCost = roundValue(MaintCost);
+					ConcessionLvlMaint = roundValue(ConcessionLvlMaint, (int)((double)MaintCost * 0.01), "down");
+					getGameCurrency -= MaintCost;
+					GameCurrencyLogMaint -= MaintCost;
+					getFightLog = String.Format("\n*** Concession Stand: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, ConcessionLvlMaint);
+					// Increase chance for maintenance to be required
+					ConcessionLvlMaintCondition--;
+					break;
+
 				case 249:
 					int leavingTeam = RndVal.Next(2,(50+CurrentJackpotLvl));
 					// team could leave if arena not doing well 
@@ -6008,7 +6185,7 @@ namespace TrainingProject
 
 		public void ConcessionLevelUp(double markup)
 		{
-			MaxStock++;
+			MaxStock = roundValue(MaxStock, RndVal.Next(1,SalePrice), "up"); ;
 			SalePrice++;
 			CurrentStock = MaxStock;
 			RestockCost = (int)(SalePrice * MaxStock * (1 - markup));
@@ -6018,11 +6195,15 @@ namespace TrainingProject
 		public long purchase(int Customers)
 		{
 			// Random number of sales
-			int Sales = rndVal.Next(Customers/Demand);
-			if (Sales > CurrentStock) { Sales = CurrentStock; }
-			CurrentStock -= Sales;
-			FightLog += string.Format("/n $$$ {1} Sales: {0:c0)", Sales, name);
-			return Sales * SalePrice;
+			int Sales = rndVal.Next(Customers / Demand);
+			if (Sales > 0 && CurrentStock > 0)
+			{
+				if (Sales > CurrentStock) { Sales = CurrentStock; }
+				CurrentStock -= Sales;
+				FightLog = string.Format("\n $$$ {1} Sales: {0:c0}", Sales, name);
+				return Sales * SalePrice;
+			}
+			else { return 0; }
 		}
 		public long restock(long currency)
 		{

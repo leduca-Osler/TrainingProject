@@ -187,11 +187,12 @@ namespace TrainingApp
 			if (cbTeamSelect.SelectedIndex > 0 && MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getAvailableRobo > 0
 					&& MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getCurrency > MyGame.GameTeams[cbTeamSelect.SelectedIndex - 1].getRoboCost) 
 																						addRobo = true;
-			// if you have enough money to upgrade Arena, Shop, Research, or Monster Den
+			// if you have enough money to upgrade Arena, Shop, Research, Monster Den, or Concession
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost ||
 					MyGame.getGameCurrency >= MyGame.getShopLvlCost ||
 					MyGame.getGameCurrency >= MyGame.getResearchDevLvlCost ||
-					MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost)				buildLvl = true;
+					MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost ||
+					MyGame.getGameCurrency >= MyGame.getConcessionLvlCost)				buildLvl = true;
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						ComunityOutreach = true;
 			if (MyGame.StartForge)														shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
@@ -199,6 +200,11 @@ namespace TrainingApp
 			{
 				shopRestock = true;
 				shopColour = Color.Green;
+			}
+			else if (MyGame.getGameCurrency > 0 && MyGame.getConcessionStock < .5)
+			{
+				shopRestock = true;
+				shopColour = Color.LawnGreen;
 			}
 			// if seats available 3 battles in a row we need advertising
 			if (MyGame.NeedAdvertising > 3)
@@ -344,6 +350,13 @@ namespace TrainingApp
 			if (MyGame.getGameCurrency > MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
 			{
 				MyGame.AddStock();
+			}
+			foreach (Concession eConcession in MyGame.ConcessionStands)
+			{
+				if (MyGame.getGameCurrency > eConcession.RestockCost && eConcession.MaxStock > eConcession.CurrentStock)
+				{
+					MyGame.getGameCurrency -= eConcession.restock(MyGame.getGameCurrency);
+				}
 			}
 			update();
 		}
