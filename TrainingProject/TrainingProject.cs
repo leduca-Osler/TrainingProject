@@ -8,6 +8,8 @@ using System.Drawing;
 using System.Xml;
 using System.Runtime;
 using System.Runtime.Remoting.Contexts;
+using System.Reflection;
+using System.Diagnostics.Eventing.Reader;
 
 namespace TrainingProject
 {
@@ -1008,12 +1010,13 @@ namespace TrainingProject
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
 			debugMsg = "";
-
+			getGameCurrency = 10000000;
+			/*
 			ConcessionLvl = 1;
 			ConcessionLvlCost = 2000;
 			ConcessionLvlMaint = 1;
 			ConcessionMarkup = .20;
-			ConcessionStands = new List<Concession> { new Concession(ConcessionMarkup) };
+			ConcessionStands = new List<Concession> { new Concession(ConcessionMarkup) };*/
 		}
 
 		public void resetShowDefeated()
@@ -1247,7 +1250,11 @@ namespace TrainingProject
 			MonsterDenLvl++;
 			MonsterDenLvlCost = roundValue(MonsterDenLvlCost, MainLvlCostBase, "up");
 			MainLvlCostBase += MainLvlCostBaseIncrement;
-			MonsterDenBonus += RndVal.Next(MonsterDenLvl);
+			// keep monster den bonus around 10% of max seating
+			long totalSeating = 0;
+			foreach (ArenaSeating eSeating in Seating) { totalSeating += eSeating.Amount; }
+			if (MonsterDenBonus > totalSeating/10) MonsterDenBonus += RndVal.Next(MonsterDenLvl);
+			else MonsterDenBonus += RndVal.Next((int)totalSeating / 10);
 			MonsterDenRepairs = roundValue(MonsterDenRepairs, MonsterDenRepairsBase, "up");
 			MonsterDenRepairsBase += MonsterDenRepairsBaseIncrement;
 			msg += string.Format("\n  Bonus +{0:n0} Repairs +{1:n0}", MonsterDenBonus - tmpMonsterDenBonus, MonsterDenRepairs - tmpMonsterDenRepairs);
@@ -1297,13 +1304,15 @@ namespace TrainingProject
 				getGameCurrency -= ShopStockCost;
 				GameCurrencyLogMisc -= ShopStockCost;
 				Equipment tmp = new Equipment(AddArmour(), RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, 100);
-				int upgradeVal = 20;
-				while (RndVal.Next(upgradeVal) < getShopLvl)
+				int upgradeVal = 1;
+				int equipmentLevel = RndVal.Next(ShopLvl);
+				while (upgradeVal < equipmentLevel && getGameCurrency > ShopStockCost)
 				{
-					long cost = tmp.eUpgradeCost;
+					getGameCurrency -= ShopStockCost;
+					GameCurrencyLogMisc -= ShopStockCost;
+					tmp.ePrice += (long)tmp.eUpgradeCost;
 					tmp.upgrade(ShopUpgradeValue, RndVal, true);
-					tmp.ePrice += (long)(cost * .75);
-					upgradeVal += 5;
+					upgradeVal++;
 				}
 				storeEquipment.Add(tmp);
 				addLifetimeEquipmentForged();
@@ -3096,29 +3105,41 @@ namespace TrainingProject
 						}
 					}
 				}
-				// if has equipment repair / upgrade it
+
+				// buy highest level weapon you can afford
+				Equipment purchase = new Equipment(true, 1, 1, RndVal);
+				purchase.ePrice = 0;
+				if (shopper.getEquipWeapon != null)
+				{
+					purchase = shopper.getEquipWeapon;
+				}
+				foreach (Equipment eEquip in storeEquipment)
+				{
+					if (eTeam.getCurrency > eEquip.ePrice && purchase.ePrice < eEquip.ePrice
+						&& eEquip.eType == "Weapon"
+						&& ((PurchaseUpgrade && !RobotPriority)
+								|| bAutomated
+								|| (!bAutomated && bManualEquipment))
+						&& getGameCurrency > 0)
+					{
+						purchase = eEquip;
+					}
+				}
+				// purchase weapon if team has the money and it is not the weapon they already have equipped
+				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 && (shopper.getEquipWeapon is null || !shopper.getEquipWeapon.Equals(purchase)))
+				{
+					eTeam.getCurrency -= purchase.ePrice;
+					GameCurrency += purchase.ePrice;
+					GameCurrencyLogMisc += purchase.ePrice;
+					shopper.getEquipWeapon = purchase;
+					eTeam.AddEquipmentPurchased();
+					storeEquipment.Remove(purchase);
+					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString();
+				}
+				// repair weapon if not null
 				if (shopper.getEquipWeapon != null)
 				{
 					int orig = shopper.getEquipWeapon.eDurability;
-					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipWeapon.eUpgradeCost 
-						&& (	(PurchaseUpgrade && !RobotPriority)
-								|| bAutomated 
-								|| (!bAutomated && bManualEquipment)
-								|| shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent
-							) 
-						&& shopper.getEquipWeapon.eMaxDurability > 50 + (shopper.getEquipWeapon.eUpgrade * (ShopUpgradeValue / 2)) 
-						&& getGameCurrency > 0)
-					{
-						long tmpUpgrade = (shopper.getEquipWeapon.eUpgradeCost);
-						eTeam.getCurrency -= tmpUpgrade;
-						GameCurrency += (int)(tmpUpgrade * 0.1);
-						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
-						string strUpgrade = shopper.getEquipWeapon.upgrade(getShopUpgradeValue, RndVal);
-						eTeam.AddEquipmentUpgraded();
-						eTeam.getTeamLog = getFightLog = string.Format("\n +++ {0}:{1} Upgraded {2}", eTeam.getName, shopper.getName, strUpgrade);
-					}
-					// Repair
 					if (eTeam.getCurrency > (shopper.getEquipWeapon.ePrice / 10)
 						&& shopper.getEquipWeapon.eDurability < shopper.getEquipWeapon.eMaxDurability * repairPercent 
 						&& shopper.getEquipWeapon.eMaxDurability > 20)
@@ -3128,46 +3149,40 @@ namespace TrainingProject
 						eTeam.getTeamLog = getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipWeapon.eName) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
 					}
 				}
-				else
+				// buy highest level armour you can afford
+				purchase = new Equipment(false, 1, 1, RndVal);
+				purchase.ePrice = 0;
+				if (shopper.getEquipArmour != null)
 				{
-					// buy
-					int index = 0;
-					foreach (Equipment eEquip in storeEquipment)
+					purchase = shopper.getEquipArmour;
+				}
+				foreach (Equipment eEquip in storeEquipment)
+				{
+					if (eTeam.getCurrency > eEquip.ePrice && purchase.ePrice < eEquip.ePrice
+						&& eEquip.eType == "Armour"
+						&& ((PurchaseUpgrade && !RobotPriority)
+								|| bAutomated
+								|| (!bAutomated && bManualEquipment))
+						&& getGameCurrency > 0)
 					{
-						if (eTeam.getCurrency > eEquip.ePrice 
-							&& eEquip.eType == "Weapon" 
-							&& (PurchaseUpgrade || bAutomated) 
-							&& getGameCurrency > 0)
-						{
-							eTeam.getCurrency -= eEquip.ePrice;
-							GameCurrency += eEquip.ePrice;
-							GameCurrencyLogMisc += eEquip.ePrice;
-							shopper.getEquipWeapon = eEquip;
-							eTeam.AddEquipmentPurchased();
-							storeEquipment.RemoveAt(index);
-							eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "   " + eEquip.ToString();
-							break;
-						}
-						index++;
+						purchase = eEquip;
 					}
 				}
+				// purchase weapon if team has the money and it is not the weapon they already have equipped
+				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 && (shopper.getEquipArmour is null || !shopper.getEquipArmour.Equals(purchase)))
+				{
+					eTeam.getCurrency -= purchase.ePrice;
+					GameCurrency += purchase.ePrice;
+					GameCurrencyLogMisc += purchase.ePrice;
+					shopper.getEquipArmour = purchase;
+					eTeam.AddEquipmentPurchased();
+					storeEquipment.Remove(purchase);
+					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString();
+				}
+				// Repair armour if not null
 				if (shopper.getEquipArmour != null)
 				{
 					int orig = shopper.getEquipArmour.eDurability;
-					// upgrade
-					if (eTeam.getCurrency > shopper.getEquipArmour.eUpgradeCost 
-						&& ((PurchaseUpgrade && !RobotPriority) || bAutomated || (!bAutomated && bManualEquipment) || shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent) && shopper.getEquipArmour.eMaxDurability > 50 + (shopper.getEquipArmour.eUpgrade * (ShopUpgradeValue / 2)) 
-						&& getGameCurrency > 0)
-					{
-						long tmpUpgrade = (shopper.getEquipArmour.eUpgradeCost);
-						eTeam.getCurrency -= tmpUpgrade;
-						GameCurrency += (int)(tmpUpgrade * 0.1);
-						GameCurrencyLogMisc += (int)(tmpUpgrade * 0.1);
-						string strUpgrade = shopper.getEquipArmour.upgrade(getShopUpgradeValue, RndVal);
-						eTeam.AddEquipmentUpgraded();
-						//eTeam.getTeamLog = getFightLog = Environment.NewLine + " +++ " + eTeam.getName + ":" + shopper.getName + " Upgraded " + String.Format("{1} ({0:n0}) ", tmpUpgrade, shopper.getEquipArmour.eName, shopper.getEquipArmour.eUpgradeCost) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
-						eTeam.getTeamLog = getFightLog = string.Format("\n +++ {0}:{1} Upgraded {2}", eTeam.getName, shopper.getName, strUpgrade);
-					}
 					// Repair 
 					if (eTeam.getCurrency > (shopper.getEquipArmour.ePrice / 10)
 						&& shopper.getEquipArmour.eDurability < shopper.getEquipArmour.eMaxDurability * repairPercent
@@ -3178,28 +3193,7 @@ namespace TrainingProject
 						eTeam.getTeamLog = getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipArmour.eName) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
 					}
 				}
-				else
-				{
-					// buy
-					int index = 0;
-					foreach (Equipment eEquip in storeEquipment)
-					{
-						if (eTeam.getCurrency > eEquip.ePrice && eEquip.eType == "Armour"
-							&& (PurchaseUpgrade || bAutomated)
-							&& getGameCurrency > 0)
-						{
-							eTeam.getCurrency -= eEquip.ePrice;
-							GameCurrency += eEquip.ePrice;
-							GameCurrencyLogMisc += eEquip.ePrice;
-							shopper.getEquipArmour = eEquip;
-							eTeam.AddEquipmentPurchased();
-							storeEquipment.RemoveAt(index);
-							eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", eEquip.ePrice, eEquip.eName) + Environment.NewLine + "   " + eEquip.ToString();
-							break;
-						}
-						index++;
-					}
-				}
+				
 				// Rebuild Monster
 				if (MonsterOutbreak.MyTeam.Count > 0 && SafeTime >= DateTime.Now && !paused && checkFight)
 				{
@@ -3777,11 +3771,12 @@ namespace TrainingProject
 				case 64:
 				case 65:
 					// Tax
-					long tmpMaint = (long)((ArenaLvlMaint * 0.1) + (MonsterDenLvlMaint * 0.1) + (ShopLvlMaint * 0.1) + (ResearchDevMaint * 0.1));
+					long tmpMaint = (long)((ArenaLvlMaint * 0.1) + (MonsterDenLvlMaint * 0.1) + (ShopLvlMaint * 0.1) + (ResearchDevMaint * 0.1) + (ConcessionLvlMaint * 0.1));
 					ArenaLvlMaint -=		RndVal.Next((int)(MainLvlCostBase / 100));
 					MonsterDenLvlMaint -=	RndVal.Next((int)(MainLvlCostBase / 100));
 					ShopLvlMaint -=			RndVal.Next((int)(MainLvlCostBase / 100));
 					ResearchDevMaint -=		RndVal.Next((int)(MainLvlCostBase / 100));
+					ConcessionLvlMaint -=	RndVal.Next((int)(MainLvlCostBase / 100));
 					if (tmpMaint > 0)
 						MaintCost = roundValue(tmpMaint);
 					else
@@ -5574,6 +5569,7 @@ namespace TrainingProject
 
 		public void fixTech()
 		{
+			EquipWeapon = null; 
 		}
 
 		public void resetLog()
@@ -6170,7 +6166,7 @@ namespace TrainingProject
 			{
 				if (Sales > CurrentStock) { Sales = CurrentStock; }
 				CurrentStock -= Sales;
-				FightLog += string.Format("\n $$$ {1} Sales: {0:c0}", Sales, name);
+				getFightLog = string.Format("\n $$$ {0} Sales: {1:n0} @ {2:c0} = {3:c0}", name, Sales, SalePrice, Sales * SalePrice);
 				return Sales * SalePrice;
 			}
 			else { return 0; }
@@ -6307,7 +6303,7 @@ namespace TrainingProject
 		}
 		public string upgrade(int value, Random RndVal, bool max = false)
 		{
-			int Type = 0; // = RndVal.Next(1, 9);
+			int Type = 0; 
 			if (eType == "Weapon") Type = RndVal.Next(1, 5);
 			if (eType == "Armour") Type = RndVal.Next(5, 9);
 			string strUpgrade = "";
