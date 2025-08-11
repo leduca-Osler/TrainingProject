@@ -1317,6 +1317,13 @@ namespace TrainingProject
 				storeEquipment.Add(tmp);
 				addLifetimeEquipmentForged();
 			}
+			foreach (Concession eConcession in ConcessionStands)
+			{
+				if (getGameCurrency > eConcession.RestockCost && eConcession.CurrentStock == 0)
+				{
+					getGameCurrency -= eConcession.restock(getGameCurrency);
+				}
+			}
 		}
 
 		public bool AddArmour()
@@ -3128,13 +3135,16 @@ namespace TrainingProject
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
 				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 && (shopper.getEquipWeapon is null || !shopper.getEquipWeapon.Equals(purchase)))
 				{
+					string msg = "";
+					if (shopper.getEquipWeapon != null)
+						msg = string.Format("\n     replacing ",shopper.getEquipWeapon.eName);
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
 					shopper.getEquipWeapon = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
-					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString();
+					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
 				}
 				// repair weapon if not null
 				if (shopper.getEquipWeapon != null)
@@ -3171,13 +3181,16 @@ namespace TrainingProject
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
 				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 && (shopper.getEquipArmour is null || !shopper.getEquipArmour.Equals(purchase)))
 				{
+					string msg = "";
+					if (shopper.getEquipArmour != null)
+						msg = string.Format("\n      replacing ", shopper.getEquipArmour.eName);
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
 					shopper.getEquipArmour = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
-					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString();
+					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
 				}
 				// Repair armour if not null
 				if (shopper.getEquipArmour != null)

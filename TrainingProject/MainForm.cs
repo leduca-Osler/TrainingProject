@@ -199,7 +199,7 @@ namespace TrainingApp
 				shopRestock = true;
 				shopColour = Color.Green;
 			}
-			else if (MyGame.getGameCurrency > 0 && MyGame.getConcessionStock < .5)
+			else if (MyGame.getGameCurrency > 0 && MyGame.getConcessionStock == 0)
 			{
 				shopRestock = true;
 				shopColour = Color.LawnGreen;
@@ -351,7 +351,7 @@ namespace TrainingApp
 			}
 			foreach (Concession eConcession in MyGame.ConcessionStands)
 			{
-				if (MyGame.getGameCurrency > eConcession.RestockCost && eConcession.MaxStock > eConcession.CurrentStock)
+				if (MyGame.getGameCurrency > eConcession.RestockCost && eConcession.CurrentStock == 0)
 				{
 					MyGame.getGameCurrency -= eConcession.restock(MyGame.getGameCurrency);
 				}
@@ -389,6 +389,7 @@ namespace TrainingApp
 
 		private void pause()
 		{
+			saveGame();
 			MyGame.roundCount = 0;
 			if (DateTime.Now > MyGame.BreakTime)
 			{
@@ -640,11 +641,9 @@ namespace TrainingApp
 				saveTime = DateTime.Now.AddHours(1);
 				try
 				{
-					if (Game.RndVal.Next(100) > 3)
-					{
-						BinarySerialization.WriteToBinaryFile<Game>("data\\TrainingProject.bin", MyGame);
-					}
-					else
+					BinarySerialization.WriteToBinaryFile<Game>("data\\TrainingProject.bin", MyGame);
+					// 3% chance to create a separate daily save file
+					if (Game.RndVal.Next(100) < 3)
 					{
 						string name = DateTime.Now.ToString("yyyyMMdd") + "_TrainingProject.bin";
 						BinarySerialization.WriteToBinaryFile<Game>("data\\" + name, MyGame);

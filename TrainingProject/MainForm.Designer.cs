@@ -112,8 +112,8 @@
             this.BreakTimersOff,
             this.fixToolStripMenuItem});
 			this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
-			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnExport.Name = "btnExport";
+			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnExport.Size = new System.Drawing.Size(36, 24);
 			this.btnExport.Text = "Export / Import";
 			this.btnExport.ButtonClick += new System.EventHandler(this.btnExport_ButtonClick);
