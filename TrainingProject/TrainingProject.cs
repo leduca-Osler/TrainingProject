@@ -10,6 +10,7 @@ using System.Runtime;
 using System.Runtime.Remoting.Contexts;
 using System.Reflection;
 using System.Diagnostics.Eventing.Reader;
+using System.Data.SqlTypes;
 
 namespace TrainingProject
 {
@@ -370,7 +371,7 @@ namespace TrainingProject
 		public IList<ArenaSeating> Seating;
 		public IList<ArenaSeating> CurrentSeating;
 		public IList<int> seatingAvailable;
-		public IList<Equipment> storeEquipment;
+		public List<Equipment> storeEquipment;
 		public IList<Team> GameTeam1;
 		public IList<Team> GameTeam2;
 		public IList<Concession> ConcessionStands;
@@ -502,7 +503,7 @@ namespace TrainingProject
 		public int WinCount;
 		public int FastForwardCount;
 		public bool FastForward;
-		public int totalRev;
+		public long totalRev;
 		public int totalRevCount;
 		public int DiffLosses;
 		public int bossLosses;
@@ -576,6 +577,11 @@ namespace TrainingProject
 		{
 			get { return ArenaLvlMaint - MonsterDenRepairs; }
 			set { ArenaLvlMaint = value; }
+		}
+		public long getConcessionLvlMaint
+		{
+			get { return ConcessionLvlMaint - MonsterDenRepairs; }
+			set { ConcessionLvlMaint = value; }
 		}
 		public int getShopLvl
 		{
@@ -951,7 +957,7 @@ namespace TrainingProject
 			}
 			UpdateMaxRobo();
 		}
-		public void addLifetimeRevenue(int revenue)
+		public void addLifetimeRevenue(long revenue)
 		{
 			LifetimeRevenue += revenue;
 			if (GoalLifetimeRevenue == 0) GoalLifetimeRevenue = 10000;
@@ -1271,12 +1277,14 @@ namespace TrainingProject
 			ShopLvl++;
 			ShopLvlCost = roundValue(ShopLvlCost, MainLvlCostBase, "up");
 			MainLvlCostBase += MainLvlCostBaseIncrement;
-			if (RndVal.Next(100) > ((75 + (ShopStock * 10)) - ShopLvl))
+			// every 8 levels increase max stock
+			if (ShopLvl % 8 == 0)
 			{
 				ShopStock++;
 				msg += string.Format("\n  Stock +1");
 			}
-			if (RndVal.Next(100) > ((85 + (ShopBays * 10)) - ShopLvl))
+			// every 10 levels increase shop bays
+			if (ShopLvl % 10 == 0)
 			{
 				ShopBays++;
 				msg += string.Format("\n  Bays +1");
@@ -1315,6 +1323,7 @@ namespace TrainingProject
 					upgradeVal++;
 				}
 				storeEquipment.Add(tmp);
+				storeEquipment.Sort();
 				addLifetimeEquipmentForged();
 			}
 			foreach (Concession eConcession in ConcessionStands)
@@ -1901,10 +1910,13 @@ namespace TrainingProject
 						}
 					}
 				}
+				long tmpSales = 0;
 				foreach (Concession eConcession in ConcessionStands)
 				{
-					eConcession.purchase(attendees - unseated);
+					tmpSales += eConcession.purchase(attendees - unseated);
 				}
+				getGameCurrency += tmpSales;
+				addLifetimeRevenue(tmpSales);
 				if (GameTeam1.Count > 1)
 				{
 					// If no seats available remove the teams that were added and exit function, unless total score is less than 10 or fighting a monster team
@@ -2259,7 +2271,7 @@ namespace TrainingProject
 				}
 				MainPanel.Controls.Add(pnlEquipment);
 				// Concession Stands
-				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% - \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, ConcessionLvlMaint, ConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
+				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% - \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, getConcessionLvlMaint, ConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
 				MainPanel.Controls.Add(lblConcessionLvl);
 				FlowLayoutPanel pnlStands = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				RowThreeLength = new int[] { 8, 2, 2, 1, 1, 1 };
@@ -2375,8 +2387,8 @@ namespace TrainingProject
 				TeamPanel.Controls.Add(lblRobotRebuilt);
 				Label lblEquipmentPurchased = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Equipment Purchased", eTeam.LifetimeEquipmentPurchased, eTeam.GoalLifetimeEquipmentPurchased) };
 				TeamPanel.Controls.Add(lblEquipmentPurchased);
-				Label lblEquipmentUpgraded = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Equipment Upgraded", eTeam.LifetimeEquipmentUpgraded, eTeam.GoalLifetimeEquipmentUpgraded) };
-				TeamPanel.Controls.Add(lblEquipmentUpgraded);
+				//Label lblEquipmentUpgraded = new Label { AutoSize = true, Text = String.Format("  {0,-20} {1," + TeamHeadingRowLength[0] + ":n0}/{2," + TeamHeadingRowLength[1] + ":n0}", "Equipment Upgraded", eTeam.LifetimeEquipmentUpgraded, eTeam.GoalLifetimeEquipmentUpgraded) };
+				//TeamPanel.Controls.Add(lblEquipmentUpgraded);
 				FlowLayoutPanel RobotPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, AutoSize = true };
 				int space = 12 + TeamRowLength[0] + TeamRowLength[1];
 				Label lblRobotList = new Label { AutoSize = true, Text = String.Format("  {0,-" + space + "}", "Robots Dest.") };
@@ -3137,7 +3149,7 @@ namespace TrainingProject
 				{
 					string msg = "";
 					if (shopper.getEquipWeapon != null)
-						msg = string.Format("\n     replacing ",shopper.getEquipWeapon.eName);
+						msg = string.Format("\n     replacing ",shopper.getEquipWeapon.ToString());
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
@@ -3183,7 +3195,7 @@ namespace TrainingProject
 				{
 					string msg = "";
 					if (shopper.getEquipArmour != null)
-						msg = string.Format("\n      replacing ", shopper.getEquipArmour.eName);
+						msg = string.Format("\n      replacing ", shopper.getEquipArmour.ToString());
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
@@ -3704,12 +3716,12 @@ namespace TrainingProject
 				case 50:
 					if (RndVal.Next(100) > ConcessionLvlMaintCondition)
 					{
-						// Monster Den Maintenance
-						if (ConcessionLvlMaint > 0)
-							MaintCost += (ConcessionLvlMaint);
+						// Concession Maintenance
+						if (getConcessionLvlMaint > 0)
+							MaintCost += (getConcessionLvlMaint);
 						else
 						{
-							MaintCost += Math.Abs(ConcessionLvlMaint);
+							MaintCost += Math.Abs(getConcessionLvlMaint);
 							if (MaintCost > longRandom(ConcessionLvlCost) && ConcessionLvlCost > MainLvlCostBase)
 							{
 								ConcessionLvlCost = roundValue(ConcessionLvlCost, MainLvlCostBase, "down");
@@ -3718,12 +3730,12 @@ namespace TrainingProject
 									ConcessionLvlCost = MainLvlCostBase;
 									MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 								}
-								ConcessionLvlMaint = ConcessionLvlCost / 2;
+								getConcessionLvlMaint = ConcessionLvlCost / 2;
 								getWarningLog = getFightLog = String.Format("\n*** Concession Stands: !Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", ConcessionLvlCost, MaintCost, ConcessionLvlMaint);
 							}
 						}
 						// continue here
-						ConcessionLvlMaint = roundValue(ConcessionLvlMaint, (int)((double)MaintCost * 0.1), "down");
+						getConcessionLvlMaint = roundValue(ConcessionLvlMaint, (int)((double)MaintCost * 0.1), "down");
 						getGameCurrency -= MaintCost;
 						GameCurrencyLogMaint -= MaintCost;
 						if (strMessage.Length == 0) strMessage = "!Health Inspector";
@@ -3738,43 +3750,43 @@ namespace TrainingProject
 					}
 					break;
 				case 51:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "repair kiosk";
 					goto case 52;
 				case 52:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "ecoli";
 					goto case 53;
 				case 53:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "expired inventory";
 					goto case 54;
 				case 54:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "restock kitchen";
 					goto case 55;
 				case 55:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "restock front counter";
 					goto case 56;
 				case 56:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "rpdate menu";
 					goto case 57;
 				case 57:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					goto case 58;
 				case 58:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					goto case 232;
 
@@ -4004,38 +4016,38 @@ namespace TrainingProject
 
 				// concession stands
 				case 230:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 200);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 200);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					goto case 231;
 				case 231:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 200);
-					else MaintCost += Math.Abs(ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 200);
+					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					goto case 232;
 				case 232:
-					if (ConcessionLvlMaint > 0) MaintCost += (ConcessionLvlMaint / 100);
+					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
 					else
 					{
-						MaintCost += Math.Abs(ConcessionLvlMaint / 100);
-						if (MaintCost > longRandom(ConcessionLvlMaint) && ConcessionLvlMaint > MainLvlCostBase)
+						MaintCost += Math.Abs(getConcessionLvlMaint / 100);
+						if (MaintCost > longRandom(getConcessionLvlMaint) && getConcessionLvlMaint > MainLvlCostBase)
 						{
-							ConcessionLvlMaint = roundValue(ConcessionLvlMaint, MainLvlCostBase, "down");
-							if (ConcessionLvlMaint < MainLvlCostBase)
+							getConcessionLvlMaint = roundValue(getConcessionLvlMaint, MainLvlCostBase, "down");
+							if (getConcessionLvlMaint < MainLvlCostBase)
 							{
-								ConcessionLvlMaint = MainLvlCostBase;
+								getConcessionLvlMaint = MainLvlCostBase;
 								MainLvlCostBase = (long)(MainLvlCostBase * 0.9);
 							}
-							ConcessionLvlMaint = ConcessionLvlMaint / 2;
+							getConcessionLvlMaint = getConcessionLvlMaint / 2;
 							getWarningLog = getFightLog = String.Format("\n*** Concession Stand Rebuilt +{0:c0} Maint:{1:c0}/{2:c0}", MonsterDenLvlCost, MaintCost, getMonsterDenLvlMaint);
 						}
 					}
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					MaintCost = roundValue(MaintCost);
-					ConcessionLvlMaint = roundValue(ConcessionLvlMaint, (int)((double)MaintCost * 0.01), "down");
+					getConcessionLvlMaint = roundValue(ConcessionLvlMaint, (int)((double)MaintCost * 0.01), "down");
 					getGameCurrency -= MaintCost;
 					GameCurrencyLogMaint -= MaintCost;
-					getFightLog = String.Format("\n*** Concession Stand: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, ConcessionLvlMaint);
+					getFightLog = String.Format("\n*** Concession Stand: {0} - cost {1:c0}/{2:c0}", strMessage, MaintCost, getConcessionLvlMaint);
 					// Increase chance for maintenance to be required
 					ConcessionLvlMaintCondition--;
 					break;
@@ -6175,6 +6187,8 @@ namespace TrainingProject
 		{
 			// Random number of sales
 			int Sales = rndVal.Next(Customers / Demand);
+			// random chance to sell one item
+			if (Sales == 0 && CurrentStock > 0 && rndVal.Next(100) > 80) { Sales = 1; }
 			if (Sales > 0 && CurrentStock > 0)
 			{
 				if (Sales > CurrentStock) { Sales = CurrentStock; }
@@ -6193,6 +6207,10 @@ namespace TrainingProject
 				CurrentStock = MaxStock;
 				return RestockCost;
 			}
+		}
+		public int CompareTo(Concession CompConcession)
+		{
+			return this.SalePrice.CompareTo(CompConcession.SalePrice);
 		}
 	}
 	[Serializable]
@@ -6364,8 +6382,9 @@ namespace TrainingProject
 			}
 			eUpgrade++;
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
-			if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
-			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
+			// if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
+			// else
+			eUpgradeCostBase += eUpgradeCostBaseIncrement;
 			return String.Format("{0}+{1:n0} ({5:c0}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, tmpDurability, eDurability, strUpgrade, tmpUpgradeCost);
 		}
 		public string ToString(int originalDur = 0)
@@ -6385,6 +6404,10 @@ namespace TrainingProject
 			if (eSpeed > 0)				{ retval += String.Format(" Spd+{0:n0}", eSpeed); }
 			retval += String.Format(" Price:{0:n0}", ePrice);
 			return retval;
+		}
+		public int CompareTo(Equipment CompEquipment)
+		{
+			return this.eUpgrade.CompareTo(CompEquipment.eUpgrade);
 		}
 	}
 	public class AlsProgressBar : ProgressBar

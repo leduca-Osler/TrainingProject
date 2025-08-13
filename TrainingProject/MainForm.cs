@@ -353,7 +353,10 @@ namespace TrainingApp
 			{
 				if (MyGame.getGameCurrency > eConcession.RestockCost && eConcession.CurrentStock == 0)
 				{
-					MyGame.getGameCurrency -= eConcession.restock(MyGame.getGameCurrency);
+					long tmpCost = eConcession.restock(MyGame.getGameCurrency);
+					MyGame.getGameCurrency -= tmpCost;
+					// subtract cost from revenue
+					MyGame.addLifetimeRevenue(tmpCost*-1);
 				}
 			}
 			update();
