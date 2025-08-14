@@ -115,7 +115,7 @@ namespace TrainingProject
 			{
 				if (WarningLog == null) WarningLog = "";
 				if (WarningLog.Length > 5000)
-					WarningLog = value + WarningLog.Substring(0, 4000);
+					WarningLog = value + WarningLog.Substring(0, 4900);
 				else
 					WarningLog = value + WarningLog;
 			}
@@ -131,7 +131,7 @@ namespace TrainingProject
 			{
 				if (FightLog == null) FightLog = "";
 				if (FightLog.Length > 10000)
-					FightLog = value + FightLog.Substring(0, 2500);
+					FightLog = value + FightLog.Substring(0, 9900);
 				else
 					FightLog = value + FightLog;
 			}
@@ -1150,7 +1150,8 @@ namespace TrainingProject
 				eSeating.Amount = (int)roundValue(eSeating.Amount, eSeating.AmountBase, "up");
 				eSeating.AmountBase += 10;
 				if (eSeating.Amount > 5000) eSeating.Amount = 5000;
-				if (RndVal.Next(100) > 98 || lastPrice >= eSeating.Price)
+				// increase price every 5 levels
+				if (eSeating.Level % 5 == 0)
 				{
 					eSeating.Price++;
 					msg += string.Format("\n  level {0} price up 1", eSeating.Level);
@@ -1159,8 +1160,8 @@ namespace TrainingProject
 				lastPrice = eSeating.Price;
 				totalLev += eSeating.Level;
 			}
-			// chance to add a new level of seating
-			if (RndVal.Next(100) > ((100 + (Seating.Count * totalLev)) - ArenaLvl))
+			// add a new level of seating every 7 levels
+			if (ArenaLvl % 7 == 0)
 			{
 				Seating.Add(new ArenaSeating(Seating.Count + 1, Seating[Seating.Count - 1].Price + Seating.Count, 20, 10));
 				msg += string.Format("\n  Added level {0} seating", Seating.Count);
@@ -1185,8 +1186,8 @@ namespace TrainingProject
 				eConcession.ConcessionLevelUp(ConcessionMarkup);
 			}
 			// continue here
-			// chance to add a new concession stand
-			if (RndVal.Next(100) <  10)
+			// add a new concession stand every 6 levels
+			if (ConcessionLvl % 6 == 0)
 			{
 				ConcessionStands.Add(new Concession(ConcessionMarkup));
 				msg += string.Format("\n  Added {0} concession stand", ConcessionStands[ConcessionStands.Count-1].name);
@@ -1277,8 +1278,8 @@ namespace TrainingProject
 			ShopLvl++;
 			ShopLvlCost = roundValue(ShopLvlCost, MainLvlCostBase, "up");
 			MainLvlCostBase += MainLvlCostBaseIncrement;
-			// every 8 levels increase max stock
-			if (ShopLvl % 8 == 0)
+			// every 4 levels increase max stock
+			if (ShopLvl % 4 == 0)
 			{
 				ShopStock++;
 				msg += string.Format("\n  Stock +1");
@@ -1311,6 +1312,7 @@ namespace TrainingProject
 			{
 				getGameCurrency -= ShopStockCost;
 				GameCurrencyLogMisc -= ShopStockCost;
+				addLifetimeRevenue(ShopStockCost * -1);
 				Equipment tmp = new Equipment(AddArmour(), RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, 100);
 				int upgradeVal = 1;
 				int equipmentLevel = RndVal.Next(ShopLvl);
@@ -3145,14 +3147,17 @@ namespace TrainingProject
 					}
 				}
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
-				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 && (shopper.getEquipWeapon is null || !shopper.getEquipWeapon.Equals(purchase)))
+				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 
+					&& (shopper.getEquipWeapon != null && purchase.ePrice > shopper.getEquipWeapon.ePrice)
+					&& (shopper.getEquipWeapon is null || !shopper.getEquipWeapon.Equals(purchase)))
 				{
 					string msg = "";
 					if (shopper.getEquipWeapon != null)
-						msg = string.Format("\n     replacing ",shopper.getEquipWeapon.ToString());
+						msg = string.Format("\n     replacing {0}",shopper.getEquipWeapon.ToString());
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
+					addLifetimeRevenue(purchase.ePrice);
 					shopper.getEquipWeapon = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
@@ -3180,7 +3185,7 @@ namespace TrainingProject
 				}
 				foreach (Equipment eEquip in storeEquipment)
 				{
-					if (eTeam.getCurrency > eEquip.ePrice && purchase.ePrice < eEquip.ePrice
+					if (eTeam.getCurrency > eEquip.ePrice && purchase.eUpgrade < eEquip.eUpgrade
 						&& eEquip.eType == "Armour"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
@@ -3191,14 +3196,17 @@ namespace TrainingProject
 					}
 				}
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
-				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 && (shopper.getEquipArmour is null || !shopper.getEquipArmour.Equals(purchase)))
+				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 
+					&& (shopper.getEquipArmour != null && purchase.eUpgrade > shopper.getEquipArmour.eUpgrade)
+					&& (shopper.getEquipArmour is null || !shopper.getEquipArmour.Equals(purchase)))
 				{
 					string msg = "";
 					if (shopper.getEquipArmour != null)
-						msg = string.Format("\n      replacing ", shopper.getEquipArmour.ToString());
+						msg = string.Format("\n      replacing {0}", shopper.getEquipArmour.ToString());
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
+					addLifetimeRevenue(purchase.ePrice);
 					shopper.getEquipArmour = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
@@ -4793,7 +4801,7 @@ namespace TrainingProject
 				if (!value.Contains("test"))
 				{
 					if (TeamLog.Length > 5000)
-						TeamLog = value + TeamLog.Substring(0, 1500);
+						TeamLog = value + TeamLog.Substring(0, 4900);
 					else
 						TeamLog = value + TeamLog;
 				}
@@ -6214,7 +6222,7 @@ namespace TrainingProject
 		}
 	}
 	[Serializable]
-	class Equipment : Common
+	class Equipment : Common, IComparable<Equipment>
 	{
 		
 		public string eType = "";
