@@ -1912,13 +1912,6 @@ namespace TrainingProject
 						}
 					}
 				}
-				long tmpSales = 0;
-				foreach (Concession eConcession in ConcessionStands)
-				{
-					tmpSales += eConcession.purchase(attendees - unseated);
-				}
-				getGameCurrency += tmpSales;
-				addLifetimeRevenue(tmpSales);
 				if (GameTeam1.Count > 1)
 				{
 					// If no seats available remove the teams that were added and exit function, unless total score is less than 10 or fighting a monster team
@@ -1929,6 +1922,14 @@ namespace TrainingProject
 						return;
 					}
 				}
+				// concession sales
+				long tmpSales = 0;
+				foreach (Concession eConcession in ConcessionStands)
+				{
+					tmpSales += eConcession.purchase(attendees - unseated);
+				}
+				getGameCurrency += tmpSales;
+				addLifetimeRevenue(tmpSales);
 				// total attendance
 				int countChars = 10 + tmpTotalScore.ToString().Length;
 				msg += displaySeating("\n    Attd", attendees - unseated, -2, ref countChars);
@@ -3136,7 +3137,7 @@ namespace TrainingProject
 				}
 				foreach (Equipment eEquip in storeEquipment)
 				{
-					if (eTeam.getCurrency > eEquip.ePrice && purchase.ePrice < eEquip.ePrice
+					if (eTeam.getCurrency > eEquip.ePrice && purchase.eUpgrade < eEquip.eUpgrade
 						&& eEquip.eType == "Weapon"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
@@ -3148,7 +3149,7 @@ namespace TrainingProject
 				}
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
 				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 
-					&& (shopper.getEquipWeapon != null && purchase.ePrice > shopper.getEquipWeapon.ePrice)
+					&& (shopper.getEquipWeapon != null && purchase.eUpgrade > shopper.getEquipWeapon.eUpgrade)
 					&& (shopper.getEquipWeapon is null || !shopper.getEquipWeapon.Equals(purchase)))
 				{
 					string msg = "";
