@@ -1016,13 +1016,7 @@ namespace TrainingProject
 		{
 			foreach (Team eTeam in GameTeams) { eTeam.fixTech(); }
 			debugMsg = "";
-			getGameCurrency = 10000000;
-			/*
-			ConcessionLvl = 1;
-			ConcessionLvlCost = 2000;
-			ConcessionLvlMaint = 1;
-			ConcessionMarkup = .20;
-			ConcessionStands = new List<Concession> { new Concession(ConcessionMarkup) };*/
+			// ConcessionStands.Add(new Concession(ConcessionMarkup));
 		}
 
 		public void resetShowDefeated()
@@ -2277,7 +2271,7 @@ namespace TrainingProject
 				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% - \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, getConcessionLvlMaint, ConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
 				MainPanel.Controls.Add(lblConcessionLvl);
 				FlowLayoutPanel pnlStands = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				RowThreeLength = new int[] { 8, 2, 2, 1, 1, 1 };
+				RowThreeLength = new int[] { 8, 1, 2, 1, 1, 1 };
 				foreach (Concession eConcession in ConcessionStands)
 				{
 					if (string.Format("{0}", eConcession.name).Length > RowThreeLength[0]) RowThreeLength[0] = string.Format("{0}", eConcession.name).Length;
@@ -2294,7 +2288,7 @@ namespace TrainingProject
 					{
 						string ending = "";
 						if (index == 2 && !showAll && storeEquipment.Count > 3) ending = "...";
-						string tmp = string.Format("{0,-" + RowThreeLength[0] + "} {1:n0}/{2:n0} S:{3:c0} R:{4:c0} D:{5:n0}", eConcession.name, eConcession.CurrentStock, eConcession.MaxStock, eConcession.SalePrice, eConcession.RestockCost, eConcession.Demand);
+						string tmp = string.Format("{0,-" + RowThreeLength[0] + "} {1," + RowThreeLength[1] + ":n0}/{2," + RowThreeLength[2] + ":n0} S:{3," + RowThreeLength[3] + ":c0} R:{4," + RowThreeLength[4] + ":c0} D:{5," + RowThreeLength[5] + ":n0}", eConcession.name, eConcession.CurrentStock, eConcession.MaxStock, eConcession.SalePrice, eConcession.RestockCost, eConcession.Demand);
 						Label lblStand = new Label { AutoSize = true, Text = string.Format("    {0}{1}\n", tmp, ending) };
 						pnlStands.Controls.Add(lblStand);
 						index++;
