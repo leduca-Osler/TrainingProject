@@ -493,6 +493,7 @@ namespace TrainingProject
 		public Boolean JackpotUpDown;
 		public int JackpotMovement;
 		public Boolean StartForge;
+		public Boolean StartRestock;
 		public Boolean RobotPriority;
 		public Boolean paused;
 		private long BossReward;
@@ -1299,6 +1300,10 @@ namespace TrainingProject
 		{
 			StartForge = true;
 		}
+		public void AddConcession()
+		{
+			StartRestock = true;
+		}
 		public void ForgeEquipment()
 		{
 			// Add new equipent to stock
@@ -1321,13 +1326,6 @@ namespace TrainingProject
 				storeEquipment.Add(tmp);
 				storeEquipment.Sort();
 				addLifetimeEquipmentForged();
-			}
-			foreach (Concession eConcession in ConcessionStands)
-			{
-				if (getGameCurrency > eConcession.RestockCost && eConcession.CurrentStock == 0)
-				{
-					getGameCurrency -= eConcession.restock(getGameCurrency);
-				}
 			}
 		}
 
@@ -1772,10 +1770,26 @@ namespace TrainingProject
 				// usually fight other teams. 
 				if (GameTeam1.Count == 0)
 				{
-					if (StartForge)
+					// combined Forge and restock so we will not miss out on restocking equipment or sock while the other is still restocking. 
+					if (StartForge || StartRestock)
 					{
+						// forge new equipment
 						if (ShopStock > storeEquipment.Count) ForgeEquipment();
 						else StartForge = false;
+						// restock concessions
+						StartRestock = false;
+						foreach (Concession eConcession in ConcessionStands)
+						{
+							if (eConcession.CurrentStock == 0 && eConcession.RestockCost < getGameCurrency)
+							{
+								long tmpCost = eConcession.restock(getGameCurrency);
+								getGameCurrency -= tmpCost;
+								// subtract cost from revenue
+								addLifetimeRevenue(tmpCost * -1);
+								getFightLog = string.Format("\n -$ {0} Restock: {1:n0}", eConcession.name, tmpCost);
+								StartRestock = true;
+							}
+						}
 					}
 					WinCount = 0;
 					incrementArenaOpponent();
@@ -2594,6 +2608,7 @@ namespace TrainingProject
 			if (bossFight) strFlags += " Boss Fight!";
 			if (GameDifficultyFight) strFlags += " Difficulty Fight!";
 			if (StartForge) strFlags += " Forge Equipment!";
+			if (StartRestock) strFlags += " Restock Concession!";
 			if (JackpotUpDown)
 			{
 				char strOperand = '+';
@@ -3131,7 +3146,7 @@ namespace TrainingProject
 				}
 				foreach (Equipment eEquip in storeEquipment)
 				{
-					if (eTeam.getCurrency > eEquip.ePrice && purchase.eUpgrade < eEquip.eUpgrade
+					if (eTeam.getCurrency > eEquip.ePrice && (purchase.eUpgrade < eEquip.eUpgrade || purchase.ePrice == 0)
 						&& eEquip.eType == "Weapon"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
@@ -3143,7 +3158,7 @@ namespace TrainingProject
 				}
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
 				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 
-					&& (shopper.getEquipWeapon != null && purchase.eUpgrade > shopper.getEquipWeapon.eUpgrade)
+					&& (shopper.getEquipWeapon is null || (shopper.getEquipWeapon != null && purchase.eUpgrade > shopper.getEquipWeapon.eUpgrade))
 					&& (shopper.getEquipWeapon is null || !shopper.getEquipWeapon.Equals(purchase)))
 				{
 					string msg = "";
@@ -3180,7 +3195,7 @@ namespace TrainingProject
 				}
 				foreach (Equipment eEquip in storeEquipment)
 				{
-					if (eTeam.getCurrency > eEquip.ePrice && purchase.eUpgrade < eEquip.eUpgrade
+					if (eTeam.getCurrency > eEquip.ePrice && (purchase.eUpgrade < eEquip.eUpgrade || purchase.ePrice == 0)
 						&& eEquip.eType == "Armour"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
@@ -3192,7 +3207,7 @@ namespace TrainingProject
 				}
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
 				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 
-					&& (shopper.getEquipArmour != null && purchase.eUpgrade > shopper.getEquipArmour.eUpgrade)
+					&& (shopper.getEquipWeapon is null || (shopper.getEquipArmour != null && purchase.eUpgrade > shopper.getEquipArmour.eUpgrade))
 					&& (shopper.getEquipArmour is null || !shopper.getEquipArmour.Equals(purchase)))
 				{
 					string msg = "";

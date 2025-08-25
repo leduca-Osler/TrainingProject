@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TrainingProject;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml.Linq;
 
 
 namespace TrainingApp
@@ -192,7 +194,7 @@ namespace TrainingApp
 					MyGame.getGameCurrency >= MyGame.getMonsterDenLvlCost ||
 					MyGame.getGameCurrency >= MyGame.getConcessionLvlCost)				buildLvl = true;
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						ComunityOutreach = true;
-			if (MyGame.StartForge)														shopColour = Color.Aquamarine;
+			if (MyGame.StartForge || MyGame.StartRestock)								shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
 			else if (MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
 			{
@@ -349,22 +351,15 @@ namespace TrainingApp
 			{
 				MyGame.AddStock();
 			}
-			foreach (Concession eConcession in MyGame.ConcessionStands)
+			if (MyGame.ConcessionStands != null && MyGame.getGameCurrency > MyGame.ConcessionStands[0].RestockCost && MyGame.ConcessionStands[0].CurrentStock == 0)
 			{
-				if (MyGame.getGameCurrency > eConcession.RestockCost && eConcession.CurrentStock == 0)
-				{
-					long tmpCost = eConcession.restock(MyGame.getGameCurrency);
-					MyGame.getGameCurrency -= tmpCost;
-					// subtract cost from revenue
-					MyGame.addLifetimeRevenue(tmpCost*-1);
-				}
+				MyGame.AddConcession();
 			}
 			update();
 		}
 		private void btnExport_ButtonClick(object sender, EventArgs e)
 		{
 		}
-
 		private void mnuExport_Click(object sender, EventArgs e)
 		{
 		}
