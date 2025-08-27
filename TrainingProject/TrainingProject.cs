@@ -11,6 +11,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Reflection;
 using System.Diagnostics.Eventing.Reader;
 using System.Data.SqlTypes;
+using System.Security.Cryptography;
 
 namespace TrainingProject
 {
@@ -1786,7 +1787,7 @@ namespace TrainingProject
 								getGameCurrency -= tmpCost;
 								// subtract cost from revenue
 								addLifetimeRevenue(tmpCost * -1);
-								getFightLog = string.Format("\n -$ {0} Restock: {1:n0}", eConcession.name, tmpCost);
+								getFightLog = string.Format("\n -$ {0} Restock: {1:c0}", eConcession.name, tmpCost);
 								StartRestock = true;
 							}
 						}
@@ -2265,15 +2266,15 @@ namespace TrainingProject
 						string ending = "";
 						if (index == 2 && !showAll && storeEquipment.Count > 3) ending = "...";
 						string tmp = string.Format("{0,-" + RowThreeLength[0] + "}", eEquipment.eName + "+" + eEquipment.eUpgrade);
-						tmp += String.Format(" Dur {0," + RowThreeLength[1] + ":n0}", eEquipment.eDurability);
-						if (eEquipment.eHealth > 0) { tmp += String.Format(" Hea{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eHealth); }
-						if (eEquipment.eEnergy > 0) { tmp += String.Format(" Enr{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eEnergy); }
-						if (eEquipment.eDamage > 0) { tmp += String.Format(" Dam{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eDamage); }
-						if (eEquipment.eHit > 0) { tmp += String.Format(" Hit{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eHit); }
-						if (eEquipment.eArmour > 0) { tmp += String.Format(" Acl{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eArmour); }
-						if (eEquipment.eMentalStrength > 0) { tmp += String.Format(" Mst{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eMentalStrength); }
-						if (eEquipment.eMentalDefense > 0) { tmp += String.Format(" Mdf{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eMentalDefense); }
-						if (eEquipment.eSpeed > 0) { tmp += String.Format(" Spd{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eSpeed); }
+						tmp += String.Format(" Dur {0," + RowThreeLength[1] + ":n0} {1}", eEquipment.eDurability, eEquipment.eType);
+						if (eEquipment.eHealth > 0 && showAll) { tmp += String.Format(" Hea{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eHealth); }
+						if (eEquipment.eEnergy > 0 && showAll) { tmp += String.Format(" Enr{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eEnergy); }
+						if (eEquipment.eDamage > 0 && showAll) { tmp += String.Format(" Dam{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eDamage); }
+						if (eEquipment.eHit > 0 && showAll) { tmp += String.Format(" Hit{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eHit); }
+						if (eEquipment.eArmour > 0 && showAll) { tmp += String.Format(" Acl{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eArmour); }
+						if (eEquipment.eMentalStrength > 0 && showAll) { tmp += String.Format(" Mst{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eMentalStrength); }
+						if (eEquipment.eMentalDefense > 0 && showAll) { tmp += String.Format(" Mdf{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eMentalDefense); }
+						if (eEquipment.eSpeed > 0 && showAll) { tmp += String.Format(" Spd{0," + RowThreeLength[2] + ":\\+#,###}", eEquipment.eSpeed); }
 						tmp += String.Format(" Price {0," + RowThreeLength[3] + ":n0}", eEquipment.ePrice);
 						Label lblEquipment = new Label { AutoSize = true, Text = string.Format("    {0}{1}\n", tmp, ending) };
 						pnlEquipment.Controls.Add(lblEquipment);
@@ -3163,7 +3164,7 @@ namespace TrainingProject
 				{
 					string msg = "";
 					if (shopper.getEquipWeapon != null)
-						msg = string.Format("\n     replacing {0}",shopper.getEquipWeapon.ToString());
+						msg = string.Format("\n     replacing {0}",shopper.getEquipWeapon.getName());
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
@@ -3171,7 +3172,9 @@ namespace TrainingProject
 					shopper.getEquipWeapon = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
-					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
+					msg = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
+					eTeam.getTeamLog = getFightLog = msg;
+					if (!eTeam.Automated) getWarningLog = msg;
 				}
 				// repair weapon if not null
 				if (shopper.getEquipWeapon != null)
@@ -3212,7 +3215,7 @@ namespace TrainingProject
 				{
 					string msg = "";
 					if (shopper.getEquipArmour != null)
-						msg = string.Format("\n      replacing {0}", shopper.getEquipArmour.ToString());
+						msg = string.Format("\n      replacing {0}", shopper.getEquipArmour.getName());
 					eTeam.getCurrency -= purchase.ePrice;
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
@@ -3220,7 +3223,9 @@ namespace TrainingProject
 					shopper.getEquipArmour = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
-					eTeam.getTeamLog = getFightLog = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
+					msg = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
+					eTeam.getTeamLog = getFightLog = msg;
+					if (!eTeam.Automated) getWarningLog = msg;
 				}
 				// Repair armour if not null
 				if (shopper.getEquipArmour != null)
@@ -6223,6 +6228,13 @@ namespace TrainingProject
 			else
 			{
 				CurrentStock = MaxStock;
+				// 1 percent chance to add extra stock
+				if (RndVal.Next(100) >= 99)
+				{
+					MaxStock++;
+					RestockCost += SalePrice;
+					getWarningLog = getFightLog = string.Format("\n +++ Concession Stand {0} reorgnized +1 stock: {1:n0}", name, MaxStock);
+				}
 				return RestockCost;
 			}
 		}
@@ -6300,12 +6312,12 @@ namespace TrainingProject
 					break;
 				case 4:
 					eType = "Weapon";
-					eName = "Ramp";
+					eName = "Bat-Ram";
 					eHealth = value * 3;
 					break;
 				case 5:
 					eType = "Armour";
-					eName = "Iron";
+					eName = "Plate";
 					eArmour = value;
 					break;
 				case 6:
@@ -6315,12 +6327,12 @@ namespace TrainingProject
 					break;
 				case 7:
 					eType = "Armour";
-					eName = "Lab Coat";
+					eName = "Hide ";
 					eMentalDefense = value;
 					break;
 				case 8:
 					eType = "Armour";
-					eName = "Field";
+					eName = "F-Field";
 					eEnergy = value * 2;
 					break;
 			}
@@ -6405,13 +6417,17 @@ namespace TrainingProject
 			eUpgradeCostBase += eUpgradeCostBaseIncrement;
 			return String.Format("{0}+{1:n0} ({5:c0}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, tmpDurability, eDurability, strUpgrade, tmpUpgradeCost);
 		}
+		public string getName()
+		{
+			return (eName + "+" + eUpgrade).PadRight(12);
+		}
 		public string ToString(int originalDur = 0)
 		{
 			string retval = (eName + "+" + eUpgrade).PadRight(12);
 			if (originalDur > 0)
 				retval += String.Format(" Dur:{0:n0}->{1:n0}", originalDur, eDurability);
 			else
-				retval += String.Format(" Dur:{0:n0}", eDurability);
+				retval += String.Format(" Dur:{0:n0} T:{1}", eDurability, eType);
 			if (eHealth > 0)			{ retval += String.Format(" Hea+{0:n0}", eHealth); }
 			if (eEnergy > 0)			{ retval += String.Format(" Enr+{0:n0}", eEnergy); }
 			if (eDamage > 0)			{ retval += String.Format(" Dam+{0:n0}", eDamage); }
