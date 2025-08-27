@@ -1933,9 +1933,10 @@ namespace TrainingProject
 				}
 				// concession sales
 				long tmpSales = 0;
+				int tmpPurchasers = attendees - unseated;
 				foreach (Concession eConcession in ConcessionStands)
 				{
-					tmpSales += eConcession.purchase(attendees - unseated);
+					tmpSales += eConcession.purchase(ref tmpPurchasers);
 				}
 				getGameCurrency += tmpSales;
 				addLifetimeRevenue(tmpSales);
@@ -6206,10 +6207,11 @@ namespace TrainingProject
 			if (rndVal.Next(100) > 90) Demand--;
 		}
 
-		public long purchase(int Customers)
+		public long purchase(ref int Customers)
 		{
 			// Random number of sales
 			int Sales = rndVal.Next(Customers / Demand);
+			Customers -= Sales;
 			// random chance to sell one item
 			if (Sales == 0 && CurrentStock > 0 && rndVal.Next(100) > 80) { Sales = 1; }
 			if (Sales > 0 && CurrentStock > 0)
