@@ -3152,7 +3152,7 @@ namespace TrainingProject
 						&& eEquip.eType == "Weapon"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
-								|| (!bAutomated && bManualEquipment))
+								|| ((!bAutomated && bManualEquipment) || shopper.getEquipWeapon is null))
 						&& getGameCurrency > 0)
 					{
 						purchase = eEquip;
@@ -3203,7 +3203,7 @@ namespace TrainingProject
 						&& eEquip.eType == "Armour"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
-								|| (!bAutomated && bManualEquipment))
+								|| ((!bAutomated && bManualEquipment) || shopper.getEquipWeapon is null))
 						&& getGameCurrency > 0)
 					{
 						purchase = eEquip;
@@ -6069,13 +6069,15 @@ namespace TrainingProject
 			}
 			if (EquipWeapon != null)
 			{
-				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n  {4:c0}\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade, EquipWeapon.eUpgradeCost);
+				//tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n  {4:c0}\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade, EquipWeapon.eUpgradeCost);
+				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade);
 			}
 			else
 				tmp += "<Unequiped>\n";
 			if (EquipArmour != null)
 			{
-				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n  {4:c0}\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade, getEquipArmour.eUpgradeCost);
+				//tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n  {4:c0}\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade, getEquipArmour.eUpgradeCost);
+				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade);
 			}
 			else
 				tmp += "<Unequiped>\n";
