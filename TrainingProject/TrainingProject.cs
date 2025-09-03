@@ -539,6 +539,11 @@ namespace TrainingProject
 			get { return MonsterDenLvlMaint - MonsterDenRepairs; }
 			set { MonsterDenLvlMaint = value; }
 		}
+		public long getMonsterDenLvlMaintCondition
+		{
+			get { return 100 - MonsterDenLvlMaintCondition; }
+			set { MonsterDenLvlMaintCondition = value; }
+		}
 		public int getMaxTeams
 		{
 			get { return MaxTeams; }
@@ -580,10 +585,20 @@ namespace TrainingProject
 			get { return ArenaLvlMaint - MonsterDenRepairs; }
 			set { ArenaLvlMaint = value; }
 		}
+		public long getArenaLvlMaintCondition
+		{
+			get { return 100 - ArenaLvlMaintCondition; }
+			set { ArenaLvlMaintCondition = value; }
+		}
 		public long getConcessionLvlMaint
 		{
 			get { return ConcessionLvlMaint - MonsterDenRepairs; }
 			set { ConcessionLvlMaint = value; }
+		}
+		public long getConcessionLvlMaintCondition
+		{
+			get { return 100 - ConcessionLvlMaintCondition; }
+			set { ConcessionLvlMaintCondition = value; }
 		}
 		public int getShopLvl
 		{
@@ -599,6 +614,11 @@ namespace TrainingProject
 		{
 			get { return ShopLvlMaint - MonsterDenRepairs; }
 			set { ShopLvlMaint = value; }
+		}
+		public long getShopLvlMaintCondition
+		{
+			get { return 100 - ShopLvlMaintCondition; }
+			set { ShopLvlMaintCondition = value; }
 		}
 		public int getShopStock
 		{
@@ -639,6 +659,11 @@ namespace TrainingProject
 		{
 			get { return ResearchDevMaint - MonsterDenRepairs; }
 			set { ResearchDevMaint = value; }
+		}
+		public long getResearchDevLvlMaintCondition
+		{
+			get { return 100 - ResearchDevLvlMaintCondition; }
+			set { ResearchDevLvlMaintCondition = value; }
 		}
 		public int getResearchDevHealValue
 		{
@@ -1749,7 +1774,12 @@ namespace TrainingProject
 		}
 		public long MaxMaintenance()
 		{
-			return (long)(Math.Max(Math.Max(ArenaLvlMaint, ShopLvlMaint), Math.Max(ResearchDevMaint, MonsterDenLvlMaint)));
+			// return highest maintenance value
+			long max = Math.Max(ArenaLvlMaint, ShopLvlMaint);
+			max = Math.Max(ResearchDevMaint, max);
+			max = Math.Max(MonsterDenLvlMaint, max);
+			max = Math.Max(ConcessionLvlMaint, max);
+			return max;
 		}
 		public void startFight()
         {
@@ -1787,7 +1817,7 @@ namespace TrainingProject
 								getGameCurrency -= tmpCost;
 								// subtract cost from revenue
 								addLifetimeRevenue(tmpCost * -1);
-								getFightLog = string.Format("\n -$ {0} Restock: {1:c0}", eConcession.name, tmpCost);
+								getFightLog = string.Format("\n    -$ {0} Restock: {1:c0}", eConcession.name, tmpCost);
 								StartRestock = true;
 							}
 						}
@@ -2203,7 +2233,7 @@ namespace TrainingProject
 				//Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0} \n{2,-13}{3," + RowOneLength[0] + ":c0}\n{4,-13}{5," + RowOneLength[0] + ":c0}\n{6,-13}{7," + RowOneLength[0] + ":c0}\n{8,-13}{9," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency, "   Misc ",  GameCurrencyLogMisc, "   Maint -", 0 - GameCurrencyLogMaint, "   Upgr  -", 0 - GameCurrencyLogUp, "   Total =", GameCurrencyLogMisc + GameCurrencyLogMaint + GameCurrencyLogUp) };
 				Label lblCurrency = new Label { AutoSize = true, Text =   String.Format("{0,-13}{1," + RowOneLength[0] + ":c0}", "Currency:",getGameCurrency)};
 				MainPanel.Controls.Add(lblCurrency);
-				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getArenaLvl, getArenaLvlCost, getArenaLvlMaint, ArenaLvlMaintCondition) };
+				Label lblArenaLvl = new Label { AutoSize = true, Text =   String.Format("Arena:       {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getArenaLvl, getArenaLvlCost, getArenaLvlMaint, getArenaLvlMaintCondition) };
 				MainPanel.Controls.Add(lblArenaLvl);
 				FlowLayoutPanel pnlSeating = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				// get highest width for columns in seating.
@@ -2233,7 +2263,7 @@ namespace TrainingProject
 				Label lblPotentialEarnings = new Label { AutoSize = true, Text = String.Format("    Earning Potenial:{0," + RowThreeLength[1] + ":c0} Seats:{1," + RowThreeLength[1] + ":n0}", potentialEarnings, totalSeating) };
 				pnlSeating.Controls.Add(lblPotentialEarnings);
 				MainPanel.Controls.Add(pnlSeating);
-				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getShopLvl, getShopLvlCost, getShopLvlMaint, ShopLvlMaintCondition) };
+				Label lblShopLvl = new Label { AutoSize = true, Text = String.Format("Shop:        {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}%", getShopLvl, getShopLvlCost, getShopLvlMaint, getShopLvlMaintCondition) };
 				MainPanel.Controls.Add(lblShopLvl);
 				FlowLayoutPanel pnlEquipment = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				Label lblShopStock = new Label
@@ -2284,7 +2314,7 @@ namespace TrainingProject
 				}
 				MainPanel.Controls.Add(pnlEquipment);
 				// Concession Stands
-				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% - \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, getConcessionLvlMaint, ConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
+				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% - \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, getConcessionLvlMaint, getConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
 				MainPanel.Controls.Add(lblConcessionLvl);
 				FlowLayoutPanel pnlStands = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				RowThreeLength = new int[] { 8, 1, 2, 1, 1, 1 };
@@ -2312,10 +2342,10 @@ namespace TrainingProject
 				}
 				MainPanel.Controls.Add(pnlStands);
 				// Research
-				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild, ResearchDevLvlMaintCondition) };
+				Label lblResearchLvl = new Label { AutoSize = true, Text = String.Format("Research:    {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", getResearchDevLvl, getResearchDevLvlCost, getResearchDevMaint, "Heal", getResearchDevHealValue, "Bay", getResearchDevHealBays, "Rbld", ResearchDevRebuild, getResearchDevLvlMaintCondition) };
 				MainPanel.Controls.Add(lblResearchLvl);
 				// Monster Den
-				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs, MonsterDenLvlMaintCondition) };
+				Label lblMonsterDen = new Label { AutoSize = true, Text = String.Format("Monster Den: {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {9}%\n  {3,-10}{4," + RowTwoLength[0] + "} {5,-6}{6," + RowTwoLength[1] + ":n0} {7,-7}{8," + RowTwoLength[2] + ":n0}", MonsterDenLvl, getMonsterDenLvlCost, getMonsterDenLvlMaint, "In Den", MonsterOutbreak.MyTeam.Count, "Bonus", MonsterDenBonus, "Repair", MonsterDenRepairs, getMonsterDenLvlMaintCondition) };
 				lblMonsterDen.Click += new EventHandler((sender, e) => displayMonsters("Monster Outbreak"));
 				MainPanel.Controls.Add(lblMonsterDen);
 				// Boss Monsters
@@ -6220,7 +6250,7 @@ namespace TrainingProject
 			{
 				if (Sales > CurrentStock) { Sales = CurrentStock; }
 				CurrentStock -= Sales;
-				getFightLog = string.Format("\n $$$ {0} Sales: {1:n0} @ {2:c0} = {3:c0}", name, Sales, SalePrice, Sales * SalePrice);
+				getFightLog = string.Format("\n    +$ {0} Sales: {1:n0} @ {2:c0} = {3:c0}", name, Sales, SalePrice, Sales * SalePrice);
 				return Sales * SalePrice;
 			}
 			else { return 0; }
@@ -6237,7 +6267,7 @@ namespace TrainingProject
 				{
 					MaxStock++;
 					RestockCost += SalePrice;
-					getWarningLog = getFightLog = string.Format("\n +++ Concession Stand {0} reorgnized +1 stock: {1:n0}", name, MaxStock);
+					getWarningLog = getFightLog = string.Format("\n    +++ Concession Stand {0} reorgnized +1 stock: {1:n0}", name, MaxStock);
 				}
 				return RestockCost;
 			}
