@@ -854,7 +854,7 @@ namespace TrainingProject
 			GameTeam1 = new List<Team> { };
 			GameTeam2 = new List<Team> { };
 			Seating = new List<ArenaSeating> { new ArenaSeating(1, 1, 50, 25) };
-			ConcessionStands = new List<Concession> { new Concession(.1) };
+			ConcessionStands = new List<Concession> { new Concession(.1,10) };
 			CurrentSeating = new List<ArenaSeating> { };
 			storeEquipment = new List<Equipment> { };
 			MonsterOutbreak = new Team(0, 1, findMonster, ref MonsterOutbreak);
@@ -1210,7 +1210,7 @@ namespace TrainingProject
 			// add a new concession stand every 6 levels
 			if (ConcessionLvl % 6 == 0)
 			{
-				ConcessionStands.Add(new Concession(ConcessionMarkup));
+				ConcessionStands.Add(new Concession(ConcessionMarkup, ConcessionLvl + 10));
 				msg += string.Format("\n  Added {0} concession stand", ConcessionStands[ConcessionStands.Count-1].name);
 			}
 			// reset maintenance condition
@@ -1345,7 +1345,7 @@ namespace TrainingProject
 				{
 					getGameCurrency -= ShopStockCost;
 					GameCurrencyLogMisc -= ShopStockCost;
-					tmp.ePrice += (long)tmp.eUpgradeCost;
+					tmp.ePrice = roundValue(tmp.ePrice, tmp.eUpgradeCost, "up"); 
 					tmp.upgrade(ShopUpgradeValue, RndVal, true);
 					upgradeVal++;
 				}
@@ -2198,8 +2198,6 @@ namespace TrainingProject
 					Button btnRebuild = new Button { AutoSize = true, Text = String.Format(strFormat, ActualRebuildCost) };
 					Label rebuildCost = new Label { AutoSize = true, Text = String.Format(strFormatFullRebuildCost, (eRobo.RoboRebuildCost - ProposedRebuildCost), tmpRunes, eRobo.rebuildBonus, eRobo.RoboRebuildCost) };
 					int innerIndex = index++;
-					if (getGameCurrency > 0)
-						btnRebuild.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].Rebuild(innerIndex, true, this));
 					MyPanel.Controls.Add(RoboName);
 					MyPanel.Controls.Add(Everything);
 					MyPanel.Controls.Add(btnRebuild);
@@ -2314,7 +2312,7 @@ namespace TrainingProject
 				}
 				MainPanel.Controls.Add(pnlEquipment);
 				// Concession Stands
-				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% - \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, getConcessionLvlMaint, getConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
+				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, getConcessionLvlMaint, getConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
 				MainPanel.Controls.Add(lblConcessionLvl);
 				FlowLayoutPanel pnlStands = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 				RowThreeLength = new int[] { 8, 1, 2, 1, 1, 1 };
@@ -3020,8 +3018,6 @@ namespace TrainingProject
 					{
 						{
 							Label lblTeamstats = new Label { AutoSize = true, Text = eTeam.getTeamStats(maxNameLength(false, roundCount < 20), maxTeamLengths, ResearchDevRebuild, KOCount, this, roundCount, false, false) };
-							if (getGameCurrency > 0)
-								lblTeamstats.Click += new EventHandler((sender, e) => eTeam.Rebuild(true, this));
 							MainPanel.Controls.Add(lblTeamstats);
 						}
 					}
@@ -3163,7 +3159,7 @@ namespace TrainingProject
 							if (getGameCurrency > 0)
 							{
 								int runesUsed = eTeam.getRunes(eTeam.MyTeam[i].getBaseStats(), false);
-								eTeam.Rebuild(i, true, this);
+								getGameCurrency += eTeam.Rebuild(i, true, this);
 							}
 						}
 					}
@@ -4827,7 +4823,7 @@ namespace TrainingProject
 					}
 					else
 					{
-						getFightLog = String.Format("\n ^^^{0} received a rank {1} rune! ({2:n0})", getName, index, Runes[index], DateTime.Now.ToString());
+						getFightLog = String.Format("\n   ^^^{0} received a rank {1} rune! ({2:n0})", getName, index, Runes[index], DateTime.Now.ToString());
 					}
 					index = -1;
 				}
@@ -4954,15 +4950,17 @@ namespace TrainingProject
 		{
 			foreach (Robot eRobo in MyTeam) eRobo.fixTech();
 		}
-		public void Rebuild(bool pay, Game myGame)
+		public long Rebuild(bool pay, Game myGame)
 		{
+			long cost = 0;
 			for (int i = 0; i < MyTeam.Count; i++)
 			{
 				if (MyTeam[i].rebuildCost(myGame.ResearchDevRebuild,Runes) >= 200)
-					Rebuild(MyTeam[i], pay, myGame);
+					cost += Rebuild(MyTeam[i], pay, myGame);
 			}
+			return cost;
 		}
-		public void Rebuild(Robot robo, bool pay, Game myGame)
+		public long Rebuild(Robot robo, bool pay, Game myGame)
 		{
 			int robotIndex = 0;
 			for (int i = 0; i < MyTeam.Count; i++)
@@ -4972,14 +4970,14 @@ namespace TrainingProject
 					robotIndex = i;
 				}
 			}
-			Rebuild(robotIndex, pay, myGame);
+			return Rebuild(robotIndex, pay, myGame);
 		}
-		public int Rebuild(int robo, bool pay, Game myGame)
+		public long Rebuild(int robo, bool pay, Game myGame)
 		{
+			long Cost = 0;
 			int bonusAnalysis = 0;
 			if (!pay || MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild,Runes) <= getCurrency)
 			{
-				long Cost = 0;
 				if (pay)
 				{
 					Cost = MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild, Runes);
@@ -5050,7 +5048,7 @@ namespace TrainingProject
 					}
 				}
 			}
-			return bonusAnalysis;
+			return Cost;
 		}
 		public int getNumRobos(bool pShowDefeated, int KOCount = 3)
 		{
@@ -5648,7 +5646,7 @@ namespace TrainingProject
 
 		public void fixTech()
 		{
-			EquipWeapon = null; 
+			
 		}
 
 		public void resetLog()
@@ -6221,10 +6219,10 @@ namespace TrainingProject
 		public long RestockCost; // Cost to re-stock the items
 		public int Demand; // demand for people to buy these items 100 would mean 1 in 100 people will order
 		Random rndVal = new Random(); // declare random variable
-		public Concession(double markup) 
+		public Concession(double markup, int stock) 
 		{
 			name = ConcessionName[rndVal.Next(ConcessionName.Length)];
-			MaxStock = CurrentStock = 10;
+			MaxStock = CurrentStock = stock;
 			SalePrice = 1;
 			RestockCost = (int)(SalePrice * MaxStock * (1 - markup));
 			Demand = 100;
@@ -6232,7 +6230,7 @@ namespace TrainingProject
 
 		public void ConcessionLevelUp(double markup)
 		{
-			MaxStock = roundValue(MaxStock, RndVal.Next(1,SalePrice), "up"); ;
+			MaxStock = roundValue(MaxStock, RndVal.Next(1,SalePrice*10), "up"); ;
 			SalePrice++;
 			CurrentStock = MaxStock;
 			RestockCost = (int)(SalePrice * MaxStock * (1 - markup));
@@ -6347,7 +6345,7 @@ namespace TrainingProject
 				case 4:
 					eType = "Weapon";
 					eName = "Bat-Ram";
-					eHealth = value * 3;
+					eSpeed = value * 3;
 					break;
 				case 5:
 					eType = "Armour";
@@ -6357,12 +6355,12 @@ namespace TrainingProject
 				case 6:
 					eType = "Armour";
 					eName = "Leather";
-					eSpeed = value;
+					eMentalDefense = value;
 					break;
 				case 7:
 					eType = "Armour";
 					eName = "Hide ";
-					eMentalDefense = value;
+					eHealth = value;
 					break;
 				case 8:
 					eType = "Armour";
