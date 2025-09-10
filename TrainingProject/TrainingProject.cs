@@ -3363,7 +3363,7 @@ namespace TrainingProject
 			// if arena is in debt, none of the benefits are available (Monster den bonus, Equipment upgrades, Repair bay, etc) so no maintenance required.
 			if (getGameCurrency <= 0)
 				maintValue = RndVal.Next(60, 260);
-			// maintValue = 51; //test 
+			maintValue = 43; //test 
 			switch (maintValue)
 			{
 				case 1:
@@ -3678,7 +3678,7 @@ namespace TrainingProject
 						long monsterOutbreakCost = roundValue(longRandom(MaintCost));
 						startMonsterOutbreak(monsterOutbreakCost);
 						MaintCost = roundValue(MaintCost - monsterOutbreakCost);
-						getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.1), "down");
+						getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.2), "down");
 						getGameCurrency -= MaintCost;
 						GameCurrencyLogMaint -= MaintCost;
 						if (strMessage.Length == 0) strMessage = "!Outbreak";
@@ -3732,6 +3732,54 @@ namespace TrainingProject
 					else MaintCost += Math.Abs(getMonsterDenLvlMaint / 100);
 					if (strMessage.Length == 0) strMessage = "cleaning";
 					goto case 210;
+
+				case 43:
+					// Arena armour Sponsor 
+					if (RndVal.Next(100) < GameTeams.Count)
+					{
+						int iteam = RndVal.Next(100);
+						if (iteam < GameTeams.Count)
+						{
+							int iRobo = RndVal.Next(GameTeams[iteam].MyTeam.Count);
+							// forge new equipment
+							Equipment tmp = new Equipment(false, RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, 100);
+							int upgradeVal = 1;
+							int equipmentLevel = ShopLvl + 1;
+							while (upgradeVal < equipmentLevel && getGameCurrency > ShopStockCost)
+							{
+								tmp.ePrice = roundValue(tmp.ePrice, tmp.eUpgradeCost, "up");
+								tmp.upgrade(ShopUpgradeValue, RndVal, true);
+								upgradeVal++;
+							}
+							GameTeams[iteam].MyTeam[iRobo].getEquipArmour = tmp;
+							getWarningLog = String.Format("\n!!! {0} Received a sponsor! {1} received a {2}", GameTeams[iteam].getName, GameTeams[iteam].MyTeam[iRobo].getName, GameTeams[iteam].MyTeam[iRobo].getEquipArmour.ToString());
+						}
+					}
+					break;
+
+				case 44:
+					// Arena Weapon Sponsor 
+					if (RndVal.Next(100) < GameTeams.Count)
+					{
+						int iteam = RndVal.Next(100);
+						if (iteam < GameTeams.Count)
+						{
+							int iRobo = RndVal.Next(GameTeams[iteam].MyTeam.Count);
+							// forge new equipment
+							Equipment tmp = new Equipment(true, RndVal.Next(5, ShopMaxStat), RndVal.Next(100, ShopMaxDurability), RndVal, false, 100);
+							int upgradeVal = 1;
+							int equipmentLevel = ShopLvl + 1;
+							while (upgradeVal < equipmentLevel && getGameCurrency > ShopStockCost)
+							{
+								tmp.ePrice = roundValue(tmp.ePrice, tmp.eUpgradeCost, "up");
+								tmp.upgrade(ShopUpgradeValue, RndVal, true);
+								upgradeVal++;
+							}
+							GameTeams[iteam].MyTeam[iRobo].getEquipWeapon = tmp;
+							getWarningLog = String.Format("\n!!! {0} Received a sponsor! {1} received a {2}", GameTeams[iteam].getName, GameTeams[iteam].MyTeam[iRobo].getName, GameTeams[iteam].MyTeam[iRobo].getEquipWeapon.ToString());
+						}
+					}
+					break;
 				case 45:
 					if (ArenaLvl < 50)
 					{
@@ -6359,7 +6407,7 @@ namespace TrainingProject
 					break;
 				case 7:
 					eType = "Armour";
-					eName = "Hide ";
+					eName = "Hide";
 					eHealth = value;
 					break;
 				case 8:
