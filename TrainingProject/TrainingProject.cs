@@ -1177,7 +1177,8 @@ namespace TrainingProject
 					eSeating.Price++;
 					msg += string.Format("\n  level {0} price up 1", eSeating.Level);
 				}
-				msg += string.Format("\n  level {0} seating up {1:n0}", eSeating.Level, eSeating.Amount - lstAmt);
+				// only display amount if it increased. 
+				if (eSeating.Amount > lstAmt) msg += string.Format("\n  level {0} seating up {1:n0}", eSeating.Level, eSeating.Amount - lstAmt);
 				lastPrice = eSeating.Price;
 				totalLev += eSeating.Level;
 			}
@@ -1858,13 +1859,16 @@ namespace TrainingProject
 						Team1Index = ArenaOpponent1;
 						Team2Index = ArenaOpponent2;
 					}
-					//ArenaOpponent2++;
+					// Keep the number of consecutive battles around 3
 					if (getGameCurrency > 0)
 					{
-						if (fightCount >= 2)
+						// increase fight percent to have fewer fights
+						if (fightCount > 3)
 							fightPercent++;
+						// decrease to have more fights
 						else
 							fightPercent--;
+						// Ensure max value is not too small
 						if (fightPercent >= fightPercentMax)
 							fightPercentMax++;
 					}
@@ -2896,6 +2900,7 @@ namespace TrainingProject
 								GameTeam2[i].getScore++;
 								// Try boss fight 
 								if  (getScore() >= GoalGameScore && !GameTeam2[0].getName.Equals("Arena")) bossFight = true;
+								// if winning team has a lower score than loosing team, steal one point. 
 								if (GameTeam1[i].getScore > GameTeam2[i].getScore && !GameTeam2[i].isMonster)
 								{
 									GameTeam1[i].getScore--;
@@ -3229,7 +3234,7 @@ namespace TrainingProject
 						&& eEquip.eType == "Armour"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
-								|| ((!bAutomated && bManualEquipment) || shopper.getEquipWeapon is null))
+								|| ((!bAutomated && bManualEquipment) || shopper.getEquipArmour is null))
 						&& getGameCurrency > 0)
 					{
 						purchase = eEquip;
@@ -3363,7 +3368,7 @@ namespace TrainingProject
 			// if arena is in debt, none of the benefits are available (Monster den bonus, Equipment upgrades, Repair bay, etc) so no maintenance required.
 			if (getGameCurrency <= 0)
 				maintValue = RndVal.Next(60, 260);
-			maintValue = 43; //test 
+			// maintValue = 43; //test 
 			switch (maintValue)
 			{
 				case 1:
@@ -5029,7 +5034,6 @@ namespace TrainingProject
 				if (pay)
 				{
 					Cost = MyTeam[robo].rebuildCost(myGame.ResearchDevRebuild, Runes);
-					getCurrency -= Cost;
 					if (MyTeam[robo].rebuildBonus > 0)
 						MyTeam[robo].rebuildBonus--;
 				}
@@ -5041,7 +5045,7 @@ namespace TrainingProject
 				if (baseStats < MyTeam[robo].getLevel / 5)
 				{
 					int MultiRank = 100 + myGame.getResearchDevLvl;
-					do
+					do 
 					{
 						baseStats++;
 						MultiRank -= 5;
@@ -5058,8 +5062,7 @@ namespace TrainingProject
 				int runesUsed = getRunes(MyTeam[robo].getBaseStats(), true);
 				if (MyTeam[robo].RebuildPercent + runesUsed > RndVal.Next(100))
 				{
-					//if (!pay) baseStats = baseStats / 2;
-					MyTeam[robo] = new Robot(baseStats, "temp", type , false);
+                    MyTeam[robo] = new Robot(baseStats, "temp", type , false);
 					MyTeam[robo].getName = strName;
 					MyTeam[robo].bIsMonster = bIsMonsterTmp;
 					MyTeam[robo].bMonster = btmpMonster;
@@ -5084,6 +5087,8 @@ namespace TrainingProject
 					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
 					if (!MyTeam[robo].bIsMonster)
 					{
+						// refund 75% of the cost of the upgrade. 
+						Cost = Cost / 4;
 						string strFormat = "\n--- {0}:{1} failed the rebuild (+{2}A/{3}R)";
 						if (Cost > 0) strFormat += " ic:{5:c0}";
 						getTeamLog = getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis, runesUsed, DateTime.Now.ToString(), Cost);
@@ -5094,8 +5099,10 @@ namespace TrainingProject
 						string strFormat = "\n [M] {0}:{1} failed to ranked up... Rank (+{2}A)";
 						getFightLog = string.Format(strFormat, getName, MyTeam[robo].getName, bonusAnalysis, DateTime.Now.ToString());
 					}
-				}
+                }
 			}
+			// pay for the upgrade
+			getCurrency -= Cost;
 			return Cost;
 		}
 		public int getNumRobos(bool pShowDefeated, int KOCount = 3)
@@ -5140,13 +5147,13 @@ namespace TrainingProject
 					if (getCurrency < cost || beds == 0 || bedUsed || (MyTeam[robo].getTHealth() - MyTeam[robo].HP) < (value / 2))
 					{
 						cost = 0;
-						value = value / 10;
+						value = 1;
 					}
 					else
 					{
 						if (getScore >= HealScore)
 						{ 
-							cost = MyTeam[robo].getBaseStats() / 2;
+							cost = MyTeam[robo].getBaseStats();
 							HealScore = getScore + 1;
 						}
 						beds--;
