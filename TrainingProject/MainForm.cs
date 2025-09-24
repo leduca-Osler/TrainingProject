@@ -196,12 +196,12 @@ namespace TrainingApp
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						ComunityOutreach = true;
 			if (MyGame.StartForge || MyGame.StartRestock)								shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
-			else if (MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
+			if (!MyGame.StartForge && MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count) 
 			{
 				shopRestock = true;
 				shopColour = Color.Green;
 			}
-			else if (MyGame.getGameCurrency > 0 && MyGame.getConcessionStock == 0)
+			else if (!MyGame.StartRestock && MyGame.getGameCurrency > 0 && MyGame.getConcessionStock == 0)
 			{
 				shopRestock = true;
 				shopColour = Color.LawnGreen;
@@ -744,7 +744,7 @@ namespace TrainingApp
 			// Jackpot +10
 			else if (e.KeyCode == Keys.K) increaseJackpot10ToolStripMenuItem.PerformClick();
 			// Clear Messages
-			else if (e.KeyCode == Keys.C) MyGame.resetAll();
+			else if (e.KeyCode == Keys.C) MyGame.clearWarnings();
 			else if (e.KeyCode == Keys.M) mouseButtons();
 			// show message box with available shortcuts if not a windows special key
 			else if (e.KeyCode == Keys.OemQuestion || e.KeyCode == Keys.OemBackslash)

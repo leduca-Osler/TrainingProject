@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Diagnostics.Eventing.Reader;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
+using System.Runtime;
+using System.Runtime.Remoting.Contexts;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing;
 using System.Xml;
-using System.Runtime;
-using System.Runtime.Remoting.Contexts;
-using System.Reflection;
-using System.Diagnostics.Eventing.Reader;
-using System.Data.SqlTypes;
-using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace TrainingProject
 {
@@ -1803,11 +1804,14 @@ namespace TrainingProject
 				if (GameTeam1.Count == 0)
 				{
 					// combined Forge and restock so we will not miss out on restocking equipment or sock while the other is still restocking. 
-					if (StartForge || StartRestock)
+					if (StartForge)
 					{
 						// forge new equipment
 						if (ShopStock > storeEquipment.Count) ForgeEquipment();
 						else StartForge = false;
+					}
+					if (StartRestock)
+					{ 
 						// restock concessions
 						StartRestock = false;
 						foreach (Concession eConcession in ConcessionStands)
@@ -1968,11 +1972,14 @@ namespace TrainingProject
 				// concession sales
 				long tmpSales = 0;
 				int tmpPurchasers = attendees - unseated;
+				bool displayEach = false;
+				if (roundCount < 20) displayEach = true;
 				foreach (Concession eConcession in ConcessionStands)
 				{
-					tmpSales += eConcession.purchase(ref tmpPurchasers);
+					tmpSales += eConcession.purchase(ref tmpPurchasers,displayEach);
 				}
-				getGameCurrency += tmpSales;
+				if (!displayEach && tmpSales > 0 ) getFightLog = string.Format("\n    +$ Concession Sales: {0:c0}", tmpSales);
+                getGameCurrency += tmpSales;
 				addLifetimeRevenue(tmpSales);
 				// total attendance
 				int countChars = 10 + tmpTotalScore.ToString().Length;
@@ -2741,6 +2748,9 @@ namespace TrainingProject
 				}
 				else
 				{
+					// if total score is a multiple of 100 reset logs. 
+					if (getScore() % 100 == 0) resetAuto();
+
 					if (GameTeam1[i].getName.Equals("Arena"))
 					{
 						// reset skill chars
@@ -3183,8 +3193,7 @@ namespace TrainingProject
 						&& eEquip.eType == "Weapon"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
-								|| ((!bAutomated && bManualEquipment) || shopper.getEquipWeapon is null))
-						&& getGameCurrency > 0)
+								|| ((!bAutomated && bManualEquipment) || shopper.getEquipWeapon is null)))
 					{
 						purchase = eEquip;
 					}
@@ -3218,6 +3227,8 @@ namespace TrainingProject
 					{
 						shopper.getEquipWeapon.eDurability = shopper.getEquipWeapon.eMaxDurability = (int)(shopper.getEquipWeapon.eMaxDurability * .9);
 						eTeam.getCurrency -= 25;
+						getGameCurrency += 25;
+						addLifetimeRevenue(25);
 						eTeam.getTeamLog = getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipWeapon.eName) + Environment.NewLine + "   " + shopper.getEquipWeapon.ToString(orig);
 					}
 				}
@@ -3234,8 +3245,7 @@ namespace TrainingProject
 						&& eEquip.eType == "Armour"
 						&& ((PurchaseUpgrade && !RobotPriority)
 								|| bAutomated
-								|| ((!bAutomated && bManualEquipment) || shopper.getEquipArmour is null))
-						&& getGameCurrency > 0)
+								|| ((!bAutomated && bManualEquipment) || shopper.getEquipArmour is null)))
 					{
 						purchase = eEquip;
 					}
@@ -3270,7 +3280,9 @@ namespace TrainingProject
 					{
 						shopper.getEquipArmour.eDurability = shopper.getEquipArmour.eMaxDurability = (int)(shopper.getEquipArmour.eMaxDurability * .9);
 						eTeam.getCurrency -= 25;
-						eTeam.getTeamLog = getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipArmour.eName) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
+                        getGameCurrency += 25;
+                        addLifetimeRevenue(25);
+                        eTeam.getTeamLog = getFightLog = Environment.NewLine + " ### " + eTeam.getName + ":" + shopper.getName + " Repaired " + String.Format("{1} ({0:n0}) ", 25, shopper.getEquipArmour.eName) + Environment.NewLine + "   " + shopper.getEquipArmour.ToString(orig);
 					}
 				}
 				
@@ -6292,7 +6304,7 @@ namespace TrainingProject
 			if (rndVal.Next(100) > 90) Demand--;
 		}
 
-		public long purchase(ref int Customers)
+		public long purchase(ref int Customers, bool displayEach)
 		{
 			// Random number of sales
 			int Sales = rndVal.Next(Customers / Demand);
@@ -6303,7 +6315,7 @@ namespace TrainingProject
 			{
 				if (Sales > CurrentStock) { Sales = CurrentStock; }
 				CurrentStock -= Sales;
-				getFightLog = string.Format("\n    +$ {0} Sales: {1:n0} @ {2:c0} = {3:c0}", name, Sales, SalePrice, Sales * SalePrice);
+				if (displayEach) getFightLog = string.Format("\n    +$ {0} Sales: {1:n0} @ {2:c0} = {3:c0}", name, Sales, SalePrice, Sales * SalePrice);
 				return Sales * SalePrice;
 			}
 			else { return 0; }
