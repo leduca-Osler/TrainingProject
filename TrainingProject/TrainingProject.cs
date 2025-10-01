@@ -3701,7 +3701,7 @@ namespace TrainingProject
 						long monsterOutbreakCost = roundValue(longRandom(MaintCost));
 						startMonsterOutbreak(monsterOutbreakCost);
 						MaintCost = roundValue(MaintCost - monsterOutbreakCost);
-						getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.2), "down");
+						getMonsterDenLvlMaint = roundValue(MonsterDenLvlMaint, (int)((double)MaintCost * 0.15), "down");
 						getGameCurrency -= MaintCost;
 						GameCurrencyLogMaint -= MaintCost;
 						if (strMessage.Length == 0) strMessage = "!Outbreak";
