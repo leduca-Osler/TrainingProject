@@ -1922,10 +1922,11 @@ namespace TrainingProject
 				// small chance to reduce the outreach percentage 
 				if (RndVal.Next(1000) < ArenaLvl) ArenaComunityReach = roundValue(ArenaComunityReach, (MainLvlCostBase / 100), "down");
 				int tmpTotalScore = (int)(PotScore * getArenaOutreach());
+				int availableSeating = 0;
 				if (tmpTotalScore < 0) tmpTotalScore = 0;
 				if (GameTeam1.Count == 1)
 				{
-					CurrentSeating = new List<ArenaSeating> {  };
+					CurrentSeating = new List<ArenaSeating> { };
 					seatingAvailable = new List<int> { };
 					// reset seating
 					foreach (ArenaSeating eSeating in Seating)
@@ -1933,16 +1934,21 @@ namespace TrainingProject
 						CurrentSeating.Add(new ArenaSeating(eSeating.Level, eSeating.Price, eSeating.Amount, eSeating.AmountBase));
 						for (int i = 0; i < eSeating.Level; i++)
 						{ seatingAvailable.Add(i); }
+						availableSeating += eSeating.Amount;
 					}
 				}
 				// randomize each attendee
-				int attendees = RndVal.Next(tmpTotalScore);
+				int attendees = 0;
+				// smaller percentage chance to fill attendees by the available seating instead of the current score
+				if (RndVal.Next(100) > 90) attendees = RndVal.Next(availableSeating);
+                else attendees = RndVal.Next(tmpTotalScore);
 				int unseated = 0;
+				// loop through all attendees to see which seating level they are assigned too. 
 				for (int i = 0; i < attendees; i++)
 				{
 					int seatingLevel = 0;
-					if (seatingAvailable.Count > 0)
-						seatingLevel = seatingAvailable[RndVal.Next(seatingAvailable.Count)];
+					// choose which level of seating to put this attendee. 
+					if (seatingAvailable.Count > 0) seatingLevel = seatingAvailable[RndVal.Next(seatingAvailable.Count)];
 					bool seated = false;
 					while (!seated)
 					{
@@ -3199,7 +3205,7 @@ namespace TrainingProject
 					}
 				}
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
-				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 
+				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0
 					&& (shopper.getEquipWeapon is null || (shopper.getEquipWeapon != null && purchase.eUpgrade > shopper.getEquipWeapon.eUpgrade))
 					&& (shopper.getEquipWeapon is null || !shopper.getEquipWeapon.Equals(purchase)))
 				{
@@ -3251,8 +3257,8 @@ namespace TrainingProject
 					}
 				}
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
-				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0 && getGameCurrency > 0 
-					&& (shopper.getEquipWeapon is null || (shopper.getEquipArmour != null && purchase.eUpgrade > shopper.getEquipArmour.eUpgrade))
+				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0
+					&& (shopper.getEquipArmour is null || (shopper.getEquipArmour != null && purchase.eUpgrade > shopper.getEquipArmour.eUpgrade))
 					&& (shopper.getEquipArmour is null || !shopper.getEquipArmour.Equals(purchase)))
 				{
 					string msg = "";
