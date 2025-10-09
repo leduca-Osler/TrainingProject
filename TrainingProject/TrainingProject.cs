@@ -1206,13 +1206,13 @@ namespace TrainingProject
 			if (ConcessionMarkup < .98 && RndVal.Next(100) > 90) ConcessionMarkup += .01; // increase markup by 1 percent 
 			foreach (Concession eConcession in ConcessionStands)
 			{
-				eConcession.ConcessionLevelUp(ConcessionMarkup);
+				eConcession.ConcessionLevelUp(ConcessionMarkup, ConcessionLvl * 10);
 			}
 			// continue here
 			// add a new concession stand every 6 levels
 			if (ConcessionLvl % 6 == 0)
 			{
-				ConcessionStands.Add(new Concession(ConcessionMarkup, ConcessionLvl + 10));
+				ConcessionStands.Add(new Concession(ConcessionMarkup, ConcessionLvl * 10));
 				msg += string.Format("\n  Added {0} concession stand", ConcessionStands[ConcessionStands.Count-1].name);
 			}
 			// reset maintenance condition
@@ -1689,7 +1689,7 @@ namespace TrainingProject
 			{
 				bossFight = false;
 				foreach (Robot eBoss in Bosses.MyTeam)
-					eBoss.getCurrentSpeed = RndVal.Next(1, eBoss.getSpeed);
+					eBoss.getCurrentSpeed = RndVal.Next(1, eBoss.getTSpeed());
 				GameTeam2.Add(Bosses);
 				Jackpot = BossReward;
 				getWarningLog = getFightLog = Environment.NewLine + " Boss Fight! ";
@@ -1904,7 +1904,7 @@ namespace TrainingProject
 					}
 					// reset speed for monsters
 					foreach (Robot eMonster in MonsterOutbreak.MyTeam)
-						eMonster.getCurrentSpeed = RndVal.Next(1, eMonster.getSpeed);
+						eMonster.getCurrentSpeed = RndVal.Next(1, eMonster.getTSpeed());
 					// Monster team... 
 					GameTeam2.Add(new Team(GameTeam1[GameTeam1.Count - 1].getDifficulty, getMonsterDenLvlImage(), findMonster, ref MonsterOutbreak));
 				}
@@ -1967,8 +1967,8 @@ namespace TrainingProject
 				}
 				if (GameTeam1.Count > 1)
 				{
-					// If no seats available remove the teams that were added and exit function, unless total score is less than 10 or fighting a monster team
-					 if (attendees == unseated && tmpTotalScore > 10 && !GameTeam2[0].isMonster)
+					// If no seats available 75% chance to  remove the teams that were added and exit function, unless total score is less than 10 or fighting a monster team
+					 if (attendees == unseated && tmpTotalScore > 10 && !GameTeam2[0].isMonster && RndVal.Next(100) > 25)
 					{
 						GameTeam1.RemoveAt(GameTeam1.Count - 1);
 						GameTeam2.RemoveAt(GameTeam2.Count - 1);
@@ -2332,24 +2332,27 @@ namespace TrainingProject
 				Label lblConcessionLvl = new Label { AutoSize = true, Text = String.Format("Concession:  {0," + RowOneLength[0] + "} {1," + RowOneLength[1] + ":\\+#,###} {2," + RowOneLength[2] + ":\\-#,###;\\!#,###} {3}% \n  Markup: {4:p0} Stock:{5:p0}", ConcessionLvl, ConcessionLvlCost, getConcessionLvlMaint, getConcessionLvlMaintCondition, ConcessionMarkup, getConcessionStock) };
 				MainPanel.Controls.Add(lblConcessionLvl);
 				FlowLayoutPanel pnlStands = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
-				RowThreeLength = new int[] { 8, 1, 2, 1, 1, 1 };
+				RowThreeLength = new int[] { 8, 1, 2, 1, 1, 1, 1 };
 				foreach (Concession eConcession in ConcessionStands)
 				{
+					long Revenu = (eConcession.MaxStock * eConcession.SalePrice) - eConcession.RestockCost;
 					if (string.Format("{0}", eConcession.name).Length > RowThreeLength[0]) RowThreeLength[0] = string.Format("{0}", eConcession.name).Length;
 					if (string.Format("{0:n0}", eConcession.CurrentStock).Length > RowThreeLength[1]) RowThreeLength[1] = string.Format("{0:n0}", eConcession.CurrentStock).Length;
 					if (string.Format("{0:n0}", eConcession.MaxStock).Length > RowThreeLength[2]) RowThreeLength[2] = string.Format("{0:n0}", eConcession.MaxStock).Length;
 					if (string.Format("{0:c0}", eConcession.SalePrice).Length > RowThreeLength[3]) RowThreeLength[3] = string.Format("{0:c0}", eConcession.SalePrice).Length;
-					if (string.Format("{0:c0}", eConcession.RestockCost).Length > RowThreeLength[4]) RowThreeLength[4] = string.Format("{0:c0}", eConcession.RestockCost).Length;
-					if (string.Format("{0:n0}", eConcession.Demand).Length > RowThreeLength[5]) RowThreeLength[5] = string.Format("{0:n0}", eConcession.Demand).Length;					
+                    if (string.Format("{0:c0}", eConcession.RestockCost).Length > RowThreeLength[4]) RowThreeLength[4] = string.Format("{0:c0}", eConcession.RestockCost).Length;
+                    if (string.Format("{0:c0}", Revenu).Length > RowThreeLength[5]) RowThreeLength[5] = string.Format("{0:c0}", Revenu).Length;
+                    if (string.Format("{0:n0}", eConcession.Demand).Length > RowThreeLength[6]) RowThreeLength[6] = string.Format("{0:n0}", eConcession.Demand).Length;
 				}
 				index = 0;
 				foreach (Concession eConcession in ConcessionStands)
 				{
 					if (showAll || index <= 2)
-					{
-						string ending = "";
+                    {
+                        long Revenu = (eConcession.MaxStock * eConcession.SalePrice) - eConcession.RestockCost;
+                        string ending = "";
 						if (index == 2 && !showAll && storeEquipment.Count > 3) ending = "...";
-						string tmp = string.Format("{0,-" + RowThreeLength[0] + "} {1," + RowThreeLength[1] + ":n0}/{2," + RowThreeLength[2] + ":n0} S:{3," + RowThreeLength[3] + ":c0} R:{4," + RowThreeLength[4] + ":c0} D:{5," + RowThreeLength[5] + ":n0}", eConcession.name, eConcession.CurrentStock, eConcession.MaxStock, eConcession.SalePrice, eConcession.RestockCost, eConcession.Demand);
+						string tmp = string.Format("{0,-" + RowThreeLength[0] + "} {1," + RowThreeLength[1] + ":n0}/{2," + RowThreeLength[2] + ":n0} S:{3," + RowThreeLength[3] + ":c0} F:{4," + RowThreeLength[4] + ":c0} R:{5," + RowThreeLength[5] + ":c0} D:{6," + RowThreeLength[6] + ":n0}", eConcession.name, eConcession.CurrentStock, eConcession.MaxStock, eConcession.SalePrice, eConcession.RestockCost, Revenu, eConcession.Demand);
 						Label lblStand = new Label { AutoSize = true, Text = string.Format("    {0}{1}\n", tmp, ending) };
 						pnlStands.Controls.Add(lblStand);
 						index++;
@@ -3193,7 +3196,7 @@ namespace TrainingProject
 				{
 					purchase = shopper.getEquipWeapon;
 				}
-				foreach (Equipment eEquip in storeEquipment)
+				foreach (Equipment eEquip in storeEquipment.ToList())
 				{
 					if (eTeam.getCurrency > eEquip.ePrice && (purchase.eUpgrade < eEquip.eUpgrade || purchase.ePrice == 0)
 						&& eEquip.eType == "Weapon"
@@ -3203,7 +3206,9 @@ namespace TrainingProject
 					{
 						purchase = eEquip;
 					}
-				}
+                    // get rid of stale merchandice that isn't selling
+                    staleMerchandice(eEquip);
+                }
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
 				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0
 					&& (shopper.getEquipWeapon is null || (shopper.getEquipWeapon != null && purchase.eUpgrade > shopper.getEquipWeapon.eUpgrade))
@@ -3216,7 +3221,9 @@ namespace TrainingProject
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
 					addLifetimeRevenue(purchase.ePrice);
-					shopper.getEquipWeapon = purchase;
+					// ensure durability is at max 
+					purchase.eDurability = purchase.eMaxDurability;
+                    shopper.getEquipWeapon = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
 					msg = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
@@ -3245,7 +3252,7 @@ namespace TrainingProject
 				{
 					purchase = shopper.getEquipArmour;
 				}
-				foreach (Equipment eEquip in storeEquipment)
+				foreach (Equipment eEquip in storeEquipment.ToList())
 				{
 					if (eTeam.getCurrency > eEquip.ePrice && (purchase.eUpgrade < eEquip.eUpgrade || purchase.ePrice == 0)
 						&& eEquip.eType == "Armour"
@@ -3254,8 +3261,10 @@ namespace TrainingProject
 								|| ((!bAutomated && bManualEquipment) || shopper.getEquipArmour is null)))
 					{
 						purchase = eEquip;
-					}
-				}
+                    }
+                    // get rid of stale merchandice that isn't selling
+                    staleMerchandice(eEquip);
+                }
 				// purchase weapon if team has the money and it is not the weapon they already have equipped
 				if (eTeam.getCurrency > purchase.ePrice && purchase.ePrice > 0
 					&& (shopper.getEquipArmour is null || (shopper.getEquipArmour != null && purchase.eUpgrade > shopper.getEquipArmour.eUpgrade))
@@ -3268,7 +3277,9 @@ namespace TrainingProject
 					GameCurrency += purchase.ePrice;
 					GameCurrencyLogMisc += purchase.ePrice;
 					addLifetimeRevenue(purchase.ePrice);
-					shopper.getEquipArmour = purchase;
+					// ensure durability is at max
+                    purchase.eDurability = purchase.eMaxDurability;
+                    shopper.getEquipArmour = purchase;
 					eTeam.AddEquipmentPurchased();
 					storeEquipment.Remove(purchase);
 					msg = Environment.NewLine + " $$$ " + eTeam.getName + ":" + shopper.getName + " purchased " + String.Format("{1} ({0:n0}) ", purchase.ePrice, purchase.eName) + Environment.NewLine + "   " + purchase.ToString() + msg;
@@ -3346,6 +3357,18 @@ namespace TrainingProject
 					}
 
 				}
+			}
+		}
+		public void staleMerchandice(Equipment eEquip)
+		{
+			// don't wear out the equipment too fast.
+			if (RndVal.Next(1000) > 998)
+			{
+				if (--eEquip.eDurability <= 0)
+                {
+					getWarningLog = getFightLog = string.Format("\n *!*! {0} did not sell and was taken off the shelf",eEquip.getName());
+                    storeEquipment.Remove(eEquip);
+                }
 			}
 		}
 		public long longRandom(long value)
@@ -4216,9 +4239,9 @@ namespace TrainingProject
 			{
 				// all characters speed is zero set speed
 				foreach (Robot eRobot in GameTeam1[index].MyTeam)
-					eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getSpeed);
+					eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getTSpeed());
 				foreach (Robot eRobot in GameTeam2[index].MyTeam)
-					eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getSpeed);
+					eRobot.getCurrentSpeed = RndVal.Next(1, eRobot.getTSpeed());
 			}
 			else
 			{
@@ -4701,7 +4724,7 @@ namespace TrainingProject
 						MyTeam[i].levelUp(RndVal);
 						MyTeam[i].HP = MyTeam[i].getTHealth();
 						MyTeam[i].MP = MyTeam[i].getTEnergy();
-						MyTeam[i].getCurrentSpeed = RndVal.Next(1, MyTeam[i].getSpeed);
+						MyTeam[i].getCurrentSpeed = RndVal.Next(1, MyTeam[i].getTSpeed());
 					}
 				}
 			}
@@ -4724,7 +4747,7 @@ namespace TrainingProject
 		public void resetSpeed()
 		{
 			foreach (Robot eRobo in MyTeam)
-				eRobo.getCurrentSpeed = RndVal.Next(1, eRobo.getSpeed);
+				eRobo.getCurrentSpeed = RndVal.Next(1, eRobo.getTSpeed());
 		}
 		public void AddRobotDestroyed(int type, bool isMonster)
 		{
@@ -6301,9 +6324,9 @@ namespace TrainingProject
 			Demand = 100;
 		}
 
-		public void ConcessionLevelUp(double markup)
+		public void ConcessionLevelUp(double markup, int StockIncreaseMax)
 		{
-			MaxStock = roundValue(MaxStock, RndVal.Next(1,SalePrice*10), "up"); ;
+			MaxStock = roundValue(MaxStock, RndVal.Next(1,StockIncreaseMax), "up"); ;
 			SalePrice++;
 			CurrentStock = MaxStock;
 			RestockCost = (int)(SalePrice * MaxStock * (1 - markup));

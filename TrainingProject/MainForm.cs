@@ -196,7 +196,7 @@ namespace TrainingApp
 			if (MyGame.getGameCurrency >= MyGame.getArenaLvlCost)						ComunityOutreach = true;
 			if (MyGame.StartForge || MyGame.StartRestock)								shopColour = Color.Aquamarine;
 			// enough money to upgrade or re-stock
-			if (!MyGame.StartForge && MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock / 2 > MyGame.storeEquipment.Count) 
+			if (!MyGame.StartForge && MyGame.getGameCurrency >= MyGame.getShopStockCost && MyGame.getShopStock / 2 >= MyGame.storeEquipment.Count) 
 			{
 				shopRestock = true;
 				shopColour = Color.Green;
@@ -347,7 +347,7 @@ namespace TrainingApp
 
 		private void btnMonsterDen_Click(object sender, EventArgs e)
 		{
-			if (MyGame.getGameCurrency > MyGame.getShopStockCost && MyGame.getShopStock > MyGame.storeEquipment.Count)
+			if (MyGame.getGameCurrency > MyGame.getShopStockCost && MyGame.getShopStock / 2 >= MyGame.storeEquipment.Count)
 			{
 				MyGame.AddStock();
 			}
