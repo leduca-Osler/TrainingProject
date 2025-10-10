@@ -2187,18 +2187,11 @@ namespace TrainingProject
 				else strAutomated = "Manual Upgrade Robot";
 				Label lblAutomatic = new Label { AutoSize = true, Text = strAutomated };
 				lblAutomatic.Click += new EventHandler((sender, e) => GameTeams[TeamSelect - 1].changeAutomated());
-				MainPanel.Controls.Add(lblNextNumeral);
-				MainPanel.Controls.Add(lblTeamName);
-				MainPanel.Controls.Add(lblTeamCurrency);
-				MainPanel.Controls.Add(lblScore);
-				MainPanel.Controls.Add(lblWin);
-				MainPanel.Controls.Add(lblRobots);
-				MainPanel.Controls.Add(lblRunes);
-				MainPanel.Controls.Add(lblDifficulty);
-				MainPanel.Controls.Add(lblAutomatic);
 				int index = 0;
+				int TotalPower = 0;
 				foreach (Robot eRobo in GameTeams[TeamSelect - 1].MyTeam)
 				{
+					TotalPower += eRobo.getTotalPower();
 					FlowLayoutPanel MyPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, AutoSize = true };
 					Label RoboName = new Label { AutoSize = true, Text = eRobo.getName };
 					RoboName.Click += new EventHandler((sender, e) => eRobo.rename(InputBox("Enter Name ", "Enter Name")));
@@ -2220,8 +2213,19 @@ namespace TrainingProject
 					MyPanel.Controls.Add(btnRebuild);
 					MyPanel.Controls.Add(rebuildCost);
 					TopLevelPanel.Controls.Add(MyPanel);
-				}
-				MainPanel.Controls.Add(TopLevelPanel);
+                }
+                Label lblTotalPower = new Label { AutoSize = true, Text = String.Format("TotalPower: {0:n0}",TotalPower)};
+                MainPanel.Controls.Add(lblNextNumeral);
+                MainPanel.Controls.Add(lblTeamName);
+                MainPanel.Controls.Add(lblTeamCurrency);
+                MainPanel.Controls.Add(lblScore);
+                MainPanel.Controls.Add(lblWin);
+                MainPanel.Controls.Add(lblRobots);
+                MainPanel.Controls.Add(lblRunes);
+                MainPanel.Controls.Add(lblDifficulty);
+                MainPanel.Controls.Add(lblTotalPower);
+                MainPanel.Controls.Add(lblAutomatic);
+                MainPanel.Controls.Add(TopLevelPanel);
 				Label lblTeamLog = new Label { AutoSize = true, Text = Environment.NewLine + "Team Log:   " + Environment.NewLine + GameTeams[TeamSelect - 1].getTeamLog };
 				MainPanel.Controls.Add(lblTeamLog);
 			}
@@ -6095,7 +6099,7 @@ namespace TrainingProject
 					if (attacker.getLevel <= getLevel)
 					{
 						attacker.getCurrentAnalysis += getLevel - attacker.getLevel + 1;
-						if (HP == 0) attacker.getCurrentAnalysis += 10;
+						if (HP == 0) attacker.getCurrentAnalysis += 10; 
 					}
 					// if attacker is higher level, get less exp
 					else if (RndVal.Next(attacker.getLevel) < getLevel)
@@ -6106,7 +6110,10 @@ namespace TrainingProject
 			}
 		}
 		public int getMaxLevel() { return (Dexterity + Strength + Agility + Tech + Accuracy + 1) * 5; }
-
+		public int getTotalPower()
+		{
+			return (getTHealth() / 3) + (getTEnergy() / 2) + getTArmour() + getTDamage() + getTHit() + getTSpeed() + getTMentalStrength() + getTMentalDefense();
+        }
 		public override string ToString()
         {
             string tmp = "";
@@ -6158,7 +6165,7 @@ namespace TrainingProject
 			}
 			int[] cPadding = { getMaxLength( new string[] { String.Format("{0:n0}", HP), String.Format("{0:n0}", MP), String.Format("{0:n0}", getTArmour()), String.Format("{0:n0}", getTDamage()), String.Format("{0:n0}", getTHit()), String.Format("{0:n0}", getTSpeed()), String.Format("{0:n0}", getTMentalStrength()), String.Format("{0:n0}", getTMentalDefense()) })
 					, getMaxLength( new string[] { String.Format("{0:n0}", getTHealth()), String.Format("{0:n0}", getTEnergy()) } )
-					, getMaxLength( new string[] { String.Format("{0:n0}", Health), String.Format("{0:n0}", Energy), String.Format("{0:n0}", Armour), String.Format("{0:n0}", Damage), String.Format("{0:n0}", Hit), String.Format("{0:n0}", Speed), String.Format("{0:n0}", MentalStrength), String.Format("{0:n0}", MentalDefense) } )
+					, getMaxLength( new string[] { String.Format("{0:n0}", getHealth), String.Format("{0:n0}", getEnergy), String.Format("{0:n0}", getArmour), String.Format("{0:n0}", getDamage), String.Format("{0:n0}", getHit), String.Format("{0:n0}", getSpeed), String.Format("{0:n0}", getMentalStrength), String.Format("{0:n0}", getMentalDefense) } )
 					, getMaxLength( new string[] { String.Format("{0:n0}", wHealth), String.Format("{0:n0}", wEnergy), String.Format("{0:n0}", wArmour), String.Format("{0:n0}", wDamage), String.Format("{0:n0}", wHit), String.Format("{0:n0}", wSpeed), String.Format("{0:n0}", wMentalStr), String.Format("{0:n0}", wMentalDef) } )
 					, getMaxLength( new string[] { String.Format("{0:n0}", aHealth), String.Format("{0:n0}", aEnergy), String.Format("{0:n0}", aArmour), String.Format("{0:n0}", aDamage), String.Format("{0:n0}", aHit), String.Format("{0:n0}", aSpeed), String.Format("{0:n0}", aMentalStr), String.Format("{0:n0}", aMentalDef) } )
 				};
@@ -6175,15 +6182,15 @@ namespace TrainingProject
 			tmp += string.Format("{0,-10}{1}\n", "Tech", Tech);
 			tmp += string.Format("{0,-10}{1}\n", "Accuracy", Accuracy);
 			tmp += ("*Elevated Stats*\n");
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "T.Power", (getTHealth() / 3) + (getTEnergy() / 2) + getTArmour() + getTDamage() + getTHit() + getTSpeed() + getTMentalStrength() + getTMentalDefense());
-			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Health", HP, getTHealth(), Health, wHealth, aHealth);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}+{5," + cPadding[4] + ":n0}\n", "Energy", MP, getTEnergy(), Energy, wEnergy, aEnergy);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Armour", getTArmour(), Armour, wArmour, aArmour);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalDef", getTMentalDefense(), MentalDefense, wMentalDef, aMentalDef);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Damage", getTDamage(), Damage, wDamage, aDamage);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "MentalStr", getTMentalStrength(), MentalStrength, wMentalStr, aMentalStr);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Hit", getTHit(), Hit, wHit, aHit);
-			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}+{4," + cPadding[4] + ":n0}\n", "Speed", getTSpeed(), Speed, wSpeed, aSpeed);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "T.Power", getTotalPower());
+			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}\n", "Health", HP, getTHealth(), getHealth, aHealth);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0]) + ":n0}/{2," + (cPadding[1]) + ":n0} {3," + cPadding[2] + ":n0}+{4," + cPadding[3] + ":n0}\n", "Energy", MP, getTEnergy(), getEnergy, aEnergy);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}\n", "Armour", getTArmour(), getArmour, aArmour);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}\n", "MentalDef", getTMentalDefense(), getMentalDefense, aMentalDef);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}\n", "Damage", getTDamage(), getDamage, wDamage);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}\n", "MentalStr", getTMentalStrength(), getMentalStrength, wMentalStr);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}\n", "Hit", getTHit(), getHit, wHit);
+			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0} {2," + cPadding[2] + ":n0}+{3," + cPadding[3] + ":n0}\n", "Speed", getTSpeed(), getSpeed, wSpeed);
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "Analysis", getAnalysisLeft());
 			tmp += string.Format("{0,-10}{1," + (cPadding[0] + cPadding[1] + 1) + ":n0}\n", "Rebuild %", RebuildPercent);
 			tmp += "-----\n";
