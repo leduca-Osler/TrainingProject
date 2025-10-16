@@ -1348,7 +1348,7 @@ namespace TrainingProject
 					getGameCurrency -= ShopStockCost;
 					GameCurrencyLogMisc -= ShopStockCost;
 					tmp.ePrice = roundValue(tmp.ePrice, tmp.eUpgradeCost, "up"); 
-					tmp.upgrade(ShopUpgradeValue, RndVal, true);
+					tmp.upgrade(ShopUpgradeValue, RndVal);
 					upgradeVal++;
 				}
 				storeEquipment.Add(tmp);
@@ -6505,10 +6505,10 @@ namespace TrainingProject
 			string strUpgrade = "";
 			long tmpDurability = eDurability,
 				tmpUpgradeCost = eUpgradeCost;
-				
-			eMaxDurability += value;
+
+            if (!max) value = RndVal.Next(1, value);
+            eMaxDurability += value;
 			eDurability = eMaxDurability;
-			if (!max) value = RndVal.Next(1, value);
 			switch (Type)
 			{
 			
