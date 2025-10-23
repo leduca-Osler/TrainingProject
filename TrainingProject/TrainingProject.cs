@@ -6547,9 +6547,8 @@ namespace TrainingProject
 			}
 			eUpgrade++;
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
-			// if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
-			// else
-			eUpgradeCostBase += eUpgradeCostBaseIncrement;
+			if (eUpgrade % 10 == 0) eUpgradeCostBase *= 2;
+			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
 			return String.Format("{0}+{1:n0} ({5:c0}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, tmpDurability, eDurability, strUpgrade, tmpUpgradeCost);
 		}
 		public string getName()
