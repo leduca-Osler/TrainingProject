@@ -5089,7 +5089,9 @@ namespace TrainingProject
 				// only increase base stats if level is high enough
 				if (baseStats < MyTeam[robo].getLevel / 5)
 				{
-					int MultiRank = 100 + myGame.getResearchDevLvl;
+					// Increase base stats according to the current level
+					baseStats = MyTeam[robo].getLevel / 5;
+                    int MultiRank = 100 + myGame.getResearchDevLvl;
 					do 
 					{
 						baseStats++;
@@ -6547,7 +6549,7 @@ namespace TrainingProject
 			}
 			eUpgrade++;
 			eUpgradeCost = roundValue(eUpgradeCost, eUpgradeCostBase, "up");
-			if (eUpgrade % 10 == 0) eUpgradeCostBase *= 2;
+			if (eUpgrade % 5 == 0) eUpgradeCostBase *= 2;
 			else eUpgradeCostBase += eUpgradeCostBaseIncrement;
 			return String.Format("{0}+{1:n0} ({5:c0}) Dur:{2:n0}->{3:n0} {4}", eName, eUpgrade, tmpDurability, eDurability, strUpgrade, tmpUpgradeCost);
 		}
