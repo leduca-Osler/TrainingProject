@@ -566,12 +566,17 @@ namespace TrainingProject
 			get { return GameCurrency; }
 		}
 
-		public int getArenaLvl
-		{
-			get { return ArenaLvl; }
-			set { ArenaLvl = value; }
-		}
-		public long getArenaLvlCost
+        public int getArenaLvl
+        {
+            get { return ArenaLvl; }
+            set { ArenaLvl = value; }
+        }
+        public int getConcessionLvl
+        {
+            get { return ConcessionLvl; }
+            set { ConcessionLvl = value; }
+        }
+        public long getArenaLvlCost
 		{
 			get { return ArenaLvlCost; }
 			set { ArenaLvlCost = value; }
@@ -5092,12 +5097,12 @@ namespace TrainingProject
 					// Increase base stats according to the current level
 					baseStats = MyTeam[robo].getLevel / 5;
                     int MultiRank = 100 + myGame.getResearchDevLvl;
-					do 
-					{
+                    while (RndVal.Next(MultiRank) > 100)
+                    {
 						baseStats++;
 						MultiRank -= 5;
 					}
-					while (RndVal.Next(MultiRank) > 100);
+					
 					baseIncreased = baseStats - MyTeam[robo].getBaseStats();
 				}
 				string strName = MyTeam[robo].getName;
@@ -5130,7 +5135,7 @@ namespace TrainingProject
 				}
 				else
 				{
-					bonusAnalysis = RndVal.Next((int)MyTeam[robo].RebuildPercent * 10);
+					bonusAnalysis = RndVal.Next((int)(myGame.getArenaLvl + myGame.getShopLvl + myGame.getResearchDevLvl + myGame.getMonsterDenLvl + myGame.getConcessionLvl));
 					MyTeam[robo].getCurrentAnalysis += bonusAnalysis;
 					if (!MyTeam[robo].bIsMonster)
 					{
