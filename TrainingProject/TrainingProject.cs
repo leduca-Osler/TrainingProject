@@ -3371,7 +3371,7 @@ namespace TrainingProject
 		public void staleMerchandice(Equipment eEquip)
 		{
 			// don't wear out the equipment too fast.
-			if (RndVal.Next(1000) > 998)
+			if (RndVal.Next(1000) > 998 && !paused)
 			{
 				if (--eEquip.eDurability <= 0)
                 {
