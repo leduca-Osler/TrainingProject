@@ -1500,7 +1500,7 @@ namespace TrainingProject
 				{
 					long iWinnings = getArenaLvl * 1000 * (winGoal + 1);
 					foreach (Robot eRobo in eTeam.MyTeam)
-						eRobo.rebuildBonus++;
+						if (RndVal.Next(100) > 90)  eRobo.rebuildBonus++;
 					const string Format = "\n*!* {0} won {1:n0} credits during partial reset!";
 					getWarningLog = getFightLog = eTeam.getTeamLog = string.Format(format: Format, eTeam.getName, iWinnings);
 					eTeam.getCurrency += iWinnings;
@@ -4914,15 +4914,16 @@ namespace TrainingProject
 					// if we have 100 runes add to the next level
 					if (Runes[index] >= 100)
 					{
-						Runes[index] = 0;
+						Runes[index] = 80;
 						addRune(level + 10, true);
+						/*
 						if (RndVal.Next(100) > 90) // 10% chance to add bonus Rebuild
 						{
 							// Add bonus rebuild
 							Robot tmpRobot = MyTeam[RndVal.Next(MyTeam.Count)];
 							tmpRobot.rebuildBonus++;
 							getFightLog = String.Format("\n ^@^{0}-{1} received a bonus rebuild! ", getName, tmpRobot.getName);
-						}
+						}*/ 
 					}
 					else
 					{
