@@ -5103,7 +5103,7 @@ namespace TrainingProject
 						baseStats++;
 						MultiRank -= 5;
 					}
-					
+					if (baseStats % 2 > 0) baseStats++; // Ensure baseStats is an even number
 					baseIncreased = baseStats - MyTeam[robo].getBaseStats();
 				}
 				string strName = MyTeam[robo].getName;
@@ -6208,15 +6208,25 @@ namespace TrainingProject
 			}
 			if (EquipWeapon != null)
 			{
-				//tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n  {4:c0}\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade, EquipWeapon.eUpgradeCost);
-				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade);
+				string visDurability = ""; int iVisDurability = 100;
+				while (EquipWeapon.eMaxDurability > iVisDurability) 
+				{ 
+					iVisDurability *= 2; 
+					visDurability = visDurability + ">";  
+				}
+				tmp += String.Format("{4}(Dur:{0:n0}/{1:n0} {2}+{3})\n", EquipWeapon.eDurability, EquipWeapon.eMaxDurability, EquipWeapon.eName, EquipWeapon.eUpgrade, visDurability);
 			}
 			else
 				tmp += "<Unequiped>\n";
 			if (EquipArmour != null)
-			{
-				//tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n  {4:c0}\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade, getEquipArmour.eUpgradeCost);
-				tmp += String.Format("{2}+{3} (Dur:{0:n0}/{1:n0})\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade);
+            {
+                string visDurability = ""; int iVisDurability = 100;
+                while (EquipArmour.eMaxDurability > iVisDurability)
+                {
+                    iVisDurability *= 2;
+                    visDurability = visDurability + ">";
+                }
+                tmp += String.Format("{4}(Dur:{0:n0}/{1:n0} {2}+{3})\n", EquipArmour.eDurability, EquipArmour.eMaxDurability, EquipArmour.eName, EquipArmour.eUpgrade, visDurability);
 			}
 			else
 				tmp += "<Unequiped>\n";
