@@ -1356,7 +1356,8 @@ namespace TrainingProject
 					tmp.upgrade(ShopUpgradeValue, RndVal);
 					upgradeVal++;
 				}
-				storeEquipment.Add(tmp);
+                getFightLog = getWarningLog = String.Format("\n  $$$ New Equipment Forged: {1} ({0:n0}) ", tmp.ePrice, tmp.getName());
+                storeEquipment.Add(tmp);
 				storeEquipment.Sort();
 				addLifetimeEquipmentForged();
 			}
@@ -6110,10 +6111,11 @@ namespace TrainingProject
 						if (HP == 0) attacker.getCurrentAnalysis += 10; 
 					}
 					// if attacker is higher level, get less exp
-					else if (RndVal.Next(attacker.getLevel) < getLevel)
-						attacker.getCurrentAnalysis++;
-					// if robot / monster is defeated addTo achievement vars. 
-					if (HP == 0) ATeam.AddRobotDestroyed(type, bIsMonster);
+					else if (RndVal.Next(attacker.getLevel) < getLevel) attacker.getCurrentAnalysis++;
+                    // get experience for defender 
+                    else if (RndVal.Next(getLevel) < attacker.getLevel) getCurrentAnalysis++;
+                    // if robot / monster is defeated addTo achievement vars. 
+                    if (HP == 0) ATeam.AddRobotDestroyed(type, bIsMonster);
 				}
 			}
 		}
