@@ -3931,7 +3931,7 @@ namespace TrainingProject
 				case 56:
 					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
 					else MaintCost += Math.Abs(getConcessionLvlMaint / 100);
-					if (strMessage.Length == 0) strMessage = "rpdate menu";
+					if (strMessage.Length == 0) strMessage = "update menu";
 					goto case 57;
 				case 57:
 					if (getConcessionLvlMaint > 0) MaintCost += (getConcessionLvlMaint / 100);
@@ -4897,7 +4897,7 @@ namespace TrainingProject
 			{
 				runesCount = Runes[index];
 				if (reset)
-					Runes[index] = RndVal.Next(Runes[index]);
+					Runes[index] = 0;
 			}
 			return runesCount;
 		}
